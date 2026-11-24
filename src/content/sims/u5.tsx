@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp, rad, deg, polyline } from "@/components/sim/svg";
+import { C, Txt, Arrow, Dim, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
 
@@ -36,7 +37,8 @@ export const pitSim: SimDef = {
     { key: "profit", label: "Profit after stripping", unit: "₹/t", digits: 0, tone: (v) => (v >= 0 ? "ok" : "crit") },
     { key: "tonnes", label: "Coal per m of strike", unit: "t", digits: 0 },
   ],
-  render: (p) => {
+  animated: true,
+  render: (p, _o, t) => {
     const r = pitSection(p);
     const k = Math.min(360 / r.Ws, 170 / (p.H + p.t));
     const cx = 200;
@@ -46,11 +48,28 @@ export const pitSim: SimDef = {
     const ok = r.sr <= r.besr;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={top} fill="#e0f2fe" />
-        <rect x={0} y={top} width={400} height={200} fill="#d6d3d1" />
-        <rect x={0} y={yC} width={400} height={p.t * k} fill="#334155" opacity={0.55} />
-        <polygon points={polyline([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} fill={ok ? "#fde68a" : "#fecaca"} stroke={C.ink} />
-        <polygon points={polyline([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={C.coal} stroke={C.ink} />
+        <rect x={0} y={0} width={400} height={top} fill={MAT.sky} />
+        <rect x={0} y={top} width={400} height={200} fill={MAT.sand} />
+        <rect x={0} y={yF} width={400} height={240 - yF} fill={MAT.shale} />
+        <rect x={0} y={yC} width={400} height={p.t * k} fill={MAT.coal} />
+        <rect x={0} y={top - 3} width={400} height={4} fill="#65A30D" />
+        <polygon points={polyline([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} fill={ok ? "#fde68a" : "#fecaca"} opacity={0.88} stroke={C.ink} />
+        <polygon points={polyline([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={MAT.coal} stroke={C.ink} />
+        {(() => {
+          // haul truck climbing the left wall of the pit
+          const u = (t * 0.12) % 1;
+          const xa = cx - (p.Wf * k) / 2;
+          const xb = cx - (r.Ws * k) / 2;
+          const tx = xa + (xb - xa) * u;
+          const ty = yF + (top - yF) * u;
+          return (
+            <g transform={`translate(${tx.toFixed(1)} ${ty.toFixed(1)})`}>
+              <rect x={-7} y={-8} width={14} height={7} rx={1.5} fill={C.hazard} stroke="#92400E" strokeWidth={0.8} />
+              <circle cx={-4} cy={0} r={2} fill={C.ink} />
+              <circle cx={4} cy={0} r={2} fill={C.ink} />
+            </g>
+          );
+        })()}
         <Txt x={cx} y={(top + yC) / 2 + 4} size={10} anchor="middle" weight={800}>
           {`WASTE ${r.wasteA.toFixed(0)} m³/m`}
         </Txt>
@@ -106,7 +125,8 @@ export const draglineSim: SimDef = {
     { key: "reh", label: "Spoil needing rehandle", unit: "%", digits: 1, tone: (v) => (v === 0 ? "ok" : v < 15 ? "warn" : "crit") },
   ],
   caption: "Dragline sits 12 m back from the highwall crest; 5 m clearance from the exposed coal edge to the spoil toe.",
-  render: (p) => {
+  animated: true,
+  render: (p, _o, t) => {
     const d = dragline(p);
     const k = 1.5;
     const X = (x: number) => 200 + x * k;
@@ -118,25 +138,40 @@ export const draglineSim: SimDef = {
     const hp = d.h * k;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={240 - surf} fill="#d6d3d1" />
-        <rect x={X(p.W)} y={coalTop} width={400 - X(p.W)} height={4.5} fill={C.coal} />
-        <rect x={X(0)} y={coalTop} width={X(p.W) - X(0)} height={4.5} fill={C.coal} opacity={0.9} />
-        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill="#a8a29e" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={240 - surf} fill={MAT.sand} />
+        <rect x={X(p.W)} y={surf - 3} width={400 - X(p.W)} height={4} fill="#65A30D" />
+        <rect x={X(p.W)} y={coalTop} width={400 - X(p.W)} height={4.5} fill={MAT.coal} />
+        <rect x={X(0)} y={coalTop} width={X(p.W) - X(0)} height={4.5} fill={MAT.coal} opacity={0.9} />
+        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={MAT.shale} />
         <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="#fde68a" opacity={0.6} />
         <Txt x={(X(0) + X(p.W)) / 2} y={(surf + coalTop) / 2} size={8} anchor="middle" weight={800}>
           CUT
         </Txt>
-        <polygon points={polyline([[X(shiftedPeak - d.b / 2), coalBot], [X(shiftedPeak), coalBot - hp], [X(shiftedPeak + d.b / 2), coalBot]])} fill={d.reh > 0 ? "#fca5a5" : "#a16207"} stroke={C.ink} />
+        <polygon points={polyline([[X(shiftedPeak - d.b / 2), coalBot], [X(shiftedPeak), coalBot - hp], [X(shiftedPeak + d.b / 2), coalBot]])} fill={d.reh > 0 ? "#fca5a5" : MAT.goaf} stroke={C.ink} />
         <Txt x={X(shiftedPeak)} y={coalBot - hp - 4} size={8} anchor="middle" weight={700}>
           SPOIL
         </Txt>
-        <rect x={X(p.W + d.e) - 10} y={surf - 14} width={20} height={14} fill={C.hazard} />
-        <line x1={X(p.W + d.e)} y1={surf - 10} x2={peakX} y2={Math.max(10, coalBot - hp - 18)} stroke={C.ink} strokeWidth={2} />
+        <rect x={X(p.W + d.e) - 12} y={surf - 16} width={24} height={14} rx={2} fill={C.hazard} stroke="#92400E" filter="url(#f-shadow)" />
+        <rect x={X(p.W + d.e) - 14} y={surf - 3} width={28} height={4} rx={2} fill={MAT.steel} />
+        <line x1={X(p.W + d.e)} y1={surf - 10} x2={peakX} y2={Math.max(10, coalBot - hp - 18)} stroke="#334155" strokeWidth={3} />
+        <line x1={X(p.W + d.e)} y1={surf - 10} x2={peakX} y2={Math.max(10, coalBot - hp - 18)} stroke={MAT.metalH} strokeWidth={1.2} />
         <circle cx={peakX} cy={Math.max(10, coalBot - hp - 18)} r={3} fill={C.ink} />
+        {(() => {
+          // bucket swinging between the cut and the spoil peak
+          const u = (Math.sin(t * 1.1) + 1) / 2;
+          const bx = X(p.W / 2) + (X(shiftedPeak) - X(p.W / 2)) * u;
+          const by = Math.min(coalTop - 8, coalBot - hp - 10) * u + (coalTop - 8) * (1 - u) - 18 * Math.sin(u * Math.PI);
+          return (
+            <g>
+              <line x1={peakX} y1={Math.max(10, coalBot - hp - 18)} x2={bx} y2={by} stroke="#475569" strokeWidth={0.8} />
+              <path d={`M${bx - 6} ${by} h12 l-2 6 h-8 z`} fill={MAT.steel} />
+            </g>
+          );
+        })()}
         <Dim x1={X(p.W + d.e)} y1={surf - 30} x2={peakX} y2={surf - 30} label={`R ${p.R} m`} color={C.tech} />
         {d.reh > 0 && (
-          <Txt x={X(0) + 4} y={coalTop - 6} size={8} weight={800} fill={C.crit}>
+          <Txt x={8} y={232} size={8} weight={800} fill={C.crit}>
             spoil on coal → rehandle
           </Txt>
         )}
@@ -204,13 +239,16 @@ export const matchSim: SimDef = {
     }
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f1f5f9" />
-        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke={C.rock} strokeWidth={18} />
-        <circle cx={55} cy={120} r={16} fill={C.tech} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
+        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.5} />
+        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#78716C" strokeWidth={20} />
+        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#F8FAFC" strokeWidth={1} strokeDasharray="6 6" opacity={0.7} />
+        <circle cx={55} cy={120} r={17} fill={MAT.steel} stroke="#0F172A" />
+        <circle cx={55} cy={120} r={13} fill={C.tech} />
         <Txt x={55} y={124} size={8} anchor="middle" fill="white" weight={800}>
           SHOVEL
         </Txt>
-        <rect x={335} y={104} width={36} height={32} fill={C.ink} />
+        <path d="M331 138 L345 102 L361 102 L375 138 Z" fill={MAT.goaf} stroke="#57534E" />
         <Txt x={353} y={124} size={7} anchor="middle" fill="white" weight={800}>
           DUMP
         </Txt>
@@ -271,7 +309,9 @@ export const haulSim: SimDef = {
     { key: "gr", label: "Ramp gradient", format: (v) => (Math.abs(v) > 6.25 ? `${Math.abs(v)}% > 1 in 16` : `${Math.abs(v)}% ≤ 1 in 16`), tone: (v) => (Math.abs(v) > 6.25 ? "crit" : "ok") },
   ],
   caption: "Speed from P·η / F (η = 0.85), capped at 50 km/h; downgrade speed held at 40 km/h by retarder. e = v²/(127R) − f with side friction f = 0.15.",
-  render: (p, o) => {
+  animated: true,
+  handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [30 + 220 * Math.cos(a), 160 - 220 * Math.sin(a) * 3]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((160 - y) / 660, -0.99, 0.99))), color: "#F59E0B" }],
+  render: (p, o, t) => {
     const ang = Math.atan(p.gr / 100);
     const x0 = 30;
     const y0 = 160;
@@ -283,13 +323,22 @@ export const haulSim: SimDef = {
     const a3 = deg(Math.atan2(y1 - y0, x1 - x0));
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill="#d6d3d1" />
-        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke={C.ink} strokeWidth={3} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.sand} />
+        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.rockShade} />
+        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#57534E" strokeWidth={5} />
+        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#E7E5E4" strokeWidth={1} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
         <g transform={`translate(${tx},${ty}) rotate(${a3})`}>
-          <rect x={-22} y={-22} width={44} height={18} rx={3} fill={C.hazard} stroke={C.ink} />
-          <circle cx={-12} cy={-2} r={6} fill={C.ink} />
-          <circle cx={12} cy={-2} r={6} fill={C.ink} />
+          <rect x={-22} y={-22} width={44} height={18} rx={3} fill={C.hazard} stroke="#92400E" />
+          <rect x={-20} y={-21} width={40} height={6} rx={2} fill={MAT.glass} />
+          <rect x={10} y={-30} width={12} height={9} rx={2} fill="#FBBF24" stroke="#92400E" />
+          {[-12, 12].map((wx) => (
+            <g key={wx} transform={`rotate(${((t * o.v * 25) % 360).toFixed(0)} ${wx} -2)`}>
+              <circle cx={wx} cy={-2} r={6} fill={C.ink} />
+              <line x1={wx - 4} y1={-2} x2={wx + 4} y2={-2} stroke="#94A3B8" strokeWidth={1.4} />
+              <line x1={wx} y1={-6} x2={wx} y2={2} stroke="#94A3B8" strokeWidth={1.4} />
+            </g>
+          ))}
           {o.tr > 0 ? <Arrow x1={0} y1={-30} x2={36} y2={-30} color={C.safe} width={3} /> : <Arrow x1={0} y1={-30} x2={-36} y2={-30} color={C.crit} width={3} />}
         </g>
         <Txt x={20} y={24} size={11} weight={800}>
@@ -304,7 +353,8 @@ export const haulSim: SimDef = {
         <Txt x={285} y={60} size={9} weight={700} fill={C.slate}>
           CURVE (plan)
         </Txt>
-        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke={C.ink} strokeWidth={8} />
+        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#57534E" strokeWidth={10} strokeLinecap="round" />
+        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#E7E5E4" strokeWidth={1} strokeDasharray="4 5" />
         <Txt x={285} y={222} size={9} mono>
           {`R ${p.Rc} m · e ${o.e.toFixed(1)}%`}
         </Txt>
@@ -364,9 +414,13 @@ export const dumpSim: SimDef = {
     const col = o.fos >= 1.2 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-        <rect x={0} y={base} width={400} height={25} fill="#a16207" />
-        <polygon points={polyline(pts)} fill="#a8a29e" stroke={C.ink} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <rect x={0} y={base} width={400} height={25} fill={MAT.soil} />
+        <g className={o.fos < 1 ? "shake" : undefined}>
+          <polygon points={polyline(pts)} fill={MAT.goaf} stroke={C.ink} />
+          <polygon points={polyline(pts)} fill={MAT.rockShade} />
+        </g>
+        {o.fos < 1 && <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: pts[pts.length - 3][0] - 10, y: pts[pts.length - 3][1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + pts[pts.length - 3][0]) / 2, y: (base + pts[pts.length - 3][1]) / 2, len: 30, angle: 150, seed: 7 }]} color="#7F1D1D" width={2} />}
         <line x1={toeX} y1={base} x2={pts[pts.length - 3][0]} y2={pts[pts.length - 3][1]} stroke={col} strokeWidth={2} strokeDasharray="6 4" />
         <Txt x={toeX + 30} y={base - 6} size={9} weight={800} fill={col}>
           {`overall ${o.bo.toFixed(1)}°`}
@@ -377,7 +431,7 @@ export const dumpSim: SimDef = {
         <Txt x={20} y={42} size={9} mono>
           {`${p.n} × ${p.h} m decks · berms ${p.b} m`}
         </Txt>
-        {p.ru > 0 && <line x1={toeX} y1={base - 2} x2={390} y2={base - o.Ht * k * p.ru * 1.6} stroke={C.tech} strokeWidth={2} strokeDasharray="8 4" />}
+        {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color={C.tech} width={2} speed={0.3} />}
       </g>
     );
   },

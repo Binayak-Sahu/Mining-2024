@@ -124,7 +124,6 @@ export const supergene: SimDef = {
     { key: "blanket", label: "Blanket grade", unit: "% Cu", digits: 2, tone: (v) => (v >= 2 ? "ok" : "info") },
     { key: "ef", label: "Enrichment factor", unit: "×", digits: 2 },
   ],
-  animated: true,
   handles: [
     { key: "Hl", axis: "y", at: (p) => [215, 40 + (p.Hl * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (d * (p.Hb + 60)) / (150 - d); }, color: "#0EA5E9" },
     { key: "Hb", axis: "y", at: (p) => [265, 40 + ((p.Hl + p.Hb) * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (60 * d) / (150 - d) - p.Hl; }, color: "#1D4ED8" },

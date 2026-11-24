@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, Meter } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Drilling methods ---------------- */
 
@@ -39,7 +40,9 @@ export const drillSim: SimDef = {
     { key: "th", label: "Top-hammer / DTH", format: (v, o) => `${v.toFixed(2)} / ${o.dth.toFixed(2)} m/min`, tone: (v, o) => (v < o.dth ? "warn" : "ok") },
   ],
   caption: "PR = η·P / (A·SE): percussive SE ≈ 1.15·UCS; rotary crushing SE rises faster with strength. Top-hammer loses ~10 % of energy per rod coupling (3.6 m rods).",
-  render: (p, o) => {
+  animated: true,
+  handles: [{ key: "depth", axis: "y", at: (p) => [95, 40 + clamp(p.depth * 4.5, 10, 180)], toValue: (y) => (y - 40) / 4.5, color: "#F59E0B" }],
+  render: (p, o, t) => {
     const bars = [
       { k: "Top-hammer", v: o.th, c: C.tech },
       { k: "DTH", v: o.dth, c: C.safe },
@@ -50,17 +53,34 @@ export const drillSim: SimDef = {
     const holeBot = 40 + clamp(p.depth * 4.5, 10, 180);
     return (
       <g>
-        <rect x={20} y={30} width={150} height={200} fill="#d6d3d1" />
-        <rect x={20} y={20} width={150} height={10} fill="#a16207" />
-        <rect x={88} y={holeTop - 30} width={14} height={20} fill={C.hazard} />
-        <line x1={95} x2={95} y1={holeTop - 10} y2={holeBot} stroke={C.ink} strokeWidth={p.m === 2 ? 8 : 4} />
+        <rect x={20} y={30} width={150} height={200} fill={MAT.rock} />
+        <rect x={20} y={90} width={150} height={40} fill={MAT.shale} opacity={0.85} />
+        <rect x={20} y={30} width={150} height={200} fill={MAT.rockShade} />
+        <rect x={20} y={20} width={150} height={10} fill={MAT.soil} />
+        <rect x={95 - (p.m === 2 ? 7 : 5)} y={holeTop - 10} width={p.m === 2 ? 14 : 10} height={holeBot - holeTop + 10} fill="#44403C" opacity={0.55} />
+        <rect x={86} y={holeTop - 32} width={18} height={22} rx={3} fill={C.hazard} stroke="#B45309" filter="url(#f-shadow)" />
+        <line x1={95} x2={95} y1={holeTop - 10} y2={holeBot} stroke="#334155" strokeWidth={p.m === 2 ? 8 : 4} />
+        <line x1={95} x2={95} y1={holeTop - 10} y2={holeBot} stroke={MAT.metalH} strokeWidth={p.m === 2 ? 5 : 2} strokeDasharray="3 5" strokeDashoffset={-(t * 40) % 8} />
+        {[0, 1, 2, 3].map((i) => {
+          const a = t * 5 + i * 1.6;
+          return <circle key={i} cx={95 + Math.cos(a) * (10 + i * 3)} cy={holeTop - 4 - ((t * 30 + i * 6) % 18)} r={1.4} fill="#A8A29E" />;
+        })}
         {p.m === 0 &&
           Array.from({ length: o.rods }).map((_, i) => (
             <rect key={i} x={91} y={holeTop + i * 16.2 - 2} width={8} height={4} fill={C.crit} />
           ))}
         {p.m === 1 && <rect x={89} y={holeBot - 22} width={12} height={22} fill={C.safe} />}
-        {p.m === 2 ? <circle cx={95} cy={holeBot} r={9} fill={C.slate} stroke={C.ink} /> : <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 8}`} fill={C.slate} />}
-        <Txt x={110} y={holeBot} size={8} mono>
+        {p.m === 2 ? (
+          <g transform={`rotate(${((t * 300) % 360).toFixed(0)} 95 ${holeBot})`}>
+            <circle cx={95} cy={holeBot} r={9} fill={MAT.metal} stroke={C.ink} />
+            {[0, 120, 240].map((a) => (
+              <circle key={a} cx={95} cy={holeBot - 5} r={2.2} fill={C.ink} transform={`rotate(${a} 95 ${holeBot})`} />
+            ))}
+          </g>
+        ) : (
+          <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 8}`} fill={MAT.metal} stroke={C.ink} strokeWidth={0.8} />
+        )}
+        <Txt x={112} y={holeBot + 3} size={8} mono weight={700}>
           {`${p.depth} m`}
         </Txt>
         <Txt x={22} y={226} size={7.5} fill={C.ink}>
@@ -71,7 +91,8 @@ export const drillSim: SimDef = {
         </Txt>
         {bars.map((b, i) => (
           <g key={b.k}>
-            <rect x={195} y={45 + i * 40} width={(180 * b.v) / max} height={24} rx={3} fill={b.c} opacity={i === p.m ? 1 : 0.45} />
+            <rect x={195} y={45 + i * 40} width={(180 * b.v) / max} height={24} rx={5} fill={b.c} opacity={i === p.m ? 1 : 0.45} filter={i === p.m ? "url(#f-shadow)" : undefined} />
+            <rect x={195} y={45 + i * 40} width={(180 * b.v) / max} height={9} rx={4} fill={MAT.glass} />
             <Txt x={(180 * b.v) / max > 110 ? 199 : 199 + (180 * b.v) / max} y={61 + i * 40} size={9} weight={800} fill={(180 * b.v) / max > 110 ? "white" : C.ink}>
               {`${b.k} ${b.v.toFixed(2)}`}
             </Txt>
@@ -150,8 +171,21 @@ export const explosiveSim: SimDef = {
         <Txt x={30} y={92} size={9} weight={700} fill={C.slate}>
           BOREHOLE · Ø {p.d} mm
         </Txt>
+        <rect x={40} y={94} width={240} height={clamp(p.d / 5, 6, 40) + 12} rx={3} fill={MAT.rock} />
         <rect x={50} y={100} width={220} height={clamp(p.d / 5, 6, 40)} fill="#fde68a" stroke={C.ink} />
         {o.vod > 0 && <rect x={50} y={100} width={Math.min(front - 50, 220)} height={clamp(p.d / 5, 6, 40)} fill={C.crit} opacity={0.75} />}
+        {o.vod > 0 && front < 270 && (
+          <g>
+            <circle cx={front} cy={100 + clamp(p.d / 5, 6, 40) / 2} r={6 + clamp(p.d / 5, 6, 40) * 0.6} fill="#FDE68A" opacity={0.85} filter="url(#f-glow)" />
+            {[1, 2].map((k) => (
+              <path key={k} d={`M ${front - 4 - k * 9} ${94 - k * 3} Q ${front + 6 + k * 6} ${100 + clamp(p.d / 5, 6, 40) / 2} ${front - 4 - k * 9} ${106 + clamp(p.d / 5, 6, 40) + k * 3}`} fill="none" stroke="#F97316" strokeWidth={1.5} opacity={0.7 / k} />
+            ))}
+          </g>
+        )}
+        {[0, 1, 2].map((k) => {
+          const ph = (t * 0.6 + k / 3) % 1;
+          return <circle key={k} cx={320 + Math.sin(ph * 6 + k) * 8} cy={130 - ph * 30} r={10 + ph * 12} fill={fumeCol} opacity={0.35 * (1 - ph)} />;
+        })}
         <ellipse cx={320} cy={115} rx={40} ry={22} fill={fumeCol} opacity={0.9} />
         <Txt x={320} y={118} size={8} anchor="middle" weight={700} fill={o.fume === 0 ? C.ink : "white"}>
           {o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}
@@ -159,8 +193,9 @@ export const explosiveSim: SimDef = {
         <Txt x={30} y={170} size={9} weight={700} fill={C.slate}>
           IMPEDANCE MATCH ρe·VOD vs ρr·Cp ({ROCKS[p.rock].name})
         </Txt>
-        <rect x={30} y={178} width={clamp(o.ratio * 170, 0, 340)} height={12} fill={C.tech} />
-        <rect x={30} y={194} width={170} height={12} fill={C.slate} />
+        <rect x={30} y={178} width={clamp(o.ratio * 170, 0, 340)} height={12} rx={3} fill={C.tech} />
+        <rect x={30} y={194} width={170} height={12} rx={3} fill={MAT.rock} />
+        <rect x={30} y={194} width={170} height={12} rx={3} fill="#334155" opacity={0.55} />
         <Txt x={34} y={188} size={8} fill="white" weight={700}>
           explosive
         </Txt>
@@ -222,6 +257,7 @@ export const kuzRamSim: SimDef = {
     { key: "fines", label: "Fines < 5 cm", unit: "%", digits: 1 },
   ],
   caption: "Stemming 0.8B, sub-drill 0.3B, drilling deviation 0.3 m. X50 = A·K^−0.8·Q^(1/6)·(115/RWS)^(19/20); Rosin–Rammler distribution.",
+  handles: [{ key: "Hb", axis: "y", at: (p) => [34, 40 + p.Hb * 6], toValue: (y) => (y - 40) / 6, color: "#3B82F6" }],
   render: (p) => {
     const k = kuzRam(p);
     const sc = 120 / 20;
@@ -232,13 +268,18 @@ export const kuzRamSim: SimDef = {
         <Txt x={15} y={20} size={9} weight={700} fill={C.slate}>
           BENCH SECTION
         </Txt>
-        <polygon points={`15,${bot} 60,${top} 175,${top} 175,${bot + 30} 15,${bot + 30}`} fill="#d6d3d1" />
+        <polygon points={`15,${bot} 60,${top} 175,${top} 175,${bot + 30} 15,${bot + 30}`} fill={MAT.shale} />
+        <polygon points={`15,${bot} 60,${top} 175,${top} 175,${bot + 30} 15,${bot + 30}`} fill={MAT.rockShade} />
+        <line x1={60} y1={top} x2={175} y2={top} stroke="#57534E" strokeWidth={2} />
+        {Array.from({ length: 7 }).map((_, i) => (
+          <path key={i} d={`M ${10 + i * 7} ${bot + 2} l ${3 + (i % 3) * 2} -${3 + (i % 2) * 3} l ${3 + (i % 2) * 2} ${3 + (i % 3)} z`} fill="#A8A29E" stroke="#57534E" strokeWidth={0.6} />
+        ))}
         {[0, 1, 2].map((r) => {
           const x = 60 + 18 + r * Math.min(p.B * sc * 1.4, 34);
           return (
             <g key={r}>
-              <rect x={x - 2.5} y={top} width={5} height={k.T * sc} fill={C.slate} />
-              <rect x={x - 2.5} y={top + k.T * sc} width={5} height={k.L * sc} fill={C.crit} />
+              <rect x={x - 2.5} y={top} width={5} height={k.T * sc} fill={MAT.sand} stroke="#78716C" strokeWidth={0.6} />
+              <rect x={x - 2.5} y={top + k.T * sc} width={5} height={k.L * sc} fill={C.crit} filter="url(#f-glow)" />
             </g>
           );
         })}
@@ -317,7 +358,8 @@ export const delaySim: SimDef = {
     const y = (r: number) => 70 + r * 50;
     return (
       <g>
-        <rect x={20} y={40} width={360} height={150} fill="#e7e5e4" />
+        <rect x={20} y={40} width={360} height={150} rx={4} fill={MAT.rock} />
+        <rect x={20} y={40} width={360} height={150} rx={4} fill="#F5F5F4" opacity={0.45} />
         <Txt x={20} y={30} size={9} weight={700} fill={C.slate}>
           FREE FACE ↑ · initiation at front-left · t = {ms.toFixed(0)} ms
         </Txt>
@@ -334,6 +376,7 @@ export const delaySim: SimDef = {
           const flash = fired && ms - h.td < 60;
           return (
             <g key={`${h.c}-${h.r}`}>
+              {fired && ms - h.td < 400 && <circle cx={x(h.c)} cy={y(h.r)} r={10 + (ms - h.td) * 0.09} fill="none" stroke="#F97316" strokeWidth={2} opacity={1 - (ms - h.td) / 400} />}
               {h.risk && <circle cx={x(h.c)} cy={y(h.r)} r={13} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeDasharray="4 2" />}
               <circle cx={x(h.c)} cy={y(h.r)} r={flash ? 11 : 8} fill={fired ? (flash ? C.crit : "#7f1d1d") : signal ? C.tech : "white"} stroke={C.ink} strokeWidth={1.5} />
               <Txt x={x(h.c)} y={y(h.r) + 22} size={7} anchor="middle" mono fill={C.slate}>
@@ -414,7 +457,7 @@ export const vibeSim: SimDef = {
           </Txt>
           <circle cx={sx(p.D)} cy={sy(Math.min(o.ppv, 40))} r={14} fill={o.ppv <= o.lim ? C.safe : C.crit} opacity={0.18} />
           <Arrow x1={sx(p.D)} y1={sy(0) - 2} x2={sx(p.D)} y2={sy(Math.min(o.ppv, 40)) + 8} color={C.slate} width={1} head={4} />
-          <Txt x={sx(p.D) + 14} y={sy(Math.min(o.ppv, 40)) - 8} size={9} mono weight={800} fill={o.ppv <= o.lim ? C.safe : C.crit}>
+          <Txt x={sx(p.D) > 320 ? sx(p.D) - 14 : sx(p.D) + 14} anchor={sx(p.D) > 320 ? "end" : "start"} y={sy(Math.min(o.ppv, 40)) - 8} size={9} mono weight={800} fill={o.ppv <= o.lim ? C.safe : C.crit}>
             {`${o.ppv.toFixed(1)} mm/s`}
           </Txt>
         </g>
