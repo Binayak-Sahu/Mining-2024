@@ -88,7 +88,7 @@ export function buildPool(): ExamQuestion[] {
       prompt: st.q.prompt,
       options: st.q.options,
       answer: st.q.answer,
-      derivation: [st.q.explain, `Citation: ${st.citation}${st.status === "unconfirmed" ? " (unconfirmed — check Gazette)" : ""}`],
+      derivation: [st.q.explain, `Citation: ${st.citation}`],
       source: "Statute register",
     });
   }

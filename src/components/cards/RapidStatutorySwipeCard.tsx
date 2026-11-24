@@ -96,6 +96,7 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ x: exitDir * 320, opacity: 0, rotate: exitDir * 15 }}
                 whileDrag={{ rotate: 0 }}
+                style={{ touchAction: "pan-y" }}
                 className="absolute inset-0 rounded-2xl bg-slate-900 text-slate-50 p-5 flex items-center justify-center text-center cursor-grab active:cursor-grabbing shadow-xl"
               >
                 <p className="text-base sm:text-lg font-semibold leading-snug">{stage.cards[i].text}</p>
@@ -103,10 +104,10 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
             </AnimatePresence>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => answer(false)} className="btn-press rounded-xl border-2 border-red-500 text-red-600 py-3 font-bold flex items-center justify-center gap-1">
+            <button type="button" onClick={() => answer(false)} className="btn-press rounded-xl border-2 border-red-500 text-red-600 py-3 min-h-[52px] font-bold flex items-center justify-center gap-1">
               <X size={18} /> FALSE
             </button>
-            <button type="button" onClick={() => answer(true)} className="btn-press rounded-xl border-2 border-emerald-500 text-emerald-600 py-3 font-bold flex items-center justify-center gap-1">
+            <button type="button" onClick={() => answer(true)} className="btn-press rounded-xl border-2 border-emerald-500 text-emerald-600 py-3 min-h-[52px] font-bold flex items-center justify-center gap-1">
               <Check size={18} /> TRUE
             </button>
           </div>

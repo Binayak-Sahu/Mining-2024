@@ -122,7 +122,7 @@ export function Warmup() {
               Start warmup
             </button>
           )}
-          <Link href="/" className="inline-flex items-center gap-1 text-xs font-bold uppercase text-slate-500">
+          <Link href="/" className="inline-flex items-center gap-1 min-h-[44px] text-xs font-bold uppercase text-slate-500">
             <ArrowLeft size={12} /> Campaign
           </Link>
         </div>

@@ -6,11 +6,19 @@ A gamified, simulation-first study platform for Indian mining engineers: deep fi
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # static production build (85 pages)
-npm run validate   # proves every lesson is completable and well-formed
+npm run dev        # http://localhost:3000 (live reload)
+npm run build      # static export to out/ + offline precache manifest
+npm start          # serve out/ locally (http://localhost:3000)
+npm run validate   # proves every lesson, exam question, calculator and statute is well-formed
 npm run typecheck && npm run lint
 ```
+
+### Deploy (GitHub Pages)
+`.github/workflows/deploy.yml` builds with `NEXT_PUBLIC_BASE_PATH=/<repo-name>` and publishes `out/` on every push to `main`.
+One-time setup: **repo Settings → Pages → Build and deployment → Source: GitHub Actions**. The site is then served at `https://<user>.github.io/<repo-name>/`.
+
+### Install on a phone (offline PWA)
+Open the site, then *Add to Home Screen* (iOS Safari) or *Install app* (Android Chrome). The service worker precaches the whole app (~3 MB), so lessons, simulations, the exam simulator and calculators all work offline. Use **Profile → Export / Import progress** (or the ⇄ icon in the header) to move progress between PC and phone.
 
 Progress (XP, streak, hearts, Field Codex, spaced-repetition queue) is stored in the browser's `localStorage`.
 

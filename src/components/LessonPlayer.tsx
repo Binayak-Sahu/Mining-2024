@@ -187,7 +187,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   return (
     <div className="max-w-2xl mx-auto px-3 sm:px-4 pb-32 pt-3">
       <div className="sticky top-0 z-20 -mx-3 sm:-mx-4 px-3 sm:px-4 py-3 bg-[#0F172A]/95 backdrop-blur flex items-center gap-3">
-        <Link href={`/unit/${unit.id}`} aria-label="Exit lesson" className="text-slate-400 hover:text-white">
+        <Link href={`/unit/${unit.id}`} aria-label="Exit lesson" className="-ml-2 flex items-center justify-center w-11 h-11 shrink-0 text-slate-400 hover:text-white">
           <X size={22} />
         </Link>
         <div className="flex-1 flex gap-1">

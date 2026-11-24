@@ -69,3 +69,36 @@ input[type="range"] {
 .alarm-flash {
   animation: alarm-flash 1s steps(2) infinite;
 }
+
+/* ---------- Touch ergonomics (phones/tablets) ---------- */
+svg[role="img"] {
+  touch-action: manipulation; /* no double-tap zoom delay on diagrams */
+}
+input[type="range"] {
+  touch-action: pan-y; /* vertical scroll still works when a thumb starts on a slider */
+  height: 28px;
+}
+@media (pointer: coarse) {
+  input[type="range"] {
+    height: 44px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  button,
+  select,
+  nav a,
+  a.btn-press,
+  input:not([type="range"]):not([type="checkbox"]) {
+    min-height: 44px;
+  }
+  input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+  }
+}

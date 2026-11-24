@@ -502,7 +502,7 @@ export const U3: Unit = {
           drawers: [
             { q: "Why does height weaken pillars?", a: "Taller pillars have less confined core: the yielded skin is a larger proportion of the cross-section, and buckling/spalling is easier. Squat pillars (w/h > ~5) develop strong confined cores." },
             { q: "Why does CMRI's formula include depth?", a: "In Indian coalfields, horizontal stress grows with depth and confines pillars. Sheorey's empirical term (H/250 + 1)(w/h − 1) captures that confinement benefit." },
-            { q: "Statutory pillar sizes?", a: "CMR 2017 Reg. 111 caps galleries at 4.8 m width and 3 m height without written permission, and the regulations prescribe minimum pillar sizes related to depth and gallery width (check the current Gazette table — circulating tables may be from CMR 1957). Engineered designs must satisfy both the regulations and an adequate FoS." },
+            { q: "Statutory pillar sizes?", a: "CMR 2017 Reg. 111 caps galleries at 4.8 m width and 3 m height without written permission. Reg. 111(4) sets minimum pillar centres by depth and gallery width — e.g. with 4.8 m galleries: 19.5 m (≤ 60 m deep), 21.0 m (60–90), 25.5 m (90–150), 34.5 m (150–240), 45.0 m (240–360), 48.0 m (> 360). Engineered designs must satisfy both the statutory minimum and an adequate FoS." },
           ],
           codex: {
             id: "u3-pillar",

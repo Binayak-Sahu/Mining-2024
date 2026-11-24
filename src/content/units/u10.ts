@@ -137,12 +137,12 @@ export const U10: Unit = {
           ],
           drawers: [
             { q: "Statutory air quality?", a: "CMR 2017 Reg. 153: air where persons work or pass must have at least 19 % oxygen and not more than 0.5 % CO₂; inflammable gas must not exceed 0.75 % in a district's return air or 1.25 % anywhere. Reg. 169: electricity is cut off if district gas exceeds 1.25 %. Reg. 166: gas counts as 'detected' at 0.1 % (Degree I), 0.5 % (Degree II) or 1.25 % (Degree III) — persons are then withdrawn from that place and it is fenced off." },
-            { q: "Statutory air quantity?", a: "The classic rule (CMR 1957 Reg. 130) required at least the larger of 6 m³/min per person employed at any one time and 2.5 m³/min per tonne of average daily output. It is still the standard teaching figure, but this audit could not confirm that the CMR 2017 text retains it — check Reg. 153 of the Gazette." },
+            { q: "Statutory air quantity?", a: "CMR 2017 Reg. 153(2)(a): ventilation must deliver at least the greater of 6 m³/min per person employed in the largest shift and 2.5 m³/min per tonne of daily output. Reg. 153(2)(d): wet bulb may not exceed 33.5 °C, and above 30.5 °C the air velocity must be at least 1.0 m/s. CO is held below 50 ppm — persons are withdrawn at 50 ppm or more." },
           ],
           codex: {
             id: "u10-gassy",
             title: "Gassiness & air standards",
-            bullets: ["Degree I: ≤ 1 m³/t and ≤ 0.1 % in general body (CMR 2017 Reg. 2)", "Degree II: 1–10 m³/t or > 0.1 % in general body (Reg. 2)", "Degree III: > 10 m³/t (Reg. 2)", "O₂ ≥ 19 %, CO₂ ≤ 0.5 % (Reg. 153)", "CH₄ ≤ 0.75 % district return, ≤ 1.25 % anywhere (Reg. 153(2)(c))", "Power cut off if district gas > 1.25 % (Reg. 169)", "Gas 'detected' at 0.1 / 0.5 / 1.25 % by degree → withdraw & fence (Reg. 166)", "Quantity: max(6 m³/min/person, 2.5 m³/min per t/day) — legacy CMR 1957 figure, confirm 2017"],
+            bullets: ["Degree I: ≤ 1 m³/t and ≤ 0.1 % in general body (CMR 2017 Reg. 2)", "Degree II: 1–10 m³/t or > 0.1 % in general body (Reg. 2)", "Degree III: > 10 m³/t in belowground workings (Reg. 2(1)(zc))", "O₂ ≥ 19 %, CO₂ ≤ 0.5 % (Reg. 153)", "CH₄ ≤ 0.75 % district return, ≤ 1.25 % anywhere (Reg. 153(2)(c))", "Power cut off if district gas > 1.25 % (Reg. 169)", "Gas 'detected' at 0.1 / 0.5 / 1.25 % by degree → withdraw & fence (Reg. 166)", "Quantity: max(6 m³/min per person in largest shift, 2.5 m³/min per t/day) (Reg. 153(2)(a))", "CO ≤ 50 ppm — withdraw persons at ≥ 50 ppm (CMR 2017 & DGMS circulars)"],
             formulas: [{ expr: "Q = max(6·N, 2.5·T) m³/min", meaning: "Minimum air quantity", vars: "N persons at one time · T tonnes/day" }],
             tags: ["gassiness", "CMR", "air standards"],
           },
@@ -175,7 +175,7 @@ export const U10: Unit = {
           intuition: ["Persons need fresh air: 6 m³/min each", "Production releases gas and dust: 2.5 m³/min per tonne per day", "The larger requirement governs"],
           target: ["Q", "=", "max", "(", "6·N", ",", "2.5·T", ")"],
           distractors: ["min", "+", "2.5·N"],
-          formula: { expr: "Q = max(6N, 2.5T) m³/min", meaning: "Statutory minimum air quantity for a district.", vars: "N persons at any one time · T average daily output (t)" },
+          formula: { expr: "Q = max(6N, 2.5T) m³/min", meaning: "Statutory minimum air quantity (CMR 2017 Reg. 153(2)(a)).", vars: "N persons in the largest shift · T daily output (t)" },
           concept: "Air quantity rule",
         },
         {

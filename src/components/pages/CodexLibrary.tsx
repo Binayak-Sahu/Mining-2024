@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, Lock, BookMarked, Sigma, Scale } from "lucide-react";
-import { STATUTES, STATUS_LABEL } from "@/content/statutes";
+import { STATUTES, statusLabel } from "@/content/statutes";
 import { allCodex, allFormulas, getSim, UNITS } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { useStrata } from "@/lib/store";
@@ -75,7 +75,7 @@ export function CodexLibrary() {
       {tab === "statutes" ? (
         <div className="mt-5 space-y-3">
           <p className="text-xs text-slate-400 max-w-3xl">
-            Every statutory rule STRATA teaches, with its citation. <b className="text-emerald-400">Verified</b> = wording checked against the CMR 2017 text (via reproductions of the Gazette) in the Phase 6 audit; <b className="text-blue-300">Standard</b> = long-established citation not re-checked; <b className="text-amber-400">Unconfirmed</b> = widely taught figure whose current provision could not be confirmed. Always check the official Gazette and DGMS circulars.
+            Every statutory rule STRATA teaches, with its citation. <b className="text-emerald-400">Verified · text-checked</b> = wording checked against reproductions of the CMR 2017 text in the Phase 6 audit; <b className="text-emerald-400">Verified · project owner</b> = value and citation confirmed by the project owner (Phase 7); <b className="text-blue-300">Standard</b> = long-established citation not re-checked. Regulations are amended — keep the official Gazette and DGMS circulars as the final authority.
           </p>
           {STATUTES.filter((st) => !needle || [st.rule, st.citation, st.topic, st.note ?? ""].join(" ").toLowerCase().includes(needle)).map((st) => (
             <div key={st.id} className="card p-4">
@@ -87,7 +87,7 @@ export function CodexLibrary() {
                     st.status === "verified" ? "bg-emerald-100 text-emerald-800" : st.status === "standard" ? "bg-blue-100 text-blue-800" : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  {STATUS_LABEL[st.status]}
+                  {statusLabel(st)}
                 </span>
               </div>
               <p className="text-sm text-slate-900 leading-snug">{st.rule}</p>

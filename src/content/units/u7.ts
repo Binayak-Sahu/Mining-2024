@@ -37,7 +37,7 @@ export const U7: Unit = {
           codex: {
             id: "u7-gases",
             title: "Mine gases & explosibility",
-            bullets: ["CH₄: LEL 5 %, UEL 15 %, nose ≈ 12 % O₂; layers at roof", "CO: highly toxic, haemoglobin affinity ~200–250× O₂", "CO₂ heavier than air; blackdamp = CO₂ + N₂ (O₂-deficient)", "Statutory air quality: O₂ ≥ 19 %, CO₂ ≤ 0.5 % (CMR 2017 Reg. 153)", "CH₄ ≤ 0.75 % in district return air, ≤ 1.25 % anywhere (CMR 2017 Reg. 153(2)(c))", "Electricity cut off if district gas > 1.25 % (CMR 2017 Reg. 169)", "Gas 'detected' at 0.1 / 0.5 / 1.25 % for Degree I / II / III mines → withdraw persons & fence the place (CMR 2017 Reg. 166)", "CO commonly held ≤ 50 ppm (numerical CMR 2017 limit not confirmed)", "Fuel-rich mixtures become explosive when diluted with air"],
+            bullets: ["CH₄: LEL 5 %, UEL 15 %, nose ≈ 12 % O₂; layers at roof", "CO: highly toxic, haemoglobin affinity ~200–250× O₂", "CO₂ heavier than air; blackdamp = CO₂ + N₂ (O₂-deficient)", "Statutory air quality: O₂ ≥ 19 %, CO₂ ≤ 0.5 % (CMR 2017 Reg. 153)", "CH₄ ≤ 0.75 % in district return air, ≤ 1.25 % anywhere (CMR 2017 Reg. 153(2)(c))", "Electricity cut off if district gas > 1.25 % (CMR 2017 Reg. 169)", "Gas 'detected' at 0.1 / 0.5 / 1.25 % for Degree I / II / III mines → withdraw persons & fence the place (CMR 2017 Reg. 166)", "CO ≤ 50 ppm (0.005 %); withdraw persons at ≥ 50 ppm (CMR 2017 & DGMS circulars)", "Fuel-rich mixtures become explosive when diluted with air"],
             formulas: [{ expr: "O₂ = 20.93·(1 − CH₄/100)", meaning: "Oxygen expected when methane dilutes fresh air" }],
             tags: ["gases", "methane", "Coward"],
           },
@@ -394,7 +394,7 @@ export const U7: Unit = {
           codex: {
             id: "u7-heat",
             title: "Psychrometry & heat",
-            bullets: ["Wet bulb governs evaporative cooling", "Tw > 30.5 °C → air velocity ≥ 1 m/s (classic coal-mine standard; confirm CMR 2017 clause)", "Tw > 33.5 °C → no work (same status)", "Autocompression ≈ 1 °C/100 m", "RH = e/es(Td); e = es(Tw) − γ(Td − Tw)"],
+            bullets: ["Wet bulb governs evaporative cooling", "Tw > 30.5 °C → air velocity ≥ 1.0 m/s (CMR 2017 Reg. 153(2)(d))", "Tw > 33.5 °C → no work (CMR 2017 Reg. 153(2)(d))", "Autocompression ≈ 1 °C/100 m", "RH = e/es(Td); e = es(Tw) − γ(Td − Tw)"],
             formulas: [
               { expr: "e = es(Tw) − γ(Td − Tw)", meaning: "Psychrometer equation" },
               { expr: "es(T) = 0.6108·exp(17.27T/(T + 237.3))", meaning: "Saturation vapour pressure (kPa)" },

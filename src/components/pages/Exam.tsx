@@ -102,7 +102,7 @@ export function Exam() {
             <li>Numerical answers accept expressions (e.g. <span className="readout">2.7*sqrt(120)</span>) and are marked within ±2 % unless stated.</li>
             <li>Review shows step-by-step derivations, citations and a per-unit breakdown. History builds your weak-unit analytics.</li>
           </ul>
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-sm min-h-[44px]">
             <input type="checkbox" checked={focusWeak} onChange={(e) => setFocusWeak(e.target.checked)} className="w-4 h-4 accent-blue-500" disabled={weak.every((w) => w.pct >= 60)} />
             Double the weight of my weak units (&lt; 60 %) {weak.every((w) => w.pct >= 60) && <span className="text-slate-400">(no weak units recorded yet)</span>}
           </label>

@@ -7,6 +7,7 @@ import { rankFor, RANKS } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { addDays, todayKey } from "@/lib/date";
 import { allLessons, allCodex } from "@/content";
+import { SyncCard } from "./SyncCard";
 
 export function Profile() {
   const hydrated = useHydrated();
@@ -74,6 +75,8 @@ export function Profile() {
           ))}
         </ol>
       </div>
+
+      <SyncCard />
 
       <div className="card p-5 space-y-4">
         <div className="text-xs font-bold uppercase tracking-wider text-slate-500">Settings</div>

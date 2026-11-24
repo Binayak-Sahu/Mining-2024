@@ -35,7 +35,7 @@ export function UnitMap({ unitId }: { unitId: string }) {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <Link href="/" className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white">
+      <Link href="/" className="inline-flex items-center gap-1 min-h-[44px] text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white">
         <ArrowLeft size={14} /> Campaign
       </Link>
       <div className="mt-3 mb-6">

@@ -6,6 +6,7 @@ import { fmt } from "@/lib/calc";
 import { kuzRam } from "@/content/sims/u4";
 import { pump } from "@/content/sims/u7";
 import { threePoint } from "@/content/sims/phase6";
+import { minPillarCentres } from "@/content/statutes";
 
 type Inputs = Record<string, number>;
 
@@ -87,6 +88,16 @@ export const TOOLS: Tool[] = [
         { label: "FoS — CMRI (Sheorey)", value: cm / sp, digits: 2, tone: tone(cm / sp) },
         { label: "Development extraction", value: 100 * (1 - (v.w * v.w) / (v.w + v.B) ** 2), unit: "%", digits: 1 },
         { label: "Gallery vs CMR 2017 Reg. 111", value: v.B <= 4.8 && v.h <= 3 ? "Within 4.8 m × 3 m" : "Exceeds — needs written permission", tone: v.B <= 4.8 && v.h <= 3 ? "ok" : "crit" },
+        ...((): Out[] => {
+          const min = minPillarCentres(v.H, v.B);
+          const c = v.w + v.B;
+          return min === null
+            ? [{ label: "Min. centres (Reg. 111(4))", value: "Gallery > 4.8 m — outside table", tone: "crit" }]
+            : [
+                { label: "Pillar centres provided", value: c, unit: "m", digits: 1 },
+                { label: "Min. centres (CMR 2017 Reg. 111(4))", value: min, unit: "m", digits: 1, tone: c >= min ? "ok" : "crit" },
+              ];
+        })(),
       ];
     },
   },

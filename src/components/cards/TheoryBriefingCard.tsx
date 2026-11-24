@@ -34,6 +34,8 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
     <g>
       {stage.hotspots.map((h, i) => (
         <g key={i} role="button" aria-label={`Hotspot ${i + 1}: ${h.title}`} onClick={() => tap(i)} style={{ cursor: "pointer" }}>
+          {/* invisible enlarged hit area: ≥ 44 px on a phone-width diagram */}
+          <circle cx={h.x} cy={h.y} r={28} fill="transparent" />
           {!seen.has(i) && <circle cx={h.x} cy={h.y} r={6} fill="none" stroke={C.tech} strokeWidth={2} className="hotspot-ring" />}
           <circle cx={h.x} cy={h.y} r={8} fill={active === i ? C.ink : seen.has(i) ? C.safe : C.tech} stroke="white" strokeWidth={2} />
           <text x={h.x} y={h.y + 3.5} fontSize={9} fill="white" textAnchor="middle" fontWeight={700}>
@@ -83,7 +85,7 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
         <div className="rounded-xl border border-slate-200 p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Causal chain</span>
-            <button type="button" onClick={playChain} className="btn-press inline-flex items-center gap-1 text-xs font-bold text-blue-600">
+            <button type="button" onClick={playChain} className="btn-press inline-flex items-center justify-center gap-1 min-w-[48px] text-xs font-bold text-blue-600">
               <Play size={12} /> {chainStep < 0 ? "Play" : "Replay"}
             </button>
           </div>
