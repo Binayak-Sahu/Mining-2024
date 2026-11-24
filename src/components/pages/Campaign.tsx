@@ -63,11 +63,11 @@ export function Campaign() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 grid lg:grid-cols-[1fr_300px] gap-6">
-      <section>
+    <div className="max-w-5xl mx-auto px-4 py-6 grid lg:grid-cols-[minmax(0,1fr)_300px] gap-6">
+      <section className="min-w-0">
         <div className="mb-5">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Campaign</h1>
-          <p className="text-slate-400 text-sm mt-1">Ten units. Five-stage mastery loop. From strata genesis to statutory command.</p>
+          <p className="text-slate-400 text-sm mt-1">Orientation plus ten units. Five-stage mastery loop. From strata genesis to statutory command.</p>
         </div>
         <div className="relative">
           <div className="absolute left-[39px] top-6 bottom-6 w-0.5 bg-slate-800" aria-hidden />
