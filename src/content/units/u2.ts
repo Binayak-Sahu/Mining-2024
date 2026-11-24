@@ -578,7 +578,7 @@ export const U2: Unit = {
               label: "Statutory action",
               prompt: "Before re-energising?",
               options: [
-                { text: "Keep power off until general-body methane is safely below limits and ventilation is restored; replace worn picks, restore spray pressure, and inform the Ventilation Officer/Manager", correct: true, why: "Equipment must stay de-energised above the electrical cut-off (1.25 % CH₄); the ignition source must be removed." },
+                { text: "Keep power off until general-body methane is safely below limits and ventilation is restored; replace worn picks, restore spray pressure, and inform the Ventilation Officer/Manager", correct: true, why: "Equipment must stay de-energised while district gas exceeds 1.25 % (CMR 2017 Reg. 169); the ignition source must be removed." },
                 { text: "Bypass the methanometer and finish the cut", why: "Bypassing a gas monitor is a grave violation." },
                 { text: "Reduce cutting speed and continue", why: "The gas is above limits and the ignition source persists." },
               ],

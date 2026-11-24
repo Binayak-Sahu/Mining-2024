@@ -37,7 +37,7 @@ export const U7: Unit = {
           codex: {
             id: "u7-gases",
             title: "Mine gases & explosibility",
-            bullets: ["CH₄: LEL 5 %, UEL 15 %, nose ≈ 12 % O₂; layers at roof", "CO: highly toxic, haemoglobin affinity ~200–250× O₂", "CO₂ heavier than air; blackdamp = CO₂ + N₂ (O₂-deficient)", "Statutory air quality: O₂ ≥ 19 %, CO₂ ≤ 0.5 %", "CH₄: ≤ 0.75 % in returns; electricity off ≥ 1.25 %; persons withdrawn ≥ 2 %", "Fuel-rich mixtures become explosive when diluted with air"],
+            bullets: ["CH₄: LEL 5 %, UEL 15 %, nose ≈ 12 % O₂; layers at roof", "CO: highly toxic, haemoglobin affinity ~200–250× O₂", "CO₂ heavier than air; blackdamp = CO₂ + N₂ (O₂-deficient)", "Statutory air quality: O₂ ≥ 19 %, CO₂ ≤ 0.5 % (CMR 2017 Reg. 153)", "CH₄ ≤ 0.75 % in district return air, ≤ 1.25 % anywhere (CMR 2017 Reg. 153(2)(c))", "Electricity cut off if district gas > 1.25 % (CMR 2017 Reg. 169)", "Gas 'detected' at 0.1 / 0.5 / 1.25 % for Degree I / II / III mines → withdraw persons & fence the place (CMR 2017 Reg. 166)", "CO commonly held ≤ 50 ppm (numerical CMR 2017 limit not confirmed)", "Fuel-rich mixtures become explosive when diluted with air"],
             formulas: [{ expr: "O₂ = 20.93·(1 − CH₄/100)", meaning: "Oxygen expected when methane dilutes fresh air" }],
             tags: ["gases", "methane", "Coward"],
           },
@@ -112,7 +112,7 @@ export const U7: Unit = {
               label: "Statutory action",
               prompt: "Immediate action?",
               options: [
-                { text: "De-energise electrical apparatus, withdraw persons from the affected place, improve ventilation to disperse the layer (raise velocity/brattice), and re-test before re-entry", correct: true, why: "≥ 1.25 % requires electricity cut-off; ≥ 2 % requires withdrawal." },
+                { text: "De-energise electrical apparatus, withdraw persons from the affected place, improve ventilation to disperse the layer (raise velocity/brattice), and re-test before re-entry", correct: true, why: "Gas above 1.25 % in the district requires the electricity to be cut off (CMR 2017 Reg. 169), and where gas is detected persons are withdrawn from the place and it is fenced off (Reg. 166)." },
                 { text: "Fan the layer with a jacket", why: "Ineffective and keeps persons in a 2.4 % atmosphere." },
                 { text: "Continue drilling and log the reading", why: "Ignition source in a flammable layer." },
               ],
@@ -394,7 +394,7 @@ export const U7: Unit = {
           codex: {
             id: "u7-heat",
             title: "Psychrometry & heat",
-            bullets: ["Wet bulb governs evaporative cooling", "CMR: Tw > 30.5 °C → air velocity ≥ 1 m/s", "CMR: Tw > 33.5 °C → no work", "Autocompression ≈ 1 °C/100 m", "RH = e/es(Td); e = es(Tw) − γ(Td − Tw)"],
+            bullets: ["Wet bulb governs evaporative cooling", "Tw > 30.5 °C → air velocity ≥ 1 m/s (classic coal-mine standard; confirm CMR 2017 clause)", "Tw > 33.5 °C → no work (same status)", "Autocompression ≈ 1 °C/100 m", "RH = e/es(Td); e = es(Tw) − γ(Td − Tw)"],
             formulas: [
               { expr: "e = es(Tw) − γ(Td − Tw)", meaning: "Psychrometer equation" },
               { expr: "es(T) = 0.6108·exp(17.27T/(T + 237.3))", meaning: "Saturation vapour pressure (kPa)" },
@@ -878,7 +878,7 @@ export const U7: Unit = {
         title: "Ventilation final sweep",
         seconds: 50,
         cards: [
-          { text: "Electrical apparatus must be switched off where methane reaches 1.25 %.", truth: true, why: "Statutory cut-off." },
+          { text: "Electricity to a ventilating district must be cut off if inflammable gas there exceeds 1.25 %.", truth: true, why: "CMR 2017 Reg. 169(1)(e)." },
           { text: "Doubling airflow doubles fan pressure.", truth: false, why: "P ∝ Q² — four times." },
           { text: "Wet bulb above 33.5 °C: no person may work.", truth: true, why: "CMR heat limit." },
           { text: "Graham's ratio is changed by dilution with fresh air.", truth: false, why: "Ratio is dilution-independent." },

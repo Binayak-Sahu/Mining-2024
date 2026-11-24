@@ -243,6 +243,7 @@ export const U1: Unit = {
           ],
           codex: {
             id: "u1-dip",
+            sims: ["u1-dip3"],
             title: "Dip, strike & apparent dip",
             bullets: ["Strike ⟂ true dip; true dip is the maximum slope", "Apparent dip < true dip for any oblique section", "Along strike: α = 0 (level roads)", "Gradient 1 in n: n = cot(dip)"],
             formulas: [{ expr: "tan α = tan δ · sin β", meaning: "Apparent dip α for a section at β from strike", vars: "δ true dip" }],
@@ -258,6 +259,15 @@ export const U1: Unit = {
           goal: { text: "With δ = 40°, set β so apparent dip ≈ 20°", test: (p, o) => p.delta === 40 && Math.abs(o.alpha - 20) < 0.5 },
           insight: "β ≈ 26° from strike. Diagonal (oblique) roadways are a standard trick to give haulage a workable gradient in steep seams.",
           concept: "Apparent dip geometry",
+        },
+        {
+          kind: "sim",
+          title: "Three-point problem lab",
+          brief: "Three boreholes intersect the seam. Change collar RLs and seam depths, rotate the section, and read true dip, dip direction and strike from the plane they define.",
+          sim: "u1-dip3",
+          goal: { text: "Re-interpret borehole C so the seam's true dip is 15° ± 0.5°", test: (_, o) => Math.abs(o.dip - 15) <= 0.5 },
+          insight: "Seam RL = collar − depth. Two vectors in the plane give its gradient: dip = atan(gradient), dip direction = steepest descent, strike ⟂ dip. A single borehole re-interpretation can swing the whole structure plan.",
+          concept: "Three-point problem",
         },
         {
           kind: "predict",
@@ -558,7 +568,7 @@ export const U1: Unit = {
               label: "Statutory action",
               prompt: "With 1.4 % CH₄ at the face, you…",
               options: [
-                { text: "Cut off power to the district (≥1.25 % CH₄), withdraw persons, improve ventilation, inform the Manager, and seal the hole with cement grout before resuming; get it plotted on the plans", correct: true, why: "Electrical apparatus must be switched off above 1.25 % firedamp; the hole must be sealed and recorded." },
+                { text: "Cut off power to the district (gas > 1.25 % — CMR 2017 Reg. 169), withdraw persons, improve ventilation, inform the Manager, and seal the hole with cement grout before resuming; get it plotted on the plans", correct: true, why: "Electricity must be cut off where district gas exceeds 1.25 % (Reg. 169) and persons withdrawn where gas is detected (Reg. 166); the hole must be sealed and recorded." },
                 { text: "Continue cutting but post a gas-tester at the face", why: "1.4 % CH₄ exceeds the electrical cut-off limit; continuing is a violation." },
                 { text: "Plug the hole with wooden pegs and continue", why: "Wood plugs do not seal against gas and water pressure." },
               ],

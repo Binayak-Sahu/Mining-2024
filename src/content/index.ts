@@ -40,10 +40,10 @@ export function getStage(lessonId: string, index: number): Stage | undefined {
 
 /** Every codex entry with its source lesson (for the Field Codex library). */
 export function allCodex() {
-  const out: { entry: import("@/lib/types").CodexEntry; lesson: Lesson; unit: Unit }[] = [];
+  const out: { entry: import("@/lib/types").CodexEntry; lesson: Lesson; unit: Unit; sims: string[] }[] = [];
   for (const u of UNITS)
     for (const l of u.lessons)
-      for (const s of l.stages) if (s.kind === "theory") out.push({ entry: s.codex, lesson: l, unit: u });
+      for (const s of l.stages) if (s.kind === "theory") out.push({ entry: s.codex, lesson: l, unit: u, sims: [s.sim, ...(s.codex.sims ?? [])] });
   return out;
 }
 

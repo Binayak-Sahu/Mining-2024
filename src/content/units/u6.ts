@@ -36,6 +36,7 @@ export const U6: Unit = {
           ],
           codex: {
             id: "u6-depillaring",
+            sims: ["u6-thick"],
             title: "Depillaring & goaf behaviour",
             bullets: ["Development: uniform pillar loading; depillaring: abutment at goaf edge", "Immediate roof caves; main roof hangs then falls", "Main fall span ≈ √(2tσt/γ); periodic ≈ √(tσt/3γ)", "Air blast from sudden large falls — monitor hung area", "Caving (cheap, subsidence) vs hydraulic sand stowing (protection)", "Thick seams: multi-slice, sublevel caving, Blasting Gallery"],
             formulas: [
@@ -53,6 +54,15 @@ export const U6: Unit = {
           goal: { text: "Reach the main fall (t = 10 m, σt = 3 MPa)", test: (p, o) => p.t === 10 && p.st === 3 && o.state === 2 },
           insight: "~49 m of span. Before that, the hung roof stores energy — the area of hang, not just span, governs air-blast severity.",
           concept: "Main fall span",
+        },
+        {
+          kind: "sim",
+          title: "Thick-seam lab: BG vs LTCC",
+          brief: "A 10 m seam. Compare Blasting Gallery ring blasting with Longwall Top Coal Caving, and tune the LTCC draw interval to balance recovery against roof-shale dilution.",
+          sim: "u6-thick",
+          goal: { text: "LTCC with recovery ≥ 78 % and dilution ≤ 8 %", test: (p, o) => p.meth === 1 && o.rec >= 78 && o.dil <= 8 },
+          insight: "Drawing longer recovers more top coal until caved shale reaches the draw window — stop draw at first sight of dilution. BG trades explosive and ring-drilling cost for recovery in seams where caving faces are impractical.",
+          concept: "Thick-seam extraction",
         },
         {
           kind: "predict",
@@ -157,6 +167,7 @@ export const U6: Unit = {
           ],
           codex: {
             id: "u6-longwall",
+            sims: ["u6-lwcycle"],
             title: "Longwall mechanics",
             bullets: ["Front abutment ahead of face; rear abutment in recompacting goaf", "Shield load ≈ γ·h_c·(canopy area)·weighting", "h_c = m/(k − 1); k bulking factor", "Shields yield at rating and advance each web", "Minimise tip-to-face distance to prevent cavities"],
             formulas: [
@@ -175,6 +186,15 @@ export const U6: Unit = {
           goal: { text: "m = 5 m with utilisation between 60 % and 90 %", test: (p, o) => p.m === 5 && o.util >= 0.6 && o.util <= 0.9 },
           insight: "~1000 t shields: required load rises linearly with height because caving height does.",
           concept: "Shield selection",
+        },
+        {
+          kind: "sim",
+          title: "Face cycle lab",
+          brief: "Watch the DERD shearer cut the web, shields lower–advance–set behind it, and the AFC snake over. Tune the face for output.",
+          sim: "u6-lwcycle",
+          goal: { text: "Production ≥ 12 000 t/day with face length ≥ 200 m", test: (p, o) => p.L >= 200 && o.prod >= 12000 },
+          insight: "Output = shears/day × face length × web × height × density. Haulage speed and turnaround time set shears/day; shield advance must keep pace or the roof behind the shearer is left unsupported.",
+          concept: "Longwall productivity",
         },
         {
           kind: "predict",

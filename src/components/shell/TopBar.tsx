@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, Zap, Map, BookMarked, Dumbbell, User } from "lucide-react";
+import { Flame, Zap, Map, BookMarked, Dumbbell, User, GraduationCap, Calculator, FlaskConical } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
@@ -10,6 +10,9 @@ import { useHydrated } from "@/lib/useHydrated";
 const NAV = [
   { href: "/", label: "Campaign", Icon: Map },
   { href: "/warmup", label: "Warmup", Icon: Dumbbell },
+  { href: "/exam", label: "Exam", Icon: GraduationCap },
+  { href: "/tools", label: "Tools", Icon: Calculator },
+  { href: "/lab", label: "Lab", Icon: FlaskConical },
   { href: "/codex", label: "Codex", Icon: BookMarked },
   { href: "/profile", label: "Profile", Icon: User },
 ];
@@ -38,8 +41,8 @@ export function TopBar() {
           {NAV.map(({ href, label, Icon }) => {
             const on = href === "/" ? path === "/" || path.startsWith("/unit") : path.startsWith(href);
             return (
-              <Link key={href} href={href} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${on ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"}`}>
-                <Icon size={14} /> {label}
+              <Link key={href} href={href} title={label} className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold uppercase tracking-wider ${on ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"}`}>
+                <Icon size={14} /> <span className="hidden lg:inline">{label}</span>
               </Link>
             );
           })}
@@ -54,11 +57,11 @@ export function TopBar() {
           </span>
         </div>
       </div>
-      <nav className="sm:hidden flex border-t border-slate-800">
+      <nav className="sm:hidden flex border-t border-slate-800 overflow-x-auto">
         {NAV.map(({ href, label, Icon }) => {
           const on = href === "/" ? path === "/" || path.startsWith("/unit") : path.startsWith(href);
           return (
-            <Link key={href} href={href} className={`flex-1 flex flex-col items-center py-1.5 text-[10px] font-bold uppercase ${on ? "text-white" : "text-slate-500"}`}>
+            <Link key={href} href={href} className={`flex-1 min-w-[56px] flex flex-col items-center py-1.5 text-[10px] font-bold uppercase ${on ? "text-white" : "text-slate-500"}`}>
               <Icon size={16} /> {label}
             </Link>
           );

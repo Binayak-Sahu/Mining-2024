@@ -11,6 +11,9 @@ import { UNITS, getSim } from "../src/content";
 import type { SimDef, Vals } from "../src/lib/types";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement, type ReactNode } from "react";
+import { buildPool, makePaper, isCorrect } from "../src/lib/exam";
+import { TOOLS } from "../src/components/pages/Tools";
+import { STATUTES } from "../src/content/statutes";
 
 let errors = 0;
 let checks = 0;
@@ -95,7 +98,7 @@ for (const u of UNITS) {
     l.stages.forEach((s, i) => {
       checks++;
       const at = `${tag}#${i} (${s.kind})`;
-      const useSim = (id?: string, params?: Vals) => {
+      const checkSim = (id?: string, params?: Vals) => {
         if (!id) return null;
         try {
           const def = getSim(id);
@@ -112,16 +115,17 @@ for (const u of UNITS) {
       };
       switch (s.kind) {
         case "theory": {
-          useSim(s.sim, s.simParams);
+          checkSim(s.sim, s.simParams);
           if (s.lines.length < 1 || s.lines.length > 3) fail(`${at}: theory should have 1–3 lines`);
           s.hotspots.forEach((h) => {
             if (h.x < 0 || h.x > 400 || h.y < 0 || h.y > 240) fail(`${at}: hotspot out of bounds ${h.title}`);
           });
           if (!s.codex.id) fail(`${at}: codex id missing`);
+          for (const sid of s.codex.sims ?? []) checkSim(sid);
           break;
         }
         case "sim": {
-          const def = useSim(s.sim, s.start);
+          const def = checkSim(s.sim, s.start);
           if (def) {
             const start = defaults(def, s.start);
             if (s.goal.test(start, def.compute(start))) fail(`${at}: goal already satisfied at start`);
@@ -130,7 +134,7 @@ for (const u of UNITS) {
           break;
         }
         case "predict":
-          useSim(s.sim, { ...s.before, ...s.after });
+          checkSim(s.sim, { ...s.before, ...s.after });
           if (s.answer < 0 || s.answer >= s.options.length) fail(`${at}: answer index out of range`);
           break;
         case "equation": {
@@ -146,7 +150,7 @@ for (const u of UNITS) {
           break;
         }
         case "numeric":
-          useSim(s.sim, s.params);
+          checkSim(s.sim, s.params);
           s.steps.forEach((st, j) => {
             if (!Number.isFinite(st.answer)) fail(`${at}: step ${j} answer not finite`);
           });
@@ -173,5 +177,34 @@ for (const u of UNITS)
         ids.add(s.codex.id);
       }
 
+// ---- Exam bank: every question answerable, papers satisfy quotas ----
+const pool = buildPool();
+for (const q of pool) {
+  if (q.kind === "num") {
+    if (!Number.isFinite(q.answer)) fail(`exam ${q.id}: non-finite answer`);
+    if (!isCorrect(q, q.answer)) fail(`exam ${q.id}: own answer not accepted`);
+  } else if (!q.options || q.answer < 0 || q.answer >= q.options.length) fail(`exam ${q.id}: bad option index`);
+}
+for (let t = 0; t < 50; t++) {
+  let seed = t * 9973 + 1;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const paper = makePaper(25, rnd);
+  if (paper.questions.length !== 25) fail(`paper ${t}: ${paper.questions.length} questions`);
+  if (paper.questions.filter((q) => q.family === "numerical").length < 7) fail(`paper ${t}: < 7 numericals`);
+  if (paper.questions.filter((q) => q.family === "statutory").length < 8) fail(`paper ${t}: < 8 statutory`);
+  if (new Set(paper.questions.map((q) => q.id)).size !== 25) fail(`paper ${t}: duplicates`);
+  for (const q of paper.questions) if (q.kind !== "num" && !isCorrect(q, q.answer)) fail(`paper ${t}: shuffled answer broken for ${q.id}`);
+}
+// ---- Calculators: defaults produce finite outputs ----
+for (const tool of TOOLS) {
+  const v = Object.fromEntries(tool.fields.map((f) => [f.key, f.default]));
+  for (const o of tool.run(v)) if (typeof o.value === "number" && !Number.isFinite(o.value)) fail(`tool ${tool.id}: ${o.label} not finite`);
+}
+// ---- Statute register ----
+for (const st of STATUTES) {
+  if (!st.citation) fail(`statute ${st.id}: missing citation`);
+  if (st.q && (st.q.answer < 0 || st.q.answer >= st.q.options.length)) fail(`statute ${st.id}: bad answer`);
+}
+console.log(`exam bank: ${pool.length} questions · tools: ${TOOLS.length} · statutes: ${STATUTES.length}`);
 console.log(`${checks} stages checked across ${UNITS.length} units — ${errors} error(s).`);
 process.exit(errors ? 1 : 0);

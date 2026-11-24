@@ -371,7 +371,7 @@ export const U3: Unit = {
           hotspots: [
             { x: 200, y: 100, title: "Laminated immediate roof", body: "Bedding planes have little shear strength — each lamina bends independently and separates (bed separation)." },
             { x: 300, y: 60, title: "Anchorage horizon", body: "Competent strata above the weak zone. Suspension needs bolts long enough to anchor ≥ 0.3 m into it." },
-            { x: 110, y: 150, title: "Span", body: "Indian bord & pillar galleries are typically limited to 4.8 m width. Beam stress ∝ L²." },
+            { x: 110, y: 150, title: "Span", body: "CMR 2017 Reg. 111 limits galleries to 4.8 m width and 3 m height unless the Regional Inspector permits in writing. Beam stress ∝ L²." },
             { x: 40, y: 150, title: "Pillar rib", body: "Supports the beam ends — clamped-beam assumption." },
           ],
           chain: ["Gallery opens a span L", "Laminae bend under self-weight", "Bed separation unclamps them", "Each thin lamina: σ = γL²/(2t_lam)", "Tensile failure → roof fall"],
@@ -502,12 +502,12 @@ export const U3: Unit = {
           drawers: [
             { q: "Why does height weaken pillars?", a: "Taller pillars have less confined core: the yielded skin is a larger proportion of the cross-section, and buckling/spalling is easier. Squat pillars (w/h > ~5) develop strong confined cores." },
             { q: "Why does CMRI's formula include depth?", a: "In Indian coalfields, horizontal stress grows with depth and confines pillars. Sheorey's empirical term (H/250 + 1)(w/h − 1) captures that confinement benefit." },
-            { q: "Statutory pillar sizes?", a: "The coal mines regulations prescribe minimum pillar dimensions and gallery widths related to depth; engineered designs must satisfy both the regulations and the FOS, and departures need permission." },
+            { q: "Statutory pillar sizes?", a: "CMR 2017 Reg. 111 caps galleries at 4.8 m width and 3 m height without written permission, and the regulations prescribe minimum pillar sizes related to depth and gallery width (check the current Gazette table — circulating tables may be from CMR 1957). Engineered designs must satisfy both the regulations and an adequate FoS." },
           ],
           codex: {
             id: "u3-pillar",
             title: "Pillar design",
-            bullets: ["σp = γH(w + B)²/w² (square pillars)", "Extraction e = 1 − w²/(w + B)²", "Salamon–Munro: S = 7.176 h^−0.66 w^0.46 (MPa, m)", "CMRI: S = 0.27σc h^−0.36 + (H/250 + 1)(w/h − 1)", "FOS ≈ 1.5 typical target for development; higher for surface protection", "Gallery width ≤ 4.8 m in typical Indian B&P"],
+            bullets: ["σp = γH(w + B)²/w² (square pillars)", "Extraction e = 1 − w²/(w + B)²", "Salamon–Munro: S = 7.176 h^−0.66 w^0.46 (MPa, m)", "CMRI: S = 0.27σc h^−0.36 + (H/250 + 1)(w/h − 1)", "FOS ≈ 1.5 typical target for development; higher for surface protection", "Galleries ≤ 4.8 m wide and ≤ 3 m high unless permitted in writing (CMR 2017 Reg. 111); split galleries in depillaring likewise (Reg. 112)"],
             formulas: [
               { expr: "σp = γH(w + B)²/w²", meaning: "Tributary-area pillar stress" },
               { expr: "S = 7.176·h^−0.66·w^0.46", meaning: "Salamon–Munro pillar strength" },
@@ -630,6 +630,7 @@ export const U3: Unit = {
           ],
           codex: {
             id: "u3-slope",
+            sims: ["u3-slope-modes"],
             title: "Slope stability",
             bullets: ["Plane: ψf > ψp > φ and strike ≈ parallel to face (±20°)", "Wedge: line of intersection daylights and plunges > φ", "Circular: soils, dumps, highly weathered rock", "Toppling: b/h < tan ψ", "Water reduces effective normal stress — drain slopes", "Monitor: prisms, radar; inverse-velocity predicts failure time"],
             formulas: [
@@ -648,6 +649,16 @@ export const U3: Unit = {
           goal: { text: "ru ≥ 0.3 and FOS ≥ 1.3", test: (p, o) => p.ru >= 0.3 && o.fos >= 1.3 },
           insight: "Flattening the face reduces the block's weight and driving force; lowering height works too. Depressurising (horizontal drains) attacks ru directly.",
           concept: "Slope geometry & water",
+        },
+        {
+          kind: "sim",
+          title: "Four failure modes lab",
+          brief: "Switch between plane, wedge, circular and toppling failure. In circular mode the app runs Bishop's simplified method over a grid of slip circles. Make a 30 m spoil-like slope stand.",
+          sim: "u3-slope-modes",
+          start: { mode: 2 },
+          goal: { text: "Circular mode, H ≥ 30 m, ru ≥ 0.2, FoS ≥ 1.3", test: (p, o) => p.mode === 2 && p.H >= 30 && p.ru >= 0.2 && o.fos >= 1.3 },
+          insight: "Without structural control, failure follows a curved surface through weak material; flattening the face and draining are the levers. In jointed rock, kinematics (daylighting, b/h vs tan ψ) decides which mode is even possible.",
+          concept: "Slope failure modes",
         },
         {
           kind: "predict",

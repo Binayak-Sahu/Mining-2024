@@ -25,6 +25,15 @@ export interface LessonRecord {
   bestXp: number;
 }
 
+export interface ExamAttempt {
+  at: string;
+  score: number;
+  total: number;
+  seconds: number;
+  /** unitId -> [correct, asked] */
+  byUnit: Record<string, [number, number]>;
+}
+
 export interface CodexUnlock {
   unlockedAt: string;
   lessonId: string;
@@ -43,6 +52,7 @@ interface StrataState {
   formulas: Record<string, CodexUnlock>;
   srs: Record<string, SrsItem>;
   warmupDoneDay: string | null;
+  exams: ExamAttempt[];
   freeRoam: boolean;
 
   addXp: (amount: number) => void;
@@ -56,6 +66,7 @@ interface StrataState {
   reviewResult: (key: string, correct: boolean) => void;
   markWarmupDone: () => void;
   setFreeRoam: (v: boolean) => void;
+  recordExam: (a: ExamAttempt) => void;
   resetAll: () => void;
 }
 
@@ -73,6 +84,7 @@ const initial = {
   srs: {} as Record<string, SrsItem>,
   warmupDoneDay: null as string | null,
   freeRoam: false,
+  exams: [] as ExamAttempt[],
 };
 
 export const useStrata = create<StrataState>()(
@@ -165,12 +177,14 @@ export const useStrata = create<StrataState>()(
 
       markWarmupDone: () => set({ warmupDoneDay: todayKey() }),
       setFreeRoam: (v) => set({ freeRoam: v }),
+      recordExam: (a) => set((s) => ({ exams: [...s.exams, a].slice(-30) })),
       resetAll: () => set({ ...initial }),
     }),
     {
       name: "strata-progress-v1",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
+      migrate: (persisted, version) => migrateState(persisted as Record<string, unknown>, version),
     },
   ),
 );
@@ -179,4 +193,41 @@ export const useStrata = create<StrataState>()(
 export function liveStreak(streak: number, lastActiveDay: string | null): number {
   if (!lastActiveDay) return 0;
   return dayDiff(lastActiveDay, todayKey()) <= 1 ? streak : 0;
+}
+
+/**
+ * Phase 6 inserted a new SimLab stage at index 2 in these lessons, shifting later stages by one.
+ * Spaced-repetition and formula keys are index-based, so v1 saves are re-keyed here.
+ */
+export const PHASE6_INSERTED: Record<string, number> = {
+  "u1-l3": 2,
+  "u3-l6": 2,
+  "u6-l1": 2,
+  "u6-l2": 2,
+  "u8-l4": 2,
+  "u8-l5": 2,
+};
+
+function shiftKey(key: string): { key: string; index: number | null } {
+  const m = /^(.*)#(eq)?(\d+)$/.exec(key);
+  if (!m) return { key, index: null };
+  const [, lesson, eq, idx] = m;
+  let i = Number(idx);
+  const at = PHASE6_INSERTED[lesson];
+  if (at !== undefined && i >= at) i += 1;
+  return { key: `${lesson}#${eq ?? ""}${i}`, index: i };
+}
+
+export function migrateState(state: Record<string, unknown>, version: number): Record<string, unknown> {
+  if (version >= 2) return state;
+  const srs = (state.srs ?? {}) as Record<string, SrsItem>;
+  const nextSrs: Record<string, SrsItem> = {};
+  for (const item of Object.values(srs)) {
+    const { key, index } = shiftKey(item.key);
+    nextSrs[key] = { ...item, key, stageIndex: index ?? item.stageIndex };
+  }
+  const formulas = (state.formulas ?? {}) as Record<string, CodexUnlock>;
+  const nextF: Record<string, CodexUnlock> = {};
+  for (const [k, v] of Object.entries(formulas)) nextF[shiftKey(k).key] = v;
+  return { ...state, srs: nextSrs, formulas: nextF, exams: (state.exams as ExamAttempt[]) ?? [] };
 }

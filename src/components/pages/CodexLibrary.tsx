@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, Lock, BookMarked, Sigma } from "lucide-react";
-import { allCodex, allFormulas, UNITS } from "@/content";
+import { Search, Lock, BookMarked, Sigma, Scale } from "lucide-react";
+import { STATUTES, STATUS_LABEL } from "@/content/statutes";
+import { allCodex, allFormulas, getSim, UNITS } from "@/content";
+import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { useStrata } from "@/lib/store";
 import { useHydrated } from "@/lib/useHydrated";
 
@@ -13,7 +15,7 @@ export function CodexLibrary() {
   const formulas = useStrata((s) => s.formulas);
   const [q, setQ] = useState("");
   const [unit, setUnit] = useState<string>("all");
-  const [tab, setTab] = useState<"sheets" | "formulas">("sheets");
+  const [tab, setTab] = useState<"sheets" | "formulas" | "statutes">("sheets");
 
   const entries = useMemo(() => allCodex(), []);
   const forms = useMemo(() => allFormulas(), []);
@@ -52,9 +54,9 @@ export function CodexLibrary() {
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search: Atkinson, Graham, RQD, CMR, flameproof…" className="flex-1 bg-transparent outline-none text-sm" />
         </label>
         <div className="flex rounded-xl bg-slate-800 p-1">
-          {(["sheets", "formulas"] as const).map((t) => (
+          {(["sheets", "formulas", "statutes"] as const).map((t) => (
             <button key={t} type="button" onClick={() => setTab(t)} className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${tab === t ? "bg-white text-slate-900" : "text-slate-400"}`}>
-              {t === "sheets" ? "Cheat sheets" : "Formulas"}
+              {t === "sheets" ? "Cheat sheets" : t === "formulas" ? "Formulas" : "Statutes"}
             </button>
           ))}
         </div>
@@ -70,14 +72,48 @@ export function CodexLibrary() {
         ))}
       </div>
 
-      {tab === "sheets" ? (
+      {tab === "statutes" ? (
+        <div className="mt-5 space-y-3">
+          <p className="text-xs text-slate-400 max-w-3xl">
+            Every statutory rule STRATA teaches, with its citation. <b className="text-emerald-400">Verified</b> = wording checked against the CMR 2017 text (via reproductions of the Gazette) in the Phase 6 audit; <b className="text-blue-300">Standard</b> = long-established citation not re-checked; <b className="text-amber-400">Unconfirmed</b> = widely taught figure whose current provision could not be confirmed. Always check the official Gazette and DGMS circulars.
+          </p>
+          {STATUTES.filter((st) => !needle || [st.rule, st.citation, st.topic, st.note ?? ""].join(" ").toLowerCase().includes(needle)).map((st) => (
+            <div key={st.id} className="card p-4">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <Scale size={14} className="text-slate-500" />
+                <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">{st.topic}</span>
+                <span
+                  className={`ml-auto text-[10px] font-bold uppercase tracking-wider rounded px-2 py-0.5 ${
+                    st.status === "verified" ? "bg-emerald-100 text-emerald-800" : st.status === "standard" ? "bg-blue-100 text-blue-800" : "bg-amber-100 text-amber-800"
+                  }`}
+                >
+                  {STATUS_LABEL[st.status]}
+                </span>
+              </div>
+              <p className="text-sm text-slate-900 leading-snug">{st.rule}</p>
+              <p className="readout text-xs font-bold text-slate-700 mt-1">{st.citation}</p>
+              {st.note && <p className="text-xs text-slate-500 mt-1">{st.note}</p>}
+            </div>
+          ))}
+        </div>
+      ) : tab === "sheets" ? (
         <>
           <div className="grid md:grid-cols-2 gap-4 mt-5">
-            {unlockedSheets.map(({ entry, lesson, unit: u }) => (
+            {unlockedSheets.map(({ entry, lesson, unit: u, sims }) => (
               <article key={entry.id} className="card p-5">
                 <div className="flex items-baseline justify-between border-b-2 border-slate-900 pb-2 mb-3">
                   <h2 className="font-extrabold text-lg leading-tight">{entry.title}</h2>
                   <span className="readout text-xs text-slate-500 shrink-0 ml-2">U{u.n}</span>
+                </div>
+                <div className={`grid gap-2 mb-3 ${sims.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
+                  {sims.map((sid) => {
+                    const def = getSim(sid);
+                    return (
+                      <Link key={sid} href={`/lab?sim=${sid}`} title={`Open “${def.title}” in the Sim Lab`} className="block hover:ring-2 ring-blue-500 rounded-xl">
+                        <SimCanvas def={def} values={defaults(def)} />
+                      </Link>
+                    );
+                  })}
                 </div>
                 <ul className="space-y-1.5">
                   {entry.bullets.map((b, i) => (

@@ -19,8 +19,11 @@ Progress (XP, streak, hearts, Field Codex, spaced-repetition queue) is stored in
 | | |
 |---|---|
 | Units | Orientation + 10 curriculum units, each with a Unit Boss Exam |
-| Lessons | 55 lessons, 373 interactive stages |
-| Simulations | 55 live SVG physics/engineering simulators |
+| Lessons | 55 lessons, 379 interactive stages |
+| Simulations | 61 live SVG physics/engineering simulators (free-play in the Sim Lab) |
+| DGMS Exam Simulator | 374-question bank, timed 25-question papers, derivations, weak-unit analytics |
+| Field Calculators | Atkinson, pillar FoS, Kuz-Ram, PPV, BESR, dip & strike, pump/NPSH |
+| Statute register | 19 rules with citations and verification status |
 | Field Codex | 55 Swiss-style cheat sheets + verified formulas, searchable |
 
 ### The five-stage loop (every lesson)

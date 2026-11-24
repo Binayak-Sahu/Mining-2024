@@ -350,6 +350,7 @@ export const U8: Unit = {
           ],
           codex: {
             id: "u8-separation",
+            sims: ["u8-flot"],
             title: "Gravity separation & flotation",
             bullets: ["Stokes (Re < 1): v = g d²(ρs − ρf)/(18μ)", "Newton (turbulent): v ≈ 1.74√(g d (ρs − ρf)/ρf)", "Washability: yield vs ash vs cut density", "NGM ±0.1 → ease of washing (Bird)", "Flotation: collectors, frothers, modifiers; contact angle"],
             formulas: [
@@ -367,6 +368,15 @@ export const U8: Unit = {
           goal: { text: "Clean ash ≤ 17 % and yield ≥ 48 %", test: (_, o) => o.cleanAsh <= 17 && o.y >= 48 },
           insight: "A narrow window around 1.55–1.59 g/cc — and only with a sharp separator. With realistic Ep the same ash costs several points of yield.",
           concept: "Cut-point selection",
+        },
+        {
+          kind: "sim",
+          title: "Flotation circuit lab",
+          brief: "A sphalerite ore carries pyrite. Dose collector, frother, CuSO₄ activator and depressant, and set aeration and impeller speed to make a saleable zinc concentrate.",
+          sim: "u8-flot",
+          goal: { text: "Zn recovery ≥ 85 % and concentrate ≥ 50 % Zn", test: (_, o) => o.Rt >= 85 && o.grade >= 50 },
+          insight: "Collector alone floats pyrite too. Activating sphalerite (Cu²⁺) and depressing pyrite (high pH lime / cyanide) creates the selectivity; too much frother or air entrains gangue and kills grade.",
+          concept: "Flotation reagents",
         },
         {
           kind: "predict",
@@ -448,8 +458,9 @@ export const U8: Unit = {
           ],
           codex: {
             id: "u8-electrical",
+            sims: ["u8-zones"],
             title: "Mine electrical safety",
-            bullets: ["Restricted neutral: earth-fault current limited (commonly 750 mA UG coal)", "Earth-leakage relay trips below the limit", "FLP: contains explosion; flame paths cool gases", "IS: energy below methane MIE (~0.28 mJ); ia/ib categories", "Only certified FLP/IS apparatus in hazardous zones; maintain gaps and bolts", "Methane ≥ 1.25 % → de-energise"],
+            bullets: ["Restricted neutral: earth-fault current limited (commonly 750 mA UG coal)", "Earth-leakage relay trips below the limit", "FLP: contains explosion; flame paths cool gases", "IS: energy below methane MIE (~0.28 mJ); ia/ib categories", "Only certified FLP/IS apparatus in hazardous zones; maintain gaps and bolts", "District gas > 1.25 % → cut off electricity (CMR 2017 Reg. 169)"],
             formulas: [
               { expr: "If = Vph / (Rn + Rf + Re)", meaning: "Earth-fault current" },
               { expr: "Rn ≈ Vph / I_limit", meaning: "Neutral earthing resistor size" },
@@ -465,6 +476,15 @@ export const U8: Unit = {
           goal: { text: "550 V, If ≤ 0.75 A and relay trips", test: (p, o) => p.V === 550 && o.If <= 0.75 && o.tripped === 1 },
           insight: "~420 Ω limits the fault; the relay must be set below the resulting current or a fault would persist undetected.",
           concept: "Restricted neutral",
+        },
+        {
+          kind: "sim",
+          title: "FLP vs IS zoning lab",
+          brief: "Degree III mine. Choose the protection concept for each location, set the earthing and earth-leakage protection, then inject a methane layer or an earth fault.",
+          sim: "u8-zones",
+          goal: { text: "Degree III: all 6 checks pass and an injected earth fault trips safely", test: (p, o) => p.deg === 3 && o.score === 6 && p.ev === 2 && o.trip === 1 && o.ignition === 0 },
+          insight: "Power circuits in gassy zones need Ex d; IS is only for low-energy instrumentation. Restricted neutral earthing limits fault energy and earth-leakage relays clear the fault — layered protection.",
+          concept: "Hazardous-area protection",
         },
         {
           kind: "predict",

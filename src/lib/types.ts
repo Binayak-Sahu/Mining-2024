@@ -61,6 +61,8 @@ export interface CodexEntry {
   bullets: string[];
   formulas?: Formula[];
   tags?: string[];
+  /** Extra simulation schematics linked to this cheat sheet (shown as thumbnails in the Codex). */
+  sims?: string[];
 }
 
 /* ------------------------------------------------------------------ */
