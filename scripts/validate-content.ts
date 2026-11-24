@@ -35,7 +35,39 @@ function valuesFor(p: SimDef["params"][number], n: number): number[] {
   return out;
 }
 
+/** Search subsets of parameters (others held at start) — users usually change 1–3 controls. */
+function subsetSearch(def: SimDef, test: (p: Vals, o: Vals) => boolean, start: Vals, size: number, res: number): boolean {
+  const k = def.params.length;
+  const combos: number[][] = [];
+  const rec = (from: number, acc: number[]) => {
+    if (acc.length === size) return void combos.push([...acc]);
+    for (let i = from; i < k; i++) rec(i + 1, [...acc, i]);
+  };
+  rec(0, []);
+  for (const combo of combos) {
+    const grids = combo.map((i) => valuesFor(def.params[i], res));
+    const idx = new Array(combo.length).fill(0);
+    for (;;) {
+      const v: Vals = { ...start };
+      combo.forEach((pi, j) => (v[def.params[pi].key] = grids[j][idx[j]]));
+      if (test(v, def.compute(v))) return true;
+      let j = 0;
+      while (j < combo.length) {
+        idx[j]++;
+        if (idx[j] < grids[j].length) break;
+        idx[j] = 0;
+        j++;
+      }
+      if (j === combo.length) break;
+    }
+  }
+  return false;
+}
+
 function reachable(def: SimDef, test: (p: Vals, o: Vals) => boolean, start: Vals): boolean {
+  if (subsetSearch(def, test, start, 1, 2000)) return true;
+  if (def.params.length >= 2 && subsetSearch(def, test, start, 2, 250)) return true;
+  if (def.params.length >= 3 && subsetSearch(def, test, start, 3, 40)) return true;
   const budget = 400000;
   const k = def.params.length;
   const per = Math.max(4, Math.floor(Math.pow(budget, 1 / Math.max(k, 1))));

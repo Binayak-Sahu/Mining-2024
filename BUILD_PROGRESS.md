@@ -33,9 +33,9 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
 ## Phase checklist
 - [x] **Phase 1** — scaffold, store, Codex, Campaign tree, Unit map, Warmup (SRS), Profile, 7 card engines, Orientation unit (U0) exercising every engine. `npm run build` ✓, `tsc --noEmit` ✓, Playwright walkthrough ✓ (0 console errors).
 - [x] **Phase 2** — Unit 1 (6 lessons + boss: coal genesis/rank, ore genesis/supergene, apparent dip, faults, RQD core logging, UNFC & reserves) and Unit 2 (5 lessons + boss: access selection & shaft pillar, sinking cycle & Galloway stage, freezing/cementation, burn-cut drift blasting, roadheader/CM/TBM). 11 new sims in `src/content/sims/u1.tsx`, `u2.tsx`. `npm run validate` ✓ (goal reachability), build ✓.
-- [ ] **Phase 3** — Units 3 & 4
+- [x] **Phase 3** — Unit 3 (7 lessons + boss: Kirsch stresses, Griffith/MC/HB failure, RMR/Q/GSI, roof bolting beam theory, pillar design SM & CMRI, slope stability, subsidence & rockbursts) and Unit 4 (5 lessons + boss: drilling mechanics, explosive thermochemistry/detonation, Kuz-Ram, NONEL delay & misfires, PPV/airblast/flyrock with DGMS TC 7/1997). 12 new sims. Validator upgraded with 1/2/3-parameter subset search. validate ✓ build ✓ walkthrough ✓.
 - [ ] **Phase 4** — Units 5, 6 & 7
 - [ ] **Phase 5** — Units 8, 9 & 10
 
 ## Next checkpoint
-Phase 3: author `src/content/sims/u3.tsx`, `u4.tsx` and `src/content/units/u3.ts`, `u4.ts`; register in the two index files; run validate + build.
+Phase 4: author `src/content/sims/u5.tsx`, `u6.tsx`, `u7.tsx` and `src/content/units/u5.ts`, `u6.ts`, `u7.ts`; register in the two index files; run validate + build.
