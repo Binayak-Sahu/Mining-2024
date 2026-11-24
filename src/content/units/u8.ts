@@ -460,7 +460,7 @@ export const U8: Unit = {
             id: "u8-electrical",
             sims: ["u8-zones"],
             title: "Mine electrical safety",
-            bullets: ["Restricted neutral: earth-fault current limited (commonly 750 mA UG coal)", "Earth-leakage relay trips below the limit", "FLP: contains explosion; flame paths cool gases", "IS: energy below methane MIE (~0.28 mJ); ia/ib categories", "Only certified FLP/IS apparatus in hazardous zones; maintain gaps and bolts", "District gas > 1.25 % → cut off electricity (CMR 2017 Reg. 169)"],
+            bullets: ["Restricted neutral: earth-fault current ≤ 750 mA (250–1100 V UG), ≤ 50 A (1.1–11 kV OC) — CEA Safety Regulations 2023, Reg. 102", "Earth-leakage relay trips below the limit", "FLP: contains explosion; flame paths cool gases", "IS: energy below methane MIE (~0.28 mJ); ia/ib categories", "Only certified FLP/IS apparatus in hazardous zones; maintain gaps and bolts", "District gas > 1.25 % → cut off electricity (CMR 2017 Reg. 169)"],
             formulas: [
               { expr: "If = Vph / (Rn + Rf + Re)", meaning: "Earth-fault current" },
               { expr: "Rn ≈ Vph / I_limit", meaning: "Neutral earthing resistor size" },
