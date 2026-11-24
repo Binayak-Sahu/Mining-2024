@@ -279,7 +279,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   return (
     <div className="min-h-[100dvh]">
       <div className="sticky top-0 z-20 bg-canvas/85 backdrop-blur-xl border-b border-slate-200/60 pt-[env(safe-area-inset-top)]">
-        <div className="max-w-2xl mx-auto px-3 sm:px-4 h-16 flex items-center gap-3">
+        <div className="max-w-2xl mx-auto px-2 sm:px-4 h-14 sm:h-16 flex items-center gap-2.5 sm:gap-3">
           <Link href={`/unit/${unit.id}`} aria-label="Exit lesson" className="-ml-1 flex items-center justify-center w-11 h-11 shrink-0 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100">
             <X size={24} strokeWidth={2.6} />
           </Link>
@@ -287,7 +287,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             {lesson.stages.map((s, i) => {
               const c = STAGE_META[s.kind].color;
               return (
-                <div key={i} className="relative h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)]">
+                <div key={i} className="relative h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)]">
                   <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? "40%" : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
                     <span className="absolute left-1.5 right-1.5 top-[3px] h-[4px] rounded-full bg-white/35" />
                   </motion.div>
@@ -299,8 +299,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-3 sm:px-4 pt-4">
-        <div className="flex items-center justify-between text-[12px] text-slate-500 mb-3 px-1 gap-3">
+      <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4">
+        <div className="flex items-center justify-between text-[12px] text-slate-500 mb-2 sm:mb-3 px-1.5 gap-3">
           <span className="font-bold truncate">
             {lesson.boss ? "Boss Exam · " : `Unit ${unit.n} · `}
             {lesson.title}
@@ -344,7 +344,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: -30, opacity: 0 }}
             transition={{ type: "spring", stiffness: 420, damping: 28 }}
-            className="fixed top-[76px] left-1/2 -translate-x-1/2 z-40 rounded-2xl text-white px-4 py-2.5 text-[13px] font-bold flex items-center gap-2 max-w-[92vw]"
+            className="fixed top-[64px] sm:top-[76px] left-1/2 -translate-x-1/2 z-40 rounded-2xl text-white px-4 py-2.5 text-[13px] font-bold flex items-center gap-2 max-w-[92vw]"
             style={{ background: meta.color === "#8B5CF6" ? "#7C3AED" : "#2563EB", boxShadow: "0 4px 0 #1E3A8A, 0 16px 32px -12px rgba(30,58,138,0.6)" }}
           >
             <BookMarked size={16} className="shrink-0" /> <span className="truncate">{toast}</span>

@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter } from "@/components/sim/svg";
+import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter, Stream } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Coalification & rank ---------------- */
 
@@ -42,6 +43,7 @@ export const coalRank: SimDef = {
     { key: "moist", label: "Bed moisture", unit: "%", digits: 1 },
     { key: "gcv", label: "GCV (daf)", unit: "kcal/kg", digits: 0 },
   ],
+  handles: [{ key: "D", axis: "y", at: (p) => [65, 30 + (p.D / 8) * 180], toValue: (y) => ((y - 30) / 180) * 8, color: "#DC2626" }],
   render: (p, o) => {
     const depthY = 30 + (p.D / 8) * 180;
     const logMin = Math.log10(0.15);
@@ -52,7 +54,9 @@ export const coalRank: SimDef = {
         <Txt x={20} y={18} size={9} fill={C.slate} weight={700}>
           BURIAL COLUMN
         </Txt>
-        <rect x={20} y={25} width={90} height={190} fill="url(#heat)" />
+        <rect x={20} y={25} width={90} height={190} rx={4} fill="url(#heat)" />
+        <rect x={20} y={25} width={90} height={190} rx={4} fill={MAT.shale} opacity={0.22} />
+        <rect x={20} y={25} width={90} height={190} rx={4} fill="none" stroke="rgba(15,23,42,0.3)" />
         <defs>
           <linearGradient id="heat" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#fde68a" />
@@ -67,9 +71,10 @@ export const coalRank: SimDef = {
             </Txt>
           </g>
         ))}
-        <rect x={30} y={depthY - 5} width={70} height={10} fill={RANKS[o.rank]?.color ?? C.coal} stroke="white" />
-        <Arrow x1={65} y1={28} x2={65} y2={depthY - 7} color={C.ink} width={1.5} />
-        <Txt x={65} y={depthY + 20} size={9} anchor="middle" weight={700} mono>
+        <rect x={26} y={depthY - 6} width={78} height={12} rx={2} fill={RANKS[o.rank]?.color ?? C.coal} stroke="white" strokeWidth={1.5} filter="url(#f-shadow)" />
+        <rect x={26} y={depthY - 6} width={78} height={12} rx={2} fill={MAT.coal} opacity={0.35} />
+        <Arrow x1={40} y1={28} x2={40} y2={depthY - 8} color={C.ink} width={1.5} />
+        <Txt x={65} y={depthY < 190 ? depthY + 22 : depthY - 12} size={9} anchor="middle" weight={800} mono>
           {o.T.toFixed(0)} °C
         </Txt>
         <Txt x={190} y={18} size={9} fill={C.slate} weight={700}>
@@ -82,6 +87,7 @@ export const coalRank: SimDef = {
           return (
             <g key={r.name}>
               <rect x={190} y={ry(hi)} width={36} height={ry(lo) - ry(hi)} fill={r.color} opacity={active ? 1 : 0.35} stroke="white" />
+              {active && <rect x={188} y={ry(hi) - 1} width={40} height={ry(lo) - ry(hi) + 2} rx={2} fill="none" stroke={C.hazard} strokeWidth={2} filter="url(#f-glow)" />}
               <Txt x={232} y={(ry(hi) + ry(lo)) / 2 + 3} size={active ? 10 : 8} weight={active ? 800 : 500} fill={active ? C.ink : C.slate}>
                 {r.name}
               </Txt>
@@ -118,6 +124,11 @@ export const supergene: SimDef = {
     { key: "blanket", label: "Blanket grade", unit: "% Cu", digits: 2, tone: (v) => (v >= 2 ? "ok" : "info") },
     { key: "ef", label: "Enrichment factor", unit: "×", digits: 2 },
   ],
+  animated: true,
+  handles: [
+    { key: "Hl", axis: "y", at: (p) => [215, 40 + (p.Hl * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (d * (p.Hb + 60)) / (150 - d); }, color: "#0EA5E9" },
+    { key: "Hb", axis: "y", at: (p) => [265, 40 + ((p.Hl + p.Hb) * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (60 * d) / (150 - d) - p.Hl; }, color: "#1D4ED8" },
+  ],
   render: (p, o) => {
     const scale = 150 / (p.Hl + p.Hb + 60);
     const y0 = 40;
@@ -125,17 +136,19 @@ export const supergene: SimDef = {
     const y2 = y1 + p.Hb * scale;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={y0} fill="#e0f2fe" />
-        <path d={`M0 ${y0} Q100 ${y0 - 12} 200 ${y0} T400 ${y0}`} fill="#a16207" />
-        <rect x={0} y={y0} width={400} height={y1 - y0} fill="#c2410c" opacity={0.55} />
-        <rect x={0} y={y1} width={400} height={y2 - y1} fill="#1d4ed8" opacity={0.6} />
-        <rect x={0} y={y2} width={400} height={240 - y2} fill="#a8a29e" />
-        <line x1={0} x2={400} y1={y1} y2={y1} stroke={C.air} strokeWidth={2} strokeDasharray="6 4" />
+        <rect x={0} y={0} width={400} height={y0} fill={MAT.sky} />
+        <rect x={0} y={y0} width={400} height={y1 - y0} fill={MAT.soil} />
+        <rect x={0} y={y0} width={400} height={y1 - y0} fill="#c2410c" opacity={0.35} />
+        <rect x={0} y={y1} width={400} height={y2 - y1} fill={MAT.ore} />
+        <rect x={0} y={y1} width={400} height={y2 - y1} fill="#1d4ed8" opacity={0.55} />
+        <rect x={0} y={y2} width={400} height={240 - y2} fill={MAT.rock} />
+        <path d={`M0 ${y0} Q100 ${y0 - 12} 200 ${y0} T400 ${y0} L400 ${y0 + 4} L0 ${y0 + 4} Z`} fill="#65A30D" />
+        <Stream d={`M0 ${y1} L400 ${y1}`} color={C.air} width={2.5} speed={0.25} />
         <Txt x={392} y={y1 - 3} size={8} anchor="end" fill="#075985" weight={700}>
           WATER TABLE
         </Txt>
         {[60, 140, 220, 300].map((x) => (
-          <Arrow key={x} x1={x} y1={y0 + 6} x2={x} y2={y1 - 4} color="#0369a1" width={1.2} dash="3 3" />
+          <Stream key={x} d={`M${x} ${y0 + 6} L${x} ${y1 - 4}`} color="#BAE6FD" width={1.6} speed={0.35} />
         ))}
         <Txt x={10} y={y0 + 14} size={9} weight={800} fill="white">
           Leached cap / gossan (limonite, hematite) · {o.cap.toFixed(2)}% Cu
@@ -175,6 +188,7 @@ export const apparentDip: SimDef = {
     { key: "grad", label: "Gradient 1 in", digits: 2, format: (v) => (Number.isFinite(v) ? `1 in ${v.toFixed(2)}` : "level (∞)") },
     { key: "ratio", label: "α / δ", digits: 2 },
   ],
+  handles: [{ key: "beta", axis: "x", at: (p) => [100 + 80 * Math.cos(rad(p.beta)), 125 + 80 * Math.sin(rad(p.beta))], toValue: (x) => deg(Math.acos(clamp((x - 100) / 80, 0, 1))), color: "#3B82F6" }],
   render: (p, o) => {
     const cx = 100;
     const cy = 125;
@@ -185,7 +199,8 @@ export const apparentDip: SimDef = {
         <Txt x={20} y={20} size={9} weight={700} fill={C.slate}>
           PLAN VIEW
         </Txt>
-        <circle cx={cx} cy={cy} r={r} fill="#f1f5f9" stroke={C.line} />
+        <circle cx={cx} cy={cy} r={r} fill={MAT.sand} stroke="#A8A29E" />
+        <circle cx={cx} cy={cy} r={r} fill="white" opacity={0.45} />
         <line x1={cx - r} x2={cx + r} y1={cy} y2={cy} stroke={C.ink} strokeWidth={3} />
         <Txt x={cx + r - 2} y={cy - 5} size={8} anchor="end" weight={700}>
           STRIKE
@@ -205,15 +220,17 @@ export const apparentDip: SimDef = {
         <Txt x={215} y={20} size={9} weight={700} fill={C.slate}>
           VERTICAL SECTION ALONG SECTION LINE
         </Txt>
-        <rect x={215} y={40} width={170} height={170} fill="#f8fafc" stroke={C.line} />
-        <line x1={215} x2={385} y1={70} y2={70} stroke={C.soil} strokeWidth={2} />
+        <rect x={215} y={40} width={170} height={30} fill={MAT.sky} />
+        <rect x={215} y={70} width={170} height={140} fill={MAT.sand} />
+        <rect x={215} y={40} width={170} height={170} fill="none" stroke="#A8A29E" />
+        <line x1={215} x2={385} y1={70} y2={70} stroke="#65A30D" strokeWidth={3} />
         {(() => {
           const a = rad(o.alpha);
           const x2 = 385;
           const y2 = 70 + 170 * Math.tan(a);
           return (
             <g>
-              <polygon points={`215,70 ${x2},${Math.min(y2, 210)} ${x2},${Math.min(y2 + 12, 222)} 215,82`} fill={C.coal} />
+              <polygon points={`215,70 ${x2},${Math.min(y2, 210)} ${x2},${Math.min(y2 + 12, 210)} 215,82`} fill={MAT.coal} stroke="#0F172A" strokeWidth={0.8} />
               <path d={`M 265 70 A 50 50 0 0 1 ${215 + 50 * Math.cos(a)} ${70 + 50 * Math.sin(a)}`} fill="none" stroke={C.crit} strokeWidth={1.5} />
               <Txt x={272} y={66} size={10} fill={C.crit} weight={800} mono>
                 α = {o.alpha.toFixed(1)}°
@@ -249,6 +266,19 @@ export const faultSim: SimDef = {
     { key: "heave", label: "Heave (horizontal)", unit: "m", digits: 2 },
     { key: "zone", label: "Seam in plan", format: (v, o) => (v === 0 ? `Barren GAP ${o.heave.toFixed(1)} m` : `Double-seam OVERLAP ${o.heave.toFixed(1)} m`), tone: (v) => (v === 0 ? "warn" : "crit") },
   ],
+  handles: [
+    {
+      key: "d",
+      axis: "y",
+      at: (p, o) => {
+        const fxx = (y: number) => 170 + (y - 20) / Math.tan(rad(p.theta));
+        const yH = 120 + (p.type === 0 ? 1 : -1) * o.throwV * 2.4;
+        return [Math.min(fxx(yH) + 46, 388), yH + 5];
+      },
+      toValue: (y, p) => ((p.type === 0 ? y - 125 : 125 - y) / (2.4 * Math.sin(rad(p.theta)))),
+      color: "#3B82F6",
+    },
+  ],
   render: (p, o) => {
     const s = 2.4; // px per metre
     const t = Math.tan(rad(p.theta));
@@ -259,11 +289,14 @@ export const faultSim: SimDef = {
     const th = 10;
     return (
       <g>
-        <polygon points={`0,20 ${fx(20)},20 ${fx(240)},240 0,240`} fill="#e7e5e4" />
-        <polygon points={`${fx(20)},20 400,20 400,240 ${fx(240)},240`} fill="#d6d3d1" />
-        <rect x={0} y={yF} width={fx(yF)} height={th} fill={C.coal} />
-        <rect x={fx(yH)} y={yH} width={Math.max(0, 400 - fx(yH))} height={th} fill={C.coal} />
-        <line x1={fx(20)} y1={20} x2={fx(240)} y2={240} stroke={C.crit} strokeWidth={3} />
+        <rect x={0} y={0} width={400} height={20} fill={MAT.sky} />
+        <polygon points={`0,20 ${fx(20)},20 ${fx(240)},240 0,240`} fill={MAT.sand} />
+        <polygon points={`${fx(20)},20 400,20 400,240 ${fx(240)},240`} fill={MAT.shale} />
+        <polygon points={`${fx(20)},20 400,20 400,240 ${fx(240)},240`} fill={MAT.rockShade} />
+        <rect x={0} y={yF} width={fx(yF)} height={th} fill={MAT.coal} />
+        <rect x={fx(yH)} y={yH} width={Math.max(0, 400 - fx(yH))} height={th} fill={MAT.coal} />
+        <line x1={fx(20)} y1={20} x2={fx(240)} y2={240} stroke="#7F1D1D" strokeWidth={6} opacity={0.25} />
+        <line x1={fx(20)} y1={20} x2={fx(240)} y2={240} stroke={C.crit} strokeWidth={2.5} strokeDasharray="10 3" />
         <Txt x={fx(20) + 6} y={32} size={9} fill={C.crit} weight={800}>
           FAULT PLANE θ={p.theta}°
         </Txt>
@@ -274,9 +307,9 @@ export const faultSim: SimDef = {
           HANGING WALL {p.type === 0 ? "↓ (down-thrown)" : "↑ (up-thrown)"}
         </Txt>
         <Arrow x1={fx(yF) + 12} y1={yF + 2} x2={fx(yH) + 12} y2={yH + 2} color={C.tech} width={2} />
-        <Dim x1={fx(yF) - 30} y1={yF} x2={fx(yF) - 30} y2={yH} label={`T ${o.throwV.toFixed(1)}`} color={C.ink} />
+        <Dim x1={Math.min(fx(yF) - 30, 330)} y1={yF} x2={Math.min(fx(yF) - 30, 330)} y2={yH} label={`T ${o.throwV.toFixed(1)} m`} color={C.ink} side="left" />
         <line x1={fx(yF)} x2={fx(yH)} y1={p.type === 0 ? yH + th + 14 : yF + th + 14} y2={p.type === 0 ? yH + th + 14 : yF + th + 14} stroke={C.hazard} strokeWidth={3} />
-        <Txt x={(fx(yF) + fx(yH)) / 2} y={(p.type === 0 ? yH : yF) + th + 28} size={9} anchor="middle" weight={800} fill={C.hazard} mono>
+        <Txt x={clamp((fx(yF) + fx(yH)) / 2, 60, 340)} y={Math.min((p.type === 0 ? yH : yF) + th + 28, 214)} size={9} anchor="middle" weight={800} fill="#B45309" mono>
           heave {o.heave.toFixed(1)} m · {p.type === 0 ? "GAP" : "OVERLAP"}
         </Txt>
       </g>
@@ -353,17 +386,18 @@ export const rqdSim: SimDef = {
     }
     return (
       <g>
-        <rect x={28} y={25} width={347} height={170} rx={4} fill="#a16207" />
+        <rect x={28} y={25} width={347} height={170} rx={6} fill={MAT.wood} filter="url(#f-shadow)" />
         {[0, 1, 2].map((r) => (
           <g key={r}>
-            <rect x={35} y={40 + r * 50} width={330} height={30} fill="#78350f" />
+            <rect x={35} y={40 + r * 50} width={330} height={30} rx={3} fill="#5B3410" />
+            <rect x={35} y={40 + r * 50} width={330} height={4} rx={2} fill="#3B200A" opacity={0.6} />
             <Txt x={22} y={60 + r * 50} size={8} anchor="end" fill={C.slate} mono>
               {r}m
             </Txt>
           </g>
         ))}
         {rows.map((s, i) => (
-          <rect key={i} x={s.x + 0.8} y={44 + s.row * 50} width={Math.max(s.w - 1.6, 0.8)} height={22} rx={3} fill={s.ok ? "#cbd5e1" : "#94a3b8"} stroke={s.ok ? C.safe : C.crit} strokeWidth={s.ok ? 1.5 : 0.6} />
+          <rect key={i} x={s.x + 0.8} y={44 + s.row * 50} width={Math.max(s.w - 1.6, 0.8)} height={22} rx={3} fill={MAT.core} stroke={s.ok ? C.safe : C.crit} strokeWidth={s.ok ? 1.5 : 0.8} />
         ))}
         <Txt x={35} y={214} size={9} weight={700}>
           <tspan fill={C.safe}>■</tspan> piece ≥ 10 cm (counts) <tspan fill={C.crit}>■</tspan> &lt; 10 cm · lost core = empty tray
@@ -425,7 +459,7 @@ export const unfcSim: SimDef = {
             </Txt>
             {Array.from({ length: a.n }).map((_, j) => (
               <g key={j}>
-                <rect x={52 + j * 52} y={26 + i * 52} width={48} height={24} rx={4} fill={a.v === j + 1 ? a.color : "#f1f5f9"} stroke={a.color} />
+                <rect x={52 + j * 52} y={26 + i * 52} width={48} height={24} rx={6} fill={a.v === j + 1 ? a.color : "#f8fafc"} stroke={a.color} strokeWidth={a.v === j + 1 ? 0 : 1.2} filter={a.v === j + 1 ? "url(#f-shadow)" : undefined} />
                 <Txt x={76 + j * 52} y={42 + i * 52} size={8} anchor="middle" weight={700} fill={a.v === j + 1 ? "white" : C.slate}>
                   {`${a.k}${j + 1}`}
                 </Txt>
@@ -436,7 +470,8 @@ export const unfcSim: SimDef = {
             ))}
           </g>
         ))}
-        <rect x={270} y={30} width={115} height={150} rx={10} fill={o.valid ? (o.reserve ? C.safe : C.tech) : C.crit} />
+        <rect x={270} y={30} width={115} height={150} rx={14} fill={o.valid ? (o.reserve ? C.safe : C.tech) : C.crit} filter="url(#f-shadow)" />
+        <rect x={270} y={30} width={115} height={150} rx={14} fill={MAT.glass} />
         <Txt x={327} y={95} size={34} weight={900} anchor="middle" fill="white" mono>
           {String(o.code)}
         </Txt>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
-import { motion } from "framer-motion";
+import { animate, motion, useReducedMotion } from "framer-motion";
 import { Hand } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
@@ -62,15 +62,17 @@ export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; val
     const p = def.params.find((q) => q.key === h.key);
     const pt = toView(e);
     if (!p || !pt) return;
-    const v = snap(p, h.toValue(h.axis === "x" ? pt.x : pt.y, values));
+    const raw = h.toValue(h.axis === "x" ? pt.x : pt.y, values);
+    if (!Number.isFinite(raw)) return;
+    const v = snap(p, raw);
     if (v !== values[h.key]) onChange({ ...values, [h.key]: v });
   };
 
   return (
-    <div className="plate">
+    <div className="plate max-sm:-mx-1.5">
       <svg
         ref={svg}
-        viewBox="0 0 400 240"
+        viewBox="-24 -24 448 288"
         className={`w-full h-auto select-none ${drag !== null ? "cursor-grabbing" : ""}`}
         role="img"
         aria-label={def.title}
@@ -125,26 +127,46 @@ export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; val
   );
 }
 
+/** A live physics number that springs from its previous value to the new one (exact value at rest). */
+export function AnimatedNumber({ value, digits }: { value: number; digits: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const prev = useRef(value);
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    const from = prev.current;
+    prev.current = value;
+    const el = ref.current;
+    if (!el) return;
+    if (reduce || !Number.isFinite(value) || !Number.isFinite(from) || from === value) {
+      el.textContent = fmt(value, digits);
+      return;
+    }
+    const c = animate(from, value, { type: "spring", stiffness: 260, damping: 30, onUpdate: (v) => (el.textContent = fmt(v, digits)), onComplete: () => (el.textContent = fmt(value, digits)) });
+    return () => c.stop();
+  }, [value, digits, reduce]);
+  return <span ref={ref}>{fmt(value, digits)}</span>;
+}
+
 /** Instrument-cluster telemetry strip (always a dark display, in both themes). */
 export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
   const out = useMemo(() => def.compute(values), [def, values]);
   return (
-    <div className="rounded-2xl bg-[#0E1424] p-1.5 grid grid-cols-2 sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+    <div className="rounded-2xl bg-[#0E1424] p-1.5 flex overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] max-sm:-mx-1.5">
       {def.outputs.map((o, i) => {
         const v = out[o.key];
         const tone = o.tone ? o.tone(v, out, values) : "info";
         const text = o.format ? o.format(v, out, values) : fmt(v, o.digits ?? 2);
         const col = tone === "info" ? "#93C5FD" : toneColor(tone);
         return (
-          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0">
+          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-[132px] sm:min-w-0 shrink-0 sm:shrink">
             <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight truncate" title={o.label}>
               {o.label}
             </div>
             <div className="readout text-[14px] font-bold flex items-center gap-1.5 mt-0.5 text-[#F1F5F9] min-w-0">
               <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />
-              <motion.span key={text} initial={{ opacity: 0.4, y: -2 }} animate={{ opacity: 1, y: 0 }} className="truncate" style={{ color: tone === "info" ? "#F1F5F9" : col }}>
-                {text}
-              </motion.span>
+              <span className="truncate" style={{ color: tone === "info" ? "#F1F5F9" : col }}>
+                {o.format ? text : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
+              </span>
               {o.unit && !o.format && <span className="text-[#8B97AE] font-medium text-[11px] shrink-0">{o.unit}</span>}
             </div>
           </div>
@@ -204,7 +226,7 @@ export function SimView({ def, values, onChange, overlay, disabled }: { def: Sim
     <div className="space-y-3">
       <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} />
       <Readouts def={def} values={values} />
-      <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)]">
+      <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
         <Controls def={def} values={values} onChange={onChange} disabled={disabled} />
       </div>
       {def.caption && <p className="text-[12px] text-slate-500 leading-relaxed">{def.caption}</p>}

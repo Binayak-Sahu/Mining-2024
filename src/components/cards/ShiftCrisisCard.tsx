@@ -69,7 +69,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {stage.telemetry.map((t) => (
             <div key={t.label} className="rounded-xl bg-[#0E1424] px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <div className="text-[9.5px] uppercase tracking-[0.1em] font-semibold text-[#8B97AE]">{t.label}</div>
+              <div className="text-[11px] font-semibold text-[#8B97AE]">{t.label}</div>
               <div className="readout text-sm font-bold" style={{ color: toneColor(t.tone) }}>
                 {t.value}
               </div>
@@ -86,7 +86,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
 
       {!finished ? (
         <div className="space-y-2">
-          <div className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-red-600">
+          <div className="text-[13px] font-extrabold text-red-600">
             {cur.label} · {phase + 1}/{stage.phases.length}
           </div>
           <p className="font-extrabold text-[17px] text-slate-900">{cur.prompt}</p>

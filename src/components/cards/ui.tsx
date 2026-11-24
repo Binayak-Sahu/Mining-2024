@@ -1,19 +1,19 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { StageKind } from "@/lib/types";
 import { BookOpen, FlaskConical, Eye, Sigma, Calculator, Siren, Scale, CheckCircle2, XCircle } from "lucide-react";
 import { sfx } from "@/lib/sfx";
 
 export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; Icon: typeof BookOpen }> = {
-  theory: { label: "Stage 1 · Field Theory", short: "Field Theory", color: "#3B82F6", Icon: BookOpen },
-  sim: { label: "Stage 2 · Intuition Lab", short: "Intuition Lab", color: "#10B981", Icon: FlaskConical },
-  predict: { label: "Stage 2 · Predict the Outcome", short: "Predict", color: "#10B981", Icon: Eye },
-  equation: { label: "Stage 3 · Equation Forge", short: "Equation Forge", color: "#8B5CF6", Icon: Sigma },
-  numeric: { label: "Stage 4 · Quantitative Workbench", short: "Workbench", color: "#F59E0B", Icon: Calculator },
-  crisis: { label: "Stage 5 · Shift Crisis", short: "Shift Crisis", color: "#EF4444", Icon: Siren },
-  swipe: { label: "Stage 5 · Statutory Swipe", short: "Statutory Swipe", color: "#EF4444", Icon: Scale },
+  theory: { label: "Field theory", short: "Field Theory", color: "#3B82F6", Icon: BookOpen },
+  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#10B981", Icon: FlaskConical },
+  predict: { label: "Predict the outcome", short: "Predict", color: "#10B981", Icon: Eye },
+  equation: { label: "Equation forge", short: "Equation Forge", color: "#8B5CF6", Icon: Sigma },
+  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F59E0B", Icon: Calculator },
+  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#EF4444", Icon: Siren },
+  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#EF4444", Icon: Scale },
 };
 
 /**
@@ -24,18 +24,18 @@ export function CardFrame({ kind, title, children, footer }: { kind: StageKind; 
   const m = STAGE_META[kind];
   return (
     <>
-      <div className="card p-4 sm:p-7 overflow-hidden relative">
+      <div className="card p-3.5 sm:p-7 overflow-hidden relative">
         <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${m.color}, ${m.color}55)` }} aria-hidden />
-        <div className="flex items-center gap-2 mb-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em]" style={{ color: m.color, background: `${m.color}18` }}>
+        <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 sm:py-1 text-[12.5px] font-bold" style={{ color: m.color, background: `${m.color}18` }}>
             <span className="inline-flex w-5 h-5 rounded-full items-center justify-center text-white" style={{ background: m.color }}>
               <m.Icon size={11} strokeWidth={2.6} />
             </span>
             {m.label}
           </span>
         </div>
-        <h2 className="text-[22px] sm:text-[28px] leading-[1.15] font-extrabold tracking-[-0.02em] text-slate-900 mb-4 text-balance">{title}</h2>
-        <div className="space-y-4">{children}</div>
+        <h2 className="text-[20px] sm:text-[28px] leading-[1.15] font-extrabold tracking-[-0.02em] text-slate-900 mb-2.5 sm:mb-4 text-balance">{title}</h2>
+        <div className="space-y-3 sm:space-y-4">{children}</div>
       </div>
       <ActionBar>{footer}</ActionBar>
     </>
@@ -127,7 +127,7 @@ export function optionClass(state: "idle" | "right" | "wrong" | "dim"): string {
   const base = "tile-3d w-full text-left px-4 py-3 text-[14.5px] font-semibold leading-snug";
   if (state === "right") return `${base} !border-emerald-500 !bg-emerald-50 !shadow-[0_3px_0_#10B981] text-emerald-900`;
   if (state === "wrong") return `${base} !border-red-500 !bg-red-50 !shadow-[0_3px_0_#EF4444] text-red-900`;
-  if (state === "dim") return `${base} opacity-45 text-slate-500`;
+  if (state === "dim") return `${base} !shadow-none !border-slate-100 text-slate-500`;
   return `${base} text-slate-800 hover:!border-blue-400`;
 }
 
@@ -136,14 +136,28 @@ export function OptionKey({ i, state }: { i: number; state: "idle" | "right" | "
   return <span className={`readout mr-3 inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg border-2 text-[12px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
 }
 
+/**
+ * Story copy. On phones it collapses to three lines (with a "Read more" toggle) so the diagram and its
+ * controls stay on the first screen; from the small breakpoint up every paragraph shows in full.
+ */
 export function Lines({ lines }: { lines: string[] }) {
+  const [open, setOpen] = useState(false);
+  const long = lines.join(" ").length > 150;
   return (
-    <div className="space-y-2">
-      {lines.map((l, i) => (
-        <p key={i} className="text-[16px] leading-relaxed text-slate-700">
-          {l}
-        </p>
-      ))}
+    <div>
+      <p className={`sm:hidden text-[15px] leading-[1.5] text-slate-700 ${open ? "" : "line-clamp-3"}`}>{lines.join(" ")}</p>
+      {long && (
+        <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="sm:hidden mt-0.5 min-h-0 py-1 text-[13px] font-bold text-blue-600">
+          {open ? "Show less" : "Read more"}
+        </button>
+      )}
+      <div className="hidden sm:block space-y-2">
+        {lines.map((l, i) => (
+          <p key={i} className="text-[16px] leading-relaxed text-slate-700">
+            {l}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }

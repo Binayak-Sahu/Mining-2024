@@ -57,7 +57,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
   if (phase === "intuition") {
     return (
       <CardFrame kind="equation" title={stage.title} footer={<PrimaryButton tone="violet" onClick={() => setPhase("forge")}>I feel the proportionality → Forge it</PrimaryButton>}>
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-violet-600">Physical proportionality first</p>
+        <p className="text-[13px] font-extrabold text-violet-600">Physical proportionality first</p>
         <div className="space-y-2">
           {stage.intuition.map((s, i) => (
             <motion.div

@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Access selection: adit vs incline vs shaft ---------------- */
 
@@ -27,6 +28,7 @@ export const accessSim: SimDef = {
     { key: "best", label: "Preferred access", format: (v) => ["ADIT (drift from hillside)", "INCLINE (belt conveyor)", "VERTICAL SHAFT (winding)"][v], tone: () => "ok" },
   ],
   caption: "Indicative cost model (₹ crore): incline ≈ 0.08/m + belt drives; shaft ≈ fixed headgear + 0.25/m sinking & lining + winding capacity. Adit only where the seam outcrops above drainage.",
+  handles: [{ key: "D", axis: "y", at: (p) => [372, 40 + (p.D * 170) / 900 + 3], toValue: (y) => ((y - 43) * 900) / 170, color: "#0F172A" }],
   render: (p, o) => {
     const surf = 40;
     const scale = 170 / 900;
@@ -38,12 +40,14 @@ export const accessSim: SimDef = {
     return (
       <g>
         {p.hill ? (
-          <path d={`M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 0 L0 0 Z`} fill="#e0f2fe" />
+          <path d={`M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 0 L0 0 Z`} fill={MAT.sky} />
         ) : (
-          <rect x={0} y={0} width={400} height={surf} fill="#e0f2fe" />
+          <rect x={0} y={0} width={400} height={surf} fill={MAT.sky} />
         )}
-        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 240 L0 240 Z` : `M0 ${surf} L400 ${surf} L400 240 L0 240 Z`} fill="#e7e5e4" />
-        <rect x={0} y={yS} width={400} height={6} fill={C.coal} />
+        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 240 L0 240 Z` : `M0 ${surf} L400 ${surf} L400 240 L0 240 Z`} fill={MAT.sand} />
+        <rect x={0} y={yS + 6} width={400} height={240 - yS} fill={MAT.shale} />
+        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25}` : `M0 ${surf} L400 ${surf}`} fill="none" stroke="#65A30D" strokeWidth={3} />
+        <rect x={0} y={yS} width={400} height={6} fill={MAT.coal} />
         {p.hill ? (
           <g>
             <line x1={120} y1={surf + 55} x2={300} y2={surf + 55} stroke={C.safe} strokeWidth={4} />
@@ -54,9 +58,10 @@ export const accessSim: SimDef = {
         ) : (
           <g>
             <line x1={Math.max(xStart, 0)} y1={xStart < 0 ? yS - (xEnd - 0) * Math.tan(rad(p.ang)) : surf} x2={xEnd} y2={yS} stroke={o.best === 1 ? C.safe : C.slate} strokeWidth={4} />
-            <rect x={xShaft + 30} y={surf - 18} width={14} height={18} fill={C.ink} />
+            <path d={`M${xShaft + 26} ${surf} L${xShaft + 31} ${surf - 22} L${xShaft + 43} ${surf - 22} L${xShaft + 48} ${surf}`} fill="none" stroke="#334155" strokeWidth={2.5} />
+            <circle cx={xShaft + 37} cy={surf - 22} r={4} fill={MAT.metalH} stroke="#334155" />
             <line x1={xShaft + 37} y1={surf} x2={xShaft + 37} y2={yS} stroke={o.best === 2 ? C.safe : C.slate} strokeWidth={6} />
-            <Txt x={xShaft + 30} y={surf - 22} size={8} weight={700} fill={C.ink}>
+            <Txt x={xShaft + 52} y={surf - 14} size={8} weight={700} fill={C.ink}>
               SHAFT
             </Txt>
             <Txt x={Math.max(xStart, 0) + 6} y={surf - 4} size={8} weight={700} fill={C.ink}>
@@ -122,7 +127,9 @@ export const sinkingSim: SimDef = {
     { key: "perMonth", label: "Sinking rate", unit: "m/month", digits: 0, tone: (v) => (v >= 70 ? "ok" : v >= 45 ? "warn" : "crit") },
   ],
   caption: "Monthly rate = rounds/day × advance × 26 working days × 0.6 availability (dewatering, inspections, shift changes).",
-  render: (p, o) => {
+  animated: true,
+  render: (p, o, t) => {
+    const ky = 160 + 28 * Math.sin(t * 1.3);
     const segs = [
       { k: "drill", label: "Drill", c: C.tech },
       { k: "blast", label: "Charge·Blast·Vent", c: C.crit },
@@ -135,22 +142,25 @@ export const sinkingSim: SimDef = {
     const sw = 40 + p.dia * 6;
     return (
       <g>
-        <rect x={20} y={20} width={110} height={205} fill="#e7e5e4" />
-        <rect x={75 - sw / 2} y={20} width={sw} height={205} fill="#f8fafc" />
-        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill={C.slate} />
-        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill={C.slate} />
+        <rect x={20} y={20} width={110} height={205} fill={MAT.rock} />
+        <rect x={20} y={20} width={110} height={205} fill={MAT.rockShade} />
+        <rect x={75 - sw / 2} y={20} width={sw} height={205} fill="#F1F5F9" />
+        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
+        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
+        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
+        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
         {[0, 1, 2].map((d) => (
-          <rect key={d} x={75 - sw / 2 + 2} y={120 + d * 12} width={sw - 4} height={4} fill={C.ink} />
+          <rect key={d} x={75 - sw / 2 + 2} y={120 + d * 12} width={sw - 4} height={4} rx={1} fill={MAT.metal} stroke="#334155" strokeWidth={0.6} />
         ))}
         <Txt x={75} y={116} size={7} anchor="middle" weight={700}>
           GALLOWAY STAGE
         </Txt>
-        <line x1={75} y1={20} x2={75} y2={185} stroke={C.ink} />
-        <rect x={68} y={185} width={14} height={14} fill={C.hazard} />
-        <Txt x={75} y={180} size={7} anchor="middle">
+        <line x1={75} y1={20} x2={75} y2={ky} stroke="#334155" strokeWidth={1.2} />
+        <path d={`M68 ${ky} h14 l-2 14 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={1} />
+        <Txt x={86} y={ky + 10} size={7} weight={700}>
           kibble
         </Txt>
-        <path d={`M ${75 - sw / 2} 215 L ${75 + sw / 2} 215 L ${75 + sw / 2} 225 L ${75 - sw / 2} 225 Z`} fill={C.rock} />
+        <path d={`M ${75 - sw / 2} 215 L ${75 + sw / 2} 215 L ${75 + sw / 2} 225 L ${75 - sw / 2} 225 Z`} fill={MAT.goaf} />
         <Txt x={75} y={237} size={7} anchor="middle" fill={C.slate}>
           sump / shaft bottom
         </Txt>
@@ -231,16 +241,19 @@ export const freezeSim: SimDef = {
     const rOut = (p.r + e) * k;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#fef9c3" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
+        <rect x={0} y={0} width={400} height={240} fill="#FEF9C3" opacity={0.45} />
         <Txt x={10} y={16} size={9} weight={700} fill={C.slate}>
           PLAN AT AQUIFER BASE ({p.h} m)
         </Txt>
         <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={o.ok ? "#bae6fd" : "#fecaca"} stroke={o.ok ? C.tech : C.crit} strokeWidth={2} />
-        <circle cx={cx} cy={cy} r={rIn} fill="white" stroke={C.ink} strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={MAT.glass} />
+        <circle cx={cx} cy={cy} r={rIn} fill="#F8FAFC" stroke={C.ink} strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={rIn - 3} fill="none" stroke="#9CA3AF" strokeWidth={3} />
         {Array.from({ length: o.n }).map((_, i) => {
           const a = (2 * Math.PI * i) / Math.max(o.n, 1);
           const R = o.Rf * k;
-          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={2.2} fill={C.tech} />;
+          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={2.6} fill="#E0F2FE" stroke="#0369A1" strokeWidth={1.2} filter="url(#f-glow)" />;
         })}
         <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={700}>
           SHAFT
@@ -349,12 +362,13 @@ export const burnCutSim: SimDef = {
     const phase = (t % 4) / 4 * 7;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e7e5e4" />
-        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill="#a8a29e" stroke={C.ink} strokeWidth={1.5} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
+        <rect x={0} y={0} width={400} height={240} fill="#57534E" opacity={0.35} />
+        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill={MAT.shale} stroke={C.ink} strokeWidth={1.5} />
         <circle cx={ccx} cy={ccy} r={Math.max(3, (p.phi / 1000) * k * 2.2)} fill="white" stroke={C.ink} strokeWidth={1.5} />
         {holes.map((hh, i) => {
           const fired = phase >= hh.d;
-          return <circle key={i} cx={hh.x} cy={hh.y} r={3.2} fill={fired ? C.crit : C.ink} opacity={fired ? 0.9 : 1} />;
+          return <circle key={i} cx={hh.x} cy={hh.y} r={fired ? 4 : 3.2} fill={fired ? "#F97316" : C.ink} stroke={fired ? "#FDE68A" : "none"} filter={fired ? "url(#f-glow)" : undefined} />;
         })}
         <Txt x={cx} y={228} size={8} anchor="middle" fill={C.slate}>
           Firing order by delay: cut → cut-spreaders → easers → perimeter → lifters
@@ -413,8 +427,11 @@ export const cuttingSim: SimDef = {
     { key: "ok", label: "Within machine envelope?", format: (v, o) => (v ? `Yes (≤ ${o.max} MPa)` : `NO — exceeds ${o.max} MPa; pick wear/vibration`), tone: (v) => (v ? "ok" : "crit") },
   ],
   caption: "ICR = k·P / SE with energy-transfer ratio k; SE ≈ 0.11 × UCS (kWh/m³) is an indicative linear fit for sedimentary rocks.",
-  render: (p, o) => {
+  animated: true,
+  handles: [{ key: "ucs", axis: "x", at: (p) => [30 + (p.ucs / 250) * 340, 36], toValue: (x) => ((x - 30) / 340) * 250, color: "#EF4444" }],
+  render: (p, o, t) => {
     const sx = (u: number) => 30 + (u / 250) * 340;
+    const spin = (t * 240) % 360;
     return (
       <g>
         <Txt x={30} y={20} size={9} weight={700} fill={C.slate}>
@@ -446,9 +463,12 @@ export const cuttingSim: SimDef = {
           {p.ucs} MPa
         </Txt>
         {/* machine schematic */}
-        <rect x={40} y={180} width={110} height={30} rx={4} fill={C.hazard} />
-        <circle cx={60} cy={215} r={8} fill={C.ink} />
-        <circle cx={130} cy={215} r={8} fill={C.ink} />
+        <rect x={40} y={180} width={110} height={30} rx={5} fill={C.hazard} stroke="#B45309" filter="url(#f-shadow)" />
+        <rect x={44} y={183} width={102} height={8} rx={3} fill={MAT.glass} />
+        <rect x={40} y={208} width={110} height={10} rx={5} fill={MAT.steel} />
+        {[52, 72, 92, 112, 132].map((x) => (
+          <circle key={x} cx={x} cy={213} r={3.5} fill="#94A3B8" />
+        ))}
         {p.m === 2 ? (
           <g>
             <rect x={150} y={160} width={14} height={60} fill={C.ink} />
@@ -459,10 +479,24 @@ export const cuttingSim: SimDef = {
         ) : (
           <g>
             <line x1={140} y1={188} x2={p.m === 0 ? 205 : 190} y2={p.m === 0 ? 160 : 190} stroke={C.ink} strokeWidth={8} />
-            {p.m === 0 ? <circle cx={210} cy={156} r={12} fill={C.slate} stroke={C.ink} strokeWidth={2} /> : <rect x={186} y={168} width={20} height={44} rx={8} fill={C.slate} stroke={C.ink} strokeWidth={2} />}
+            {p.m === 0 ? (
+              <g transform={`rotate(${spin.toFixed(0)} 210 156)`}>
+                <circle cx={210} cy={156} r={12} fill={MAT.metal} stroke={C.ink} strokeWidth={2} />
+                {[0, 60, 120, 180, 240, 300].map((a) => (
+                  <path key={a} d="M210 141 l3 4 h-6 z" fill={C.ink} transform={`rotate(${a} 210 156)`} />
+                ))}
+              </g>
+            ) : (
+              <g>
+                <rect x={186} y={168} width={20} height={44} rx={8} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} />
+                {[0, 1, 2, 3].map((i) => (
+                  <line key={i} x1={186} x2={206} y1={172 + ((i * 11 + t * 30) % 40)} y2={176 + ((i * 11 + t * 30) % 40)} stroke={C.ink} strokeWidth={1.5} />
+                ))}
+              </g>
+            )}
           </g>
         )}
-        <rect x={225} y={150} width={155} height={75} fill="#d6d3d1" />
+        <rect x={225} y={150} width={155} height={75} rx={8} fill="#F1F5F9" stroke="#CBD5E1" />
         <Txt x={232} y={170} size={9} weight={800}>
           ICR = k·P / SE
         </Txt>

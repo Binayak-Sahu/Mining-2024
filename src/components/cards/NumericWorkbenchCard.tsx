@@ -70,7 +70,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
       {def && <SimCanvas def={def} values={defaults(def, stage.params)} />}
 
       <div>
-        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Givens — tap to insert symbol</div>
+        <div className="text-[12.5px] font-bold text-slate-500 mb-1">Givens — tap to insert symbol</div>
         <div className="flex flex-wrap gap-1.5">
           {stage.givens.map((g) => (
             <button
@@ -95,7 +95,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
       </div>
 
       <div className="rounded-2xl bg-[#0E1424] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8B97AE] mb-2">
+        <div className="flex items-center gap-2 text-[12.5px] font-bold text-[#8B97AE] mb-2">
           <Calculator size={12} /> Scratch calculator · trig in degrees · sqrt ln log exp ^
         </div>
         <input

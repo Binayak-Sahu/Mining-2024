@@ -171,6 +171,7 @@ export const failureSim: SimDef = {
     { key: "scm", label: "HB rock-mass σcm = σci·s^a", unit: "MPa", digits: 2 },
     { key: "mb", label: "mb / s", format: (v, o) => `${v.toFixed(2)} / ${o.s.toExponential(1)}` },
   ],
+  handles: [{ key: "s3", axis: "x", at: (p) => [40 + (p.s3 / 30) * 340, 202], toValue: (x) => ((x - 40) / 340) * 30, color: "#64748B" }],
   render: (p, o) => {
     const ymax = Math.max(60, Math.ceil(((o.scMC + 30 * o.Nphi) * 1.05) / 20) * 20, Math.ceil((30 + p.sci * Math.pow((hb(p.gsi, p.mi).mb * 30) / p.sci + hb(p.gsi, p.mi).s, hb(p.gsi, p.mi).a)) / 20) * 20);
     const h = hb(p.gsi, p.mi);
@@ -178,11 +179,17 @@ export const failureSim: SimDef = {
       <Plot x={40} y={15} w={340} h={195} xmin={0} xmax={30} ymin={0} ymax={ymax} xlabel="σ3 (MPa)" ylabel="σ1 (MPa)">
         {(sx, sy) => (
           <g>
-            <polyline points={sample((s3) => s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a), 0, 30, 60, sx, sy)} fill="none" stroke={C.crit} strokeWidth={2.5} />
+            <polygon points={`${sx(0)},${sy(0)} ${sample((s3) => Math.min(ymax, s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a)), 0, 30, 60, sx, sy)} ${sx(30)},${sy(0)}`} fill={C.safe} opacity={0.1} />
+            <polygon points={`${sx(0)},${sy(ymax)} ${sample((s3) => Math.min(ymax, s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a)), 0, 30, 60, sx, sy)} ${sx(30)},${sy(ymax)}`} fill={C.crit} opacity={0.07} />
+            <polyline points={sample((s3) => s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a), 0, 30, 60, sx, sy)} fill="none" stroke={C.crit} strokeWidth={2.5} strokeLinejoin="round" />
             <polyline points={sample((s3) => o.scMC + s3 * o.Nphi, 0, 30, 2, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} strokeDasharray="6 4" />
             <line x1={sx(p.s3)} x2={sx(p.s3)} y1={sy(0)} y2={sy(ymax)} stroke={C.slate} strokeDasharray="2 3" />
-            <circle cx={sx(p.s3)} cy={sy(o.hb)} r={4} fill={C.crit} />
-            <circle cx={sx(p.s3)} cy={sy(o.mc)} r={4} fill={C.tech} />
+            <circle cx={sx(p.s3)} cy={sy(o.hb)} r={9} fill={C.crit} opacity={0.15} />
+            <circle cx={sx(p.s3)} cy={sy(o.hb)} r={4.5} fill={C.crit} stroke="white" strokeWidth={1.5} />
+            <circle cx={sx(p.s3)} cy={sy(o.mc)} r={4.5} fill={C.tech} stroke="white" strokeWidth={1.5} />
+            <Txt x={sx(2)} y={sy(0) - 8} size={8} weight={700} fill="#047857">
+              stable (below envelope)
+            </Txt>
             <Txt x={sx(12)} y={sy(ymax) + 14} size={9} weight={800} fill={C.crit}>
               — Hoek–Brown (curved)
             </Txt>
@@ -267,6 +274,7 @@ export const rmrSim: SimDef = {
           const el = (
             <g key={pt.k}>
               <rect x={x} y={30} width={pt.v * k} height={28} fill={pt.c} />
+              <rect x={x} y={30} width={pt.v * k} height={10} fill={MAT.glass} />
               {pt.v * k > 24 && (
                 <Txt x={x + 3} y={48} size={8} fill="white" weight={800}>
                   {pt.v}
@@ -284,7 +292,7 @@ export const rmrSim: SimDef = {
             <line x1="0" y1="0" x2="0" y2="6" stroke={C.crit} strokeWidth="3" />
           </pattern>
         </defs>
-        <rect x={30} y={30} width={340} height={28} fill="none" stroke={C.ink} />
+        <rect x={30} y={30} width={340} height={28} rx={2} fill="none" stroke={C.ink} />
         {parts.map((pt, i) => (
           <g key={pt.k}>
             <rect x={30 + i * 70} y={66} width={9} height={9} fill={pt.c} />
@@ -298,7 +306,7 @@ export const rmrSim: SimDef = {
         </Txt>
         {[0, 20, 40, 60, 80].map((v, i) => (
           <g key={v}>
-            <rect x={30 + v * 3.4} y={108} width={68} height={18} fill={["#991b1b", "#ef4444", "#f59e0b", "#10b981", "#047857"][i]} opacity={o.cls === 4 - i ? 1 : 0.35} />
+            <rect x={30 + v * 3.4} y={108} width={68} height={18} fill={["#991b1b", "#ef4444", "#f59e0b", "#10b981", "#047857"][i]} opacity={o.cls === 4 - i ? 1 : 0.35} filter={o.cls === 4 - i ? "url(#f-shadow)" : undefined} />
             <Txt x={64 + v * 3.4} y={121} size={8} anchor="middle" fill="white" weight={800}>
               {["V", "IV", "III", "II", "I"][i]}
             </Txt>
@@ -589,6 +597,19 @@ export const subsidenceSim: SimDef = {
     { key: "ratio", label: "W / Wc", digits: 2 },
     { key: "cls", label: "Panel", format: (v) => ["Sub-critical", "Critical", "Super-critical"][v], tone: (v) => (v === 0 ? "ok" : v === 1 ? "warn" : "crit") },
   ],
+  handles: [
+    {
+      key: "W",
+      axis: "x",
+      at: (p, o) => [200 + ((p.W / 2) * 185) / (p.W / 2 + 1.4 * o.r), 209],
+      toValue: (x, p) => {
+        const r = subsidenceSim.compute(p).r;
+        const d = clamp(x - 200, 1, 184);
+        return (2 * 1.4 * r * d) / (185 - d);
+      },
+      color: "#F59E0B",
+    },
+  ],
   render: (p, o) => {
     const span = p.W / 2 + 1.4 * o.r;
     const kx = 185 / span;
@@ -604,14 +625,30 @@ export const subsidenceSim: SimDef = {
     const panelY = 205;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={surfY} fill="#e0f2fe" />
-        <polygon points={polyline([[0, surfY], ...pts, [400, surfY], [400, 240], [0, 240]])} fill="#e7e5e4" />
+        <rect x={0} y={0} width={400} height={surfY} fill={MAT.sky} />
+        <polygon points={polyline([[0, surfY], ...pts, [400, surfY], [400, 240], [0, 240]])} fill={MAT.sand} />
+        <rect x={0} y={surfY + 60} width={400} height={40} fill={MAT.shale} opacity={0.8} />
+        <rect x={0} y={surfY + 110} width={400} height={30} fill={MAT.sand} opacity={0.7} />
+        <polyline points={polyline(pts)} fill="none" stroke="#65A30D" strokeWidth={4} />
+        {[-0.9, -0.45, 0, 0.45, 0.9].map((f) => {
+          const x = f * span * 0.9;
+          const y = surfY + S(x) * ky;
+          const slope = ((S(x + 1) - S(x - 1)) / 2) * ky * kx === 0 ? 0 : (Math.atan2((S(x + 1) - S(x - 1)) * ky, 2 * kx) * 180) / Math.PI;
+          return (
+            <g key={f} transform={`translate(${sx(x).toFixed(1)} ${y.toFixed(1)}) rotate(${(slope * 4).toFixed(1)})`}>
+              <rect x={-6} y={-10} width={12} height={10} fill="#F8FAFC" stroke="#475569" strokeWidth={0.8} />
+              <path d="M-8 -10 L0 -16 L8 -10 Z" fill="#B91C1C" />
+            </g>
+          );
+        })}
         <line x1={0} x2={400} y1={surfY} y2={surfY} stroke={C.slate} strokeDasharray="3 3" />
         <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={2.5} />
-        <rect x={sx(-p.W / 2)} y={panelY} width={p.W * kx} height={8} fill={p.meth ? C.sand : "#57534e"} stroke={C.ink} />
+        <rect x={sx(-p.W / 2)} y={panelY} width={p.W * kx} height={8} fill={p.meth ? C.sand : MAT.goaf} stroke={C.ink} />
+        <rect x={0} y={panelY} width={sx(-p.W / 2)} height={8} fill={MAT.coal} />
+        <rect x={sx(p.W / 2)} y={panelY} width={400 - sx(p.W / 2)} height={8} fill={MAT.coal} />
         <line x1={sx(-p.W / 2)} y1={panelY} x2={sx(-p.W / 2 - o.r)} y2={surfY} stroke={C.tech} strokeDasharray="4 3" />
         <line x1={sx(p.W / 2)} y1={panelY} x2={sx(p.W / 2 + o.r)} y2={surfY} stroke={C.tech} strokeDasharray="4 3" />
-        <Txt x={sx(p.W / 2 + o.r) + 4} y={surfY - 6} size={8} fill={C.tech}>
+        <Txt x={Math.min(sx(p.W / 2 + o.r) + 4, 396)} y={surfY - 6} size={8} fill={C.tech} anchor={sx(p.W / 2 + o.r) + 54 > 396 ? "end" : "start"}>
           limit of draw
         </Txt>
         <Txt x={200} y={panelY + 22} size={8} anchor="middle" weight={700}>

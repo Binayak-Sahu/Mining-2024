@@ -73,7 +73,7 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
             exit={{ opacity: 0 }}
             className="rounded-2xl bg-[#0E1424] text-[#F1F5F9] p-4 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]"
           >
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#93C5FD]">
+            <div className="text-[13px] font-bold text-[#93C5FD]">
               {active + 1} · {stage.hotspots[active].title}
             </div>
             <p className="text-[14.5px] mt-1.5 leading-relaxed text-[#CBD5E1]">{stage.hotspots[active].body}</p>
@@ -82,9 +82,9 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
       </AnimatePresence>
 
       {stage.chain && (
-        <div className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] p-3.5">
+        <div className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] p-3 sm:p-3.5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">Causal chain</span>
+            <span className="text-[13px] font-bold text-slate-600">Causal chain</span>
             <button type="button" onClick={playChain} className="btn-press inline-flex items-center justify-center gap-1 min-w-[48px] rounded-lg bg-blue-500 text-white px-2.5 py-1 text-xs font-extrabold shadow-[0_2px_0_#1D4ED8]">
               <Play size={12} /> {chainStep < 0 ? "Play" : "Replay"}
             </button>
@@ -93,16 +93,17 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
             {stage.chain.map((c, i) => (
               <motion.div
                 key={i}
-                animate={{ opacity: chainStep >= i ? 1 : 0.25, x: chainStep >= i ? 0 : -4 }}
+                animate={{ x: chainStep >= i ? 0 : -3 }}
+                transition={{ type: "spring", stiffness: 400, damping: 26 }}
                 className="flex items-start gap-2 text-sm"
               >
                 <span
                   className="readout mt-0.5 shrink-0 w-5 h-5 rounded-full text-[10px] flex items-center justify-center text-white"
-                  style={{ background: chainStep >= i ? (i === stage.chain!.length - 1 ? C.crit : C.tech) : C.rock }}
+                  style={{ background: chainStep >= i ? (i === stage.chain!.length - 1 ? C.crit : C.tech) : "var(--n-400)" }}
                 >
                   {i + 1}
                 </span>
-                <span className="text-slate-700 leading-snug text-[14.5px]">{c}</span>
+                <span className={`leading-snug text-[14.5px] transition-colors ${chainStep >= i ? "text-slate-900 font-semibold" : "text-slate-500"}`}>{c}</span>
               </motion.div>
             ))}
           </div>
@@ -110,7 +111,7 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
       )}
 
       <div className="space-y-2">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500 flex items-center gap-1.5">
+        <div className="text-[13px] font-bold text-slate-600 flex items-center gap-1.5">
           <Lightbulb size={12} /> Tap to unpack first principles
         </div>
         {stage.drawers.map((d, i) => (

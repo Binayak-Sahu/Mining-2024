@@ -29,7 +29,7 @@ export function PredictOutcomeCard({ stage, onMistake, onDone }: CardProps<Predi
         <div className="space-y-2">
           <SimCanvas def={def} values={values} />
           {revealed && <Readouts def={def} values={values} />}
-          {!revealed && <p className="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-bold">Before state — commit to a prediction to run the simulation</p>}
+          {!revealed && <p className="text-[13px] text-slate-500 font-bold">Before state — commit to a prediction to run the simulation</p>}
         </div>
       )}
       <p className="font-extrabold text-[17px] text-slate-900">{stage.question}</p>

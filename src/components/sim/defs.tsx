@@ -19,6 +19,10 @@ export const MAT = {
   heat: "url(#grad-heat)",
   water: "url(#grad-water)",
   rockShade: "url(#grad-rock-shade)",
+  core: "url(#grad-core)",
+  wood: "url(#grad-wood)",
+  steel: "url(#grad-steel)",
+  glass: "url(#grad-glass)",
   shadow: "url(#f-shadow)",
   glow: "url(#f-glow)",
 } as const;
@@ -112,6 +116,24 @@ export function SvgDefs() {
         <linearGradient id="grad-rock-shade" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#000" stopOpacity="0" />
           <stop offset="1" stopColor="#000" stopOpacity="0.22" />
+        </linearGradient>
+        <linearGradient id="grad-core" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#E2E8F0" />
+          <stop offset="0.35" stopColor="#F8FAFC" />
+          <stop offset="1" stopColor="#94A3B8" />
+        </linearGradient>
+        <linearGradient id="grad-wood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#B7791F" />
+          <stop offset="1" stopColor="#7C4A12" />
+        </linearGradient>
+        <linearGradient id="grad-steel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#64748B" />
+          <stop offset="0.5" stopColor="#334155" />
+          <stop offset="1" stopColor="#1E293B" />
+        </linearGradient>
+        <linearGradient id="grad-glass" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
         </linearGradient>
         <radialGradient id="grad-lamp" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#FDE68A" stopOpacity="0.9" />

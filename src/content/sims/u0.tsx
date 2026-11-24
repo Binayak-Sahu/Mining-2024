@@ -1,5 +1,5 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp, HudBadge } from "@/components/sim/svg";
+import { C, Txt, Arrow, Dim, clamp } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
 
 export const overburden: SimDef = {
@@ -33,27 +33,26 @@ export const overburden: SimDef = {
     return (
       <g>
         {layers.map((c, i) => (
-          <rect key={i} x={40} y={top + (i * (bottom - top)) / layers.length} width={160} height={(bottom - top) / layers.length} fill={c} />
+          <rect key={i} x={56} y={top + (i * (bottom - top)) / layers.length} width={144} height={(bottom - top) / layers.length} fill={c} />
         ))}
-        <rect x={40} y={top} width={160} height={bottom - top} fill={MAT.rockShade} />
-        <rect x={40} y={top - 6} width={160} height={6} fill="#65A30D" />
-        <rect x={40} y={top} width={160} height={bottom - top} fill="none" stroke="rgba(15,23,42,0.35)" />
-        <rect x={40} y={yWork - 4} width={160} height={8} fill={MAT.coal} />
+        <rect x={56} y={top} width={144} height={bottom - top} fill={MAT.rockShade} />
+        <rect x={56} y={top - 6} width={144} height={6} rx={1} fill="#65A30D" />
+        <rect x={56} y={top} width={144} height={bottom - top} fill="none" stroke="rgba(15,23,42,0.35)" />
+        <rect x={56} y={yWork - 4} width={144} height={8} fill={MAT.coal} />
         <rect x={100} y={yWork - 4} width={40} height={8} fill="#FEF3C7" stroke={C.ink} />
         <circle cx={120} cy={yWork} r={14} fill="url(#grad-lamp)" />
         <Txt x={120} y={yWork + 3} size={7} anchor="middle" weight={700}>
           GALLERY
         </Txt>
-        <Dim x1={30} y1={top} x2={30} y2={yWork} label={`${p.H} m`} />
+        <Dim x1={46} y1={top} x2={46} y2={yWork} label={`${p.H} m`} side="left" />
         <Arrow x1={120} y1={yWork - 6 - arrowLen} x2={120} y2={yWork - 6} color={o.sv > 20 ? C.crit : C.tech} width={4} head={9} />
-        <HudBadge x={392} y={214} anchor="end" label="σv" value={`${o.sv.toFixed(1)} MPa`} tone={o.sv > 20 ? "crit" : o.sv > 10 ? "warn" : "ok"} />
         <Txt x={230} y={40} size={11} weight={700}>
           σv = ρ·g·H
         </Txt>
         <Txt x={230} y={58} size={10} mono>
           {`= ${p.rho.toFixed(2)}×9.81×${p.H}`}
         </Txt>
-        <Txt x={230} y={76} size={14} weight={800} mono fill={o.sv > 20 ? C.crit : C.ink}>
+        <Txt x={230} y={78} size={15} weight={800} mono fill={o.sv > 20 ? C.crit : C.ink}>
           {`${o.sv.toFixed(2)} MPa`}
         </Txt>
         <Txt x={230} y={104} size={9} fill={C.slate}>

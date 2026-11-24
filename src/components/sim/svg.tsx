@@ -156,6 +156,7 @@ export function Dim({
   label,
   color = C.slate,
   offset = 0,
+  side = "right",
 }: {
   x1: number;
   y1: number;
@@ -164,10 +165,18 @@ export function Dim({
   label: string;
   color?: string;
   offset?: number;
+  /** For vertical dimensions: which side of the line the callout sits on (keep it in a margin gutter). */
+  side?: "left" | "right";
 }) {
   const mx = (x1 + x2) / 2;
   const my = (y1 + y2) / 2;
   const vertical = Math.abs(x2 - x1) < Math.abs(y2 - y1);
+  // Callout on a paper pill so it stays legible over any texture.
+  const w = label.length * 5.5 + 6;
+  const tx = vertical ? (side === "left" ? mx - 5 - offset : mx + 5 + offset) : mx;
+  const ty = vertical ? my + 3 : my - 4 + offset;
+  const anchor = vertical ? (side === "left" ? "end" : "start") : "middle";
+  const bx = anchor === "start" ? tx - 3 : anchor === "end" ? tx - w + 3 : tx - w / 2;
   return (
     <g>
       <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={1} />
@@ -182,7 +191,8 @@ export function Dim({
           <line x1={x2} x2={x2} y1={y2 - 3} y2={y2 + 3} stroke={color} />
         </>
       )}
-      <Txt x={vertical ? mx + 5 + offset : mx} y={vertical ? my + 3 : my - 4 + offset} size={9} fill={color} anchor={vertical ? "start" : "middle"} mono>
+      <rect x={bx} y={ty - 9} width={w} height={12} rx={3} fill="#FDFCF9" opacity={0.92} />
+      <Txt x={tx} y={ty} size={9} fill={color} anchor={anchor} mono weight={700}>
         {label}
       </Txt>
     </g>
