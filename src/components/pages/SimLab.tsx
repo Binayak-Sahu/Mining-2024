@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FlaskConical, RotateCcw } from "lucide-react";
+import { FlaskConical, RotateCcw, Search } from "lucide-react";
 import { ALL_SIMS } from "@/content/sims";
 import { SimView, defaults } from "@/components/sim/SimView";
 import type { Vals } from "@/lib/types";
@@ -31,31 +31,41 @@ export function SimLab() {
   const list = ALL_SIMS.filter((s) => s.title.toLowerCase().includes(q.toLowerCase()) || s.id.includes(q.toLowerCase())).sort((a, b) => UNIT_OF(a.id) - UNIT_OF(b.id));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-[280px_minmax(0,1fr)] gap-5">
-      <aside className="space-y-2">
-        <h1 className="text-2xl font-extrabold flex items-center gap-2">
-          <FlaskConical /> Sim Lab
-        </h1>
-        <p className="text-xs text-slate-400">Every simulation in STRATA, free-play — no hearts, no objectives.</p>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter simulations…" className="w-full rounded-lg bg-slate-800 px-3 py-2 text-sm outline-none" />
-        <div className="max-h-[60vh] lg:max-h-[75vh] overflow-y-auto space-y-1 pr-1">
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-5 sm:py-8 grid lg:grid-cols-[300px_minmax(0,1fr)] gap-5 lg:gap-6">
+      <aside className="order-2 lg:order-1 space-y-3 lg:sticky lg:top-24 self-start">
+        <div className="hidden lg:block">
+          <h1 className="text-[28px] font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <span className="w-10 h-10 rounded-2xl bg-violet-500 text-white flex items-center justify-center shadow-[0_3px_0_#6D28D9]"><FlaskConical size={20} /></span> Sim Lab
+          </h1>
+          <p className="text-[13px] text-slate-500 mt-1.5">All {ALL_SIMS.length} simulations, free-play — no hearts, no objectives.</p>
+        </div>
+        <div className="card p-2.5">
+        <label className="relative block">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search simulations…" className="w-full rounded-xl bg-slate-100 pl-9 pr-3 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-violet-400" />
+        </label>
+        <div className="mt-2 max-h-[46vh] lg:max-h-[64vh] overflow-y-auto space-y-1 pr-0.5 no-scrollbar">
           {list.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => pick(s.id)}
-              className={`w-full text-left rounded-lg px-3 py-2 text-xs ${s.id === id ? "bg-blue-500 text-white" : "bg-slate-800/60 text-slate-300 hover:bg-slate-800"}`}
+              className={`w-full flex items-start gap-2.5 text-left rounded-xl px-2.5 py-2 text-[13px] font-semibold leading-snug transition-colors ${s.id === id ? "bg-violet-500 text-white shadow-[0_2px_0_#6D28D9]" : "text-slate-700 hover:bg-slate-100"}`}
             >
-              <span className="readout text-[10px] opacity-70">U{UNIT_OF(s.id)} · </span>
-              {s.title}
+              <span className={`readout shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-extrabold ${s.id === id ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>U{UNIT_OF(s.id)}</span>
+              <span className="min-w-0">{s.title}</span>
             </button>
           ))}
         </div>
+        </div>
       </aside>
-      <section className="card p-4 sm:p-6 min-w-0">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <h2 className="text-lg font-extrabold leading-tight">{def.title}</h2>
-          <button type="button" onClick={() => setVals(defaults(def))} className="btn-press shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900">
+      <section className="order-1 lg:order-2 card p-4 sm:p-6 min-w-0">
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="min-w-0">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-violet-600">Sim Lab · Unit {UNIT_OF(def.id)}</div>
+            <h2 className="text-[20px] sm:text-[24px] font-extrabold leading-tight tracking-tight text-slate-900 mt-0.5 text-balance">{def.title}</h2>
+          </div>
+          <button type="button" onClick={() => setVals(defaults(def))} className="btn-3d tone-ghost shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-[11px]">
             <RotateCcw size={12} /> Reset
           </button>
         </div>

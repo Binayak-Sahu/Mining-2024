@@ -26,22 +26,22 @@ export function SyncCard() {
 
   return (
     <div id="sync" className="card p-5 space-y-3 scroll-mt-24">
-      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-        <Smartphone size={12} /> Move progress between devices
+      <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
+        <Smartphone size={13} /> Move progress between devices
       </div>
-      <p className="text-sm text-slate-600">
+      <p className="text-[14px] text-slate-600 leading-relaxed">
         Progress lives in this browser. Export it as a JSON file on one device and import it on the other — XP, streaks, lessons, Codex unlocks, spaced-repetition queue and exam history all transfer.
       </p>
-      <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={downloadProgress} className="btn-press inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-bold text-white">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <button type="button" onClick={downloadProgress} className="btn-3d tone-tech inline-flex items-center justify-center gap-2 px-4 py-3 text-[12.5px]">
           <Download size={14} /> Export progress (JSON)
         </button>
-        <button type="button" onClick={() => fileRef.current?.click()} className="btn-press inline-flex items-center gap-2 rounded-xl border-2 border-slate-900 px-4 py-2 text-sm font-bold text-slate-900">
+        <button type="button" onClick={() => fileRef.current?.click()} className="btn-3d tone-ghost inline-flex items-center justify-center gap-2 px-4 py-3 text-[12.5px]">
           <Upload size={14} /> Import progress (JSON)
         </button>
         <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" aria-label="Progress file" onChange={(e) => onFile(e.target.files?.[0])} />
       </div>
-      <div className="flex flex-wrap gap-x-4 text-sm">
+      <div className="flex flex-wrap gap-x-5 text-[14px] text-slate-700 font-semibold">
         <label className="flex items-center gap-2 min-h-[44px]">
           <input type="radio" name="sync-mode" checked={mode === "merge"} onChange={() => setMode("merge")} className="w-5 h-5 accent-blue-500" />
           Merge (keep the best of both)

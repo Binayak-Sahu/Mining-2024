@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { TopBar } from "@/components/shell/TopBar";
+import { TopBar, BottomNav } from "@/components/shell/TopBar";
 import { PwaRegister } from "@/components/shell/PwaRegister";
+import { ClientEffects } from "@/components/shell/ClientEffects";
+import { SvgDefs } from "@/components/sim/defs";
+import { THEME_BOOT } from "@/lib/prefs";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F172A",
+  themeColor: "#0B0F19",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -26,11 +29,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen grid-bg">
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen studio-bg" suppressHydrationWarning>
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        <SvgDefs />
         <TopBar />
-        <main className="pb-[env(safe-area-inset-bottom)]">{children}</main>
+        <main>{children}</main>
+        <BottomNav />
         <PwaRegister />
+        <ClientEffects />
       </body>
     </html>
   );

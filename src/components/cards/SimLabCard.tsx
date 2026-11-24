@@ -34,13 +34,13 @@ export function SimLabCard({ stage, onDone }: CardProps<SimStage>) {
         </PrimaryButton>
       }
     >
-      <p className="text-[15px] leading-snug text-slate-800">{stage.brief}</p>
-      <div className={`flex items-start gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${met && touched ? "bg-emerald-50 text-emerald-800" : "bg-blue-50 text-blue-900"}`}>
-        {met && touched ? <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> : <Target size={16} className="mt-0.5 shrink-0" />}
+      <p className="text-[16px] leading-relaxed text-slate-700">{stage.brief}</p>
+      <div className={`flex items-start gap-2.5 rounded-2xl px-3.5 py-3 text-[14px] font-bold transition-colors ${met && touched ? "bg-emerald-50 text-emerald-800 shadow-[inset_0_0_0_2px_#10B98155]" : "bg-blue-50 text-blue-900 shadow-[inset_0_0_0_2px_#3B82F633]"}`}>
+        {met && touched ? <CheckCircle2 size={18} className="shrink-0 fill-emerald-500 text-white" /> : <Target size={18} className="shrink-0 text-blue-500" />}
         <span>Objective: {stage.goal.text}</span>
       </div>
       <SimView def={def} values={values} onChange={change} />
-      <button type="button" onClick={() => setValues(start)} className="btn-press inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900">
+      <button type="button" onClick={() => setValues(start)} className="btn-press inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100">
         <RotateCcw size={12} /> Reset rig
       </button>
       <Feedback show={achieved} ok title="Objective reached — here's the physics">

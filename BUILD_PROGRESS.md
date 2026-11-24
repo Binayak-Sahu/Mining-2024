@@ -3,7 +3,7 @@
 Lossless state log for multi-session builds. Update at the end of every phase.
 
 ## Stack
-Next.js 15 (App Router, static SSG) · TypeScript strict · Tailwind CSS v4 · framer-motion · lucide-react · zustand (persist → localStorage key `strata-progress-v1`).
+Next.js 15 (App Router, static SSG) · TypeScript strict · Tailwind CSS v4 · framer-motion · lucide-react · zustand (persist → localStorage key `strata-progress-v1`; UI prefs in `strata-prefs`) · self-hosted Plus Jakarta Sans + JetBrains Mono (@fontsource-variable).
 All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency was needed, so `three` is not installed.
 
 ## Architecture
@@ -21,6 +21,12 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
 | Lesson player (hearts, XP, codex unlock, SRS capture, fail/retry) | `src/components/LessonPlayer.tsx` |
 | Pages: Campaign skill tree, Unit map, Codex, Warmup, Profile | `src/components/pages/*.tsx`, `src/app/**` |
 | Content registry | `src/content/index.ts`, `src/content/units/*.ts`, `src/content/sims/*.tsx` |
+| Design tokens, light/dark ramps, 3D buttons/tiles, slider, plate, animations | `src/app/globals.css` |
+| Theme + sound prefs (device-local), no-flash theme boot | `src/lib/prefs.ts` |
+| Web Audio tactile sound + haptics (global listener) | `src/lib/sfx.ts`, `src/components/shell/ClientEffects.tsx` |
+| SVG material library (strata hatch patterns, metal/rock gradients, filters) | `src/components/sim/defs.tsx` (`MAT`) |
+| Expedition map (strata bands, S-curve path, nodes) | `src/components/pages/ExpeditionPath.tsx`, `strata.ts` |
+| Custom slider | `src/components/ui/Slider.tsx` |
 
 ### Content authoring contract
 - A **SimDef** = params (sliders / segmented options) + `compute(p)` + `outputs` (tone/format) + `render(p, o, t)` SVG.
@@ -29,6 +35,8 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
 - SRS key = `${lessonId}#${stageIndex}`; formula codex key = `${lessonId}#eq${stageIndex}`.
 - `npm run validate` (scripts/validate-content.ts) proves every SimLab goal is reachable by grid search, hotspots are in-bounds, every crisis phase has exactly one correct option, and every sim renders.
 - QA flag: `localStorage["strata-qa"]="1"` keeps one heart so automated walkthroughs can traverse lessons.
+- Optional `SimDef.handles` add direct-manipulation grips on the canvas: `{ key, axis, at(p,o) → [x,y], toValue(coord,p) }`; the runtime clamps and snaps to the param's range/step. Theory hotspots are placed over the same render, so diorama upgrades must keep geometry (only fills/overlays change).
+- Theming: author UI in light-mode semantics with `slate-*`, `bg-surface`, `bg-canvas`; `.dark` on `<html>` remaps the neutral ramp and accent tints. Always-dark instrument panels (telemetry, calculators) use fixed hex colours. Simulation plates stay daylight-lit in both themes.
 
 ## Phase checklist
 - [x] **Phase 1** — scaffold, store, Codex, Campaign tree, Unit map, Warmup (SRS), Profile, 7 card engines, Orientation unit (U0) exercising every engine. `npm run build` ✓, `tsc --noEmit` ✓, Playwright walkthrough ✓ (0 console errors).
@@ -56,8 +64,21 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
 
 - [x] **Phase 7.1** — Citations corrected: lighting → CMR 2017 Reg. 178(2)(b); earth-fault limit → CEA Safety Regulations 2023, Reg. 102. Discrepancy notes removed.
 
+- [x] **Phase 8 — "Tactile Engineering Studio" redesign**
+  - **Audit findings:** flat list home with no sense of journey; uniform white boxes on a navy grid; raw browser sliders and flat buttons with no press feedback; wireframe-flat diagrams that could only be driven from sliders below them; 7-item top nav out of thumb reach on phones; no sound, spring or reward feedback in lessons.
+  - **Design system:** warm alabaster `#F7F7F5` (Crisp Daylight) / obsidian `#0B0F19` (Underground Shift Mode) with a token-remapped slate ramp, multi-layer card shadows, Plus Jakarta Sans + JetBrains Mono for telemetry, chunky 3D buttons (`.btn-3d` tones) and answer tiles (`.tile-3d`), Brilliant-style slider with gradient fill, 3D thumb and floating value pill (native range input kept on top for keyboard/a11y/touch). Theme toggle (device / light / dark, no-flash boot script) and mute toggle in the header; Profile has an Appearance & sound card.
+  - **Sound & haptics:** Web Audio-synthesised tap clicks, slider detent ticks, correct triad chime, wrong thud, unlock arpeggio, completion fanfare, heart-loss blip; `navigator.vibrate` on phones; all silenced by the mute toggle. Works offline (no audio files).
+  - **Expedition map (home):** each unit is a geological stratum band (surface daylight → topsoil → sandstone → shale → … → granite basement → DGMS Command Level at −1200 m) with texture, depth label and progress ring; every lesson/boss sits on a winding S-curve trail with 3D nodes (done/current/open/locked, perfect-hearts star, boss crown), a bobbing START callout and pulsing halo on the current node. Hero "Continue your expedition" card, rank/streak-week/warmup/codex/exam bento sidebar. Unit pages reuse the path beside shift-briefing cards with stage icons.
+  - **Shell:** glass header with sliding nav pill; phones get a 6-tab bottom bar in the thumb zone (Path, Warmup, Exam, Lab, Tools, Codex) and a rank avatar → Profile.
+  - **Dioramas:** global `SvgDefs` material library; diorama plate with blueprint grid, LIVE badge on animated sims; dark instrument-cluster telemetry strip; `Cracks`, `Stream`, `HudBadge`, `heatColor` primitives. Upgraded sims: overburden column (textured strata, lamp glow, σv HUD, drag the gallery to change depth), Kirsch (full σθ(r,θ) stress heatmap + spalling/roof cracks at failure), pillar (coal texture, drag pillar width, animated pillar cracks and shaking core pillar when FoS < 1), plane-failure slope (rock texture, drag the crest to change face angle, tension cracks and shaking block when FoS < 1), roof bolting (drag span, roof cracks when beam tension ≥ strength), ventilation network (roadway walls, animated airflow streamlines scaled by Q, spinning fan), PPV (drag distance along the attenuation curve).
+  - **Immersive lesson player:** no outer nav; X exit, chunky segmented progress bar per stage colour, pulsing hearts that shake and burst on loss; spring slide transitions between stages; stage cards with a coloured stage chip; every card footer lifted into a bottom action drawer (lifted above the tab bar on Warmup); +XP burst particles; codex/formula toasts; red stand-down drawer; completion screen with confetti, medallion and XP / accuracy / hearts tiles.
+  - **Cards:** 3D answer tiles with A–D keys and green/red states, dark swipe cards with drag tilt and TRUE/FALSE stamps, violet equation blocks, always-dark scratch calculator, amber workbench panel, dark hotspot explanations.
+  - **Pages:** Codex (stat tiles, sliding tab control, unit chip rail, statute cards with citation pills), Exam (hero, dark timer bar, question rail, answer tiles, scorecard), Tools (icon tile picker + dark live-output panel), Sim Lab (sim first on phones, searchable list), Profile (rank hero, stat bento, 28-day heatmap, ladder, appearance), Warmup (Leitner boxes, segmented progress, slide transitions).
+  - **Fix:** the theme boot script moved from `<head>` to the start of `<body>` (with `suppressHydrationWarning`) after the head placement produced intermittent React #418 hydration errors in production; Kirsch ring coordinates rounded to avoid float-precision hydration mismatch.
+  - Verified: validate ✓ (379 stages, 379-question bank) · tsc ✓ · lint ✓ · build ✓ (root and `NEXT_PUBLIC_BASE_PATH=/Mining-2024`; 87 pages; precache 221 files, 5.5 MB). Playwright on the base-path build: SW controls page with 221 cached entries, 5 never-visited pages load offline, export → reset → import (replace) → merge round-trip, malformed file rejected, 0 lesson tap targets < 44 px; 12 pages × desktop 1366 + Pixel 7 × light + dark → no horizontal overflow, 0 console/page errors (7 consecutive sweeps); full lesson walkthrough (all 7 engines + completion) in both themes; drag grips change parameters (depth 300 → 650 m) and pillar failure draws 9 cracks; exam paper start → answer 25 → submit → review; theme cycle + persistence; mute persistence.
+
 ## Totals
-55 lessons + 11 boss exams · 379 stages · 61 simulations · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators.
+55 lessons + 11 boss exams · 379 stages · 61 simulations (7 with on-canvas drag grips) · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators · light + dark themes · synthesised sound & haptics.
 
 ## Next checkpoint (optional enhancements)
-All five phases are complete. Possible future work: per-unit statutory reference pages, export/import of progress, a teacher dashboard, and periodic re-verification of statutory figures as OSH&WC Code regulations are notified.
+All phases are complete. Possible future work: drag grips and diorama textures for the remaining simulations, per-unit statutory reference pages, a teacher dashboard, and periodic re-verification of statutory figures as OSH&WC Code regulations are notified.

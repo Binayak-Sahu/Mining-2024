@@ -66,7 +66,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
 
   return (
     <CardFrame kind="numeric" title={stage.title} footer={done && <PrimaryButton onClick={onDone} tone="safe">Calculation signed off — Continue</PrimaryButton>}>
-      <p className="text-[15px] leading-snug text-slate-800">{stage.problem}</p>
+      <p className="text-[16px] leading-relaxed text-slate-700">{stage.problem}</p>
       {def && <SimCanvas def={def} values={defaults(def, stage.params)} />}
 
       <div>
@@ -77,7 +77,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
               key={g.sym}
               type="button"
               onClick={() => setExpr((e) => e + g.sym)}
-              className="btn-press rounded-lg border border-slate-300 bg-white px-2 py-1 text-left hover:border-amber-500"
+              className="tile-3d px-2.5 py-1.5 text-left hover:!border-amber-400"
               title={g.label}
             >
               <span className="readout text-xs font-bold text-amber-700">{g.sym}</span>
@@ -86,7 +86,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
             </button>
           ))}
           {results.map((r, i) => (
-            <button key={i} type="button" onClick={() => setExpr((e) => e + `s${i + 1}`)} className="btn-press rounded-lg border border-emerald-300 bg-emerald-50 px-2 py-1">
+            <button key={i} type="button" onClick={() => setExpr((e) => e + `s${i + 1}`)} className="tile-3d !border-emerald-300 !bg-emerald-50 px-2.5 py-1.5">
               <span className="readout text-xs font-bold text-emerald-700">s{i + 1}</span>
               <span className="readout text-xs text-slate-900"> = {fmt(r, 4)} {stage.steps[i].unit}</span>
             </button>
@@ -94,22 +94,22 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
         </div>
       </div>
 
-      <div className="rounded-xl bg-slate-900 p-3">
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+      <div className="rounded-2xl bg-[#0E1424] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8B97AE] mb-2">
           <Calculator size={12} /> Scratch calculator · trig in degrees · sqrt ln log exp ^
         </div>
         <input
           value={expr}
           onChange={(e) => setExpr(e.target.value)}
           placeholder="e.g. 0.025*H*(w+B)^2/w^2"
-          className="readout w-full rounded-lg bg-slate-800 text-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500"
+          className="readout w-full rounded-xl bg-[#1B2336] text-[#F1F5F9] placeholder:text-[#5D6B89] px-3 py-2.5 text-[15px] outline-none focus:ring-2 focus:ring-amber-500"
           spellCheck={false}
           autoCapitalize="off"
         />
         <div className="flex items-center justify-between mt-1.5">
-          <span className={`readout text-sm ${calcVal !== null ? "text-amber-300" : "text-red-300"}`}>{calcOut && `= ${calcOut}`}</span>
+          <span className={`readout text-[15px] font-bold ${calcVal !== null ? "text-[#FCD34D]" : "text-[#FCA5A5]"}`}>{calcOut && `= ${calcOut}`}</span>
           {calcVal !== null && !done && state !== "right" && state !== "revealed" && (
-            <button type="button" onClick={() => setInput(String(+calcVal!.toPrecision(6)))} className="btn-press inline-flex items-center gap-1 text-xs font-bold text-amber-400">
+            <button type="button" onClick={() => setInput(String(+calcVal!.toPrecision(6)))} className="btn-press inline-flex items-center gap-1 rounded-lg bg-[#FBBF24] text-[#422006] px-2.5 py-1.5 text-xs font-extrabold">
               <CornerDownLeft size={12} /> Use as answer
             </button>
           )}
@@ -118,7 +118,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
 
       {stage.steps.map((s, i) =>
         i < step ? (
-          <div key={i} className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm">
+          <div key={i} className="rounded-2xl bg-emerald-50 shadow-[inset_0_0_0_1.5px_#10B98155] px-3.5 py-2.5 text-sm">
             <span className="font-semibold text-emerald-800">Step {i + 1} ✓</span> <span className="text-slate-700">{s.prompt}</span>
             <span className="readout block font-bold text-slate-900">
               s{i + 1} = {fmt(s.answer, 3)} {s.unit}
@@ -128,7 +128,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
       )}
 
       {!done && (
-        <div className="rounded-xl border-2 border-amber-400 p-3 space-y-2">
+        <div className="rounded-2xl border-2 border-amber-400 bg-amber-50/40 p-3.5 space-y-3">
           <div className="text-sm font-semibold text-slate-900">
             Step {step + 1}/{stage.steps.length}: {cur.prompt}
           </div>
@@ -143,7 +143,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
               disabled={state === "right" || state === "revealed"}
               placeholder="answer"
               inputMode="decimal"
-              className="readout flex-1 min-w-0 rounded-lg border-2 border-slate-300 px-3 py-2 text-sm outline-none focus:border-amber-500"
+              className="readout flex-1 min-w-0 rounded-xl border-2 border-slate-300 bg-surface px-3 py-2.5 text-[16px] font-bold outline-none focus:border-amber-500"
             />
             <span className="readout self-center text-sm text-slate-600 shrink-0">{cur.unit}</span>
           </div>
@@ -152,7 +152,7 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
               Next step
             </PrimaryButton>
           ) : (
-            <PrimaryButton onClick={check} disabled={!input}>
+            <PrimaryButton onClick={check} disabled={!input} tone="hazard">
               Check
             </PrimaryButton>
           )}

@@ -1,7 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Calculator } from "lucide-react";
+import { Calculator, Wind, Columns3, Bomb, Activity, Mountain, Compass, Droplets, RotateCcw, type LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
+
+const TOOL_STYLE: Record<string, { Icon: LucideIcon; c: string; e: string; blurb: string }> = {
+  atkinson: { Icon: Wind, c: "#0EA5E9", e: "#0369A1", blurb: "Airway pressure & power" },
+  pillar: { Icon: Columns3, c: "#64748B", e: "#334155", blurb: "Pillar FoS + Reg. 111" },
+  kuzram: { Icon: Bomb, c: "#EF4444", e: "#991B1B", blurb: "Blast fragmentation" },
+  ppv: { Icon: Activity, c: "#8B5CF6", e: "#5B21B6", blurb: "Ground vibration limit" },
+  besr: { Icon: Mountain, c: "#F59E0B", e: "#B45309", blurb: "Break-even strip ratio" },
+  dipstrike: { Icon: Compass, c: "#10B981", e: "#047857", blurb: "Three-point problem" },
+  pump: { Icon: Droplets, c: "#3B82F6", e: "#1D4ED8", blurb: "Head, power & NPSH" },
+};
 import { fmt } from "@/lib/calc";
 import { kuzRam } from "@/content/sims/u4";
 import { pump } from "@/content/sims/u7";
@@ -244,26 +255,37 @@ export function Tools() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 space-y-4">
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-5 sm:py-8 space-y-5">
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-2">
-          <Calculator /> Field Calculators
+        <h1 className="text-[28px] sm:text-[34px] font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
+          <span className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-[0_3px_0_#B45309]">
+            <Calculator size={22} />
+          </span>
+          Field Calculators
         </h1>
-        <p className="text-slate-400 text-sm mt-1">The same engineering models as the lessons — plug in your own mine&apos;s numbers.</p>
+        <p className="text-slate-500 text-[14px] mt-2">The same engineering models as the lessons — plug in your own mine&apos;s numbers.</p>
       </div>
-      <div className="flex flex-wrap gap-1.5">
-        {TOOLS.map((t) => (
-          <button key={t.id} type="button" onClick={() => setId(t.id)} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${t.id === id ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-300 hover:bg-slate-700"}`}>
-            {t.name}
-          </button>
-        ))}
+      <div className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1.5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 lg:grid-cols-7">
+        {TOOLS.map((t) => {
+          const st = TOOL_STYLE[t.id] ?? { Icon: Calculator, c: "#64748B", e: "#334155", blurb: "" };
+          const on = t.id === id;
+          return (
+            <button key={t.id} type="button" onClick={() => setId(t.id)} data-on={on} className="tile-3d shrink-0 w-[148px] sm:w-auto text-left p-3 flex flex-col gap-2 min-h-[104px]" style={on ? { borderColor: st.c, boxShadow: `0 3px 0 ${st.c}`, background: `color-mix(in oklab, ${st.c} 10%, var(--surface))` } : undefined}>
+              <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white" style={{ background: st.c, boxShadow: `0 2px 0 ${st.e}` }}>
+                <st.Icon size={18} />
+              </span>
+              <span className="text-[13px] font-extrabold leading-tight text-slate-900">{t.name}</span>
+              <span className="text-[11px] text-slate-500 leading-tight -mt-1">{st.blurb}</span>
+            </button>
+          );
+        })}
       </div>
-      <div className="card p-5 grid md:grid-cols-2 gap-6">
-        <div className="space-y-3">
-          <h2 className="font-extrabold text-lg">{tool.name}</h2>
+      <motion.div key={id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 380, damping: 30 }} className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+        <div className="card p-5 sm:p-6 space-y-3.5">
+          <h2 className="font-extrabold text-[20px] tracking-tight text-slate-900">{tool.name}</h2>
           {tool.fields.map((f) => (
             <label key={f.key} className="block">
-              <span className="text-xs font-semibold text-slate-600">
+              <span className="text-[12.5px] font-bold text-slate-600">
                 {f.label}
                 {f.unit && <span className="text-slate-400"> ({f.unit})</span>}
               </span>
@@ -271,7 +293,7 @@ export function Tools() {
                 <select
                   value={v[f.key]}
                   onChange={(e) => setVals((all) => ({ ...all, [id]: { ...all[id], [f.key]: Number(e.target.value) } }))}
-                  className="mt-1 w-full rounded-lg border-2 border-slate-300 px-3 py-2 text-sm bg-white"
+                  className="mt-1.5 w-full rounded-xl border-2 border-slate-200 px-3 py-2.5 text-[15px] font-semibold text-slate-900 bg-surface outline-none focus:border-blue-500"
                 >
                   {f.options.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -285,7 +307,7 @@ export function Tools() {
                   aria-label={f.label}
                   value={raw[`${id}.${f.key}`] ?? String(v[f.key])}
                   onChange={(e) => setField(f.key, e.target.value)}
-                  className="readout mt-1 w-full rounded-lg border-2 border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+                  className="readout mt-1.5 w-full rounded-xl border-2 border-slate-200 bg-surface px-3 py-2.5 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
                 />
               )}
             </label>
@@ -296,23 +318,32 @@ export function Tools() {
               setVals((all) => ({ ...all, [id]: defaultsOf(tool) }));
               setRaw((r) => Object.fromEntries(Object.entries(r).filter(([k]) => !k.startsWith(`${id}.`))));
             }}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-900"
+            className="btn-press inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100"
           >
-            Reset to example values
+            <RotateCcw size={12} /> Reset to example values
           </button>
         </div>
-        <div className="space-y-2">
-          <div className="rounded-xl bg-slate-900 text-slate-100 px-3 py-2 readout text-xs leading-relaxed">{tool.formula}</div>
-          {outs.map((o) => (
-            <div key={o.label} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
-              <span className="text-sm text-slate-600">{o.label}</span>
-              <span className={`readout font-bold ${o.tone === "crit" ? "text-red-600" : o.tone === "warn" ? "text-amber-600" : o.tone === "ok" ? "text-emerald-600" : "text-slate-900"}`}>
-                {typeof o.value === "number" ? fmt(o.value, o.digits ?? 2) : o.value} {typeof o.value === "number" && o.unit ? <span className="text-slate-400 font-normal text-xs">{o.unit}</span> : null}
-              </span>
-            </div>
-          ))}
+        <div className="rounded-[1.25rem] bg-[#0E1424] p-4 sm:p-5 space-y-2.5 shadow-[var(--shadow-card)] self-start">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8B97AE]">
+            <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live output
+          </div>
+          <div className="rounded-xl bg-white/[0.05] text-[#E2E8F0] px-3.5 py-2.5 readout text-[12px] leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">{tool.formula}</div>
+          {outs.map((o) => {
+            const col = o.tone === "crit" ? "#F87171" : o.tone === "warn" ? "#FBBF24" : o.tone === "ok" ? "#34D399" : "#F1F5F9";
+            return (
+              <div key={o.label} className="flex items-center justify-between gap-3 rounded-xl bg-white/[0.04] px-3.5 py-2.5">
+                <span className="text-[13px] text-[#A6B1C6] flex items-center gap-2 min-w-0">
+                  {o.tone && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />}
+                  <span className="truncate">{o.label}</span>
+                </span>
+                <motion.span key={String(o.value)} initial={{ opacity: 0.4, y: -2 }} animate={{ opacity: 1, y: 0 }} className="readout font-extrabold text-[15px] text-right shrink-0" style={{ color: col }}>
+                  {typeof o.value === "number" ? fmt(o.value, o.digits ?? 2) : o.value} {typeof o.value === "number" && o.unit ? <span className="text-[#8B97AE] font-medium text-[11px]">{o.unit}</span> : null}
+                </motion.span>
+              </div>
+            );
+          })}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

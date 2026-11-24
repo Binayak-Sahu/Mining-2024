@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Plot, sample, clamp, rad, polyline } from "@/components/sim/svg";
+import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
 export function erf(x: number): number {
@@ -48,19 +49,43 @@ export const kirschSim: SimDef = {
       const s = o.p * (1 + p.K + 2 * (1 - p.K) * Math.cos(2 * th));
       const col = s < 0 ? (s <= -p.T ? "#1d4ed8" : "#60a5fa") : s >= p.ucs ? C.crit : s >= 0.5 * p.ucs ? C.hazard : C.safe;
       segs.push(
-        <line key={i} x1={cx + R * Math.cos(a1)} y1={cy + R * Math.sin(a1)} x2={cx + R * Math.cos(a2)} y2={cy + R * Math.sin(a2)} stroke={col} strokeWidth={9} />,
+        <line key={i} x1={+(cx + R * Math.cos(a1)).toFixed(2)} y1={+(cy + R * Math.sin(a1)).toFixed(2)} x2={+(cx + R * Math.cos(a2)).toFixed(2)} y2={+(cy + R * Math.sin(a2)).toFixed(2)} stroke={col} strokeWidth={9} />,
       );
     }
     const vl = clamp(10 + o.p * 1.2, 10, 40);
     const hl = clamp(10 + o.p * p.K * 1.2, 6, 40);
+    // Full Kirsch field σθ(r, θ) sampled on a grid → stress heatmap around the opening
+    const cells = [];
+    const G = 11;
+    for (let gx = 20; gx < 240; gx += G)
+      for (let gy = 12; gy < 232; gy += G) {
+        const dx = gx + G / 2 - cx;
+        const dy = gy + G / 2 - cy;
+        const r = Math.hypot(dx, dy);
+        if (r < R) continue;
+        const th = Math.atan2(dy, dx);
+        const a2 = (R * R) / (r * r);
+        const s = (o.p / 2) * ((1 + p.K) * (1 + a2) + (1 - p.K) * (1 + 3 * a2 * a2) * Math.cos(2 * th));
+        const col = s < 0 ? (s <= -p.T ? "#1d4ed8" : "#60a5fa") : heatColor(0.35 + 0.65 * clamp(s / p.ucs, 0, 1));
+        cells.push(<rect key={`${gx}-${gy}`} x={gx} y={gy} width={G} height={G} fill={col} opacity={0.5} />);
+      }
+    const cracks = [];
+    if (o.sideFail === 2) cracks.push({ x: cx - R, y: cy - 6, len: 30, angle: 200, seed: 3 }, { x: cx - R, y: cy + 8, len: 26, angle: 160, seed: 5 }, { x: cx + R, y: cy - 6, len: 30, angle: -20, seed: 7 }, { x: cx + R, y: cy + 8, len: 26, angle: 20, seed: 9 });
+    if (o.roofFail === 2) cracks.push({ x: cx - 6, y: cy - R, len: 28, angle: -100, seed: 11 }, { x: cx + 8, y: cy - R, len: 24, angle: -70, seed: 13 }, { x: cx, y: cy + R, len: 24, angle: 90, seed: 15 });
     return (
       <g>
-        <rect x={20} y={12} width={220} height={220} fill="#e7e5e4" />
+        <rect x={20} y={12} width={220} height={220} fill={MAT.rock} />
+        <g clipPath="url(#kirsch-clip)">{cells}</g>
+        <clipPath id="kirsch-clip">
+          <rect x={20} y={12} width={220} height={220} rx={6} />
+        </clipPath>
         {segs}
-        <circle cx={cx} cy={cy} r={R - 4.5} fill="white" />
-        <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={700}>
+        <circle cx={cx} cy={cy} r={R - 4.5} fill="#0F172A" />
+        <circle cx={cx} cy={cy + 6} r={R - 10} fill="url(#grad-lamp)" opacity={0.35} />
+        <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={800} fill="#F8FAFC">
           OPENING
         </Txt>
+        {cracks.length > 0 && <Cracks key={`${o.sideFail}${o.roofFail}`} cracks={cracks} color="#7F1D1D" width={2} />}
         <Arrow x1={cx} y1={14} x2={cx} y2={14 + vl} color={C.ink} width={3} />
         <Arrow x1={cx} y1={230} x2={cx} y2={230 - vl} color={C.ink} width={3} />
         <Txt x={cx + 6} y={26} size={9} weight={700} mono>
@@ -323,6 +348,7 @@ export const boltSim: SimDef = {
     { key: "len", label: "Min bolt length (t + 0.3 m anchor)", unit: "m", digits: 1 },
   ],
   caption: "Shale tensile strength taken as 1.5 MPa; γ = 25 kN/m³. Beam stress for a clamped beam under self-weight.",
+  handles: [{ key: "L", axis: "x", at: (p) => [200 + (p.L * 55) / 2, 132], toValue: (x) => ((x - 200) * 2) / 55, color: "#F59E0B" }],
   render: (p, o) => {
     const k = 330 / 6;
     const x0 = 200 - (p.L * k) / 2;
@@ -335,7 +361,7 @@ export const boltSim: SimDef = {
       const lt = th / p.n;
       const y = yRoof - (i + 1) * lt;
       const gap = p.mode ? 0 : 2.2 * (p.n - i) * clamp(o.ratio, 0.2, 1.5);
-      layers.push(<path key={i} d={`M 20 ${y} L ${x0} ${y} Q 200 ${y + lt + sag + gap} ${x1} ${y} L 380 ${y} L 380 ${y + lt} L ${x1} ${y + lt} Q 200 ${y + 2 * lt + sag + gap} ${x0} ${y + lt} L 20 ${y + lt} Z`} fill={i % 2 ? "#a8a29e" : "#d6d3d1"} stroke="#78716c" strokeWidth={0.6} />);
+      layers.push(<path key={i} d={`M 20 ${y} L ${x0} ${y} Q 200 ${y + lt + sag + gap} ${x1} ${y} L 380 ${y} L 380 ${y + lt} L ${x1} ${y + lt} Q 200 ${y + 2 * lt + sag + gap} ${x0} ${y + lt} L 20 ${y + lt} Z`} fill={i % 2 ? MAT.shale : MAT.sand} stroke="#78716c" strokeWidth={0.6} />);
     }
     const bolts = [];
     if (p.mode) {
@@ -343,7 +369,8 @@ export const boltSim: SimDef = {
     }
     return (
       <g>
-        <rect x={20} y={20} width={360} height={yRoof - th - 20} fill="#78716c" />
+        <rect x={20} y={20} width={360} height={yRoof - th - 20} fill={MAT.rock} />
+        <rect x={20} y={20} width={360} height={yRoof - th - 20} fill="#57534E" opacity={0.45} />
         <Txt x={30} y={34} size={8} fill="white" weight={700}>
           COMPETENT STRATA (anchorage horizon)
         </Txt>
@@ -353,6 +380,7 @@ export const boltSim: SimDef = {
         <rect x={x1} y={yRoof} width={380 - x1} height={90} fill={C.coal} />
         <rect x={20} y={yRoof + 70} width={360} height={20} fill="#57534e" />
         {bolts}
+        {o.ratio >= 1 && <Cracks key={`b${p.mode}${Math.round(o.ratio * 4)}`} cracks={[{ x: 200, y: yRoof + sag * 0.6, len: Math.min(th, 40), angle: -95, seed: 2 }, { x: x0 + 6, y: yRoof - 2, len: 22, angle: -60, seed: 6 }, { x: x1 - 6, y: yRoof - 2, len: 22, angle: -120, seed: 10 }]} color="#7F1D1D" width={2} />}
         <Txt x={200} y={yRoof + 40} size={10} anchor="middle" weight={800}>
           {`span ${p.L.toFixed(1)} m`}
         </Txt>
@@ -396,6 +424,7 @@ export const pillarSim: SimDef = {
     { key: "e", label: "Extraction (development)", unit: "%", digits: 1 },
     { key: "wh", label: "w/h ratio", digits: 1, tone: (v) => (v >= 4 ? "ok" : "warn") },
   ],
+  handles: [{ key: "w", axis: "x", at: (p) => [115 + (30 * p.w) / (p.w + p.B), 115], toValue: (x, p) => { const pw = clamp(2 * (x - 115), 2, 58); return (pw * p.B) / (60 - pw); }, color: "#F59E0B" }],
   render: (p, o) => {
     const pitch = 60;
     const pw = (pitch * p.w) / (p.w + p.B);
@@ -403,11 +432,20 @@ export const pillarSim: SimDef = {
     const cells = [];
     for (let i = 0; i < 3; i++)
       for (let j = 0; j < 3; j++)
-        cells.push(<rect key={`${i}${j}`} x={25 + i * pitch + (pitch - pw) / 2} y={25 + j * pitch + (pitch - pw) / 2} width={pw} height={pw} fill={C.coal} stroke={col} strokeWidth={3} />);
+        cells.push(<rect key={`${i}${j}`} x={25 + i * pitch + (pitch - pw) / 2} y={25 + j * pitch + (pitch - pw) / 2} width={pw} height={pw} rx={2} fill={MAT.coal} stroke={col} strokeWidth={3} className={o.fos < 1 && i === 1 && j === 1 ? "shake" : undefined} />);
     return (
       <g>
-        <rect x={25} y={25} width={180} height={180} fill="#f1f5f9" />
+        <rect x={25} y={25} width={180} height={180} rx={4} fill="#E9E5DA" />
+        <rect x={25} y={25} width={180} height={180} rx={4} fill={MAT.hatch} opacity={0.25} />
         {cells}
+        {o.fos < 1 && (
+          <Cracks
+            key={`f${Math.round(o.fos * 10)}`}
+            cracks={[0, 1, 2].flatMap((i) => [0, 1, 2].map((j) => ({ x: 25 + i * pitch + pitch / 2 - pw / 4, y: 25 + j * pitch + (pitch - pw) / 2 + 2, len: pw * 0.8, angle: 70 + ((i + j) % 2) * 30, seed: i * 3 + j + 1 })))}
+            color="#FCA5A5"
+            width={1.4}
+          />
+        )}
         <rect x={25 + pitch + (pitch - pw) / 2} y={25 + pitch + (pitch - pw) / 2} width={pw} height={pw} fill="none" stroke={C.tech} strokeWidth={1.5} strokeDasharray="4 3" />
         <rect x={25 + pitch} y={25 + pitch} width={pitch} height={pitch} fill={C.tech} opacity={0.12} />
         <Txt x={115} y={222} size={8} anchor="middle" fill={C.slate}>
@@ -470,6 +508,7 @@ export const slopeSim: SimDef = {
     { key: "daylight", label: "Kinematics", format: (v) => (v ? "Plane daylights (ψp < ψf)" : "Plane does not daylight"), tone: (v) => (v ? "warn" : "ok") },
   ],
   caption: "FOS = [cA + W cosψp (1 − ru) tanφ] / (W sinψp), γ = 25 kN/m³, no tension crack.",
+  handles: [{ key: "pf", axis: "x", at: (p) => [120 + (p.H * 2.4) / Math.tan(rad(p.pf)), 205 - p.H * 2.4], toValue: (x, p) => deg(Math.atan((p.H * 2.4) / Math.max(1, x - 120))), color: "#8B5CF6" }],
   render: (p, o) => {
     const k = 2.4;
     const toeX = 120;
@@ -481,8 +520,10 @@ export const slopeSim: SimDef = {
     const col = !o.daylight ? C.safe : o.fos >= 1.3 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill="#d6d3d1" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.shale} />
+        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.rockShade} />
+        <polyline points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" stroke="#57534E" strokeWidth={2} strokeLinejoin="round" />
         {o.daylight ? (
           <polygon
             points={polyline(
@@ -492,8 +533,12 @@ export const slopeSim: SimDef = {
             )}
             fill={col}
             opacity={0.55}
+            className={o.fos < 1 ? "shake" : undefined}
           />
         ) : null}
+        {o.daylight && o.fos < 1 && (
+          <Cracks key={`s${Math.round(o.fos * 20)}`} cracks={[{ x: Math.min(planeX, 396) - 4, y: topY, len: 26, angle: 100, seed: 4 }, { x: toeX + 30, y: toeY - 30 * Math.tan(rad(p.pp)), len: 40, angle: -p.pp, seed: 8 }]} color="#7F1D1D" width={2} />
+        )}
         <line x1={toeX} y1={toeY} x2={Math.min(planeX, 400)} y2={planeX <= 400 ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp))} stroke={C.ink} strokeWidth={1.5} strokeDasharray="6 4" />
         {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={topY + (1 - p.ru * 2) * Hp * 0.8} stroke={C.tech} strokeWidth={2} strokeDasharray="8 4" />}
         <Txt x={toeX + 70} y={toeY - 70 * Math.tan(rad(p.pp)) + 14} size={8} fill={C.ink}>

@@ -43,6 +43,19 @@ export interface SimDef {
   animated?: boolean;
   /** Optional extra plotted caption below the canvas. */
   caption?: string;
+  /** Direct-manipulation grips drawn on the canvas: drag them to change a parameter. */
+  handles?: SimHandle[];
+}
+
+/** A draggable grip on a simulation canvas bound to one parameter along one axis. */
+export interface SimHandle {
+  key: string;
+  axis: "x" | "y";
+  /** Where to draw the grip (viewBox coordinates) for the current state. */
+  at: (p: Vals, o: Vals) => [number, number];
+  /** Convert the pointer coordinate along `axis` (viewBox units) to a parameter value (clamped + snapped by the runtime). */
+  toValue: (coord: number, p: Vals) => number;
+  color?: string;
 }
 
 /* ------------------------------------------------------------------ */

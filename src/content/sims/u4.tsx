@@ -397,11 +397,13 @@ export const vibeSim: SimDef = {
     { key: "air", label: "Airblast (indicative)", unit: "dB(L)", digits: 0, tone: (v) => (v > 134 ? "warn" : "ok") },
   ],
   caption: "Limits per DGMS Technical Circular 7 of 1997 for structures not belonging to the mine owner. Airblast compared with USBM 134 dB(L) guidance.",
+  handles: [{ key: "D", axis: "x", at: (p, o) => [40 + ((p.D - 50) / 1450) * 340, 198 - (Math.min(o.ppv, 40) / 40) * 180], toValue: (x) => 50 + ((x - 40) / 340) * 1450, color: "#3B82F6" }],
   render: (p, o) => (
     <Plot x={40} y={18} w={340} h={180} xmin={50} xmax={1500} ymin={0} ymax={40} xlabel="distance (m)" ylabel="PPV mm/s">
       {(sx, sy) => (
         <g>
-          <polyline points={sample((d) => Math.min(40, p.K * Math.pow(d / Math.sqrt(p.Q), -p.b)), 50, 1500, 80, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} />
+          <polygon points={`${sx(50)},${sy(0)} ${sample((d) => Math.min(40, p.K * Math.pow(d / Math.sqrt(p.Q), -p.b)), 50, 1500, 80, sx, sy)} ${sx(1500)},${sy(0)}`} fill={C.tech} opacity={0.1} />
+          <polyline points={sample((d) => Math.min(40, p.K * Math.pow(d / Math.sqrt(p.Q), -p.b)), 50, 1500, 80, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} strokeLinejoin="round" />
           <line x1={sx(50)} x2={sx(1500)} y1={sy(o.lim)} y2={sy(o.lim)} stroke={C.crit} strokeDasharray="6 4" strokeWidth={1.5} />
           <Txt x={sx(1500) - 4} y={sy(o.lim) - 4} size={8} anchor="end" fill={C.crit} weight={700}>
             {`limit ${o.lim} mm/s`}
@@ -410,9 +412,9 @@ export const vibeSim: SimDef = {
           <Txt x={sx(500) + 3} y={sy(38)} size={7} fill={C.hazard}>
             500 m danger zone
           </Txt>
-          <circle cx={sx(p.D)} cy={sy(Math.min(o.ppv, 40))} r={6} fill={o.ppv <= o.lim ? C.safe : C.crit} stroke="white" strokeWidth={2} />
+          <circle cx={sx(p.D)} cy={sy(Math.min(o.ppv, 40))} r={14} fill={o.ppv <= o.lim ? C.safe : C.crit} opacity={0.18} />
           <Arrow x1={sx(p.D)} y1={sy(0) - 2} x2={sx(p.D)} y2={sy(Math.min(o.ppv, 40)) + 8} color={C.slate} width={1} head={4} />
-          <Txt x={sx(p.D) + 8} y={sy(Math.min(o.ppv, 40)) - 6} size={9} mono weight={800} fill={o.ppv <= o.lim ? C.safe : C.crit}>
+          <Txt x={sx(p.D) + 14} y={sy(Math.min(o.ppv, 40)) - 8} size={9} mono weight={800} fill={o.ppv <= o.lim ? C.safe : C.crit}>
             {`${o.ppv.toFixed(1)} mm/s`}
           </Txt>
         </g>

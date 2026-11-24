@@ -1,104 +1,614 @@
 @import "tailwindcss";
+@import "@fontsource-variable/plus-jakarta-sans/wght.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
 
-@theme {
-  --color-slate-ink: #0F172A;
-  --color-paper: #F8FAFC;
-  --color-emerald-safe: #10B981;
-  --color-amber-hazard: #F59E0B;
-  --color-crimson: #EF4444;
-  --color-tech: #3B82F6;
-  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+/*
+ * STRATA "Tactile Engineering Studio" design system.
+ *
+ * Every neutral (slate-*) and accent tint used by the app resolves to a CSS variable, so the whole UI
+ * — authored once in light-mode semantics — flips to "Underground Shift Mode" by toggling `.dark` on <html>.
+ * bg-surface / bg-canvas are the semantic elevated-card and page backgrounds.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --color-canvas: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--n-900);
+
+  --color-slate-50: var(--n-50);
+  --color-slate-100: var(--n-100);
+  --color-slate-200: var(--n-200);
+  --color-slate-300: var(--n-300);
+  --color-slate-400: var(--n-400);
+  --color-slate-500: var(--n-500);
+  --color-slate-600: var(--n-600);
+  --color-slate-700: var(--n-700);
+  --color-slate-800: var(--n-800);
+  --color-slate-900: var(--n-900);
+  --color-slate-950: var(--n-950);
+
+  --color-emerald-50: var(--em-50);
+  --color-emerald-100: var(--em-100);
+  --color-emerald-200: var(--em-200);
+  --color-emerald-300: var(--em-300);
+  --color-emerald-600: var(--em-600);
+  --color-emerald-700: var(--em-700);
+  --color-emerald-800: var(--em-800);
+  --color-emerald-900: var(--em-900);
+
+  --color-red-50: var(--rd-50);
+  --color-red-100: var(--rd-100);
+  --color-red-200: var(--rd-200);
+  --color-red-300: var(--rd-300);
+  --color-red-600: var(--rd-600);
+  --color-red-700: var(--rd-700);
+  --color-red-800: var(--rd-800);
+  --color-red-900: var(--rd-900);
+
+  --color-amber-50: var(--am-50);
+  --color-amber-100: var(--am-100);
+  --color-amber-300: var(--am-300);
+  --color-amber-600: var(--am-600);
+  --color-amber-700: var(--am-700);
+  --color-amber-800: var(--am-800);
+
+  --color-blue-50: var(--bl-50);
+  --color-blue-100: var(--bl-100);
+  --color-blue-300: var(--bl-300);
+  --color-blue-600: var(--bl-600);
+  --color-blue-700: var(--bl-700);
+  --color-blue-800: var(--bl-800);
+  --color-blue-900: var(--bl-900);
+
+  --color-violet-50: var(--vi-50);
+  --color-violet-600: var(--vi-600);
 }
 
+/* ---------- Crisp Daylight ---------- */
 :root {
+  color-scheme: light;
+  --bg: #f7f7f5;
+  --bg-deep: #efeee9;
+  --surface: #ffffff;
+  --surface-2: #fbfbf9;
+  --hair: rgba(15, 23, 42, 0.07);
+  --plate: #fdfcf9;
+  --plate-line: rgba(15, 23, 42, 0.05);
+  --shadow-card:
+    0 0 0 1px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px -6px rgba(15, 23, 42, 0.08),
+    0 22px 44px -22px rgba(15, 23, 42, 0.14);
+  --shadow-pop: 0 0 0 1px rgba(15, 23, 42, 0.06), 0 12px 32px -8px rgba(15, 23, 42, 0.2), 0 32px 64px -32px rgba(15, 23, 42, 0.25);
+  --edge-neutral: #d9dde3;
+
+  --n-50: #f8fafc;
+  --n-100: #f1f5f9;
+  --n-200: #e2e8f0;
+  --n-300: #cbd5e1;
+  --n-400: #94a3b8;
+  --n-500: #64748b;
+  --n-600: #475569;
+  --n-700: #334155;
+  --n-800: #1e293b;
+  --n-900: #0f172a;
+  --n-950: #020617;
+
+  --em-50: #ecfdf5;
+  --em-100: #d1fae5;
+  --em-200: #a7f3d0;
+  --em-300: #6ee7b7;
+  --em-600: #059669;
+  --em-700: #047857;
+  --em-800: #065f46;
+  --em-900: #064e3b;
+
+  --rd-50: #fef2f2;
+  --rd-100: #fee2e2;
+  --rd-200: #fecaca;
+  --rd-300: #fca5a5;
+  --rd-600: #dc2626;
+  --rd-700: #b91c1c;
+  --rd-800: #991b1b;
+  --rd-900: #7f1d1d;
+
+  --am-50: #fffbeb;
+  --am-100: #fef3c7;
+  --am-300: #fcd34d;
+  --am-600: #d97706;
+  --am-700: #b45309;
+  --am-800: #92400e;
+
+  --bl-50: #eff6ff;
+  --bl-100: #dbeafe;
+  --bl-300: #93c5fd;
+  --bl-600: #2563eb;
+  --bl-700: #1d4ed8;
+  --bl-800: #1e40af;
+  --bl-900: #1e3a8a;
+
+  --vi-50: #f5f3ff;
+  --vi-600: #7c3aed;
+}
+
+/* ---------- Underground Shift Mode ---------- */
+:root.dark {
   color-scheme: dark;
+  --bg: #0b0f19;
+  --bg-deep: #070a12;
+  --surface: #121826;
+  --surface-2: #161d2d;
+  --hair: rgba(148, 163, 184, 0.1);
+  --plate: #eef0ea;
+  --plate-line: rgba(15, 23, 42, 0.06);
+  --shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 0 0 1px rgba(148, 163, 184, 0.09), 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 16px 40px -16px rgba(0, 0, 0, 0.7);
+  --shadow-pop: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(148, 163, 184, 0.14), 0 24px 64px -16px rgba(0, 0, 0, 0.8);
+  --edge-neutral: #070a12;
+
+  --n-50: #161d2d;
+  --n-100: #1b2336;
+  --n-200: #263049;
+  --n-300: #344262;
+  --n-400: #5d6b89;
+  --n-500: #8693ad;
+  --n-600: #a6b1c6;
+  --n-700: #c4ccda;
+  --n-800: #dce2ec;
+  --n-900: #eef1f7;
+  --n-950: #f8fafc;
+
+  --em-50: #0e2a22;
+  --em-100: #113629;
+  --em-200: #145a43;
+  --em-300: #1d7a59;
+  --em-600: #34d399;
+  --em-700: #6ee7b7;
+  --em-800: #a7f3d0;
+  --em-900: #d1fae5;
+
+  --rd-50: #2b1418;
+  --rd-100: #3b191e;
+  --rd-200: #5c2329;
+  --rd-300: #b4404a;
+  --rd-600: #f87171;
+  --rd-700: #fca5a5;
+  --rd-800: #fecaca;
+  --rd-900: #fee2e2;
+
+  --am-50: #2a2111;
+  --am-100: #3a2c12;
+  --am-300: #b45309;
+  --am-600: #fbbf24;
+  --am-700: #fcd34d;
+  --am-800: #fde68a;
+
+  --bl-50: #111e3a;
+  --bl-100: #16284d;
+  --bl-300: #2f5fc4;
+  --bl-600: #60a5fa;
+  --bl-700: #93c5fd;
+  --bl-800: #bfdbfe;
+  --bl-900: #dbeafe;
+
+  --vi-50: #1f1836;
+  --vi-600: #a78bfa;
 }
 
 html,
 body {
-  background: #0F172A;
-  color: #F8FAFC;
+  background: var(--bg);
+  color: var(--n-900);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  transition: background-color 240ms ease;
+}
+::selection {
+  background: rgba(59, 130, 246, 0.25);
 }
 
-/* Swiss grid hairline background for the app shell */
-.grid-bg {
+/* Soft studio backdrop: a faint dot lattice with a warm top glow */
+.studio-bg {
   background-image:
-    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
-  background-size: 32px 32px;
+    radial-gradient(1200px 500px at 50% -200px, rgba(59, 130, 246, 0.07), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--hair) 1px, transparent 0);
+  background-size:
+    100% 100%,
+    22px 22px;
+  background-attachment: fixed, scroll;
 }
 
+/* Elevated surface */
 .card {
-  background: #F8FAFC;
-  color: #0F172A;
-  border-radius: 1rem;
-  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+  background: var(--surface);
+  color: var(--n-900);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+.card-pop {
+  box-shadow: var(--shadow-pop);
 }
 
-.readout {
+.readout,
+.font-mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 0;
 }
 
-input[type="range"] {
-  accent-color: #3B82F6;
+/* ---------- Tactile 3D buttons ----------
+ * --c is the face colour, --e the lip/edge colour. Pressing sinks the face into its lip. */
+.btn-3d {
+  --c: var(--n-900);
+  --e: #000;
+  --t: #fff;
+  position: relative;
+  background: var(--c);
+  color: var(--t);
+  border-radius: 0.95rem;
+  box-shadow: 0 4px 0 var(--e);
+  transform: translateY(0);
+  transition:
+    transform 70ms ease,
+    box-shadow 70ms ease,
+    filter 120ms ease;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.btn-3d:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.btn-3d:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--e);
+}
+.btn-3d:disabled {
+  --c: var(--n-200) !important;
+  --e: var(--n-300) !important;
+  --t: var(--n-500) !important;
+  cursor: not-allowed;
+}
+.btn-3d:focus-visible,
+.tile-3d:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 3px;
+}
+.tone-ink {
+  --c: var(--n-900);
+  --e: var(--n-950);
+  --t: var(--n-50);
+}
+:root.dark .tone-ink {
+  --e: #8a94a8;
+}
+.tone-safe {
+  --c: #10b981;
+  --e: #047857;
+  --t: #fff;
+}
+.tone-crit {
+  --c: #ef4444;
+  --e: #b91c1c;
+  --t: #fff;
+}
+.tone-tech {
+  --c: #3b82f6;
+  --e: #1d4ed8;
+  --t: #fff;
+}
+.tone-hazard {
+  --c: #f59e0b;
+  --e: #b45309;
+  --t: #fff;
+}
+.tone-violet {
+  --c: #8b5cf6;
+  --e: #6d28d9;
+  --t: #fff;
+}
+.tone-ghost {
+  --c: var(--surface);
+  --e: var(--edge-neutral);
+  --t: var(--n-700);
+  border: 2px solid var(--n-200);
 }
 
+/* Chunky selectable tile (answer options, segmented picks) */
+.tile-3d {
+  background: var(--surface);
+  border: 2px solid var(--n-200);
+  border-radius: 1rem;
+  box-shadow: 0 3px 0 var(--n-200);
+  transition:
+    transform 70ms ease,
+    box-shadow 70ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+.tile-3d:hover:not(:disabled) {
+  border-color: var(--n-300);
+}
+.tile-3d:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--n-200);
+}
+.tile-3d[data-on="true"] {
+  border-color: #3b82f6;
+  background: var(--bl-50);
+  box-shadow: 0 3px 0 #3b82f6;
+}
+
+/* Legacy press helper (still used by small inline buttons) */
 .btn-press {
-  transition: transform 80ms ease, box-shadow 80ms ease;
+  transition:
+    transform 80ms ease,
+    box-shadow 80ms ease;
 }
 .btn-press:active {
   transform: translateY(2px);
 }
 
+/* ---------- Simulation plate (a daylight lightbox in both themes) ---------- */
+.plate {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 20px 20px,
+    var(--plate);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.08),
+    inset 0 2px 6px rgba(15, 23, 42, 0.05);
+}
+:root.dark .plate {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 18px 40px -18px rgba(0, 0, 0, 0.9);
+}
+.plate svg {
+  display: block;
+}
+
+/* ---------- Custom range slider ----------
+ * A native <input type=range> stays on top (transparent) for keyboard, a11y and touch; the visuals are drawn below. */
+.slider {
+  position: relative;
+  height: 44px;
+  touch-action: pan-y;
+}
+.slider input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: grab;
+  touch-action: pan-y;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.slider input[type="range"]:active {
+  cursor: grabbing;
+}
+.slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px;
+  height: 44px;
+}
+.slider input[type="range"]::-moz-range-thumb {
+  width: 30px;
+  height: 44px;
+  border: 0;
+}
+.slider-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: var(--n-200);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+.slider-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+}
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid currentColor;
+  box-shadow:
+    0 3px 0 rgba(15, 23, 42, 0.18),
+    0 6px 14px -4px rgba(15, 23, 42, 0.3);
+  pointer-events: none;
+}
+.slider input:focus-visible ~ .slider-thumb {
+  outline: 3px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Geological strata bands behind the expedition path */
+.stratum {
+  position: relative;
+}
+.stratum::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--texture);
+  opacity: 0.5;
+}
+
 @keyframes pulse-ring {
-  0% { opacity: 0.8; r: 6; }
-  100% { opacity: 0; r: 16; }
+  0% {
+    opacity: 0.8;
+    r: 6;
+  }
+  100% {
+    opacity: 0;
+    r: 16;
+  }
 }
 .hotspot-ring {
   animation: pulse-ring 1.6s ease-out infinite;
 }
 
 @keyframes alarm-flash {
-  0%, 100% { background-color: #7f1d1d; }
-  50% { background-color: #EF4444; }
+  0%,
+  100% {
+    background-color: #7f1d1d;
+  }
+  50% {
+    background-color: #ef4444;
+  }
 }
 .alarm-flash {
   animation: alarm-flash 1s steps(2) infinite;
 }
 
+@keyframes bob {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -6px);
+  }
+}
+.bob {
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+@keyframes live-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+.live-dot {
+  animation: live-dot 1.4s ease-in-out infinite;
+}
+
+/* SVG airflow / conveyor streamlines */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.flow {
+  stroke-dasharray: 6 6;
+  animation: flow-dash 0.9s linear infinite;
+}
+.flow-slow {
+  stroke-dasharray: 4 8;
+  animation: flow-dash 2.2s linear infinite;
+}
+
+/* Animated fracture propagation (FoS < 1) */
+@keyframes crack-draw {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.crack {
+  stroke-dasharray: 120;
+  animation: crack-draw 0.9s ease-out forwards;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-1.5px);
+  }
+  40% {
+    transform: translateX(1.5px);
+  }
+  60% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+}
+.shake {
+  animation: shake 0.35s linear infinite;
+  transform-box: fill-box;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /* ---------- Touch ergonomics (phones/tablets) ---------- */
 svg[role="img"] {
-  touch-action: manipulation; /* no double-tap zoom delay on diagrams */
-}
-input[type="range"] {
-  touch-action: pan-y; /* vertical scroll still works when a thumb starts on a slider */
-  height: 28px;
+  touch-action: manipulation;
 }
 @media (pointer: coarse) {
-  input[type="range"] {
-    height: 44px;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    width: 28px;
-    height: 28px;
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
-  }
   button,
   select,
   nav a,
   a.btn-press,
+  a.btn-3d,
   input:not([type="range"]):not([type="checkbox"]) {
     min-height: 44px;
   }
   input[type="checkbox"] {
     width: 24px;
     height: 24px;
+  }
+}
+
+/* Lift the lesson action drawer above the phone tab bar on pages that show it (e.g. Warmup) */
+@media (max-width: 767px) {
+  body:has(nav[aria-label="Primary"]) .action-bar {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    padding-bottom: 0;
   }
 }

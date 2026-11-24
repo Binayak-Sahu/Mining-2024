@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Siren, Timer } from "lucide-react";
 import type { CrisisStage } from "@/lib/types";
 import { toneColor } from "@/components/sim/svg";
-import { CardFrame, Feedback, PrimaryButton, type CardProps } from "./ui";
+import { CardFrame, Feedback, PrimaryButton, optionClass, type CardProps } from "./ui";
 
 export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisStage>) {
   const [phase, setPhase] = useState(0);
@@ -36,10 +36,10 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
   if (!started) {
     return (
       <CardFrame kind="crisis" title={stage.title} footer={<PrimaryButton tone="crit" onClick={() => setStarted(true)}>Take charge of the district — start clock ({stage.seconds}s)</PrimaryButton>}>
-        <div className="alarm-flash rounded-xl text-white px-3 py-2 flex items-center gap-2 font-bold text-sm">
+        <div className="alarm-flash rounded-2xl text-white px-4 py-3 flex items-center gap-2 font-extrabold text-sm shadow-[0_4px_0_#7F1D1D]">
           <Siren size={16} /> {stage.alarm}
         </div>
-        <p className="text-[15px] leading-snug text-slate-800">{stage.scenario}</p>
+        <p className="text-[16px] leading-relaxed text-slate-700">{stage.scenario}</p>
         <p className="text-xs text-slate-500">You are the competent person on shift. Wrong diagnoses or actions cost safety hearts; the clock is running once you accept.</p>
       </CardFrame>
     );
@@ -54,7 +54,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
 
   return (
     <CardFrame kind="crisis" title={stage.title} footer={finished && <PrimaryButton onClick={onDone}>Debrief complete — Continue</PrimaryButton>}>
-      <div className={`${finished ? "bg-slate-800" : "alarm-flash"} rounded-xl text-white px-3 py-2 flex items-center justify-between font-bold text-sm`}>
+      <div className={`${finished ? "bg-[#1E293B]" : "alarm-flash"} rounded-2xl text-white px-4 py-3 flex items-center justify-between font-extrabold text-sm`}>
         <span className="flex items-center gap-2">
           <Siren size={16} /> {stage.alarm}
         </span>
@@ -62,14 +62,14 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
           <Timer size={14} /> {left}s
         </span>
       </div>
-      <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
-        <motion.div className="h-full bg-red-500" animate={{ width: `${(left / stage.seconds) * 100}%` }} transition={{ ease: "linear", duration: 1 }} />
+      <div className="h-2.5 rounded-full bg-slate-200 overflow-hidden shadow-[inset_0_1px_2px_rgba(15,23,42,0.15)]">
+        <motion.div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-red-500" animate={{ width: `${(left / stage.seconds) * 100}%` }} transition={{ ease: "linear", duration: 1 }} />
       </div>
       {stage.telemetry && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {stage.telemetry.map((t) => (
-            <div key={t.label} className="rounded-lg bg-slate-900 px-2 py-1.5">
-              <div className="text-[9px] uppercase tracking-wider text-slate-400">{t.label}</div>
+            <div key={t.label} className="rounded-xl bg-[#0E1424] px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="text-[9.5px] uppercase tracking-[0.1em] font-semibold text-[#8B97AE]">{t.label}</div>
               <div className="readout text-sm font-bold" style={{ color: toneColor(t.tone) }}>
                 {t.value}
               </div>
@@ -86,10 +86,10 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
 
       {!finished ? (
         <div className="space-y-2">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-red-600">
+          <div className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-red-600">
             {cur.label} · {phase + 1}/{stage.phases.length}
           </div>
-          <p className="font-bold text-slate-900">{cur.prompt}</p>
+          <p className="font-extrabold text-[17px] text-slate-900">{cur.prompt}</p>
           <div className="grid gap-2">
             {cur.options.map((o, i) => {
               const st = pick === null ? "idle" : o.correct ? "right" : i === pick ? "wrong" : "dim";
@@ -98,12 +98,10 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
                   key={i}
                   type="button"
                   onClick={() => choose(i)}
-                  className={`btn-press text-left rounded-xl border-2 px-3 py-2.5 text-sm font-medium ${
-                    st === "idle" ? "border-slate-200 bg-white hover:border-red-500" : st === "right" ? "border-emerald-500 bg-emerald-50" : st === "wrong" ? "border-red-500 bg-red-50" : "border-slate-100 text-slate-400"
-                  }`}
+                  className={optionClass(st)}
                 >
                   {o.text}
-                  {pick !== null && (st === "right" || st === "wrong") && <span className="block text-xs mt-1 text-slate-600 font-normal">{o.why}</span>}
+                  {pick !== null && (st === "right" || st === "wrong") && <span className="block text-[13px] mt-1.5 text-slate-600 font-medium">{o.why}</span>}
                 </button>
               );
             })}

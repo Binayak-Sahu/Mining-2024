@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { SimDef, Vals } from "@/lib/types";
+import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
+import { motion } from "framer-motion";
+import { Hand } from "lucide-react";
+import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
 import { toneColor } from "./svg";
+import { Slider } from "@/components/ui/Slider";
 
 export function defaults(def: SimDef, overrides?: Vals): Vals {
   const v: Vals = {};
@@ -28,32 +31,121 @@ function useClock(active: boolean): number {
   return t;
 }
 
-export function SimCanvas({ def, values, overlay }: { def: SimDef; values: Vals; overlay?: ReactNode }) {
+function snap(p: SimParam, v: number): number {
+  const s = Math.round((v - p.min) / p.step) * p.step + p.min;
+  const c = Math.min(p.max, Math.max(p.min, s));
+  return +c.toFixed(6);
+}
+
+const PARAM_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#0EA5E9"];
+
+/** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
+export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void }) {
   const out = useMemo(() => def.compute(values), [def, values]);
   const t = useClock(!!def.animated);
+  const svg = useRef<SVGSVGElement>(null);
+  const [drag, setDrag] = useState<number | null>(null);
+  const [used, setUsed] = useState(false);
+  const handles = onChange ? (def.handles ?? []) : [];
+
+  const toView = (e: RPointerEvent) => {
+    const el = svg.current;
+    const m = el?.getScreenCTM();
+    if (!el || !m) return null;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+    return pt;
+  };
+
+  const move = (e: RPointerEvent) => {
+    if (drag === null || !onChange) return;
+    const h = handles[drag];
+    const p = def.params.find((q) => q.key === h.key);
+    const pt = toView(e);
+    if (!p || !pt) return;
+    const v = snap(p, h.toValue(h.axis === "x" ? pt.x : pt.y, values));
+    if (v !== values[h.key]) onChange({ ...values, [h.key]: v });
+  };
+
   return (
-    <svg viewBox="0 0 400 240" className="w-full h-auto rounded-xl bg-white border border-slate-200 select-none" role="img" aria-label={def.title}>
-      {def.render(values, out, t)}
-      {overlay}
-    </svg>
+    <div className="plate">
+      <svg
+        ref={svg}
+        viewBox="0 0 400 240"
+        className={`w-full h-auto select-none ${drag !== null ? "cursor-grabbing" : ""}`}
+        role="img"
+        aria-label={def.title}
+        style={{ touchAction: drag !== null ? "none" : undefined }}
+        onPointerMove={move}
+        onPointerUp={() => setDrag(null)}
+        onPointerCancel={() => setDrag(null)}
+      >
+        {def.render(values, out, t)}
+        {overlay}
+        {handles.map((h, i) => {
+          const [x, y] = h.at(values, out);
+          const c = h.color ?? "#3B82F6";
+          const on = drag === i;
+          return (
+            <g
+              key={`${h.key}-${i}`}
+              role="slider"
+              aria-label={`Drag to change ${def.params.find((q) => q.key === h.key)?.label ?? h.key}`}
+              aria-valuenow={values[h.key]}
+              style={{ cursor: on ? "grabbing" : "grab", touchAction: "none" }}
+              onPointerDown={(e) => {
+                (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+                e.preventDefault();
+                setDrag(i);
+                setUsed(true);
+              }}
+            >
+              <circle cx={x} cy={y} r={22} fill="transparent" />
+              {!used && <circle cx={x} cy={y} r={9} fill="none" stroke={c} strokeWidth={2} className="hotspot-ring" />}
+              <circle cx={x} cy={y} r={on ? 10 : 8.5} fill="white" stroke={c} strokeWidth={3} filter="url(#f-shadow)" />
+              {h.axis === "x" ? (
+                <path d={`M${x - 3.5} ${y} l2.5 -2.5 v5z M${x + 3.5} ${y} l-2.5 -2.5 v5z`} fill={c} />
+              ) : (
+                <path d={`M${x} ${y - 3.5} l-2.5 2.5 h5z M${x} ${y + 3.5} l-2.5 -2.5 h5z`} fill={c} />
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      {handles.length > 0 && !used && (
+        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+          <Hand size={11} /> Drag the grips on the diagram
+        </motion.div>
+      )}
+      {def.animated && (
+        <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
+          <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+        </span>
+      )}
+    </div>
   );
 }
 
+/** Instrument-cluster telemetry strip (always a dark display, in both themes). */
 export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
   const out = useMemo(() => def.compute(values), [def, values]);
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+    <div className="rounded-2xl bg-[#0E1424] p-1.5 grid grid-cols-2 sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
       {def.outputs.map((o, i) => {
         const v = out[o.key];
         const tone = o.tone ? o.tone(v, out, values) : "info";
         const text = o.format ? o.format(v, out, values) : fmt(v, o.digits ?? 2);
+        const col = tone === "info" ? "#93C5FD" : toneColor(tone);
         return (
-          <div key={`${o.key}-${i}`} className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5">
-            <div className="text-[10px] uppercase tracking-wider text-slate-500 leading-tight">{o.label}</div>
-            <div className="readout text-sm font-semibold flex items-center gap-1.5" style={{ color: tone === "info" ? "#0F172A" : toneColor(tone) }}>
-              <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: toneColor(tone) }} />
-              {text}
-              {o.unit && !o.format && <span className="text-slate-500 font-normal text-xs">{o.unit}</span>}
+          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0">
+            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight truncate" title={o.label}>
+              {o.label}
+            </div>
+            <div className="readout text-[14px] font-bold flex items-center gap-1.5 mt-0.5 text-[#F1F5F9] min-w-0">
+              <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />
+              <motion.span key={text} initial={{ opacity: 0.4, y: -2 }} animate={{ opacity: 1, y: 0 }} className="truncate" style={{ color: tone === "info" ? "#F1F5F9" : col }}>
+                {text}
+              </motion.span>
+              {o.unit && !o.format && <span className="text-[#8B97AE] font-medium text-[11px] shrink-0">{o.unit}</span>}
             </div>
           </div>
         );
@@ -62,83 +154,60 @@ export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
   );
 }
 
-export function Controls({
-  def,
-  values,
-  onChange,
-  disabled,
-}: {
-  def: SimDef;
-  values: Vals;
-  onChange: (v: Vals) => void;
-  disabled?: boolean;
-}) {
+export function Controls({ def, values, onChange, disabled }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; disabled?: boolean }) {
   return (
-    <div className="space-y-2.5">
-      {def.params.map((p) => (
-        <div key={p.key}>
-          <div className="flex justify-between text-xs mb-1">
-            <span className="text-slate-600 font-medium">{p.label}</span>
-            <span className="readout font-semibold text-slate-900">
-              {p.options ? p.options.find((o) => o.value === values[p.key])?.label : fmt(values[p.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0)}
-              {!p.options && p.unit ? ` ${p.unit}` : ""}
-            </span>
-          </div>
-          {p.options ? (
-            <div className="flex flex-wrap gap-1">
-              {p.options.map((o) => (
-                <button
-                  key={o.value}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => onChange({ ...values, [p.key]: o.value })}
-                  className={`btn-press text-xs px-2.5 py-1 rounded-md border ${
-                    values[p.key] === o.value ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-300 text-slate-700 hover:border-slate-500"
-                  }`}
-                >
-                  {o.label}
-                </button>
-              ))}
+    <div className="space-y-3">
+      {def.params.map((p, k) => {
+        const color = PARAM_COLORS[k % PARAM_COLORS.length];
+        const display = p.options
+          ? (p.options.find((o) => o.value === values[p.key])?.label ?? "")
+          : `${fmt(values[p.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0)}${p.unit ? ` ${p.unit}` : ""}`;
+        return (
+          <div key={p.key}>
+            <div className="flex items-baseline justify-between gap-3 text-[13px] mb-0.5">
+              <span className="text-slate-600 font-semibold">{p.label}</span>
+              <span className="readout font-bold shrink-0" style={{ color }}>
+                {display}
+              </span>
             </div>
-          ) : (
-            <input
-              type="range"
-              className="w-full"
-              min={p.min}
-              max={p.max}
-              step={p.step}
-              value={values[p.key]}
-              disabled={disabled}
-              aria-label={p.label}
-              onChange={(e) => onChange({ ...values, [p.key]: Number(e.target.value) })}
-            />
-          )}
-        </div>
-      ))}
+            {p.options ? (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {p.options.map((o) => {
+                  const on = values[p.key] === o.value;
+                  return (
+                    <button
+                      key={o.value}
+                      type="button"
+                      disabled={disabled}
+                      data-on={on}
+                      onClick={() => onChange({ ...values, [p.key]: o.value })}
+                      className="tile-3d px-3 py-2 text-[13px] font-bold text-slate-700 data-[on=true]:text-blue-700"
+                    >
+                      {o.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <Slider value={values[p.key]} min={p.min} max={p.max} step={p.step} label={p.label} display={display} color={color} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-/** Full interactive sim: canvas + sliders + readouts. */
-export function SimView({
-  def,
-  values,
-  onChange,
-  overlay,
-  disabled,
-}: {
-  def: SimDef;
-  values: Vals;
-  onChange: (v: Vals) => void;
-  overlay?: ReactNode;
-  disabled?: boolean;
-}) {
+/** Full interactive sim: diorama + telemetry + controls. */
+export function SimView({ def, values, onChange, overlay, disabled }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean }) {
   return (
     <div className="space-y-3">
-      <SimCanvas def={def} values={values} overlay={overlay} />
+      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} />
       <Readouts def={def} values={values} />
-      <Controls def={def} values={values} onChange={onChange} disabled={disabled} />
-      {def.caption && <p className="text-[11px] text-slate-500">{def.caption}</p>}
+      <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)]">
+        <Controls def={def} values={values} onChange={onChange} disabled={disabled} />
+      </div>
+      {def.caption && <p className="text-[12px] text-slate-500 leading-relaxed">{def.caption}</p>}
     </div>
   );
 }

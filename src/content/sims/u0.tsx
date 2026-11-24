@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp } from "@/components/sim/svg";
+import { C, Txt, Arrow, Dim, clamp, HudBadge } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 export const overburden: SimDef = {
   id: "u0-overburden",
@@ -22,24 +23,30 @@ export const overburden: SimDef = {
       tone: (v) => (v >= 20 ? "crit" : v > 10 ? "warn" : "ok"),
     },
   ],
+  handles: [{ key: "H", axis: "y", at: (p) => [168, 20 + (200 * p.H) / 1200], toValue: (y) => (y - 20) * 6, color: "#3B82F6" }],
   render: (p, o) => {
     const top = 20;
     const bottom = 220;
     const yWork = top + ((bottom - top) * p.H) / 1200;
-    const layers = [C.soil, C.sand, C.shale, C.sand, C.shale, C.rock];
+    const layers = [MAT.soil, MAT.sand, MAT.shale, MAT.sand, MAT.shale, MAT.rock];
     const arrowLen = clamp(o.sv * 4, 6, 150);
     return (
       <g>
         {layers.map((c, i) => (
-          <rect key={i} x={40} y={top + (i * (bottom - top)) / layers.length} width={160} height={(bottom - top) / layers.length} fill={c} opacity={0.85} />
+          <rect key={i} x={40} y={top + (i * (bottom - top)) / layers.length} width={160} height={(bottom - top) / layers.length} fill={c} />
         ))}
-        <rect x={40} y={yWork - 4} width={160} height={8} fill={C.coal} />
-        <rect x={100} y={yWork - 4} width={40} height={8} fill="white" stroke={C.ink} />
+        <rect x={40} y={top} width={160} height={bottom - top} fill={MAT.rockShade} />
+        <rect x={40} y={top - 6} width={160} height={6} fill="#65A30D" />
+        <rect x={40} y={top} width={160} height={bottom - top} fill="none" stroke="rgba(15,23,42,0.35)" />
+        <rect x={40} y={yWork - 4} width={160} height={8} fill={MAT.coal} />
+        <rect x={100} y={yWork - 4} width={40} height={8} fill="#FEF3C7" stroke={C.ink} />
+        <circle cx={120} cy={yWork} r={14} fill="url(#grad-lamp)" />
         <Txt x={120} y={yWork + 3} size={7} anchor="middle" weight={700}>
           GALLERY
         </Txt>
         <Dim x1={30} y1={top} x2={30} y2={yWork} label={`${p.H} m`} />
         <Arrow x1={120} y1={yWork - 6 - arrowLen} x2={120} y2={yWork - 6} color={o.sv > 20 ? C.crit : C.tech} width={4} head={9} />
+        <HudBadge x={392} y={214} anchor="end" label="σv" value={`${o.sv.toFixed(1)} MPa`} tone={o.sv > 20 ? "crit" : o.sv > 10 ? "warn" : "ok"} />
         <Txt x={230} y={40} size={11} weight={700}>
           σv = ρ·g·H
         </Txt>

@@ -56,8 +56,8 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
 
   if (phase === "intuition") {
     return (
-      <CardFrame kind="equation" title={stage.title} footer={<PrimaryButton onClick={() => setPhase("forge")}>I feel the proportionality → Forge it</PrimaryButton>}>
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Physical proportionality first</p>
+      <CardFrame kind="equation" title={stage.title} footer={<PrimaryButton tone="violet" onClick={() => setPhase("forge")}>I feel the proportionality → Forge it</PrimaryButton>}>
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-violet-600">Physical proportionality first</p>
         <div className="space-y-2">
           {stage.intuition.map((s, i) => (
             <motion.div
@@ -65,7 +65,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.25 }}
-              className="rounded-xl border-l-4 border-violet-500 bg-violet-50 px-3 py-2 text-sm text-slate-800"
+              className="rounded-2xl border-l-4 border-violet-500 bg-violet-50 px-4 py-3 text-[15px] text-slate-800 leading-relaxed"
             >
               {s}
             </motion.div>
@@ -90,7 +90,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
               Check equation
             </PrimaryButton>
             {status === "wrong" && (
-              <button type="button" onClick={reveal} className="btn-press shrink-0 rounded-xl border-2 border-slate-300 px-3 text-xs font-bold uppercase text-slate-600">
+              <button type="button" onClick={reveal} className="btn-3d tone-ghost shrink-0 px-4 text-[12px]">
                 Show me
               </button>
             )}
@@ -98,12 +98,12 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
         )
       }
     >
-      <p className="text-sm text-slate-700">Tap blocks to assemble the governing equation. Tap a placed block to return it.</p>
+      <p className="text-[14px] text-slate-600">Tap blocks to assemble the governing equation. Tap a placed block to return it.</p>
       <motion.div
         key={shake}
         animate={status === "wrong" ? { x: [0, -8, 8, -6, 6, 0] } : {}}
         transition={{ duration: 0.35 }}
-        className={`min-h-[64px] rounded-xl border-2 border-dashed p-2 flex flex-wrap gap-1.5 items-center ${
+        className={`min-h-[76px] rounded-2xl border-2 border-dashed p-2.5 flex flex-wrap gap-2 items-center ${
           status === "right" ? "border-emerald-500 bg-emerald-50" : status === "wrong" ? "border-red-400 bg-red-50" : "border-slate-300 bg-slate-50"
         }`}
       >
@@ -117,7 +117,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
               setPlaced((p) => p.filter((x) => x !== t.id));
               setStatus("idle");
             }}
-            className="btn-press readout rounded-lg bg-slate-900 text-white px-2.5 py-1.5 text-base font-semibold shadow-[0_2px_0_rgba(0,0,0,0.3)]"
+            className="btn-press readout rounded-xl bg-violet-500 text-white px-3 py-2 text-[17px] font-bold shadow-[0_3px_0_#6D28D9]"
           >
             {t.text}
           </button>
@@ -140,9 +140,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
                 setPlaced((p) => [...p, t.id]);
                 setStatus("idle");
               }}
-              className={`btn-press readout rounded-lg border-2 px-2.5 py-1.5 text-base font-semibold ${
-                used ? "border-slate-100 text-slate-200" : "border-slate-300 bg-white text-slate-900 hover:border-violet-500 shadow-[0_2px_0_#CBD5E1]"
-              }`}
+              className={`readout tile-3d px-3 py-2 text-[17px] font-bold ${used ? "opacity-30 !shadow-none" : "text-slate-900 hover:!border-violet-400"}`}
             >
               {t.text}
             </button>

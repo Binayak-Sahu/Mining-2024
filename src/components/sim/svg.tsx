@@ -24,6 +24,9 @@ export const C = {
   air: "#38BDF8",
 };
 
+export const SANS = "'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif";
+export const MONO = "'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, monospace";
+
 export const W = 400;
 export const H = 240;
 
@@ -65,7 +68,8 @@ export function Txt({
       fill={fill}
       textAnchor={anchor}
       fontWeight={weight}
-      fontFamily={mono ? "ui-monospace, Menlo, monospace" : "Inter, Helvetica, Arial, sans-serif"}
+      fontFamily={mono ? MONO : SANS}
+      style={mono ? { fontVariantNumeric: "tabular-nums" } : undefined}
     >
       {children}
     </text>
@@ -98,8 +102,8 @@ export function Arrow({
   const hy2 = y2 - head * Math.sin(a + 0.45);
   return (
     <g>
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={width} strokeDasharray={dash} />
-      <polygon points={`${x2},${y2} ${hx1},${hy1} ${hx2},${hy2}`} fill={color} />
+      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={width} strokeDasharray={dash} strokeLinecap="round" />
+      <polygon points={`${x2},${y2} ${hx1},${hy1} ${hx2},${hy2}`} fill={color} stroke={color} strokeWidth={1} strokeLinejoin="round" />
     </g>
   );
 }
@@ -128,8 +132,9 @@ export function Meter({
   const over = limit !== undefined && value > limit;
   return (
     <g>
-      <rect x={x} y={y} width={w} height={8} rx={4} fill={C.faint} />
-      <rect x={x} y={y} width={w * f} height={8} rx={4} fill={color ?? (over ? C.crit : C.safe)} />
+      <rect x={x} y={y} width={w} height={8} rx={4} fill={C.faint} stroke="rgba(15,23,42,0.08)" />
+      <rect x={x} y={y} width={Math.max(w * f, f > 0 ? 8 : 0)} height={8} rx={4} fill={color ?? (over ? C.crit : C.safe)} />
+      <rect x={x + 2} y={y + 1.5} width={Math.max(w * f - 4, 0)} height={2} rx={1} fill="white" opacity={0.35} />
       {limit !== undefined && (
         <line x1={x + w * clamp(limit / max, 0, 1)} x2={x + w * clamp(limit / max, 0, 1)} y1={y - 3} y2={y + 11} stroke={C.ink} strokeWidth={1.5} />
       )}
@@ -214,7 +219,7 @@ export function Plot({
   const sy = (v: number) => y + h - ((v - ymin) / (ymax - ymin)) * h;
   return (
     <g>
-      <rect x={x} y={y} width={w} height={h} fill="white" stroke={C.line} />
+      <rect x={x} y={y} width={w} height={h} rx={3} fill="white" stroke={C.line} filter="url(#f-shadow)" />
       {[0.25, 0.5, 0.75].map((f) => (
         <g key={f}>
           <line x1={x + w * f} x2={x + w * f} y1={y} y2={y + h} stroke={C.faint} />
@@ -272,4 +277,89 @@ export function sample(
 
 export function toneColor(t: "ok" | "warn" | "crit" | "info"): string {
   return t === "ok" ? C.safe : t === "warn" ? C.hazard : t === "crit" ? C.crit : C.tech;
+}
+
+/** Blue → green → amber → red ramp for stress / temperature heatmaps (f in 0..1). */
+export function heatColor(f: number): string {
+  const stops: [number, [number, number, number]][] = [
+    [0, [59, 130, 246]],
+    [0.35, [16, 185, 129]],
+    [0.65, [245, 158, 11]],
+    [1, [239, 68, 68]],
+  ];
+  const v = clamp(f, 0, 1);
+  for (let i = 1; i < stops.length; i++) {
+    if (v <= stops[i][0]) {
+      const [a, ca] = stops[i - 1];
+      const [b, cb] = stops[i];
+      const t = (v - a) / (b - a);
+      const c = ca.map((k, j) => Math.round(lerp(k, cb[j], t)));
+      return `rgb(${c[0]},${c[1]},${c[2]})`;
+    }
+  }
+  return "rgb(239,68,68)";
+}
+
+/** Deterministic jagged fracture path from (x, y) heading at `angle` degrees. */
+export function crackPath(x: number, y: number, len: number, angle: number, seed = 1): string {
+  let px = x;
+  let py = y;
+  const pts = [`M${px.toFixed(1)} ${py.toFixed(1)}`];
+  const n = 6;
+  for (let i = 1; i <= n; i++) {
+    const jitter = Math.sin(seed * 12.9898 + i * 78.233) * 22;
+    const a = rad(angle + jitter);
+    px += (len / n) * Math.cos(a);
+    py += (len / n) * Math.sin(a);
+    pts.push(`L${px.toFixed(1)} ${py.toFixed(1)}`);
+  }
+  return pts.join(" ");
+}
+
+/** Animated fracture network (drawn on mount via CSS stroke-dash animation). */
+export function Cracks({ cracks, color = C.crit, width = 1.6 }: { cracks: { x: number; y: number; len: number; angle: number; seed?: number }[]; color?: string; width?: number }) {
+  return (
+    <g pointerEvents="none">
+      {cracks.map((k, i) => (
+        <path key={i} d={crackPath(k.x, k.y, k.len, k.angle, k.seed ?? i + 1)} className="crack" fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" style={{ animationDelay: `${i * 0.08}s` }} />
+      ))}
+    </g>
+  );
+}
+
+/** Animated dashed streamline (airflow, water, conveyors). `speed` in 0..1 scales the dash speed. */
+export function Stream({ d, color = C.air, width = 2, speed = 0.5, opacity = 0.9 }: { d: string; color?: string; width?: number; speed?: number; opacity?: number }) {
+  const dur = speed <= 0 ? 0 : 2.4 - 2 * clamp(speed, 0, 1);
+  return (
+    <path
+      d={d}
+      fill="none"
+      stroke={color}
+      strokeWidth={width}
+      strokeLinecap="round"
+      opacity={opacity}
+      className={dur ? "flow" : undefined}
+      style={dur ? { animationDuration: `${dur.toFixed(2)}s` } : { strokeDasharray: "6 6" }}
+      pointerEvents="none"
+    />
+  );
+}
+
+/** Crisp in-canvas telemetry badge (rounded pill with status dot). */
+export function HudBadge({ x, y, label, value, tone = "info", anchor = "start" }: { x: number; y: number; label: string; value: string; tone?: "ok" | "warn" | "crit" | "info"; anchor?: "start" | "end" }) {
+  const w = Math.max(54, 6.2 * (label.length + value.length) + 22);
+  const bx = anchor === "end" ? x - w : x;
+  const col = toneColor(tone);
+  return (
+    <g pointerEvents="none">
+      <rect x={bx} y={y} width={w} height={18} rx={9} fill="#0E1424" opacity={0.9} />
+      <circle cx={bx + 9} cy={y + 9} r={3} fill={col} />
+      <text x={bx + 16} y={y + 12.5} fontSize={8} fill="#8B97AE" fontFamily={SANS} fontWeight={700} letterSpacing={0.4}>
+        {label.toUpperCase()}
+      </text>
+      <text x={bx + w - 8} y={y + 12.5} fontSize={9} fill="#F1F5F9" fontFamily={MONO} fontWeight={700} textAnchor="end">
+        {value}
+      </text>
+    </g>
+  );
 }

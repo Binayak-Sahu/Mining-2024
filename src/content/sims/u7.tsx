@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Plot, sample, clamp, polyline } from "@/components/sim/svg";
+import { C, Txt, Arrow, Plot, sample, clamp, polyline, Stream } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Coward's triangle ---------------- */
 
@@ -113,23 +114,40 @@ export const networkSim: SimDef = {
     { key: "power", label: "Fan shaft power (η 0.75)", unit: "kW", digits: 0 },
   ],
   caption: "P = RQ²; parallel: 1/√R = Σ 1/√Rᵢ; regulator modelled as an orifice R = 1.416/A²; equivalent orifice A = 1.19Q/√P.",
-  render: (p, o) => {
+  animated: true,
+  render: (p, o, t) => {
     const w = (q: number) => clamp(q / 6, 1.5, 16);
+    const sp = (q: number) => clamp(q / 120, 0.05, 1);
+    const ways: [string, number][] = [
+      ["M60 120 L120 120", o.Q],
+      ["M120 120 L160 60 L300 60 L340 120", o.Q1],
+      ["M120 120 L160 180 L300 180 L340 120", o.Q2],
+      ["M340 120 L385 120", o.Q],
+    ];
+    const rot = (t * clamp(o.Q, 0, 200) * 6) % 360;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <circle cx={40} cy={120} r={20} fill={C.tech} />
-        <Txt x={40} y={124} size={9} anchor="middle" fill="white" weight={800}>
+        <rect x={0} y={0} width={400} height={240} fill={MAT.coal} opacity={0.18} />
+        <rect x={0} y={0} width={400} height={240} fill="#F1F5F9" opacity={0.7} />
+        {ways.map(([d, q], i) => (
+          <path key={`wall${i}`} d={d} fill="none" stroke="#475569" strokeWidth={w(q) + 7} strokeLinejoin="round" strokeLinecap="round" opacity={0.85} />
+        ))}
+        {ways.map(([d, q], i) => (
+          <path key={`air${i}`} d={d} fill="none" stroke={C.air} strokeWidth={w(q)} strokeLinejoin="round" strokeLinecap="round" />
+        ))}
+        {ways.map(([d, q], i) => (
+          <Stream key={`fl${i}`} d={d} color="white" width={Math.max(1.2, w(q) / 3)} speed={sp(q)} opacity={0.85} />
+        ))}
+        <circle cx={40} cy={120} r={21} fill={C.tech} stroke="#1D4ED8" strokeWidth={3} filter="url(#f-shadow)" />
+        <g transform={`rotate(${rot.toFixed(1)} 40 120)`}>
+          {[0, 90, 180, 270].map((a) => (
+            <ellipse key={a} cx={40} cy={110} rx={4} ry={9} fill="white" opacity={0.85} transform={`rotate(${a} 40 120)`} />
+          ))}
+        </g>
+        <circle cx={40} cy={120} r={4} fill="#1E3A8A" />
+        <Txt x={40} y={152} size={8} anchor="middle" fill={C.tech} weight={800}>
           FAN
         </Txt>
-        <line x1={60} y1={120} x2={120} y2={120} stroke={C.air} strokeWidth={w(o.Q)} />
-        <line x1={120} y1={120} x2={160} y2={60} stroke={C.air} strokeWidth={w(o.Q1)} />
-        <line x1={160} y1={60} x2={300} y2={60} stroke={C.air} strokeWidth={w(o.Q1)} />
-        <line x1={300} y1={60} x2={340} y2={120} stroke={C.air} strokeWidth={w(o.Q1)} />
-        <line x1={120} y1={120} x2={160} y2={180} stroke={C.air} strokeWidth={w(o.Q2)} />
-        <line x1={160} y1={180} x2={300} y2={180} stroke={C.air} strokeWidth={w(o.Q2)} />
-        <line x1={300} y1={180} x2={340} y2={120} stroke={C.air} strokeWidth={w(o.Q2)} />
-        <line x1={340} y1={120} x2={385} y2={120} stroke={C.air} strokeWidth={w(o.Q)} />
         <rect x={262} y={162} width={10} height={36} fill={p.A < 19.9 ? C.hazard : C.line} />
         <rect x={262} y={180 - clamp(p.A, 0.5, 20) * 0.9} width={10} height={clamp(p.A, 0.5, 20) * 1.8} fill="#f8fafc" />
         <Txt x={267} y={212} size={8} anchor="middle" weight={700} fill={C.hazard}>

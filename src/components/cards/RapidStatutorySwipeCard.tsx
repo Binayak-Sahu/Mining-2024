@@ -1,10 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { Check, X, Timer } from "lucide-react";
 import type { SwipeStage } from "@/lib/types";
 import { CardFrame, Feedback, PrimaryButton, type CardProps } from "./ui";
+
+function SwipeItem({ text, exitDir, onDragEnd }: { text: string; exitDir: number; onDragEnd: (e: unknown, info: PanInfo) => void }) {
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-220, 220], [-14, 14]);
+  const yes = useTransform(x, [20, 110], [0, 1]);
+  const no = useTransform(x, [-110, -20], [1, 0]);
+  return (
+    <motion.div
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.9}
+      onDragEnd={onDragEnd}
+      initial={{ scale: 0.9, opacity: 0, y: 12 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      exit={{ x: exitDir * 360, opacity: 0, rotate: exitDir * 18, transition: { duration: 0.28 } }}
+      style={{ x, rotate, touchAction: "pan-y" }}
+      className="absolute inset-0 rounded-3xl p-6 flex items-center justify-center text-center cursor-grab active:cursor-grabbing text-[#F1F5F9]"
+    >
+      <div className="absolute inset-0 rounded-3xl" style={{ background: "radial-gradient(120% 120% at 0% 0%, #1E293B, #0E1424 70%)", boxShadow: "0 6px 0 #020617, 0 24px 40px -16px rgba(2,6,23,0.6)" }} />
+      <motion.span style={{ opacity: yes }} className="absolute left-5 top-5 rotate-[-12deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1 text-emerald-400 font-black tracking-[0.12em] text-lg">
+        TRUE
+      </motion.span>
+      <motion.span style={{ opacity: no }} className="absolute right-5 top-5 rotate-[12deg] rounded-xl border-[3px] border-red-400 px-3 py-1 text-red-400 font-black tracking-[0.12em] text-lg">
+        FALSE
+      </motion.span>
+      <p className="relative text-[17px] sm:text-[19px] font-bold leading-snug">{text}</p>
+    </motion.div>
+  );
+}
 
 interface Verdict {
   index: number;
@@ -59,7 +88,7 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
   if (!started) {
     return (
       <CardFrame kind="swipe" title={stage.title} footer={<PrimaryButton tone="crit" onClick={() => setStarted(true)}>Start drill · {stage.cards.length} cards · {stage.seconds}s</PrimaryButton>}>
-        <p className="text-[15px] text-slate-800 leading-snug">
+        <p className="text-[16px] text-slate-700 leading-relaxed">
           Rapid statutory recall. Swipe <b className="text-emerald-600">right = TRUE / compliant</b>, swipe <b className="text-red-600">left = FALSE / violation</b>. Each wrong call costs a safety heart.
         </p>
         <p className="text-[11px] text-slate-500">
@@ -84,35 +113,21 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
 
       {!finished ? (
         <>
-          <div className="relative h-48">
+          <div className="relative h-56">
             <AnimatePresence custom={exitDir}>
-              <motion.div
-                key={i}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.9}
-                onDragEnd={onDragEnd}
-                initial={{ scale: 0.92, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ x: exitDir * 320, opacity: 0, rotate: exitDir * 15 }}
-                whileDrag={{ rotate: 0 }}
-                style={{ touchAction: "pan-y" }}
-                className="absolute inset-0 rounded-2xl bg-slate-900 text-slate-50 p-5 flex items-center justify-center text-center cursor-grab active:cursor-grabbing shadow-xl"
-              >
-                <p className="text-base sm:text-lg font-semibold leading-snug">{stage.cards[i].text}</p>
-              </motion.div>
+              <SwipeItem key={i} text={stage.cards[i].text} exitDir={exitDir} onDragEnd={onDragEnd} />
             </AnimatePresence>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => answer(false)} className="btn-press rounded-xl border-2 border-red-500 text-red-600 py-3 min-h-[52px] font-bold flex items-center justify-center gap-1">
+          <div className="grid grid-cols-2 gap-3">
+            <button type="button" onClick={() => answer(false)} className="btn-3d tone-crit py-3.5 min-h-[52px] flex items-center justify-center gap-1.5">
               <X size={18} /> FALSE
             </button>
-            <button type="button" onClick={() => answer(true)} className="btn-press rounded-xl border-2 border-emerald-500 text-emerald-600 py-3 min-h-[52px] font-bold flex items-center justify-center gap-1">
+            <button type="button" onClick={() => answer(true)} className="btn-3d tone-safe py-3.5 min-h-[52px] flex items-center justify-center gap-1.5">
               <Check size={18} /> TRUE
             </button>
           </div>
           {flash && (
-            <Feedback show ok={flash.ok} title={flash.ok ? "Correct call" : "Wrong call"}>
+            <Feedback key={i} show ok={flash.ok} title={flash.ok ? "Correct call" : "Wrong call"}>
               {flash.why}
             </Feedback>
           )}
@@ -125,7 +140,7 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
           {verdicts.map((v) => {
             const c = stage.cards[v.index];
             return (
-              <div key={v.index} className={`rounded-xl border px-3 py-2 text-sm ${v.ok ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"}`}>
+              <div key={v.index} className={`rounded-2xl px-3.5 py-2.5 text-sm ${v.ok ? "bg-emerald-50 shadow-[inset_0_0_0_1.5px_#10B98155]" : "bg-red-50 shadow-[inset_0_0_0_1.5px_#EF444455]"}`}>
                 <div className="font-semibold text-slate-900">
                   {c.truth ? "TRUE" : "FALSE"} — {c.text}
                 </div>

@@ -22,14 +22,18 @@ Open the site, then *Add to Home Screen* (iOS Safari) or *Install app* (Android 
 
 Progress (XP, streak, hearts, Field Codex, spaced-repetition queue) is stored in the browser's `localStorage`.
 
+### Look & feel
+Light (*Crisp Daylight*) and dark (*Underground Shift Mode*) themes. The header's sun/moon button cycles device → light → dark. The speaker button mutes the synthesised sound effects and phone haptics. On phones, navigation sits in a bottom tab bar. Several simulations have grips on the diagram itself that you can drag.
+
 ## What's inside
 
 | | |
 |---|---|
 | Units | Orientation + 10 curriculum units, each with a Unit Boss Exam |
 | Lessons | 55 lessons, 379 interactive stages |
-| Simulations | 61 live SVG physics/engineering simulators (free-play in the Sim Lab) |
-| DGMS Exam Simulator | 374-question bank, timed 25-question papers, derivations, weak-unit analytics |
+| Expedition map | Duolingo-style winding path descending through 11 geological strata to the DGMS Command Level |
+| Simulations | 61 live SVG physics/engineering dioramas (free-play in the Sim Lab), with textures, animated airflow/cracks and on-canvas drag grips |
+| DGMS Exam Simulator | 379-question bank, timed 25-question papers, derivations, weak-unit analytics |
 | Field Calculators | Atkinson, pillar FoS, Kuz-Ram, PPV, BESR, dip & strike, pump/NPSH |
 | Statute register | 19 rules with citations and verification status |
 | Field Codex | 55 Swiss-style cheat sheets + verified formulas, searchable |
