@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --color-slate-ink: #0F172A;
+  --color-paper: #F8FAFC;
+  --color-emerald-safe: #10B981;
+  --color-amber-hazard: #F59E0B;
+  --color-crimson: #EF4444;
+  --color-tech: #3B82F6;
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #0F172A;
+  color: #F8FAFC;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Swiss grid hairline background for the app shell */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.card {
+  background: #F8FAFC;
+  color: #0F172A;
+  border-radius: 1rem;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+}
+
+.readout {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="range"] {
+  accent-color: #3B82F6;
+}
+
+.btn-press {
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.btn-press:active {
+  transform: translateY(2px);
+}
+
+@keyframes pulse-ring {
+  0% { opacity: 0.8; r: 6; }
+  100% { opacity: 0; r: 16; }
+}
+.hotspot-ring {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+@keyframes alarm-flash {
+  0%, 100% { background-color: #7f1d1d; }
+  50% { background-color: #EF4444; }
+}
+.alarm-flash {
+  animation: alarm-flash 1s steps(2) infinite;
+}

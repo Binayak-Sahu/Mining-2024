@@ -1,0 +1,175 @@
+import type { Unit } from "@/lib/types";
+
+/** Orientation unit: one lesson touching all seven card engines on a single concept (σv = ρgH). */
+export const U0: Unit = {
+  id: "u0",
+  n: 0,
+  title: "Field Orientation: How STRATA Trains You",
+  short: "Orientation",
+  blurb: "One concept — overburden stress — run through all five mastery stages so you learn the controls.",
+  lessons: [
+    {
+      id: "u0-l1",
+      unitId: "u0",
+      title: "The Weight Above Your Head",
+      subtitle: "Vertical stress σv = ρgH through all 5 stages",
+      stages: [
+        {
+          kind: "theory",
+          title: "Every metre of rock is load",
+          lines: [
+            "Rock above a gallery is not empty space — it is mass pressing down under gravity.",
+            "The deeper the working, the higher the vertical (overburden) stress every pillar and support must carry.",
+          ],
+          sim: "u0-overburden",
+          hotspots: [
+            { x: 70, y: 32, title: "Overburden strata", body: "Soil, sandstone and shale bands each contribute ρ·g·Δh. Their sum is the virgin vertical stress." },
+            { x: 150, y: 45, title: "Load path", body: "Gravity load funnels down to the excavation level, where pillars and abutments pick it up." },
+            { x: 175, y: 70, title: "Working horizon", body: "The coal seam with your gallery. Depth H is measured from the surface to here." },
+          ],
+          chain: ["Rock has mass", "Gravity converts mass to weight", "Weight spreads over area → stress", "Opening removes support → stress concentrates on pillars"],
+          drawers: [
+            { q: "Why ρgH and not just weight?", a: "Stress is force per unit area. A column of area A and height H weighs ρ·A·H·g; divide by A and area cancels, leaving ρgH." },
+            { q: "Why 0.025 MPa/m?", a: "With ρ = 2.5 t/m³ = 2500 kg/m³: 2500 × 9.81 ≈ 24.5 kPa per metre ≈ 0.025 MPa/m — the field rule of thumb." },
+          ],
+          codex: {
+            id: "u0-sv",
+            title: "Virgin vertical stress",
+            bullets: ["σv = ρ g H (MPa when ρ in kg/m³, H in m, ÷10⁶)", "Field rule: ≈ 0.025 MPa per metre depth", "Basis of pillar, support and shaft-lining design"],
+            formulas: [{ expr: "σv = ρ·g·H", meaning: "Vertical stress from overburden weight", vars: "ρ density kg/m³ · g 9.81 m/s² · H depth m" }],
+            tags: ["rock mechanics", "orientation"],
+          },
+        },
+        {
+          kind: "sim",
+          title: "Drive the gallery deeper",
+          brief: "Drag the depth slider. Watch the load arrow on the gallery grow linearly with depth.",
+          sim: "u0-overburden",
+          goal: { text: "Find the depth where σv reaches coal's UCS (~20 MPa) at ρ = 2.5 t/m³", test: (p, o) => Math.abs(p.rho - 2.5) < 0.01 && o.sv >= 19.6 && o.sv <= 20.6 },
+          insight: "Around 800 m, virgin stress alone equals intact coal strength — this is why deep Indian seams need wider pillars, yielding supports and destress strategies.",
+          concept: "Depth–stress linearity",
+        },
+        {
+          kind: "predict",
+          title: "Double the depth",
+          scenario: "A district at 300 m is replanned at 600 m in the same strata.",
+          sim: "u0-overburden",
+          before: { H: 300 },
+          after: { H: 600 },
+          question: "What happens to the virgin vertical stress?",
+          options: ["It stays the same", "It doubles", "It quadruples", "It increases by √2"],
+          answer: 1,
+          explain: "σv = ρgH is linear in H: double H, double σv (7.4 → 14.7 MPa).",
+          concept: "σv linear in depth",
+        },
+        {
+          kind: "equation",
+          title: "Forge the overburden equation",
+          intuition: ["σv ∝ ρ — denser rock, more load", "σv ∝ H — more rock above, more load", "g converts mass to weight"],
+          target: ["σv", "=", "ρ", "·", "g", "·", "H"],
+          distractors: ["H²", "/", "√H"],
+          accept: [
+            ["σv", "=", "ρ", "·", "H", "·", "g"],
+            ["σv", "=", "g", "·", "ρ", "·", "H"],
+          ],
+          formula: { expr: "σv = ρ·g·H", meaning: "Virgin vertical stress grows linearly with depth and density.", vars: "ρ kg/m³ · g 9.81 m/s² · H m" },
+          concept: "σv = ρgH form",
+        },
+        {
+          kind: "numeric",
+          title: "Load on a 450 m seam",
+          problem: "A seam lies at 450 m under strata of average density 2.4 t/m³. Find the virgin vertical stress.",
+          givens: [
+            { sym: "rho", label: "density", value: 2400, unit: "kg/m³" },
+            { sym: "H", label: "depth", value: 450, unit: "m" },
+          ],
+          steps: [
+            { prompt: "σv in Pa (ρ·g·H)", answer: 2400 * 9.81 * 450, unit: "Pa", hint: "Multiply rho × 9.81 × H.", explain: "2400 × 9.81 × 450 = 10.59 × 10⁶ Pa." },
+            { prompt: "Convert to MPa", answer: (2400 * 9.81 * 450) / 1e6, unit: "MPa", hint: "Divide s1 by 10⁶ (1e6).", explain: "≈ 10.6 MPa — about half the UCS of typical Indian coal." },
+          ],
+          concept: "σv numerical",
+        },
+        {
+          kind: "crisis",
+          title: "Spalling pillars at depth",
+          alarm: "PILLAR SPALLING REPORTED — PANEL D4",
+          scenario: "Overman reports side spalling and floor heave in a 600 m deep panel developed with pillars sized for 250 m.",
+          seconds: 60,
+          telemetry: [
+            { label: "Depth", value: "600 m", tone: "warn" },
+            { label: "σv (virgin)", value: "14.7 MPa", tone: "warn" },
+            { label: "Design depth", value: "250 m", tone: "crit" },
+            { label: "Convergence", value: "18 mm/day", tone: "crit" },
+          ],
+          phases: [
+            {
+              label: "Diagnosis",
+              prompt: "Root cause?",
+              options: [
+                { text: "Pillars undersized: stress scales with depth, so 250 m design is overloaded at 600 m", correct: true, why: "σv more than doubles; pillar stress (tributary loading) exceeds strength." },
+                { text: "Methane accumulation weakening coal", why: "Gas does not cause mechanical spalling; this is a load problem." },
+                { text: "Poor blasting fragmentation", why: "Fragmentation affects muck size, not pillar loading." },
+              ],
+            },
+            {
+              label: "Statutory action",
+              prompt: "Immediate action?",
+              options: [
+                { text: "Withdraw persons from the affected area, fence it off, report to the Manager and support/strengthen before re-entry", correct: true, why: "Danger to persons must trigger withdrawal and support before work resumes." },
+                { text: "Continue production and monitor next shift", why: "Continuing work in a recognised danger exposes persons — a statutory violation." },
+                { text: "Increase blasting to bring down loose coal faster", why: "Blasting near distressed pillars worsens instability." },
+              ],
+            },
+          ],
+          debrief: "Load first, strength second: every design starts from σv = ρgH. Pillars designed for one depth cannot be copied to another.",
+          concept: "Depth-dependent pillar design",
+        },
+        {
+          kind: "swipe",
+          title: "Orientation drill",
+          seconds: 45,
+          cards: [
+            { text: "Virgin vertical stress increases roughly 0.025 MPa per metre depth.", truth: true, why: "ρ = 2.5 t/m³ gives 24.5 kPa/m." },
+            { text: "Doubling depth quadruples vertical stress.", truth: false, why: "σv is linear in H." },
+            { text: "A pillar design valid at 250 m is automatically safe at 600 m.", truth: false, why: "Load more than doubles; pillar must be redesigned." },
+            { text: "When a place is found dangerous, persons must be withdrawn before support work.", truth: true, why: "Withdrawal of persons from danger is a core statutory duty of supervisors." },
+          ],
+          concept: "Orientation basics",
+        },
+      ],
+    },
+  ],
+  boss: {
+    id: "u0-boss",
+    unitId: "u0",
+    title: "Orientation Check-ride",
+    subtitle: "Prove you can run the controls",
+    boss: true,
+    stages: [
+      {
+        kind: "predict",
+        title: "Density swap",
+        scenario: "Same 500 m depth, but the overburden changes from shale (2.4 t/m³) to dense dolerite sill (2.9 t/m³).",
+        sim: "u0-overburden",
+        before: { H: 500, rho: 2.4 },
+        after: { H: 500, rho: 2.9 },
+        question: "Vertical stress will…",
+        options: ["Fall", "Rise by about 21%", "Rise by 2.9×", "Stay the same"],
+        answer: 1,
+        explain: "σv ∝ ρ: 2.9/2.4 = 1.21 → 21% higher (11.8 → 14.2 MPa).",
+        concept: "σv proportional to density",
+      },
+      {
+        kind: "numeric",
+        title: "Depth for 15 MPa",
+        problem: "At what depth does σv reach 15 MPa if ρ = 2.5 t/m³?",
+        givens: [
+          { sym: "sv", label: "target stress", value: 15e6, unit: "Pa" },
+          { sym: "rho", label: "density", value: 2500, unit: "kg/m³" },
+        ],
+        steps: [{ prompt: "H = σv / (ρg)", answer: 15e6 / (2500 * 9.81), unit: "m", hint: "sv/(rho*9.81)", explain: "≈ 612 m." }],
+        concept: "Inverse σv",
+      },
+    ],
+  },
+};
