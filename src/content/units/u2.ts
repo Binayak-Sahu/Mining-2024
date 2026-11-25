@@ -25,8 +25,8 @@ export const U2: Unit = {
           ],
           sim: "u2-access",
           hotspots: [
-            { x: 205, y: 63, title: "Belt incline", body: "Conveyors climb ~14–16° (≈ 1 in 4) at most before material rolls back; length = depth / sin θ. Continuous, high-capacity, men and material access." },
-            { x: 337, y: 60, title: "Vertical shaft", body: "Shortest path to depth. Needs headgear, winder, skips/cages and a protective shaft pillar. Cost driven by sinking & lining per metre." },
+            { x: 208, y: 76, title: "Belt incline", body: "Conveyors climb ~14–16° (≈ 1 in 4) at most before material rolls back; length = depth / sin θ. Continuous, high-capacity, men and material access." },
+            { x: 324, y: 63, title: "Vertical shaft", body: "Shortest path to depth. Needs headgear, winder, skips/cages and a protective shaft pillar. Cost driven by sinking & lining per metre." },
             { x: 60, y: 90, title: "Seam horizon", body: "Depth, dip, water and gas of the seam, plus the planned output and mine life, fix the access choice." },
             { x: 200, y: 157, title: "Capital comparison", body: "Indicative ₹ crore model. In practice also compare operating cost per tonne, ventilation, and the time to first coal." },
           ],
@@ -147,7 +147,7 @@ export const U2: Unit = {
           ],
           sim: "u2-sinking",
           hotspots: [
-            { x: 75, y: 126, title: "Galloway stage", body: "Multi-deck working platform suspended by stage-winch ropes. Carries grab, shuttering, services; protects the bottom from falling objects." },
+            { x: 79, y: 127, title: "Galloway stage", body: "Multi-deck working platform suspended by stage-winch ropes. Carries grab, shuttering, services; protects the bottom from falling objects." },
             { x: 75, y: 192, title: "Kibble", body: "Bucket hoisted by the sinking winder. Grab loads it; it is tipped at surface. The kibble rope also guides the stage." },
             { x: 264, y: 53, title: "Mucking bottleneck", body: "Volume scales with diameter² × advance × swell — usually the longest step. Better grabs or bigger kibbles shorten the cycle." },
             { x: 300, y: 204, title: "Advance rate", body: "Indian conventional sinking typically achieves tens of metres per month; mechanised concurrent lining pushes this higher." },
@@ -267,7 +267,7 @@ export const U2: Unit = {
             { x: 120, y: 100, title: "Shaft excavation", body: "Excavated inside the frozen ring, then lined with a watertight (often double) lining before thawing." },
             { x: 120, y: 60, title: "Frozen wall", body: "Behaves like a thick-walled cylinder under external pressure. Its strength rises as temperature falls." },
             { x: 188, y: 125, title: "Freeze holes", body: "Typically about 1–1.5 m apart on a circle outside the shaft. Brine (CaCl₂ at about −20 to −35 °C) circulates in concentric pipes." },
-            { x: 195, y: 200, title: "Ground + water pressure", body: "Lateral pressure grows with depth (~0.013 MPa/m in saturated sand). Deep aquifers need thick walls or colder ground." },
+            { x: 202, y: 200, title: "Ground + water pressure", body: "Lateral pressure grows with depth (~0.013 MPa/m in saturated sand). Deep aquifers need thick walls or colder ground." },
           ],
           chain: ["Brine circulates in freeze pipes", "Pore water freezes into ice cylinders around each pipe", "Cylinders merge into a closed wall", "Wall resists p as a thick cylinder", "Sink and line inside; then thaw"],
           drawers: [

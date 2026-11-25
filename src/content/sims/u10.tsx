@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, clamp } from "@/components/sim/svg";
+import { C, Txt, clamp, SANS, Stream } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Statutory hierarchy & duties explorer ---------------- */
 
@@ -36,19 +37,21 @@ export const rolesSim: SimDef = {
           const w = 150 + i * 45;
           return (
             <g key={l}>
-              <rect x={200 - w / 2} y={12 + i * 22} width={w} height={20} rx={3} fill={i === 0 ? C.ink : i === 1 ? "#334155" : i === 2 ? "#475569" : i === 3 ? "#64748b" : "#94a3b8"} />
+              <rect x={200 - w / 2} y={12 + i * 22} width={w} height={20} rx={4} fill={i === 0 ? C.ink : i === 1 ? "#334155" : i === 2 ? "#475569" : i === 3 ? "#64748b" : "#94a3b8"} filter="url(#f-shadow)" />
+              <rect x={200 - w / 2} y={12 + i * 22} width={w} height={7} rx={4} fill={MAT.glass} />
               <Txt x={200} y={26 + i * 22} size={8} anchor="middle" fill="white" weight={700}>
                 {l}
               </Txt>
             </g>
           );
         })}
-        <rect x={20} y={130} width={360} height={100} rx={8} fill="white" stroke={C.tech} strokeWidth={2} />
+        <rect x={20} y={130} width={360} height={100} rx={12} fill="white" stroke={C.tech} strokeWidth={2} filter="url(#f-shadow)" />
+        <rect x={20} y={130} width={6} height={100} rx={3} fill={C.tech} />
         <Txt x={32} y={150} size={12} weight={900} fill={C.tech}>
           {r.name}
         </Txt>
         <foreignObject x={30} y={156} width={340} height={72}>
-          <div style={{ fontSize: 10, lineHeight: 1.35, color: "#0f172a", fontFamily: "Inter, Helvetica, sans-serif" }}>{r.duty}</div>
+          <div style={{ fontSize: 10, lineHeight: 1.35, color: "#0f172a", fontFamily: SANS }}>{r.duty}</div>
         </foreignObject>
       </g>
     );
@@ -74,7 +77,12 @@ export const gassySim: SimDef = {
     { key: "deg", label: "Key implication", format: (v) => ["", "Least gassy — still test regularly", "Gassy: flameproof/IS apparatus, permitted explosives, stricter gas testing", "Most gassy: strictest controls; continuous monitoring, drainage often needed"][v] },
   ],
   caption: "Degree I: ≤ 0.1 % inflammable gas in general body AND emission ≤ 1 m³/t. Degree II: > 0.1 % or > 1 m³/t up to 10 m³/t. Degree III: > 10 m³/t.",
-  render: (p, o) => {
+  animated: true,
+  handles: [
+    { key: "em", axis: "x", at: (p) => [30 + (clamp(p.em, 0, 20) / 20) * 340, 72], toValue: (x) => ((x - 30) / 340) * 20, color: "#0F172A" },
+    { key: "gb", axis: "x", at: (p) => [30 + clamp(p.gb, 0, 1) * 340, 115], toValue: (x) => (x - 30) / 340, color: "#F59E0B" },
+  ],
+  render: (p, o, t) => {
     const ex = (e: number) => 30 + (clamp(e, 0, 20) / 20) * 340;
     return (
       <g>
@@ -85,6 +93,7 @@ export const gassySim: SimDef = {
         <rect x={ex(0)} y={32} width={ex(1) - ex(0)} height={30} fill={C.safe} />
         <rect x={ex(1)} y={32} width={ex(10) - ex(1)} height={30} fill={C.hazard} />
         <rect x={ex(10)} y={32} width={ex(20) - ex(10)} height={30} fill={C.crit} />
+        <rect x={ex(0)} y={32} width={ex(20) - ex(0)} height={11} fill={MAT.glass} />
         <Txt x={ex(0.5)} y={51} size={8} anchor="middle" fill="white" weight={800}>
           I
         </Txt>
@@ -98,14 +107,20 @@ export const gassySim: SimDef = {
         <Txt x={30} y={100} size={9} weight={700} fill={C.slate}>
           GENERAL BODY INFLAMMABLE GAS (%)
         </Txt>
-        <rect x={30} y={108} width={340} height={14} fill="#e2e8f0" />
+        <rect x={30} y={108} width={340} height={14} rx={7} fill="#e2e8f0" />
+        <rect x={30} y={108} width={clamp(p.gb, 0, 1) * 340} height={14} rx={7} fill={p.gb > 0.1 ? C.hazard : C.safe} opacity={0.35} />
         <rect x={30} y={108} width={34} height={14} fill={C.safe} />
         <line x1={64} x2={64} y1={104} y2={126} stroke={C.ink} />
         <Txt x={66} y={136} size={8} mono>
           0.1 %
         </Txt>
         <circle cx={30 + clamp(p.gb, 0, 1) * 340} cy={115} r={6} fill={p.gb > 0.1 ? C.hazard : C.safe} stroke="white" strokeWidth={2} />
-        <rect x={30} y={160} width={340} height={56} rx={10} fill={o.deg === 1 ? C.safe : o.deg === 2 ? C.hazard : C.crit} />
+        <rect x={30} y={160} width={340} height={56} rx={12} fill={o.deg === 1 ? C.safe : o.deg === 2 ? C.hazard : C.crit} filter="url(#f-shadow)" />
+        <rect x={30} y={160} width={340} height={18} rx={10} fill={MAT.glass} />
+        {[0, 1, 2, 3, 4].map((k) => {
+          const ph = (t * (0.2 + o.deg * 0.15) + k / 5) % 1;
+          return <circle key={k} cx={56 + k * 70 + Math.sin(ph * 6 + k) * 6} cy={212 - ph * 48} r={2 + ph * 3} fill="white" opacity={0.45 * (1 - ph)} />;
+        })}
         <Txt x={200} y={196} size={22} anchor="middle" weight={900} fill="white">
           {`DEGREE ${["", "I", "II", "III"][o.deg]}`}
         </Txt>
@@ -150,6 +165,10 @@ export const riskSim: SimDef = {
     { key: "br", label: "Residual band", format: (v) => BANDS[v], tone: (v) => (["ok", "warn", "crit", "crit"] as const)[v] },
   ],
   caption: "Hierarchy of controls: elimination > substitution > engineering > administrative > PPE. PPE only reduces consequence for the wearer; it never removes the hazard.",
+  handles: [
+    { key: "C", axis: "x", at: (p) => [40 + (p.C - 1) * 34 + 16, 196], toValue: (x) => (x - 40 - 16) / 34 + 1, color: "#EF4444" },
+    { key: "L", axis: "y", at: (p) => [24, 20 + (5 - p.L) * 34 + 16], toValue: (y) => 5 - (y - 20 - 16) / 34, color: "#EF4444" },
+  ],
   render: (p, o) => {
     const s = 34;
     const x0 = 40;
@@ -160,7 +179,8 @@ export const riskSim: SimDef = {
       for (let Cc = 1; Cc <= 5; Cc++)
         cells.push(
           <g key={`${L}${Cc}`}>
-            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={s - 2} fill={col(L * Cc)} />
+            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={s - 2} rx={4} fill={col(L * Cc)} />
+            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={10} rx={4} fill={MAT.glass} />
             <Txt x={x0 + (Cc - 1) * s + s / 2 - 1} y={y0 + (5 - L) * s + s / 2 + 3} size={8} anchor="middle" mono fill={C.slate}>
               {L * Cc}
             </Txt>
@@ -178,6 +198,7 @@ export const riskSim: SimDef = {
         <Txt x={12} y={y0 + 2.5 * s} size={8} fill={C.slate} weight={700}>
           L
         </Txt>
+        {(p.C !== o.C2 || p.L !== o.L2) && <Stream d={`M${cx(p.C)} ${cy(p.L)} Q ${(cx(p.C) + cx(o.C2)) / 2 + 16} ${(cy(p.L) + cy(o.L2)) / 2 - 16} ${cx(o.C2)} ${cy(o.L2)}`} color={C.tech} width={2} speed={0.5} />}
         <circle cx={cx(p.C)} cy={cy(p.L)} r={12} fill="none" stroke={C.crit} strokeWidth={3} />
         <circle cx={cx(o.C2)} cy={cy(o.L2)} r={9} fill={C.tech} stroke="white" strokeWidth={2} />
         <Txt x={235} y={40} size={10} weight={800}>
@@ -190,7 +211,7 @@ export const riskSim: SimDef = {
           .reverse()
           .map((c, i) => (
             <g key={c.name}>
-              <rect x={235} y={80 + i * 22} width={150 - i * 14} height={18} rx={3} fill={p.ctrl === CONTROLS.length - 1 - i ? C.tech : "#e2e8f0"} />
+              <rect x={235} y={80 + i * 22} width={150 - i * 14} height={18} rx={5} fill={p.ctrl === CONTROLS.length - 1 - i ? C.tech : "#e2e8f0"} filter={p.ctrl === CONTROLS.length - 1 - i ? "url(#f-shadow)" : undefined} />
               <Txt x={240} y={93 + i * 22} size={8} weight={700} fill={p.ctrl === CONTROLS.length - 1 - i ? "white" : C.ink}>
                 {c.name.split(" (")[0]}
               </Txt>
@@ -231,7 +252,7 @@ export const ftaSim: SimDef = {
   render: (p, o) => {
     const box = (x: number, y: number, w: number, label: string, val: number, color: string) => (
       <g>
-        <rect x={x - w / 2} y={y} width={w} height={30} rx={4} fill="white" stroke={color} strokeWidth={2} />
+        <rect x={x - w / 2} y={y} width={w} height={30} rx={6} fill="white" stroke={color} strokeWidth={2} filter="url(#f-shadow)" />
         <Txt x={x} y={y + 12} size={7.5} anchor="middle" weight={700}>
           {label}
         </Txt>
@@ -242,9 +263,9 @@ export const ftaSim: SimDef = {
     );
     const gate = (x: number, y: number, kind: "AND" | "OR") =>
       kind === "AND" ? (
-        <path d={`M ${x - 12} ${y + 20} L ${x - 12} ${y + 8} A 12 12 0 0 1 ${x + 12} ${y + 8} L ${x + 12} ${y + 20} Z`} fill="#e2e8f0" stroke={C.ink} />
+        <path d={`M ${x - 12} ${y + 20} L ${x - 12} ${y + 8} A 12 12 0 0 1 ${x + 12} ${y + 8} L ${x + 12} ${y + 20} Z`} fill={MAT.metal} stroke={C.ink} />
       ) : (
-        <path d={`M ${x - 12} ${y + 20} Q ${x} ${y + 12} ${x + 12} ${y + 20} Q ${x + 10} ${y + 6} ${x} ${y} Q ${x - 10} ${y + 6} ${x - 12} ${y + 20} Z`} fill="#e2e8f0" stroke={C.ink} />
+        <path d={`M ${x - 12} ${y + 20} Q ${x} ${y + 12} ${x + 12} ${y + 20} Q ${x + 10} ${y + 6} ${x} ${y} Q ${x - 10} ${y + 6} ${x - 12} ${y + 20} Z`} fill={MAT.metal} stroke={C.ink} />
       );
     const leaves = [
       { x: 40, l: "Vent fail", v: p.p1 },
@@ -257,6 +278,7 @@ export const ftaSim: SimDef = {
     return (
       <g>
         <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
+        {o.top > 0.001 && <rect x={135} y={6} width={130} height={30} rx={6} fill={C.crit} opacity={0.35} filter="url(#f-glow)" />}
         {box(200, 6, 130, "FIREDAMP EXPLOSION", o.top, o.top <= 0.001 ? C.safe : C.crit)}
         <line x1={200} y1={36} x2={200} y2={50} stroke={C.ink} />
         {gate(200, 50, "AND")}
@@ -275,6 +297,7 @@ export const ftaSim: SimDef = {
           <g key={lf.l}>
             <line x1={lf.x} y1={140} x2={lf.x} y2={156} stroke={C.ink} />
             <circle cx={lf.x} cy={176} r={20} fill="white" stroke={C.tech} strokeWidth={1.5} />
+            <circle cx={lf.x} cy={176} r={20} fill={lf.v > 0.1 ? C.crit : lf.v > 0.02 ? C.hazard : C.safe} opacity={0.12 + Math.min(lf.v, 0.5)} />
             <Txt x={lf.x} y={174} size={7} anchor="middle" weight={700}>
               {lf.l}
             </Txt>
@@ -327,7 +350,9 @@ export const scbaSim: SimDef = {
     { key: "turn", label: "Turn-around gauge reading", unit: "bar", digits: 0 },
   ],
   caption: "Consumption = metabolic O₂ + 0.2 L/min allowance. The team turns back when the gauge reaches the turn-around pressure — whichever member reaches it first.",
-  render: (p, o) => {
+  animated: true,
+  handles: [{ key: "travel", axis: "x", at: (p, o) => [30 + p.travel * (340 / Math.max(o.dur, 1)), 70], toValue: (x, p) => (x - 30) / (340 / Math.max(scbaSim.compute(p).dur, 1)), color: "#3B82F6" }],
+  render: (p, o, t) => {
     const total = Math.max(o.dur, 1);
     const k = 340 / total;
     const tr = p.travel * k;
@@ -339,7 +364,7 @@ export const scbaSim: SimDef = {
         <Txt x={30} y={24} size={9} weight={700} fill={C.slate}>
           MISSION OXYGEN BUDGET (minutes)
         </Txt>
-        <rect x={30} y={34} width={340} height={30} fill="#e2e8f0" />
+        <rect x={30} y={34} width={340} height={30} rx={6} fill="#e2e8f0" />
         <rect x={30} y={34} width={tr} height={30} fill={C.tech} />
         <rect x={30 + tr} y={34} width={wk} height={30} fill={C.safe} />
         <rect x={30 + tr + wk} y={34} width={tr} height={30} fill={C.tech} opacity={0.7} />
@@ -355,8 +380,24 @@ export const scbaSim: SimDef = {
         <Txt x={366} y={53} size={8} anchor="end" fill="white" weight={800}>
           reserve
         </Txt>
-        <rect x={40} y={90} width={60} height={120} rx={28} fill="#cbd5e1" stroke={C.ink} strokeWidth={2} />
+        <rect x={40} y={90} width={60} height={120} rx={28} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} filter="url(#f-shadow)" />
+        <rect x={62} y={80} width={16} height={12} rx={3} fill={MAT.steel} />
         <rect x={48} y={90 + 120 * (1 - clamp(o.turn / p.P, 0, 1))} width={44} height={120 * clamp(o.turn / p.P, 0, 1) - 6} rx={18} fill={C.hazard} opacity={0.8} />
+        {[0, 1, 2].map((k) => {
+          const ph = (t * 0.5 + k / 3) % 1;
+          return <circle key={k} cx={70 + Math.sin(ph * 6 + k) * 5} cy={200 - ph * 100} r={2 + ph * 2} fill="white" opacity={0.6 * (1 - ph)} />;
+        })}
+        {(() => {
+          // rescuer marker walking the mission timeline: in → work → out
+          const cyc = (t * 0.08) % 1;
+          const x = 30 + cyc * (2 * tr + wk);
+          return (
+            <g transform={`translate(${x.toFixed(1)} 30)`}>
+              <circle cx={0} cy={-6} r={3} fill={C.ink} />
+              <path d="M0 -3 L0 3 M-3 0 L3 0 M0 3 L-2.5 7 M0 3 L2.5 7" stroke={C.ink} strokeWidth={1.4} />
+            </g>
+          );
+        })()}
         <Txt x={70} y={226} size={8} anchor="middle" weight={700}>
           O₂ cylinder
         </Txt>

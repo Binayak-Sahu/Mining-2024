@@ -98,7 +98,12 @@ const { chromium } = require("playwright");
   await page.goto("file://" + join(dir, "svgs.html"));
   await page.evaluate(() => document.fonts.ready);
   await page.addScriptTag({ path: resolve("scripts/audit-measure.js") });
-  const meta = cases.map((c) => ({ sim: c.sim, ctx: c.ctx }));
+  const meta = cases.map((c) => ({ sim: c.sim, ctx: c.ctx, pins: c.pins.map((h) => ({ x: h.x, y: h.y, title: h.title })) }));
+  if (process.env.AUDIT_SUGGEST) {
+    const sug = await page.evaluate(`window.suggestPins(${JSON.stringify(meta)})`);
+    writeFileSync(join(dir, "pin-suggestions.json"), JSON.stringify(sug, null, 1));
+    console.log(`pin suggestions: ${(sug as unknown[]).length} → ${join(dir, "pin-suggestions.json")}`);
+  }
   const findings: string[] = await page.evaluate(`window.measureSvgs(${JSON.stringify(meta)})`);
   await browser.close();
   const uniq = [...new Set(findings)];

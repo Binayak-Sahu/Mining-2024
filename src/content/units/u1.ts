@@ -25,7 +25,7 @@ export const U1: Unit = {
           ],
           sim: "u1-coalrank",
           hotspots: [
-            { x: 40, y: 75, title: "Seam at burial depth", body: "Deeper burial means higher temperature. Hilt's law: in a vertical sequence, rank increases with depth." },
+            { x: 44, y: 76, title: "Seam at burial depth", body: "Deeper burial means higher temperature. Hilt's law: in a vertical sequence, rank increases with depth." },
             { x: 85, y: 160, title: "Geothermal gradient", body: "Temperature, not pressure, drives geochemical coalification. A dolerite intrusion can locally 'over-cook' coal into natural coke (jhama), as seen in Jharia." },
             { x: 208, y: 48, title: "Anthracite end-member", body: "Ro > 2.5 %, VM < 8 %. Aromatic carbon sheets have aligned — high reflectance, low reactivity." },
             { x: 150, y: 178, title: "Vitrinite reflectance Ro", body: "The % of light reflected by polished vitrinite. The most reliable single rank parameter, independent of ash." },
@@ -232,9 +232,9 @@ export const U1: Unit = {
           ],
           sim: "u1-dip",
           hotspots: [
-            { x: 60, y: 125, title: "Strike line", body: "Intersection of the bed with a horizontal plane. Level galleries in a dipping seam are driven along strike." },
-            { x: 100, y: 165, title: "True dip direction", body: "Perpendicular to strike, down the steepest slope. Dip galleries and inclines follow this line." },
-            { x: 70, y: 73, title: "Section line at angle β", body: "Any oblique line — a cross-measure drift, a borehole section, a haul road — sees only the apparent dip." },
+            { x: 67, y: 136, title: "Strike line", body: "Intersection of the bed with a horizontal plane. Level galleries in a dipping seam are driven along strike." },
+            { x: 87, y: 168, title: "True dip direction", body: "Perpendicular to strike, down the steepest slope. Dip galleries and inclines follow this line." },
+            { x: 61, y: 78, title: "Section line at angle β", body: "Any oblique line — a cross-measure drift, a borehole section, a haul road — sees only the apparent dip." },
             { x: 330, y: 150, title: "Apparent dip in section", body: "tan α = tan δ · sin β. At β = 90° (dip direction) α = δ; at β = 0° (strike) α = 0." },
           ],
           drawers: [
@@ -359,10 +359,10 @@ export const U1: Unit = {
           ],
           sim: "u1-fault",
           hotspots: [
-            { x: 193, y: 60, title: "Fault plane", body: "Dips at θ. Rock on the upper side is the hanging wall; below is the footwall. Fault zones carry crushed rock, water and sometimes gas." },
+            { x: 184, y: 69, title: "Fault plane", body: "Dips at θ. Rock on the upper side is the hanging wall; below is the footwall. Fault zones carry crushed rock, water and sometimes gas." },
             { x: 100, y: 125, title: "Footwall seam", body: "Your working. On hitting the fault, you must decide whether to drive up or down to regain the seam." },
             { x: 320, y: 156, title: "Displaced seam", body: "Normal fault: hanging wall down → look DOWN when crossing from footwall. Reverse fault: look UP." },
-            { x: 205, y: 175, title: "Heave in plan", body: "Width of the barren (normal) or overlap (reverse) zone on a seam plan — affects reserve boundaries and boundary pillars." },
+            { x: 202, y: 172, title: "Heave in plan", body: "Width of the barren (normal) or overlap (reverse) zone on a seam plan — affects reserve boundaries and boundary pillars." },
           ],
           drawers: [
             { q: "Why do normal faults form?", a: "When the crust is stretched, σ1 is vertical (overburden) and σ3 horizontal. Mohr-Coulomb shear planes form at ~60° to horizontal, and the hanging wall slides down. Gondwana coalfields are rift basins dominated by normal faults." },
@@ -598,7 +598,7 @@ export const U1: Unit = {
             { x: 14, y: 38, title: "E axis", body: "E1 economic now; E2 potentially economic; E3 intrinsically economic (not yet assessed or currently uneconomic)." },
             { x: 14, y: 90, title: "F axis", body: "F1 feasibility study/actual mining; F2 prefeasibility; F3 geological study only." },
             { x: 14, y: 142, title: "G axis", body: "G1 detailed exploration (measured); G2 general (indicated); G3 prospecting (inferred); G4 reconnaissance." },
-            { x: 327, y: 60, title: "Code", body: "Read E-F-G as a three-digit code: 111 Proved Reserve, 121/122 Probable Reserve, 331/332/333 Measured/Indicated/Inferred Resource." },
+            { x: 324, y: 58, title: "Code", body: "Read E-F-G as a three-digit code: 111 Proved Reserve, 121/122 Probable Reserve, 331/332/333 Measured/Indicated/Inferred Resource." },
           ],
           drawers: [
             { q: "Why separate reserve from resource?", a: "A reserve is the mineable, economically justified part after applying modifying factors (mining, processing, economic, legal, environmental). Banks, regulators and auctions rely on that distinction." },

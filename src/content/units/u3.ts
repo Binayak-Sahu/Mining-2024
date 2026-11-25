@@ -26,8 +26,8 @@ export const U3: Unit = {
           ],
           sim: "u3-kirsch",
           hotspots: [
-            { x: 130, y: 70, title: "Roof (crown)", body: "σθ = p(3K − 1). Low K puts the roof in tension (fall of laminated roof); high K overloads it in compression (guttering, shear)." },
-            { x: 182, y: 122, title: "Sidewalls", body: "σθ = p(3 − K). Under mostly vertical load (K small) the ribs carry up to 3p — spalling and rib slabbing." },
+            { x: 134, y: 85, title: "Roof (crown)", body: "σθ = p(3K − 1). Low K puts the roof in tension (fall of laminated roof); high K overloads it in compression (guttering, shear)." },
+            { x: 198, y: 122, title: "Sidewalls", body: "σθ = p(3 − K). Under mostly vertical load (K small) the ribs carry up to 3p — spalling and rib slabbing." },
             { x: 152, y: 42, title: "Far-field stresses", body: "p = γH vertical; Kp horizontal. Indian coalfields often show horizontal stresses exceeding vertical at shallow depth." },
             { x: 368, y: 62, title: "Failure map", body: "Compare boundary stress with UCS (compression) and tensile strength — the basis of support design." },
           ],
@@ -150,7 +150,7 @@ export const U3: Unit = {
           hotspots: [
             { x: 267, y: 107, title: "Hoek–Brown envelope", body: "σ1 = σ3 + σci(mb·σ3/σci + s)^a. GSI and disturbance D set mb, s and a." },
             { x: 153, y: 140, title: "Mohr–Coulomb line", body: "σ1 = σc + σ3·tan²(45° + φ/2). Linear — overestimates strength at high confinement unless fitted to the stress range." },
-            { x: 97, y: 190, title: "Working confinement", body: "Pillar cores and deep walls see σ3 > 0; skins and roof beams see σ3 ≈ 0, where the criteria differ most." },
+            { x: 96, y: 186, title: "Working confinement", body: "Pillar cores and deep walls see σ3 > 0; skins and roof beams see σ3 ≈ 0, where the criteria differ most." },
           ],
           drawers: [
             { q: "What did Griffith add?", a: "Brittle failure starts at microscopic flaws where tensile stress concentrates at crack tips. Griffith's 2-D theory predicts uniaxial compressive strength ≈ 8 × tensile strength — explaining why rock is so weak in tension." },
@@ -249,7 +249,7 @@ export const U3: Unit = {
           ],
           sim: "u3-rmr",
           hotspots: [
-            { x: 60, y: 44, title: "Rating stack", body: "UCS (15) + RQD (20) + spacing (20) + condition (30) + water (15) = 100 maximum. Joint condition is the single heaviest weight." },
+            { x: 47, y: 47, title: "Rating stack", body: "UCS (15) + RQD (20) + spacing (20) + condition (30) + water (15) = 100 maximum. Joint condition is the single heaviest weight." },
             { x: 300, y: 145, title: "Classes I–V", body: "Five 20-point bands from very good to very poor. Each implies stand-up time and support intensity." },
             { x: 384, y: 172, title: "Support guidance", body: "Bieniawski's tunnel guidance. For Indian coal roadways, the CMRI-ISM RMR and DGMS-approved Systematic Support Rules govern bolt density." },
           ],
@@ -619,8 +619,8 @@ export const U3: Unit = {
           hotspots: [
             { x: 175, y: 165, title: "Sliding block", body: "Weight W resolved into W sinψp (driving) and W cosψp (normal, generating friction)." },
             { x: 200, y: 150, title: "Failure plane", body: "Bedding, joint or fault dipping toward the pit. Must daylight (ψp < ψf) and be steeper than φ for sliding." },
-            { x: 162, y: 133, title: "Crest", body: "Tension cracks open here first. Monitor with prisms and slope stability radar." },
-            { x: 60, y: 205, title: "Pit floor", body: "HEMM and persons work at the toe — the consequence side of slope risk." },
+            { x: 163, y: 137, title: "Crest", body: "Tension cracks open here first. Monitor with prisms and slope stability radar." },
+            { x: 64, y: 205, title: "Pit floor", body: "HEMM and persons work at the toe — the consequence side of slope risk." },
           ],
           drawers: [
             { q: "Wedge failure?", a: "Two intersecting discontinuities form a wedge that slides along their line of intersection. Analysed with stereonets: the intersection line must daylight and plunge steeper than φ." },

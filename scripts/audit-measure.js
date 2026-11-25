@@ -63,3 +63,67 @@ window.measureSvgs = function (meta) {
   });
   return res;
 };
+
+/**
+ * For every theory diagram, propose the nearest collision-free position for each hotspot pin that
+ * covers a label, an arrowhead, a thick stroke, another pin or the edge. Searches rings of growing
+ * radius around the authored anchor so pins stay next to what they explain.
+ */
+window.suggestPins = function (meta) {
+  const out = [];
+  const inter = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+  document.querySelectorAll("svg.case").forEach((svg) => {
+    const m = meta[Number(svg.dataset.k)];
+    if (!m.pins || !m.pins.length) return;
+    const box = svg.getBoundingClientRect();
+    const toUser = (r) => ({ x: r.left - box.left - 24, y: r.top - box.top - 24, w: r.width, h: r.height });
+    const texts = [];
+    svg.querySelectorAll("text").forEach((el) => {
+      if (el.closest("defs, pattern") || !(el.textContent || "").trim()) return;
+      const u = toUser(el.getBoundingClientRect());
+      if (u.w === 0) return;
+      const trim = u.h * 0.18;
+      texts.push({ x: u.x, y: u.y + trim, w: u.w, h: u.h - 2 * trim });
+    });
+    const heads = [];
+    const segs = [];
+    svg.querySelectorAll("polygon, line").forEach((el) => {
+      if (el.closest("pattern, defs")) return;
+      const p = el.parentElement;
+      const isHead = el.tagName === "polygon" && p && p.children.length === 2 && p.firstElementChild && p.firstElementChild.tagName === "line";
+      const sw = Number(el.getAttribute("stroke-width") || 0);
+      if (isHead) heads.push(toUser(el.getBoundingClientRect()));
+      else if (el.tagName === "line" && sw >= 2.5) segs.push({ s: [+el.getAttribute("x1"), +el.getAttribute("y1"), +el.getAttribute("x2"), +el.getAttribute("y2")], sw });
+    });
+    const segDist = (px, py, [x1, y1, x2, y2]) => {
+      const dx = x2 - x1, dy = y2 - y1;
+      const L = dx * dx + dy * dy || 1;
+      const u = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / L));
+      return Math.hypot(px - (x1 + u * dx), py - (y1 + u * dy));
+    };
+    const placed = m.pins.map((p) => ({ x: p.x, y: p.y }));
+    const bad = (x, y, self) => {
+      if (x < 12 || y < 12 || x > 388 || y > 228) return true;
+      const pr = { x: x - 10, y: y - 10, w: 20, h: 20 };
+      if (texts.some((t) => inter(pr, t) > 6)) return true;
+      if (heads.some((h) => h.w * h.h < 4000 && inter(pr, h) > 6)) return true;
+      if (segs.some((g) => segDist(x, y, g.s) < 9 + g.sw / 2)) return true;
+      return placed.some((q, j) => j !== self && Math.hypot(q.x - x, q.y - y) < 22);
+    };
+    m.pins.forEach((p, i) => {
+      if (!bad(p.x, p.y, i)) return;
+      let best = null;
+      for (let r = 4; r <= 48 && !best; r += 3)
+        for (let a = 0; a < 24 && !best; a++) {
+          const x = Math.round(p.x + r * Math.cos((a / 24) * 2 * Math.PI));
+          const y = Math.round(p.y + r * Math.sin((a / 24) * 2 * Math.PI));
+          if (!bad(x, y, i)) best = { x, y };
+        }
+      if (best) {
+        placed[i] = best;
+        out.push({ ctx: m.ctx, sim: m.sim, title: p.title, from: [p.x, p.y], to: [best.x, best.y] });
+      } else out.push({ ctx: m.ctx, sim: m.sim, title: p.title, from: [p.x, p.y], to: null });
+    });
+  });
+  return out;
+};

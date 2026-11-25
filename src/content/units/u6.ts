@@ -26,8 +26,8 @@ export const U6: Unit = {
           hotspots: [
             { x: 365, y: 168, title: "Solid / pillars", body: "Carry the front abutment load during depillaring — stooks near the goaf edge are most stressed." },
             { x: 305, y: 166, title: "Immediate caving", body: "Weak roof falls behind supports and bulks (k ≈ 1.3) to fill height m/(k−1)." },
-            { x: 385, y: 103, title: "Main roof", body: "A massive sandstone beam spans the goaf until tensile failure: the main fall. Later falls recur at the periodic weighting interval." },
-            { x: 334, y: 142, title: "Goaf-edge supports", body: "Breaker line of props/cogs or chocks (or roof bolts) define where the roof should break, protecting the working side." },
+            { x: 381, y: 88, title: "Main roof", body: "A massive sandstone beam spans the goaf until tensile failure: the main fall. Later falls recur at the periodic weighting interval." },
+            { x: 331, y: 140, title: "Goaf-edge supports", body: "Breaker line of props/cogs or chocks (or roof bolts) define where the roof should break, protecting the working side." },
           ],
           drawers: [
             { q: "Caving vs hydraulic sand stowing?", a: "Caving lets the roof collapse into the goaf (cheap; subsidence ≈ 0.8m). Stowing fills the void with sand slurry, supporting the roof (expensive; protects surface features, reduces fire risk)." },
@@ -156,7 +156,7 @@ export const U6: Unit = {
           sim: "u6-longwall",
           hotspots: [
             { x: 258, y: 12, title: "Front abutment", body: "Peak vertical stress, often 2–4 × σv, a few metres ahead of the face — causes face spall and gate-road loading." },
-            { x: 210, y: 112, title: "Powered shield", body: "Two-leg shield: canopy, caving shield and base. Set to a pressure, yields at its rating, advances after each shear." },
+            { x: 208, y: 105, title: "Powered shield", body: "Two-leg shield: canopy, caving shield and base. Set to a pressure, yields at its rating, advances after each shear." },
             { x: 246, y: 129, title: "Shearer & AFC", body: "Double-ended ranging drum shearer cuts a web (0.6–1.0 m) along the face; coal falls onto the armoured face conveyor (AFC)." },
             { x: 60, y: 140, title: "Goaf", body: "Caves behind the shields; bulks and recompacts, carrying load again further back (rear abutment)." },
           ],
@@ -289,7 +289,7 @@ export const U6: Unit = {
           hotspots: [
             { x: 200, y: 120, title: "Orebody", body: "Width, dip and the strength of hanging and footwall decide the method. Steep, strong, wide → open stoping." },
             { x: 172, y: 120, title: "Hanging-wall slough", body: "ELOS: equivalent linear overbreak/slough — waste thickness falling from the walls into the stope." },
-            { x: 310, y: 210, title: "Diluted grade", body: "Mill head grade = ore grade diluted by waste. Below cut-off, the stope loses money even if the in-situ ore is rich." },
+            { x: 307, y: 208, title: "Diluted grade", body: "Mill head grade = ore grade diluted by waste. Below cut-off, the stope loses money even if the in-situ ore is rich." },
           ],
           drawers: [
             { q: "Unsupported methods?", a: "Sublevel open stoping and VCR blast large stopes from sublevels, relying on strong walls; shrinkage leaves broken ore in the stope as a working floor and temporary wall support." },

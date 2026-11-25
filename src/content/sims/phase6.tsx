@@ -3,7 +3,8 @@
  * thick-seam BG vs LTCC, froth flotation circuit, and FLP/IS electrical zoning.
  */
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline } from "@/components/sim/svg";
+import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -73,9 +74,11 @@ export const dipStrikeSim: SimDef = {
         contours.push(
           <g key={lvl}>
             <line x1={X(pE - sE * 300)} y1={Y(pN - sN * 300)} x2={X(pE + sE * 300)} y2={Y(pN + sN * 300)} stroke={C.line} strokeWidth={1} />
-            <Txt x={X(pE + sE * 60)} y={Y(pN + sN * 60)} size={6} fill={C.slate} mono>
-              {lvl.toFixed(0)}
-            </Txt>
+            {X(pE + sE * 60) > 26 && X(pE + sE * 60) < 186 && Y(pN + sN * 60) > 40 && Y(pN + sN * 60) < 204 && Object.values(BH).every(([e, n]) => Math.hypot(X(e) - X(pE + sE * 60), Y(n) - Y(pN + sN * 60)) > 26) && (
+              <Txt x={X(pE + sE * 60)} y={Y(pN + sN * 60)} size={6} fill={C.slate} mono>
+                {lvl.toFixed(0)}
+              </Txt>
+            )}
           </g>,
         );
       }
@@ -96,7 +99,7 @@ export const dipStrikeSim: SimDef = {
             <rect x={20} y={30} width={180} height={180} />
           </clipPath>
         </defs>
-        <rect x={20} y={30} width={180} height={180} fill="white" stroke={C.line} />
+        <rect x={20} y={30} width={180} height={180} rx={3} fill="#F0FDF4" stroke="#86EFAC" />
         <g clipPath="url(#mapclip)">
           {contours}
           <line x1={X(cE - sE * 400)} y1={Y(cN - sN * 400)} x2={X(cE + sE * 400)} y2={Y(cN + sN * 400)} stroke={C.ink} strokeWidth={2.5} />
@@ -105,6 +108,7 @@ export const dipStrikeSim: SimDef = {
         <Arrow x1={X(cE)} y1={Y(cN)} x2={X(cE + dE * 110)} y2={Y(cN + dN * 110)} color={C.crit} width={2.5} />
         {bh.map(([n, [e, nn], rl]) => (
           <g key={n}>
+            <circle cx={X(e)} cy={Y(nn)} r={9} fill={C.hazard} opacity={0.2} />
             <circle cx={X(e)} cy={Y(nn)} r={5} fill={C.hazard} stroke={C.ink} />
             <Txt x={X(e) + 7} y={Y(nn) - 4} size={8} weight={800}>
               {n}
@@ -126,9 +130,12 @@ export const dipStrikeSim: SimDef = {
         <Txt x={215} y={22} size={8} weight={700} fill={C.slate}>
           {`SECTION along ${p.sec}°`}
         </Txt>
-        <rect x={215} y={30} width={170} height={150} fill="white" stroke={C.line} />
-        <line x1={215} x2={385} y1={60} y2={60} stroke={C.soil} strokeWidth={2} />
-        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke={C.coal} strokeWidth={6} />
+        <rect x={215} y={30} width={170} height={30} fill={MAT.sky} />
+        <rect x={215} y={60} width={170} height={120} fill={MAT.sand} />
+        <rect x={215} y={30} width={170} height={150} fill="none" stroke="#A8A29E" />
+        <line x1={215} x2={385} y1={60} y2={60} stroke="#65A30D" strokeWidth={3} />
+        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke="#0F172A" strokeWidth={8} />
+        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke={MAT.coal} strokeWidth={6} />
         <Txt x={222} y={170} size={11} weight={900} mono fill={C.tech}>
           {`α = ${r.app.toFixed(2)}°`}
         </Txt>
@@ -264,8 +271,8 @@ export const slopeModesSim: SimDef = {
       const half = clamp(80 * Math.tan(rad(p.xi / 2)), 25, 150);
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-          <rect x={40} y={50} width={320} height={160} fill="#d6d3d1" stroke={C.ink} />
+          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+          <rect x={40} y={50} width={320} height={160} fill={MAT.rock} stroke={C.ink} />
           <polygon points={polyline([[200 - half, 50], [200 + half, 50], [200, 50 + 150]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(0 ${d})`} />
           <line x1={200 - half - 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
           <line x1={200 + half + 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
@@ -296,15 +303,15 @@ export const slopeModesSim: SimDef = {
       const mass: [number, number][] = [[S(0), SY(0)], [crestX, topY], [S(b.xe), topY], ...arc.slice().reverse()];
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-          <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill="#d6c9a8" />
+          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+          <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.goaf} />
           {arc.length > 0 && (
             <g transform={`rotate(${deg(ang)} ${S(b.cx)} ${SY(b.cy)})`}>
               <polygon points={polyline(mass)} fill={col} opacity={0.55} stroke={C.ink} />
             </g>
           )}
           {arc.length > 0 && <circle cx={S(b.cx)} cy={SY(b.cy)} r={3} fill={C.ink} />}
-          <Txt x={240} y={225} size={8} fill={C.slate}>
+          <Txt x={396} y={225} size={7.5} fill={C.slate} anchor="end">
             critical circle (Bishop, weak overburden/dump)
           </Txt>
           {header}
@@ -330,8 +337,8 @@ export const slopeModesSim: SimDef = {
       }
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-          <polygon points={polyline([[60, 215], [380, 215 - 320 * Math.tan(rad(baseAng))], [400, 240], [0, 240]])} fill="#a8a29e" />
+          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+          <polygon points={polyline([[60, 215], [380, 215 - 320 * Math.tan(rad(baseAng))], [400, 240], [0, 240]])} fill={MAT.rock} />
           {blocks}
           <Txt x={230} y={232} size={8} fill={C.slate}>
             {`b/h ${p.bh.toFixed(2)} vs tan ψ ${Math.tan(rad(p.pp)).toFixed(2)}`}
@@ -346,8 +353,9 @@ export const slopeModesSim: SimDef = {
     const dy = d * Math.sin(rad(p.pp));
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e0f2fe" />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill="#d6d3d1" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.shale} />
+        {fail && <Cracks key={`m${p.mode}`} cracks={[{ x: crestX + 20, y: topY, len: 34, angle: 100, seed: 5 }, { x: crestX + 46, y: topY, len: 26, angle: 80, seed: 11 }]} color="#7F1D1D" width={2} />}
         {o.kin === 1 && planeX <= 400 && (
           <polygon points={polyline([[toeX, toeY], [crestX, topY], [planeX, topY]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(${-dx} ${dy})`} />
         )}
@@ -424,11 +432,11 @@ export const longwallCycleSim: SimDef = {
         <Txt x={20} y={14} size={8} weight={700} fill={C.slate}>
           PLAN VIEW · coal face ↑ · goaf ↓
         </Txt>
-        <rect x={x0} y={20} width={W} height={56 - 8 * u} fill={C.coal} />
+        <rect x={x0} y={20} width={W} height={56 - 8 * u} fill={MAT.coal} />
         <rect x={x0} y={76 - 8 * u} width={fx(shX) - x0} height={8 * u + 6} fill="#334155" opacity={0.25} />
         <path d={afc} fill="none" stroke={C.hazard} strokeWidth={3} />
         {shields}
-        <rect x={x0} y={124} width={W} height={16} fill="#78716c" />
+        <rect x={x0} y={124} width={W} height={16} fill={MAT.goaf} />
         <Txt x={x0 + 4} y={135} size={7} fill="white" weight={700}>
           GOAF (caving)
         </Txt>
@@ -443,8 +451,8 @@ export const longwallCycleSim: SimDef = {
         <Txt x={20} y={156} size={8} weight={700} fill={C.slate}>
           {`SECTION · shield ${["SET against roof", "LOWER → ADVANCE", "SET (new web)"][midState]}`}
         </Txt>
-        <rect x={20} y={162} width={190} height={8} fill="#a8a29e" />
-        <rect x={20} y={222} width={190} height={8} fill="#a8a29e" />
+        <rect x={20} y={162} width={190} height={8} fill={MAT.shale} />
+        <rect x={20} y={222} width={190} height={8} fill={MAT.sand} />
         <g transform={`translate(${midState === 2 ? 14 : midState === 1 ? 7 : 0} 0)`}>
           <rect x={70} y={midState === 1 ? 178 : 171} width={80} height={6} fill={C.tech} />
           <line x1={95} y1={midState === 1 ? 184 : 177} x2={100} y2={216} stroke={C.ink} strokeWidth={4} />
@@ -518,12 +526,12 @@ export const thickSeamSim: SimDef = {
       }
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill="#d6d3d1" />
-          <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={C.coal} />
+          <rect x={0} y={0} width={400} height={240} fill={MAT.shale} />
+          <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={MAT.coal} />
           <rect x={20} y={bot - 18} width={110} height={18} fill="#f8fafc" />
-          <rect x={0} y={bot} width={400} height={40} fill="#a8a29e" />
+          <rect x={0} y={bot} width={400} height={40} fill={MAT.sand} />
           {rings}
-          <polygon points={polyline([[130, bot], [200, seamTop + 20], [260, bot]])} fill="#475569" opacity={0.6} />
+          <polygon points={polyline([[130, bot], [200, seamTop + 20], [260, bot]])} fill={MAT.goaf} opacity={0.85} />
           <rect x={30 + flow * 60} y={bot - 15} width={26} height={12} rx={2} fill={C.hazard} />
           <Txt x={30} y={bot + 14} size={8} weight={700}>
             remote-controlled LHD in gallery
@@ -542,9 +550,9 @@ export const thickSeamSim: SimDef = {
     const cone = (seamTop - 10) + (cut - seamTop) * (1 - drawn);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#d6d3d1" />
-        <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={C.coal} />
-        <rect x={0} y={bot} width={400} height={40} fill="#a8a29e" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.shale} />
+        <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={MAT.coal} />
+        <rect x={0} y={bot} width={400} height={40} fill={MAT.sand} />
         <rect x={95} y={cut} width={120} height={bot - cut} fill="#f8fafc" />
         <Txt x={300} y={cut - 6} size={8} fill="white" weight={700} anchor="middle">
           top coal above the shield (caves on release)
@@ -560,13 +568,13 @@ export const thickSeamSim: SimDef = {
         <Txt x={100} y={bot + 14} size={7} weight={700}>
           rear AFC + draw window
         </Txt>
-        <polygon points={polyline([[40, seamTop], [140, seamTop], [125, cone], [55, cone]])} fill="#475569" />
+        <polygon points={polyline([[40, seamTop], [140, seamTop], [125, cone], [55, cone]])} fill={MAT.goaf} />
         {o.dil > 4 && <polygon points={polyline([[70, seamTop - 30], [110, seamTop - 30], [100, cone + 10], [80, cone + 10]])} fill="#a8a29e" opacity={0.9} stroke={C.crit} />}
         {[0, 1, 2, 3].map((i) => (
           <circle key={i} cx={95 + (i % 2) * 8} cy={cone + ((flow + i * 0.25) % 1) * (bot - 12 - cone)} r={2.5} fill={o.dil > 8 && i % 2 ? C.rock : "#0f172a"} stroke="white" strokeWidth={0.5} />
         ))}
-        <rect x={0} y={seamTop - 40} width={400} height={40} fill="#a8a29e" opacity={0.6} />
-        <Txt x={200} y={seamTop - 26} size={8} anchor="middle" weight={700}>
+        <rect x={0} y={seamTop - 40} width={400} height={40} fill={MAT.sand} opacity={0.85} />
+        <Txt x={200} y={Math.max(seamTop - 26, 42)} size={8} anchor="middle" weight={700}>
           ROOF SHALE (dilution source)
         </Txt>
         <Txt x={12} y={22} size={13} weight={900} mono>
@@ -640,7 +648,8 @@ export const flotationSim: SimDef = {
     return (
       <g>
         <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <rect x={25} y={cellTop} width={200} height={190} fill="#bfdbfe" stroke={C.ink} strokeWidth={2} />
+        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill={MAT.water} stroke={C.ink} strokeWidth={2} />
+        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill="#1E293B" opacity={0.35} />
         <rect x={25} y={cellTop} width={200} height={frothH} fill="#fef3c7" />
         <Txt x={30} y={cellTop + 12} size={8} weight={800}>
           FROTH (concentrate)
@@ -742,8 +751,9 @@ export const zonesSim: SimDef = {
     const eqCol = (e: number) => (e === 1 ? C.tech : e === 2 ? C.safe : "#94a3b8");
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e7e5e4" />
-        <rect x={30} y={30} width={18} height={190} fill="#cbd5e1" />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
+        <rect x={0} y={0} width={400} height={240} fill="#F5F5F4" opacity={0.6} />
+        <rect x={30} y={30} width={18} height={190} fill={MAT.metalH} />
         <Txt x={39} y={26} size={7} anchor="middle" weight={700}>
           shaft
         </Txt>

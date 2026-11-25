@@ -25,9 +25,9 @@ export const U7: Unit = {
           sim: "u7-coward",
           hotspots: [
             { x: 120, y: 70, title: "Explosive zone", body: "Between LEL (5 %) and UEL (15 %) CH₄ with enough oxygen. Most violent near 9.5 % (stoichiometric)." },
-            { x: 97, y: 32, title: "Lower explosive limit", body: "Below 5 % there is too little fuel to propagate a flame." },
-            { x: 107, y: 99, title: "Nose", body: "Below ~12 % O₂ no methane mixture can explode — the basis of inertisation with N₂/CO₂." },
-            { x: 267, y: 59, title: "Air-dilution line", body: "Composition of methane mixed with fresh air only. Points below it have lost oxygen (consumed by oxidation or diluted by inert gas)." },
+            { x: 103, y: 36, title: "Lower explosive limit", body: "Below 5 % there is too little fuel to propagate a flame." },
+            { x: 101, y: 103, title: "Nose", body: "Below ~12 % O₂ no methane mixture can explode — the basis of inertisation with N₂/CO₂." },
+            { x: 272, y: 64, title: "Air-dilution line", body: "Composition of methane mixed with fresh air only. Points below it have lost oxygen (consumed by oxidation or diluted by inert gas)." },
           ],
           drawers: [
             { q: "Why is CO so toxic?", a: "Haemoglobin binds CO roughly 200–250 times more strongly than O₂, forming carboxyhaemoglobin and starving tissue of oxygen. Effects depend on concentration × time; symptoms (headache, confusion, collapse) can be sudden." },
@@ -263,7 +263,7 @@ export const U7: Unit = {
           hotspots: [
             { x: 100, y: 60, title: "Stall zone", body: "Left of the peak, blades stall: flow separates, pressure fluctuates, vibration and noise rise. Never design a duty point there." },
             { x: 212, y: 63, title: "Pressure peak", body: "Duty should sit comfortably to the right of it (stable, rising-resistance-tolerant region)." },
-            { x: 296, y: 48, title: "Mine curve", body: "P = RQ² − NVP. Higher resistance (closed doors, falls, extended workings) steepens it." },
+            { x: 303, y: 48, title: "Mine curve", body: "P = RQ² − NVP. Higher resistance (closed doors, falls, extended workings) steepens it." },
             { x: 271, y: 77, title: "Operating point", body: "Q and P at the intersection; power = P·Q/η." },
           ],
           drawers: [

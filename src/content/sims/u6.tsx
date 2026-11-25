@@ -93,7 +93,7 @@ export const goafSim: SimDef = {
           goaf-edge supports
         </Txt>
         <rect x={0} y={seamY} width={400} height={65} fill={MAT.sand} />
-        <Txt x={edge + 4} y={Math.max(roofY - tt + 12, 12)} size={8} weight={800}>
+        <Txt x={396} y={Math.max(roofY - tt + 12, 12)} size={8} weight={800} anchor="end">
           {`MAIN ROOF ${p.t} m`}
         </Txt>
         <Txt x={10} y={228} size={9} mono>

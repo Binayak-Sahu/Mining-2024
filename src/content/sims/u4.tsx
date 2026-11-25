@@ -80,7 +80,7 @@ export const drillSim: SimDef = {
         ) : (
           <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 8}`} fill={MAT.metal} stroke={C.ink} strokeWidth={0.8} />
         )}
-        <Txt x={112} y={holeBot + 3} size={8} mono weight={700}>
+        <Txt x={112} y={Math.min(holeBot + 3, 210)} size={8} mono weight={700}>
           {`${p.depth} m`}
         </Txt>
         <Txt x={22} y={226} size={7.5} fill={C.ink}>

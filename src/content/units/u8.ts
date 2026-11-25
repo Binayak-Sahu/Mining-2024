@@ -24,8 +24,8 @@ export const U8: Unit = {
           ],
           sim: "u8-bowditch",
           hotspots: [
-            { x: 60, y: 215, title: "Opening/closing station", body: "Traverse starts and ends here (or on two known stations). Coordinates must agree; the gap is the misclosure." },
-            { x: 240, y: 147, title: "Traverse station", body: "At each station the angle between back and fore sights is measured; errors accumulate into bearings further along." },
+            { x: 57, y: 218, title: "Opening/closing station", body: "Traverse starts and ends here (or on two known stations). Coordinates must agree; the gap is the misclosure." },
+            { x: 244, y: 153, title: "Traverse station", body: "At each station the angle between back and fore sights is measured; errors accumulate into bearings further along." },
             { x: 388, y: 96, title: "Precision", body: "Perimeter ÷ linear misclosure, quoted as 1 in N. Main mine traverses aim for high precision (several thousand to tens of thousands)." },
             { x: 388, y: 46, title: "Adjusted traverse", body: "After Bowditch, the polygon closes; corrected coordinates go on the mine plan." },
           ],
@@ -127,8 +127,8 @@ export const U8: Unit = {
           hotspots: [
             { x: 206, y: 105, title: "Instrument C", body: "Set up nearly on the line of the wires (α under about 1°), as close to the near wire as focusing allows." },
             { x: 294, y: 104, title: "Near wire W₁", body: "Plumb wires with heavy bobs damped in oil; wire oscillation and air currents are the main error sources." },
-            { x: 250, y: 160, title: "Distance ratio b/c", body: "The error multiplier: keep b small and c (wire separation) as large as the shaft allows." },
-            { x: 327, y: 62, title: "Shaft", body: "Bearing of W₁W₂ is fixed at surface by connection to the surface survey." },
+            { x: 252, y: 167, title: "Distance ratio b/c", body: "The error multiplier: keep b small and c (wire separation) as large as the shaft allows." },
+            { x: 326, y: 58, title: "Shaft", body: "Bearing of W₁W₂ is fixed at surface by connection to the surface survey." },
           ],
           drawers: [
             { q: "How does a gyro-theodolite find north?", a: "A fast-spinning gyroscope suspended on a tape is acted on by Earth's rotation; its spin axis oscillates about the meridian. Observing turning points of the oscillation gives true north without any line of sight to surface." },
@@ -340,7 +340,7 @@ export const U8: Unit = {
           sim: "u8-wash",
           hotspots: [
             { x: 168, y: 136, title: "Washability curve", body: "Cumulative floats: yield vs ash as the cut density increases. The 'M-curve' (Mayer) is an equivalent construction." },
-            { x: 205, y: 30, title: "Ash target", body: "Coking coal for steelmaking needs low ash; Indian coking coals require heavy washing." },
+            { x: 206, y: 34, title: "Ash target", body: "Coking coal for steelmaking needs low ash; Indian coking coals require heavy washing." },
             { x: 231, y: 67, title: "Operating point", body: "Cut-point density sets yield and clean-coal ash. Real separators blur the cut (probable error Ep)." },
           ],
           drawers: [
@@ -446,7 +446,7 @@ export const U8: Unit = {
           ],
           sim: "u8-earth",
           hotspots: [
-            { x: 60, y: 40, title: "Transformer", body: "Supplies the underground feeder; its star point (neutral) connection decides how big an earth fault can be." },
+            { x: 64, y: 41, title: "Transformer", body: "Supplies the underground feeder; its star point (neutral) connection decides how big an earth fault can be." },
             { x: 60, y: 142, title: "Neutral earthing resistor", body: "Restricted neutral: limits earth-fault current, keeping touch voltages and fault energy tiny." },
             { x: 300, y: 40, title: "Earth fault", body: "Insulation failure lets a phase touch the frame; fault current returns through the earth conductor." },
             { x: 190, y: 115, title: "Earth-leakage relay", body: "Senses residual (earth) current and isolates the supply in milliseconds, set well below the limit." },
@@ -575,9 +575,9 @@ export const U8: Unit = {
           sim: "u8-koepe",
           hotspots: [
             { x: 245, y: 50, title: "Friction wheel", body: "Tower- or ground-mounted. Rope does not coil; it relies on tread friction (μ ≈ 0.2–0.25 for modern linings)." },
-            { x: 140, y: 135, title: "Tight side T₁", body: "Loaded conveyance plus rope, accelerating upward: T₁ = M₁(g + a)." },
-            { x: 170, y: 190, title: "Loaded skip", body: "Payload is limited by slip and rope factor of safety." },
-            { x: 200, y: 225, title: "Tail rope", body: "Balances head-rope weight so the tension ratio does not change with skip position." },
+            { x: 153, y: 135, title: "Tight side T₁", body: "Loaded conveyance plus rope, accelerating upward: T₁ = M₁(g + a)." },
+            { x: 178, y: 204, title: "Loaded skip", body: "Payload is limited by slip and rope factor of safety." },
+            { x: 198, y: 218, title: "Tail rope", body: "Balances head-rope weight so the tension ratio does not change with skip position." },
           ],
           drawers: [
             { q: "Detaching hooks?", a: "On drum winders, a detaching hook passes through a bell plate in an overwind, releasing the rope and hanging the cage safely. Koepe winders can't detach (continuous rope), so they rely on overwind arrestors/retarding guides, crash beams and controller protection." },

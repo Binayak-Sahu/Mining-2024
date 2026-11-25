@@ -124,7 +124,7 @@ export const U9: Unit = {
           ],
           sim: "u9-cutoff",
           hotspots: [
-            { x: 72, y: 33, title: "Tonnage curve", body: "Tonnes above cut-off fall as cut-off rises; shape set by grade variability." },
+            { x: 76, y: 34, title: "Tonnage curve", body: "Tonnes above cut-off fall as cut-off rises; shape set by grade variability." },
             { x: 168, y: 149, title: "Grade curve", body: "Mean grade of material above cut-off rises with cut-off." },
             { x: 70, y: 120, title: "Break-even cut-off", body: "g_be = cost / (price × recovery). Below it, each tonne loses money." },
             { x: 136, y: 180, title: "Chosen cut-off", body: "Too high: ore is wasted; too low: losses on marginal tonnes." },
@@ -319,8 +319,8 @@ export const U9: Unit = {
           sim: "u9-radar",
           hotspots: [
             { x: 100, y: 120, title: "1/v readings", body: "Inverse of measured velocity. Noise from atmosphere and dust scatters the points." },
-            { x: 228, y: 40, title: "Actual failure", body: "Unknown in advance. The forecast tries to locate it from the trend." },
-            { x: 71, y: 60, title: "Now", body: "Later forecasts are more accurate but leave less lead time — so alarm thresholds must trigger withdrawal early." },
+            { x: 222, y: 44, title: "Actual failure", body: "Unknown in advance. The forecast tries to locate it from the trend." },
+            { x: 78, y: 60, title: "Now", body: "Later forecasts are more accurate but leave less lead time — so alarm thresholds must trigger withdrawal early." },
           ],
           drawers: [
             { q: "Why does 1/v go linear?", a: "Fukuzono observed that for tertiary creep, acceleration ∝ velocity^α with α ≈ 2, which makes 1/v decrease linearly with time to zero at failure." },

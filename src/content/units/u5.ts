@@ -143,9 +143,9 @@ export const U5: Unit = {
           ],
           sim: "u5-dragline",
           hotspots: [
-            { x: 230, y: 92, title: "Overburden cut", body: "Width × thickness of bank material removed per pass. Swells on excavation (s ≈ 1.2–1.4)." },
+            { x: 237, y: 103, title: "Overburden cut", body: "Width × thickness of bank material removed per pass. Swells on excavation (s ≈ 1.2–1.4)." },
             { x: 173, y: 100, title: "Spoil pile", body: "Loose material at its angle of repose (≈ 35–38°). Cross-section area = swell × cut area." },
-            { x: 278, y: 62, title: "Dragline", body: "Walks on the highwall bench, setback from the crest for stability. Operating radius is fixed by boom length and angle." },
+            { x: 288, y: 65, title: "Dragline", body: "Walks on the highwall bench, setback from the crest for stability. Operating radius is fixed by boom length and angle." },
             { x: 300, y: 117, title: "Exposed coal", body: "Coal is mined after the cut is cleared; spoil falling back on it must be rehandled." },
           ],
           drawers: [
@@ -242,7 +242,7 @@ export const U5: Unit = {
           hotspots: [
             { x: 55, y: 150, title: "Loading unit", body: "Loading time = passes × swing cycle. 3–5 passes is the classic optimum for truck/shovel sizing." },
             { x: 200, y: 90, title: "Loaded haul", body: "Usually the longest part of the cycle — speed set by rimpull on ramps." },
-            { x: 353, y: 120, title: "Dump", body: "Dump + manoeuvre + spot at shovel time is roughly fixed per cycle." },
+            { x: 347, y: 109, title: "Dump", body: "Dump + manoeuvre + spot at shovel time is roughly fixed per cycle." },
             { x: 150, y: 24, title: "Match factor", body: "MF = (N trucks × loading time) / (N shovels × truck cycle time)." },
           ],
           drawers: [
@@ -358,7 +358,7 @@ export const U5: Unit = {
           sim: "u5-haul",
           hotspots: [
             { x: 139, y: 112, title: "Truck on ramp", body: "Required rimpull F = GVW·g·(RR + GR)/100 kN for GVW in tonnes." },
-            { x: 230, y: 100, title: "Ramp gradient", body: "Indian practice limits haul road gradients to about 1 in 16 (6.25 %) unless permitted; steep ramps slow trucks and overload retarders." },
+            { x: 237, y: 111, title: "Ramp gradient", body: "Indian practice limits haul road gradients to about 1 in 16 (6.25 %) unless permitted; steep ramps slow trucks and overload retarders." },
             { x: 320, y: 170, title: "Curve", body: "Super-elevation e and side friction f balance centrifugal force: e + f = v²/(127R)." },
             { x: 260, y: 22, title: "Total resistance", body: "TR = RR + GR. Effective grade concept: a 3 % RR road behaves like an extra 3 % climb." },
           ],

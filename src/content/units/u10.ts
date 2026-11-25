@@ -245,7 +245,7 @@ export const U10: Unit = {
           sim: "u10-risk",
           hotspots: [
             { x: 210, y: 37, title: "Inherent risk", body: "Before new controls: likelihood × consequence. Fatal-potential hazards sit in the right-hand column." },
-            { x: 390, y: 140, title: "Hierarchy of controls", body: "Elimination > substitution > engineering > administrative > PPE. Effectiveness falls as you go down." },
+            { x: 388, y: 143, title: "Hierarchy of controls", body: "Elimination > substitution > engineering > administrative > PPE. Effectiveness falls as you go down." },
             { x: 74, y: 190, title: "Consequence axis", body: "Severity of the worst credible outcome — fatality/multiple fatality at 5." },
           ],
           drawers: [
@@ -447,7 +447,7 @@ export const U10: Unit = {
           sim: "u10-scba",
           hotspots: [
             { x: 60, y: 49, title: "Travel in", body: "Oxygen used getting to the site must be matched by oxygen to return — so travel time is effectively doubled." },
-            { x: 340, y: 49, title: "Reserve", body: "Kept back for delays, casualty handling and apparatus faults." },
+            { x: 327, y: 52, title: "Reserve", body: "Kept back for delays, casualty handling and apparatus faults." },
             { x: 70, y: 150, title: "Cylinder", body: "Oxygen volume = water capacity × pressure (e.g. 2 L × 200 bar = 400 L)." },
             { x: 380, y: 170, title: "Turn-around pressure", body: "Return oxygen ÷ cylinder size + reserve. The team turns when the first member reaches it." },
           ],

@@ -1,5 +1,5 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks } from "@/components/sim/svg";
+import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
@@ -320,7 +320,7 @@ export const rmrSim: SimDef = {
           {RMR_CLASS[o.cls].name}
         </Txt>
         <foreignObject x={30} y={160} width={345} height={70}>
-          <div style={{ fontSize: 9, lineHeight: 1.3, color: "#334155", fontFamily: "Inter, Helvetica, sans-serif" }}>Support (10 m tunnel): {RMR_CLASS[o.cls].support}</div>
+          <div style={{ fontSize: 9, lineHeight: 1.3, color: "#334155", fontFamily: SANS }}>Support (10 m tunnel): {RMR_CLASS[o.cls].support}</div>
         </foreignObject>
       </g>
     );

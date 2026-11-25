@@ -24,10 +24,10 @@ export const U4: Unit = {
           ],
           sim: "u4-drill",
           hotspots: [
-            { x: 95, y: 22, title: "Top-hammer", body: "Hammer at the surface sends a stress wave down the drill string. Each coupling reflects and absorbs part of it — efficiency falls with depth." },
+            { x: 92, y: 19, title: "Top-hammer", body: "Hammer at the surface sends a stress wave down the drill string. Each coupling reflects and absorbs part of it — efficiency falls with depth." },
             { x: 118, y: 50, title: "Rod couplings", body: "Every 3.6 m rod adds a joint. Top-hammer suits short benches and small diameters (≤ ~115 mm)." },
             { x: 300, y: 57, title: "Penetration comparison", body: "DTH puts the hammer directly behind the bit: no string losses, straight holes, good in hard rock at depth. Rotary tricone excels in soft–medium rock and large diameters." },
-            { x: 285, y: 189, title: "Energy at the bit", body: "η·P is the useful power. Specific energy SE rises with rock strength." },
+            { x: 289, y: 189, title: "Energy at the bit", body: "η·P is the useful power. Specific energy SE rises with rock strength." },
           ],
           drawers: [
             { q: "How does a percussive bit break rock?", a: "Impact drives button inserts into the rock: a crushed zone forms under each button and radial cracks extend outward. Rotation (indexing) between blows lets adjacent craters coalesce, chipping out the rock between them." },
@@ -124,7 +124,7 @@ export const U4: Unit = {
           hotspots: [
             { x: 200, y: 35, title: "Oxygen balance", body: "OB = 0: exactly enough O to convert C → CO₂ and H → H₂O. ANFO's 94.5:5.5 ratio is chosen to hit zero." },
             { x: 160, y: 110, title: "Detonation front", body: "Travels at the velocity of detonation (VOD). Below the critical diameter, the front cannot sustain itself and the charge fails or deflagrates." },
-            { x: 320, y: 115, title: "Post-blast fumes", body: "Fuel-rich (OB < 0) → CO. Oxygen-rich (OB > 0) or water-damaged ANFO → NOx (orange-brown)." },
+            { x: 323, y: 128, title: "Post-blast fumes", body: "Fuel-rich (OB < 0) → CO. Oxygen-rich (OB > 0) or water-damaged ANFO → NOx (orange-brown)." },
             { x: 100, y: 184, title: "Impedance matching", body: "Energy transfer is best when explosive impedance (ρe·VOD) matches rock impedance (ρr·Cp): low-VOD ANFO suits soft rock; high-VOD emulsions suit hard rock." },
           ],
           chain: ["Primer shock initiates the column", "Shock compresses and heats explosive ahead", "Reaction zone releases energy behind the front (CJ plane)", "Detonation pressure shatters the borehole wall", "Gas pressure heaves and displaces the burden"],
@@ -349,7 +349,7 @@ export const U4: Unit = {
             { x: 60, y: 70, title: "Initiation point", body: "The firing wave starts here and propagates through surface connectors hole to hole and row to row." },
             { x: 86, y: 70, title: "Surface connector", body: "Surface delays (e.g. 17, 25, 42 ms) set the sequence. They are exposed to flyrock and ground movement." },
             { x: 320, y: 170, title: "Cut-off risk", body: "If a hole's surface signal arrives after the first hole has fired, its tube may be cut by moving rock → misfire." },
-            { x: 112, y: 96, title: "Detonation times", body: "Hole time = surface time + in-hole delay. Holes firing within ~8 ms of each other count as one charge per delay for vibration." },
+            { x: 116, y: 102, title: "Detonation times", body: "Hole time = surface time + in-hole delay. Holes firing within ~8 ms of each other count as one charge per delay for vibration." },
           ],
           drawers: [
             { q: "Why long in-hole delays?", a: "With 400–500 ms in-hole delays, the whole surface network has initiated before any hole detonates, so no surface tube can be cut by ground movement." },
