@@ -132,6 +132,8 @@ export interface PredictStage {
   options: string[];
   answer: number;
   explain: string;
+  /** Why each wrong option fails in the field (same order as options; the correct entry is ""). */
+  optionWhy?: string[];
   concept: string;
 }
 

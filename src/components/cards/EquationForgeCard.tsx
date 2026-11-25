@@ -11,6 +11,26 @@ interface Tile {
   text: string;
 }
 
+/** Explain exactly what is wrong with this attempt, block by block, compared with the target equation. */
+function diagnose(got: string[], target: string[]): { title: string; lines: string[] } {
+  const left = [...target];
+  const extra: string[] = [];
+  for (const g of got) {
+    const i = left.indexOf(g);
+    if (i >= 0) left.splice(i, 1);
+    else extra.push(g);
+  }
+  const lines: string[] = [];
+  if (extra.length) lines.push(`${extra.map((e) => `“${e}”`).join(", ")} ${extra.length > 1 ? "do not belong" : "does not belong"} in this relationship: check it against the proportionality statements.`);
+  if (left.length) lines.push(`Still missing ${left.length === 1 ? "one block" : `${left.length} blocks`}: the physics needs ${left.length === 1 ? "another term" : "more terms"} than you placed.`);
+  if (!extra.length && !left.length) {
+    const k = got.findIndex((g, i) => g !== target[i]);
+    lines.push(`Every block is right, but the order is not: block ${k + 1} should be “${target[k]}”. Which quantity sits in the numerator, and what is it raised to?`);
+    return { title: "Right blocks, wrong arrangement", lines };
+  }
+  return { title: extra.length ? "A block here does not fit the physics" : "Not complete yet", lines };
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -27,6 +47,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
   const [status, setStatus] = useState<"idle" | "wrong" | "right">("idle");
   const [penalised, setPenalised] = useState(false);
   const [shake, setShake] = useState(0);
+  const [diag, setDiag] = useState<{ title: string; lines: string[] } | null>(null);
 
   const placedTiles = placed.map((id) => bank.find((t) => t.id === id)!);
 
@@ -35,6 +56,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
     const valid = [stage.target, ...(stage.accept ?? [])].some((a) => a.join("\u0001") === got);
     if (valid) setStatus("right");
     else {
+      setDiag(diagnose(placedTiles.map((t) => t.text), stage.target));
       setStatus("wrong");
       setShake((s) => s + 1);
       if (!penalised) {
@@ -147,8 +169,12 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
           );
         })}
       </div>
-      <Feedback show={status === "wrong"} ok={false} title="Dimensionally or physically inconsistent — try again">
-        Re-read the proportionality statements: which quantity sits in the numerator, and which exponent does the physics demand?
+      <Feedback show={status === "wrong"} ok={false} title={diag?.title ?? "Not quite"}>
+        {diag?.lines.map((l, i) => (
+          <span key={i} className="block">
+            {l}
+          </span>
+        ))}
       </Feedback>
       <Feedback show={status === "right"} ok title={stage.formula.expr}>
         {stage.formula.meaning}

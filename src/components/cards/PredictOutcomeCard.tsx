@@ -49,8 +49,14 @@ export function PredictOutcomeCard({ stage, onMistake, onDone }: CardProps<Predi
           );
         })}
       </div>
-      <Feedback show={revealed} ok={pick === stage.answer} title={pick === stage.answer ? "Prediction confirmed" : "Simulation disagrees — safety heart lost"}>
-        {stage.explain}
+      <Feedback show={revealed} ok={pick === stage.answer} title={pick === stage.answer ? "Prediction confirmed" : "The simulation disagrees"}>
+        {pick !== null && pick !== stage.answer && stage.optionWhy?.[pick] && (
+          <span className="block mb-1.5">
+            <b className="text-red-700">Why “{stage.options[pick]}” fails: </b>
+            {stage.optionWhy[pick]}
+          </span>
+        )}
+        <span className="block">{pick !== stage.answer && <b className="text-slate-900">What actually happens: </b>}{stage.explain}</span>
       </Feedback>
     </CardFrame>
   );

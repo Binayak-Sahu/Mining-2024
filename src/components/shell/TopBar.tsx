@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { Flame, Zap, Map, BookMarked, Dumbbell, GraduationCap, Calculator, FlaskConical, ArrowLeftRight, Volume2, VolumeX, Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor } from "@/lib/ranks";
@@ -76,6 +78,21 @@ export function MuteToggle() {
   );
 }
 
+/** Streak flame that pops (and plays the unlock arpeggio) the moment the streak grows. */
+function StreakFlame({ n }: { n: number }) {
+  const controls = useAnimationControls();
+  const prev = useRef(n);
+  useEffect(() => {
+    if (n > prev.current) void controls.start({ scale: [1, 1.5, 0.9, 1.1, 1], rotate: [0, -12, 10, 0], transition: { duration: 0.7 } });
+    prev.current = n;
+  }, [n, controls]);
+  return (
+    <motion.span animate={controls} className="inline-flex">
+      <Flame size={18} className={n > 0 ? "fill-orange-400" : ""} />
+    </motion.span>
+  );
+}
+
 export function TopBar() {
   const hydrated = useHydrated();
   const path = usePathname();
@@ -105,14 +122,16 @@ export function TopBar() {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-orange-500 font-extrabold readout text-sm" title="Daily streak">
-            <Flame size={18} className={st > 0 ? "fill-orange-400" : ""} /> {st}
+          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-orange-700 dark:text-orange-400 font-extrabold readout text-sm" title="Daily streak">
+            <StreakFlame n={st} /> {st}
           </span>
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-blue-500 font-extrabold readout text-sm" title="Experience points">
-            <Zap size={18} className="fill-blue-400/40" /> {hydrated ? xp : 0}
+          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-blue-600 font-extrabold readout text-sm" title="Experience points">
+            <Zap size={18} className="fill-blue-400/40" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
           <MuteToggle />
-          <ThemeToggle />
+          <span className="hidden sm:inline-flex">
+            <ThemeToggle />
+          </span>
           <Link href="/profile/#sync" title="Export / import progress" aria-label="Export or import progress" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
             <ArrowLeftRight size={17} />
           </Link>

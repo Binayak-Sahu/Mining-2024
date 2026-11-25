@@ -21,6 +21,8 @@ export interface ExamQuestion {
   tol?: number;
   unit?: string;
   derivation: string[];
+  /** Why each wrong option fails (multiple-choice only; correct entry is ""). */
+  optionWhy?: string[];
   source: string;
   lessonId?: string;
 }
@@ -35,7 +37,7 @@ export function buildPool(): ExamQuestion[] {
       l.stages.forEach((s, i) => {
         const base = { unitId: u.id, unitN: u.n, source: `${l.boss ? "Boss · " : ""}${l.title}`, lessonId: l.id };
         if (s.kind === "predict") {
-          pool.push({ ...base, id: `${l.id}#${i}`, kind: "mcq", family: "concept", weight: 2 * bossMul, prompt: `${s.scenario} ${s.question}`, options: s.options, answer: s.answer, derivation: [s.explain] });
+          pool.push({ ...base, id: `${l.id}#${i}`, kind: "mcq", family: "concept", weight: 2 * bossMul, prompt: `${s.scenario} ${s.question}`, options: s.options, answer: s.answer, derivation: [s.explain], optionWhy: s.optionWhy });
         } else if (s.kind === "crisis") {
           s.phases.forEach((ph, j) => {
             const correct = ph.options.findIndex((o) => o.correct);
@@ -50,6 +52,7 @@ export function buildPool(): ExamQuestion[] {
               options: ph.options.map((o) => o.text),
               answer: correct,
               derivation: [ph.options[correct].why, s.debrief],
+              optionWhy: ph.options.map((o) => (o.correct ? "" : o.why)),
             });
           });
         } else if (s.kind === "swipe") {

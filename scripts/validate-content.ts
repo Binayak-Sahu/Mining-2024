@@ -3,7 +3,7 @@
  *  - every sim id referenced exists; every sim computes finite outputs at defaults
  *  - every SimLab goal is reachable (grid search over slider values)
  *  - hotspots lie inside the 400 x 240 viewBox
- *  - predict answers index a real option; numeric answers are finite
+ *  - predict answers index a real option and every wrong option explains why it fails; numeric answers are finite
  *  - equation targets can be built from the token bank
  * Run: npm run validate
  */
@@ -136,6 +136,13 @@ for (const u of UNITS) {
         case "predict":
           checkSim(s.sim, { ...s.before, ...s.after });
           if (s.answer < 0 || s.answer >= s.options.length) fail(`${at}: answer index out of range`);
+          if (s.optionWhy) {
+            if (s.optionWhy.length !== s.options.length) fail(`${at}: optionWhy has ${s.optionWhy.length} entries for ${s.options.length} options`);
+            s.optionWhy.forEach((w, k) => {
+              if (k === s.answer && w) fail(`${at}: optionWhy for the correct option should be empty`);
+              if (k !== s.answer && !w.trim()) fail(`${at}: wrong option ${k} has no explanation`);
+            });
+          } else fail(`${at}: predict stage has no per-option explanations (optionWhy)`);
           break;
         case "equation": {
           const bank = [...s.target, ...s.distractors];

@@ -91,9 +91,12 @@ export function PrimaryButton({
 /** Inline verdict panel. Plays a chime / thud (and a haptic tick on phones) the moment it appears. */
 export function Feedback({ show, ok, title, children }: { show: boolean; ok: boolean; title: string; children?: ReactNode }) {
   const played = useRef(false);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (show && !played.current) {
       played.current = true;
+      // bring the verdict into view (clear of the bottom action drawer) once it has animated in
+      window.setTimeout(() => box.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 180);
       if (ok) sfx.correct();
       else sfx.wrong();
     }
@@ -107,7 +110,8 @@ export function Feedback({ show, ok, title, children }: { show: boolean; ok: boo
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className={`rounded-2xl p-3.5 sm:p-4 ${ok ? "bg-emerald-50 shadow-[inset_0_0_0_2px_#10B98155]" : "bg-red-50 shadow-[inset_0_0_0_2px_#EF444455]"}`}
+          ref={box}
+          className={`scroll-mb-32 scroll-mt-20 rounded-2xl p-3.5 sm:p-4 ${ok ? "bg-emerald-50 shadow-[inset_0_0_0_2px_#10B98155]" : "bg-red-50 shadow-[inset_0_0_0_2px_#EF444455]"}`}
         >
           <div className={`flex items-center gap-2 font-extrabold text-[15px] ${ok ? "text-emerald-700" : "text-red-700"}`}>
             <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 14, delay: 0.05 }}>

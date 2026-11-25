@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
-import { animate, motion, useReducedMotion } from "framer-motion";
-import { Hand } from "lucide-react";
+import { motion } from "framer-motion";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+export { AnimatedNumber };
+import { Hand, Check } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
 import { toneColor } from "./svg";
@@ -42,7 +44,15 @@ const PARAM_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#0
 const PARAM_TEXT = ["text-blue-700", "text-emerald-700", "text-amber-700", "text-violet-600", "text-red-700", "text-slate-700"];
 
 /** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
-export function SimCanvas({ def, values, overlay, onChange, still = false }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean }) {
+/** A live objective shown in the diagram's own frame; the frame lights up emerald while it is met. */
+export interface Objective {
+  text: string;
+  met: boolean;
+  /** e.g. "Challenge 2 of 3" */
+  tag?: string;
+}
+
+export function SimCanvas({ def, values, overlay, onChange, still = false, objective }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective }) {
   const out = useMemo(() => def.compute(values), [def, values]);
   const wrap = useRef<HTMLDivElement>(null);
   const [onScreen, setOnScreen] = useState(true);
@@ -81,7 +91,18 @@ export function SimCanvas({ def, values, overlay, onChange, still = false }: { d
   };
 
   return (
-    <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"}`}>
+    <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"} transition-shadow duration-300 ${objective?.met ? "plate-met" : ""}`}>
+      {objective && (
+        <div className={`relative z-[1] flex items-start gap-2 px-3 py-2 text-[13px] font-bold leading-snug transition-colors duration-300 ${objective.met ? "bg-[#047857] text-white" : "bg-[#0E1424] text-[#F1F5F9]"}`} role="status" aria-live="polite">
+          <motion.span key={objective.met ? "met" : "open"} initial={{ scale: 0.4, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 16 }} className={`mt-[1px] inline-flex w-[18px] h-[18px] shrink-0 items-center justify-center rounded-full ${objective.met ? "bg-white text-[#047857]" : "border-2 border-[#93C5FD]"}`}>
+            {objective.met ? <Check size={12} strokeWidth={3.5} /> : <span className="w-1.5 h-1.5 rounded-full bg-[#93C5FD]" />}
+          </motion.span>
+          <span className="min-w-0">
+            {objective.tag && <span className={`mr-1.5 font-extrabold ${objective.met ? "text-[#D1FAE5]" : "text-[#93C5FD]"}`}>{objective.tag}</span>}
+            {objective.text}
+          </span>
+        </div>
+      )}
       <svg
         ref={svg}
         viewBox="-24 -24 448 288"
@@ -124,6 +145,27 @@ export function SimCanvas({ def, values, overlay, onChange, still = false }: { d
             </g>
           );
         })}
+        {drag !== null &&
+          (() => {
+            const h = handles[drag];
+            const p = def.params.find((q) => q.key === h.key);
+            if (!p) return null;
+            const [x, y] = h.at(values, out);
+            const val = `${fmt(values[h.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0)}${p.unit ? ` ${p.unit}` : ""}`;
+            const name = p.label.replace(/\s*\(.*\)$/, "").split(",")[0];
+            const text = `${name.length > 22 ? name.slice(0, 21) + "…" : name}: ${val}`;
+            const w = text.length * 5.6 + 16;
+            const bx = Math.min(Math.max(x - w / 2, -20), 420 - w);
+            const by = y - 38 < -20 ? y + 18 : y - 38;
+            return (
+              <g pointerEvents="none">
+                <rect x={bx} y={by} width={w} height={20} rx={10} fill="#0E1424" opacity={0.92} />
+                <text x={bx + w / 2} y={by + 13.5} fontSize={10} fontWeight={700} fill="#F1F5F9" textAnchor="middle" fontFamily="'JetBrains Mono Variable', ui-monospace, monospace">
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
       </svg>
       {handles.length > 0 && !used && (
         <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
@@ -137,26 +179,6 @@ export function SimCanvas({ def, values, overlay, onChange, still = false }: { d
       )}
     </div>
   );
-}
-
-/** A live physics number that springs from its previous value to the new one (exact value at rest). */
-export function AnimatedNumber({ value, digits }: { value: number; digits: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const prev = useRef(value);
-  const reduce = useReducedMotion();
-  useEffect(() => {
-    const from = prev.current;
-    prev.current = value;
-    const el = ref.current;
-    if (!el) return;
-    if (reduce || !Number.isFinite(value) || !Number.isFinite(from) || from === value) {
-      el.textContent = fmt(value, digits);
-      return;
-    }
-    const c = animate(from, value, { type: "spring", stiffness: 260, damping: 30, onUpdate: (v) => (el.textContent = fmt(v, digits)), onComplete: () => (el.textContent = fmt(value, digits)) });
-    return () => c.stop();
-  }, [value, digits, reduce]);
-  return <span ref={ref}>{fmt(value, digits)}</span>;
 }
 
 /** Instrument-cluster telemetry strip (always a dark display, in both themes). */
@@ -233,10 +255,10 @@ export function Controls({ def, values, onChange, disabled }: { def: SimDef; val
 }
 
 /** Full interactive sim: diorama + telemetry + controls. */
-export function SimView({ def, values, onChange, overlay, disabled }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean }) {
+export function SimView({ def, values, onChange, overlay, disabled, objective }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean; objective?: Objective }) {
   return (
     <div className="space-y-3">
-      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} />
+      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} />
       <Readouts def={def} values={values} />
       <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
         <Controls def={def} values={values} onChange={onChange} disabled={disabled} />

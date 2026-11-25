@@ -18,6 +18,7 @@ export const U0: Unit = {
           kind: "theory",
           title: "Every metre of rock is load",
           lines: [
+            "Stand in a gallery 300 m down and every square metre of roof is holding up a stack of rock heavier than 500 cars.",
             "Rock above a gallery is not empty space — it is mass pressing down under gravity.",
             "The deeper the working, the higher the vertical (overburden) stress every pillar and support must carry.",
           ],
@@ -59,6 +60,7 @@ export const U0: Unit = {
           question: "What happens to the virgin vertical stress?",
           options: ["It stays the same", "It doubles", "It quadruples", "It increases by √2"],
           answer: 1,
+          optionWhy: ["Stress cannot stay the same: every extra metre adds another metre of rock pressing down.", "", "Quadrupling needs a square law; σv = ρgH has H to the first power, not H².", "√2 would mean stress grows with the square root of depth; the overburden column grows linearly."],
           explain: "σv = ρgH is linear in H: double H, double σv (7.4 → 14.7 MPa).",
           concept: "σv linear in depth",
         },
@@ -156,6 +158,7 @@ export const U0: Unit = {
         question: "Vertical stress will…",
         options: ["Fall", "Rise by about 21%", "Rise by 2.9×", "Stay the same"],
         answer: 1,
+        optionWhy: ["Denser rock is heavier per metre, so the load can only go up, never down.", "", "2.9× confuses the new density (2.9 t/m³) with the ratio of densities, 2.9/2.4 ≈ 1.21.", "σv = ρgH: change ρ and σv must change in the same proportion."],
         explain: "σv ∝ ρ: 2.9/2.4 = 1.21 → 21% higher (11.8 → 14.2 MPa).",
         concept: "σv proportional to density",
       },

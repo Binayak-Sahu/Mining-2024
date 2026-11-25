@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FlaskConical, RotateCcw, Search } from "lucide-react";
 import { ALL_SIMS } from "@/content/sims";
+import { allLessons } from "@/content";
+import { sfx } from "@/lib/sfx";
+import type { SimStage } from "@/lib/types";
 import { SimView, defaults } from "@/components/sim/SimView";
 import type { Vals } from "@/lib/types";
 
@@ -11,6 +14,13 @@ const UNIT_OF = (id: string) => {
   const m = /^u(\d+)-/.exec(id);
   return m ? Number(m[1]) : -1;
 };
+
+/** Every lesson Intuition-lab goal that uses a sim becomes a free-play challenge for it in the Sim Lab. */
+const CHALLENGES: Record<string, SimStage["goal"][]> = (() => {
+  const m: Record<string, SimStage["goal"][]> = {};
+  for (const l of allLessons()) for (const st of l.stages) if (st.kind === "sim") (m[st.sim] ??= []).push(st.goal);
+  return m;
+})();
 
 export function SimLab() {
   const params = useSearchParams();
@@ -20,10 +30,20 @@ export function SimLab() {
   const def = useMemo(() => ALL_SIMS.find((s) => s.id === id)!, [id]);
   const [vals, setVals] = useState<Vals>(() => defaults(def));
   const [q, setQ] = useState("");
+  const [ci, setCi] = useState(0);
+  const challenges = CHALLENGES[id] ?? [];
+  const ch = challenges[Math.min(ci, Math.max(0, challenges.length - 1))];
+  const met = ch ? ch.test(vals, def.compute(vals)) : false;
+  const wasMet = useRef(false);
+  useEffect(() => {
+    if (met && !wasMet.current) sfx.correct();
+    wasMet.current = met;
+  }, [met]);
 
   const pick = (sid: string) => {
     const d = ALL_SIMS.find((s) => s.id === sid)!;
     setId(sid);
+    setCi(0);
     setVals(defaults(d));
     router.replace(`/lab?sim=${sid}`, { scroll: false });
   };
@@ -69,7 +89,12 @@ export function SimLab() {
             <RotateCcw size={12} /> Reset
           </button>
         </div>
-        <SimView key={id} def={def} values={vals} onChange={setVals} />
+        <SimView key={id} def={def} values={vals} onChange={setVals} objective={ch ? { text: ch.text, met, tag: challenges.length > 1 ? `Challenge ${ci + 1}/${challenges.length}` : "Challenge" } : undefined} />
+        {ch && met && ci + 1 < challenges.length && (
+          <button type="button" onClick={() => setCi(ci + 1)} className="btn-3d tone-safe w-full mt-3 py-3 text-[13px]">
+            Next challenge
+          </button>
+        )}
       </section>
     </div>
   );

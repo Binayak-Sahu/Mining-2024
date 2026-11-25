@@ -347,7 +347,14 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             className="fixed top-[64px] sm:top-[76px] left-1/2 -translate-x-1/2 z-40 rounded-2xl text-white px-4 py-2.5 text-[13px] font-bold flex items-center gap-2 max-w-[92vw]"
             style={{ background: meta.color === "#8B5CF6" ? "#7C3AED" : "#2563EB", boxShadow: "0 4px 0 #1E3A8A, 0 16px 32px -12px rgba(30,58,138,0.6)" }}
           >
-            <BookMarked size={16} className="shrink-0" /> <span className="truncate">{toast}</span>
+            <span className="relative shrink-0">
+              <BookMarked size={16} />
+              {Array.from({ length: 8 }).map((_, i) => {
+                const ang = (i / 8) * Math.PI * 2;
+                return <motion.span key={i} className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full bg-[#FDE68A]" initial={{ x: 0, y: 0, opacity: 1, scale: 1 }} animate={{ x: Math.cos(ang) * 18, y: Math.sin(ang) * 18, opacity: 0, scale: 0.4 }} transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }} />;
+              })}
+            </span>{" "}
+            <span className="truncate">{toast}</span>
           </motion.div>
         )}
       </AnimatePresence>

@@ -222,6 +222,12 @@ export function Exam() {
                   Your answer: <b>{r === undefined ? "—" : q.options![Number(r)]}</b> · Correct: <b className="text-emerald-700">{q.options![q.answer]}</b>
                 </p>
               )}
+              {!ok && q.kind !== "num" && r !== undefined && q.optionWhy?.[Number(r)] && (
+                <p className="text-[13.5px] mt-1.5 rounded-xl bg-red-50 text-red-800 px-3 py-2 leading-snug">
+                  <b>Why that fails: </b>
+                  {q.optionWhy[Number(r)]}
+                </p>
+              )}
               <ol className="mt-2 space-y-1 text-sm text-slate-700 list-decimal pl-5">
                 {q.derivation.map((d, j) => (
                   <li key={j}>{d}</li>
