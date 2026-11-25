@@ -6,6 +6,7 @@ import { getUnit } from "@/content";
 import { useStrata } from "@/lib/store";
 import { lessonUnlocked, bossUnlocked, unitProgress } from "@/lib/progress";
 import { useHydrated } from "@/lib/useHydrated";
+import { usePrefs } from "@/lib/prefs";
 import { STAGE_META } from "@/components/cards/ui";
 import type { Lesson } from "@/lib/types";
 import { ExpeditionPath, ProgressRing } from "./ExpeditionPath";
@@ -30,9 +31,11 @@ export function UnitMap({ unitId }: { unitId: string }) {
   const hydrated = useHydrated();
   const unit = getUnit(unitId);
   const s = useStrata();
+  const masterPref = usePrefs((p) => p.masterUnlock);
   if (!unit) return <div className="p-6">Unit not found.</div>;
   const done = hydrated ? s.lessons : {};
   const free = hydrated && s.freeRoam;
+  const master = hydrated && masterPref;
   const st = stratumFor(unit.n);
   const f = unitProgress(unit, done);
 
@@ -66,12 +69,14 @@ export function UnitMap({ unitId }: { unitId: string }) {
       </div>
 
       <div className="mt-6 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 items-start">
-        <ExpeditionPath unit={unit} done={done} freeRoam={free} currentId={currentId} header={false} />
+        <ExpeditionPath unit={unit} done={done} freeRoam={free} currentId={currentId} header={false} master={master} />
 
         <div className="space-y-3">
           <h2 className="text-[13px] font-extrabold uppercase tracking-[0.14em] text-slate-500 px-1">Shift briefings</h2>
           {all.map(({ l, i, boss }) => {
-            const open = boss ? bossUnlocked(unit, done, free) : lessonUnlocked(unit, i, done, free);
+            const genuine = boss ? bossUnlocked(unit, done, free) : lessonUnlocked(unit, i, done, free);
+            const open = genuine || master;
+            const inspect = open && !genuine;
             const complete = !!done[l.id];
             const inner = (
               <div className="flex items-start gap-3">
@@ -86,7 +91,7 @@ export function UnitMap({ unitId }: { unitId: string }) {
                   {!open ? <Lock size={18} /> : boss ? <Crown size={20} /> : complete ? <Check size={20} strokeWidth={3} /> : <Play size={17} className="fill-white" />}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-slate-500">{boss ? `Unit Boss Exam${complete ? " · Cleared" : ""}` : `Lesson ${unit.n}.${i + 1}${complete ? " · Mastered" : ""}`}</div>
+                  <div className="text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-slate-500">{inspect && <span className="mr-1.5 rounded bg-amber-400 text-[#422006] px-1 py-[1px] tracking-[0.1em]">MASTER</span>}{boss ? `Unit Boss Exam${complete ? " · Cleared" : ""}` : `Lesson ${unit.n}.${i + 1}${complete ? " · Mastered" : ""}`}</div>
                   <div className={`font-extrabold leading-snug ${open ? "text-slate-900" : "text-slate-400"}`}>{l.title}</div>
                   <div className="text-[12.5px] text-slate-500 leading-snug">{open ? l.subtitle : boss ? "Master every lesson in this unit to unlock" : "Complete the previous lesson to unlock"}</div>
                   {open && <StageDots lesson={l} />}

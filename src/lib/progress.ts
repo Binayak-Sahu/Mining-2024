@@ -23,3 +23,13 @@ export function nextLesson(unit: Unit, lesson: Lesson): Lesson | null {
   if (i < 0) return null;
   return unit.lessons[i + 1] ?? unit.boss;
 }
+
+/** Whether a lesson or boss is open through real progress (or free-roam) — Inspector Mode never counts. */
+export function genuinelyOpen(units: Unit[], lessonId: string, done: Record<string, LessonRecord>, freeRoam: boolean): boolean {
+  for (const u of units) {
+    if (u.boss.id === lessonId) return bossUnlocked(u, done, freeRoam);
+    const i = u.lessons.findIndex((l) => l.id === lessonId);
+    if (i >= 0) return lessonUnlocked(u, i, done, freeRoam);
+  }
+  return false;
+}

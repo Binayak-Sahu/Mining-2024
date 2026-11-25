@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import { X, Heart, BookMarked, RotateCcw, ArrowRight, ShieldAlert, Crown, Trophy, Zap, Map as MapIcon } from "lucide-react";
-import { getLesson, getUnit } from "@/content";
+import { X, Heart, BookMarked, RotateCcw, ArrowRight, ShieldAlert, Crown, Trophy, Zap, Map as MapIcon, KeyRound } from "lucide-react";
+import { getLesson, getUnit, UNITS } from "@/content";
+import { usePrefs } from "@/lib/prefs";
+import { genuinelyOpen } from "@/lib/progress";
 import { useStrata } from "@/lib/store";
 import { BOSS_BONUS, HEARTS_PER_LESSON, LESSON_BONUS, STAGE_XP } from "@/lib/ranks";
 import { nextLesson } from "@/lib/progress";
@@ -87,13 +89,28 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [burst, setBurst] = useState<{ id: number; xp: number } | null>(null);
+  const [jumped, setJumped] = useState(false);
+  const [jumpSeq, setJumpSeq] = useState(0);
   const started = useRef(-1);
 
-  useEffect(() => {
-    if (!hydrated || !lesson || started.current === attempt) return;
+  // Inspector Mode: a lesson opened only because Inspector unlocked it — or any run where the Stage
+  // Jumper was used — is a sandbox: nothing is written to the progress store.
+  const master = usePrefs((p) => p.masterUnlock);
+  const doneMap = useStrata((st) => st.lessons);
+  const freeRoam = useStrata((st) => st.freeRoam);
+  const [genuine] = useState(() => (lesson ? genuinelyOpen(UNITS, lesson.id, useStrata.getState().lessons, useStrata.getState().freeRoam) : false));
+  const genuineNow = hydrated && lesson ? genuinelyOpen(UNITS, lesson.id, doneMap, freeRoam) : genuine;
+  const sandbox = hydrated && ((master && !genuineNow) || jumped);
+  const sandboxRef = useRef(sandbox);
+  sandboxRef.current = sandbox;
+
+  // The attempt is recorded on the first real answer of a non-sandbox run, so merely opening a lesson
+  // (or opening it and then using the Inspector stage jumper) never touches saved progress.
+  const recordAttempt = useCallback(() => {
+    if (!lesson || sandboxRef.current || started.current === attempt) return;
     started.current = attempt;
     useStrata.getState().startAttempt(lesson.id);
-  }, [hydrated, lesson, attempt]);
+  }, [lesson, attempt]);
 
   const failed = hearts <= 0;
 
@@ -111,47 +128,53 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       setCardMistakes((m) => m + 1);
       setMistakesTotal((m) => m + 1);
       sfx.heart();
+      if (sandboxRef.current) return;
+      recordAttempt();
       const s = useStrata.getState();
       s.loseHeart();
       s.recordMiss(lesson.id, index, concept);
     },
-    [lesson, index],
+    [lesson, index, recordAttempt],
   );
 
   const onDone = useCallback(() => {
     if (!lesson || failed) return;
     const stage = lesson.stages[index];
+    const sb = sandboxRef.current;
+    if (!sb) recordAttempt();
     const s = useStrata.getState();
     const base = STAGE_XP[stage.kind] ?? 10;
     const gained = cardMistakes === 0 ? base : Math.round(base / 2);
-    s.addXp(gained);
+    if (!sb) s.addXp(gained);
     let total = xp + gained;
     let filed = false;
     if (stage.kind === "theory") {
-      if (!s.codex[stage.codex.id]) {
+      if (!sb && !s.codex[stage.codex.id]) {
         setUnlocked((u) => [...u, stage.codex.title]);
         setToast(`Field Codex: “${stage.codex.title}” unlocked`);
         filed = true;
       }
-      s.unlockCodex(stage.codex.id, lesson.id);
+      if (!sb) s.unlockCodex(stage.codex.id, lesson.id);
     }
     if (stage.kind === "equation") {
       const id = `${lesson.id}#eq${index}`;
-      if (!s.formulas[id]) {
+      if (!sb && !s.formulas[id]) {
         setUnlocked((u) => [...u, stage.formula.expr]);
         setToast(`Verified formula filed: ${stage.formula.expr}`);
         filed = true;
       }
-      s.unlockFormula(id, lesson.id);
+      if (!sb) s.unlockFormula(id, lesson.id);
     }
     if (filed) sfx.unlock();
     setCardMistakes(0);
     setBurst({ id: Date.now(), xp: gained });
     if (index + 1 >= lesson.stages.length) {
       const bonus = lesson.boss ? BOSS_BONUS : LESSON_BONUS;
-      s.addXp(bonus);
+      if (!sb) {
+        s.addXp(bonus);
+        s.completeLesson(lesson.id, hearts, total + bonus);
+      }
       total += bonus;
-      s.completeLesson(lesson.id, hearts, total);
       setFinished(true);
       sfx.fanfare();
     } else {
@@ -159,7 +182,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
     setXp(total);
-  }, [lesson, index, cardMistakes, xp, hearts, failed]);
+  }, [lesson, index, cardMistakes, xp, hearts, failed, recordAttempt]);
 
   useEffect(() => {
     if (!toast) return;
@@ -198,6 +221,22 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
   if (!hydrated) return <div className="max-w-2xl mx-auto p-6 text-slate-500 readout text-sm">Loading shift briefing…</div>;
 
+  /** Inspector Stage Jumper: go straight to any stage (the run becomes a sandbox). */
+  const jumpTo = (i: number) => {
+    setJumped(true);
+    setJumpSeq((n) => n + 1);
+    setFinished(false);
+    setCardMistakes(0);
+    setIndex(i);
+    window.scrollTo({ top: 0 });
+  };
+
+  const inspectorChip = sandbox && (
+    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 text-[11px] font-extrabold tracking-wide" role="status">
+      <KeyRound size={12} /> INSPECTOR · progress not saved
+    </span>
+  );
+
   if (finished) {
     const nxt = nextLesson(unit, lesson);
     const stagesN = lesson.stages.length;
@@ -212,6 +251,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
               {lesson.boss ? <Crown size={60} className="fill-white/30" strokeWidth={2.2} /> : <Trophy size={58} className="fill-white/30" strokeWidth={2.2} />}
             </div>
           </motion.div>
+          {inspectorChip && <div className="mt-6">{inspectorChip}</div>}
           <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-8 text-[30px] sm:text-[38px] leading-tight font-extrabold tracking-[-0.02em] text-slate-900">
             {lesson.boss ? "Boss Exam cleared!" : "Lesson mastered!"}
           </motion.h1>
@@ -297,9 +337,33 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
           </div>
           <Hearts n={hearts} />
         </div>
+        {hydrated && master && (
+          <div className="max-w-2xl mx-auto px-2 sm:px-4 pb-2 flex items-center gap-2">
+            <div className="flex-1 min-w-0 flex gap-1 overflow-x-auto no-scrollbar" role="group" aria-label="Stage jumper">
+              {lesson.stages.map((st, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => jumpTo(i)}
+                  aria-current={i === index ? "step" : undefined}
+                  title={`Jump to stage ${i + 1}: ${STAGE_META[st.kind].label}`}
+                  className={`readout shrink-0 min-h-0 h-7 min-w-7 px-2 rounded-full text-[12px] font-extrabold transition-colors ${i === index ? "bg-slate-900 text-slate-50" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            {sandbox && (
+              <button type="button" onClick={() => setHearts(HEARTS_PER_LESSON)} className="shrink-0 min-h-0 h-7 inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 px-2.5 text-[12px] font-extrabold" title="Refill sandbox hearts">
+                <Heart size={13} className="fill-current" /> Refill
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4">
+        {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
         <div className="flex items-center justify-between text-[12px] text-slate-500 mb-2 sm:mb-3 px-1.5 gap-3">
           <span className="font-bold truncate">
             {lesson.boss ? "Boss Exam · " : `Unit ${unit.n} · `}
@@ -316,7 +380,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         </div>
 
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={`${attempt}-${index}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 340, damping: 32 }}>
+          <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 340, damping: 32 }}>
             <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} />
           </motion.div>
         </AnimatePresence>

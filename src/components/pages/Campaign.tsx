@@ -8,6 +8,7 @@ import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor, RANKS } from "@/lib/ranks";
 import { lessonUnlocked, bossUnlocked } from "@/lib/progress";
 import { useHydrated } from "@/lib/useHydrated";
+import { usePrefs } from "@/lib/prefs";
 import { todayKey } from "@/lib/date";
 import { ExpeditionPath } from "./ExpeditionPath";
 import { stratumFor } from "./strata";
@@ -19,6 +20,7 @@ export function Campaign() {
   const s = useStrata();
   const done = hydrated ? s.lessons : {};
   const free = hydrated && s.freeRoam;
+  const master = usePrefs((p) => p.masterUnlock) && hydrated;
   const xp = hydrated ? s.xp : 0;
   const { rank, next, progress, index } = rankFor(xp);
   const today = todayKey();
@@ -118,7 +120,7 @@ export function Campaign() {
 
         <div className="space-y-4">
           {UNITS.map((u, k) => (
-            <ExpeditionPath key={u.id} unit={u} done={done} freeRoam={free} currentId={rec?.id ?? null} index={k} />
+            <ExpeditionPath key={u.id} unit={u} done={done} freeRoam={free} currentId={rec?.id ?? null} index={k} master={master} />
           ))}
         </div>
       </section>

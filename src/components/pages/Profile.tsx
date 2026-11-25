@@ -10,6 +10,8 @@ import { addDays, todayKey } from "@/lib/date";
 import { allLessons, allCodex } from "@/content";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { SyncCard } from "./SyncCard";
+import { setInspector } from "@/lib/inspector";
+import { KeyRound } from "lucide-react";
 
 const THEMES: { v: ThemePref; label: string; Icon: typeof Sun }[] = [
   { v: "system", label: "Device", Icon: MonitorSmartphone },
@@ -115,6 +117,20 @@ export function Profile() {
             <span className="block text-[12.5px] text-slate-500">Soft synthesized clicks, chimes and vibration on phones.</span>
           </span>
           <span className={`readout text-[12px] font-extrabold ${prefs.muted ? "text-slate-400" : "text-blue-600"}`}>{prefs.muted ? "OFF" : "ON"}</span>
+        </button>
+      </div>
+
+      <div className="card p-5 space-y-3">
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
+          <KeyRound size={13} /> Inspector Mode
+        </div>
+        <button type="button" role="switch" aria-checked={prefs.masterUnlock} onClick={() => setInspector(!prefs.masterUnlock)} data-on={prefs.masterUnlock} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+          <KeyRound size={20} className={prefs.masterUnlock ? "text-amber-700" : "text-slate-500"} />
+          <span className="flex-1">
+            <span className="block font-bold text-[14px] text-slate-900">Open every lesson, boss and Codex sheet</span>
+            <span className="block text-[12.5px] text-slate-500">Inspector runs are sandboxes: no XP, hearts, streak, completions, review queue or Codex unlocks are saved. Shortcut: Shift + M.</span>
+          </span>
+          <span className={`readout text-[12px] font-extrabold ${prefs.masterUnlock ? "text-amber-700" : "text-slate-400"}`}>{prefs.masterUnlock ? "ON" : "OFF"}</span>
         </button>
       </div>
 

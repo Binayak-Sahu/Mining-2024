@@ -12,8 +12,11 @@ export type ThemePref = "system" | "light" | "dark";
 interface Prefs {
   theme: ThemePref;
   muted: boolean;
+  /** Inspector Mode: everything playable as a sandbox. Device-local; never exported with progress. */
+  masterUnlock: boolean;
   setTheme: (t: ThemePref) => void;
   toggleMuted: () => void;
+  setMasterUnlock: (v: boolean) => void;
 }
 
 export const PREFS_KEY = "strata-prefs";
@@ -23,6 +26,8 @@ export const usePrefs = create<Prefs>()(
     (set) => ({
       theme: "system",
       muted: false,
+      masterUnlock: false,
+      setMasterUnlock: (masterUnlock) => set({ masterUnlock }),
       setTheme: (theme) => {
         set({ theme });
         applyTheme(theme);

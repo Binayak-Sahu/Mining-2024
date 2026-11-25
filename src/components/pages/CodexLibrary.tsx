@@ -9,11 +9,13 @@ import { allCodex, allFormulas, getSim, UNITS } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { useStrata } from "@/lib/store";
 import { useHydrated } from "@/lib/useHydrated";
+import { usePrefs } from "@/lib/prefs";
 
 export function CodexLibrary() {
   const hydrated = useHydrated();
   const codex = useStrata((s) => s.codex);
   const formulas = useStrata((s) => s.formulas);
+  const master = usePrefs((p) => p.masterUnlock);
   const [q, setQ] = useState("");
   const [unit, setUnit] = useState<string>("all");
   const [tab, setTab] = useState<"sheets" | "formulas" | "statutes">("sheets");
@@ -34,8 +36,9 @@ export function CodexLibrary() {
     return [f.formula.expr, f.formula.meaning, f.formula.vars ?? "", f.lesson.title].join(" ").toLowerCase().includes(needle);
   };
 
-  const have = (id: string) => hydrated && !!codex[id];
-  const haveF = (id: string) => hydrated && !!formulas[id];
+  // Inspector Mode shows every sheet and formula in full (view only — nothing is unlocked in progress).
+  const have = (id: string) => hydrated && (!!codex[id] || master);
+  const haveF = (id: string) => hydrated && (!!formulas[id] || master);
 
   const sheets = entries.filter(matchSheet);
   const fl = forms.filter(matchForm);

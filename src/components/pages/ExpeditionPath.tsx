@@ -30,7 +30,7 @@ export function ProgressRing({ f, size, color, track = "rgba(148,163,184,0.25)",
   );
 }
 
-type NodeState = "done" | "current" | "open" | "locked";
+type NodeState = "done" | "current" | "open" | "locked" | "inspect";
 
 /**
  * One geological stratum on the expedition map: a textured band with its unit header and the unit's
@@ -43,6 +43,7 @@ export function ExpeditionPath({
   currentId,
   header = true,
   index = 0,
+  master = false,
 }: {
   unit: Unit;
   done: Record<string, LessonRecord>;
@@ -50,6 +51,8 @@ export function ExpeditionPath({
   currentId: string | null;
   header?: boolean;
   index?: number;
+  /** Inspector Mode: locked nodes become playable sandboxes, badged MASTER. */
+  master?: boolean;
 }) {
   const st = stratumFor(unit.n);
   const nodes = [...unit.lessons.map((l, i) => ({ lesson: l, i, boss: false })), { lesson: unit.boss, i: unit.lessons.length, boss: true }];
@@ -61,7 +64,7 @@ export function ExpeditionPath({
   const stateOf = (n: (typeof nodes)[number]): NodeState => {
     if (done[n.lesson.id]) return "done";
     const open = n.boss ? bossUnlocked(unit, done, freeRoam) : lessonUnlocked(unit, n.i, done, freeRoam);
-    if (!open) return "locked";
+    if (!open) return master ? "inspect" : "locked";
     return n.lesson.id === currentId ? "current" : "open";
   };
   const states = nodes.map(stateOf);
@@ -120,13 +123,15 @@ export function ExpeditionPath({
           const face =
             s === "locked"
               ? { c: "var(--n-200)", e: "var(--n-300)", t: "var(--n-400)" }
+              : s === "inspect"
+                ? { c: "#64748B", e: "#334155", t: "#fff" }
               : n.boss
                 ? { c: s === "done" ? "#F59E0B" : "#EF4444", e: s === "done" ? "#B45309" : "#991B1B", t: "#fff" }
                 : s === "done"
                   ? { c: st.accent, e: st.edge, t: "#fff" }
                   : { c: "#3B82F6", e: "#1D4ED8", t: "#fff" };
-          const Icon = s === "locked" ? Lock : n.boss ? Crown : s === "done" ? (perfect ? Star : Check) : Play;
-          const label = `${n.boss ? "Boss Exam" : `Lesson ${unit.n}.${n.i + 1}`}: ${n.lesson.title}${s === "locked" ? " (locked)" : s === "done" ? " (completed)" : ""}`;
+          const Icon = s === "locked" ? Lock : s === "inspect" ? (n.boss ? Crown : Play) : n.boss ? Crown : s === "done" ? (perfect ? Star : Check) : Play;
+          const label = `${n.boss ? "Boss Exam" : `Lesson ${unit.n}.${n.i + 1}`}: ${n.lesson.title}${s === "locked" ? " (locked)" : s === "done" ? " (completed)" : s === "inspect" ? " (Inspector sandbox, progress not saved)" : ""}`;
 
           const body = (
             <motion.span
@@ -151,6 +156,9 @@ export function ExpeditionPath({
               viewport={{ once: true, margin: "40px" }}
               transition={{ type: "spring", stiffness: 380, damping: 22, delay: Math.min(index, 2) * 0.05 + k * 0.03 }}
             >
+              {s === "inspect" && (
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 rounded-md bg-amber-400 text-[#422006] px-1.5 py-[1px] text-[9px] font-black tracking-[0.12em] shadow-[0_2px_0_#B45309]">MASTER</span>
+              )}
               {s === "current" && (
                 <>
                   <span className="bob absolute left-1/2 -top-11 z-10 rounded-xl bg-surface px-3 py-1.5 text-[12px] font-black tracking-[0.12em] text-blue-600 shadow-[0_3px_0_var(--n-200),0_10px_20px_-8px_rgba(15,23,42,0.35)] whitespace-nowrap">

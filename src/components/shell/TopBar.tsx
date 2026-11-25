@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { motion, useAnimationControls } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
-import { Flame, Zap, Map, BookMarked, Dumbbell, GraduationCap, Calculator, FlaskConical, ArrowLeftRight, Volume2, VolumeX, Sun, Moon, MonitorSmartphone } from "lucide-react";
+import { Flame, Zap, Map, BookMarked, Dumbbell, GraduationCap, Calculator, FlaskConical, ArrowLeftRight, KeyRound, Volume2, VolumeX, Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
+import { setInspector } from "@/lib/inspector";
 
 const NAV = [
   { href: "/", label: "Path", Icon: Map, tint: "#3B82F6" },
@@ -62,6 +63,24 @@ export function ThemeToggle() {
       <motion.span key={t} initial={{ rotate: -90, scale: 0.6, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }}>
         <Icon size={18} />
       </motion.span>
+    </button>
+  );
+}
+
+/** Subtle key icon: toggles Inspector Mode on desktop; on phones it only appears while the mode is on. */
+export function InspectorBadge() {
+  const hydrated = useHydrated();
+  const on = usePrefs((s) => s.masterUnlock);
+  if (!hydrated) return null;
+  if (!on)
+    return (
+      <button type="button" onClick={() => setInspector(true)} title="Inspector Mode (Shift+M)" aria-label="Turn on Inspector Mode" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+        <KeyRound size={17} />
+      </button>
+    );
+  return (
+    <button type="button" onClick={() => setInspector(false)} title="Inspector Mode is on — tap to turn off (Shift+M)" aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 bg-amber-50">
+      <KeyRound size={18} />
     </button>
   );
 }
@@ -128,6 +147,7 @@ export function TopBar() {
           <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-blue-600 font-extrabold readout text-sm" title="Experience points">
             <Zap size={18} className="fill-blue-400/40" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
+          <InspectorBadge />
           <MuteToggle />
           <span className="hidden sm:inline-flex">
             <ThemeToggle />
