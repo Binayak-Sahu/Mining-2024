@@ -8,8 +8,14 @@ import { getSim } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { CardFrame, Lines, PrimaryButton, type CardProps } from "./ui";
+import { ConceptFlow } from "./ConceptFlow";
 
-export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
+export function TheoryBriefingCard(props: CardProps<TheoryStage>) {
+  if (props.stage.flow?.length) return <ConceptFlow {...props} />;
+  return <Briefing {...props} />;
+}
+
+function Briefing({ stage, onDone }: CardProps<TheoryStage>) {
   const def = getSim(stage.sim);
   const values = defaults(def, stage.simParams);
   const [active, setActive] = useState<number | null>(null);

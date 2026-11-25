@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
 import { motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 export { AnimatedNumber };
@@ -53,7 +53,8 @@ export interface Objective {
   tag?: string;
 }
 
-export function SimCanvas({ def, values, overlay, onChange, still = false, objective }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective }) {
+export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][] }) {
+  const maskId = `focus-${useId().replace(/:/g, "")}`;
   const out = useMemo(() => def.compute(values), [def, values]);
   const wrap = useRef<HTMLDivElement>(null);
   const [onScreen, setOnScreen] = useState(true);
@@ -119,6 +120,17 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
         onPointerCancel={() => setDrag(null)}
       >
         {def.render(values, out, t)}
+        {focus && focus.length > 0 && (
+          <g aria-hidden>
+            <mask id={maskId}>
+              <rect x={-24} y={-24} width={448} height={288} fill="white" />
+              {focus.map(([x, y], i) => (
+                <circle key={i} cx={x} cy={y} r={34} fill="black" />
+              ))}
+            </mask>
+            <rect x={-24} y={-24} width={448} height={288} fill="#0B0F19" opacity={0.5} mask={`url(#${maskId})`} style={{ transition: "opacity 300ms" }} />
+          </g>
+        )}
         {overlay}
         {handles.map((h, i) => {
           const [x, y] = h.at(values, out);

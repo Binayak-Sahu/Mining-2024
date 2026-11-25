@@ -176,8 +176,40 @@ export function Lines({ lines }: { lines: string[] }) {
   );
 }
 
+export interface MistakeOpts {
+  /** false = record the miss for spaced repetition but keep the heart (a kind retry). */
+  heart?: boolean;
+}
+
 export interface CardProps<S> {
   stage: S;
-  onMistake: (concept: string) => void;
+  onMistake: (concept: string, opts?: MistakeOpts) => void;
   onDone: () => void;
+  /** Fraction (0–1) of the current stage completed; fills the active lesson progress segment. Visual only. */
+  onSubProgress?: (f: number) => void;
+}
+
+/**
+ * Verdict state of the bottom action bar (Brilliant-style): a tinted strip with the verdict, a short
+ * reason and the next action. Plays the chime / thud once when it appears.
+ */
+export function VerdictBar({ ok, title, why, children }: { ok: boolean; title: string; why?: ReactNode; children: ReactNode }) {
+  useEffect(() => {
+    if (ok) sfx.correct();
+    else sfx.wrong();
+  }, [ok, title]);
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 32 }} className="space-y-3" role="status" aria-live="polite">
+      <div className={`-mx-3 sm:-mx-4 -mt-3 px-4 sm:px-5 pt-3.5 pb-1 ${ok ? "verdict-ok" : "verdict-no"}`}>
+        <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-emerald-700" : "text-amber-700"}`}>
+          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 14, delay: 0.05 }}>
+            {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-amber-500 text-white" />}
+          </motion.span>
+          {title}
+        </div>
+        {why && <div className="text-[15px] leading-[1.5] text-slate-700 mt-1 max-h-[32vh] overflow-y-auto">{why}</div>}
+      </div>
+      {children}
+    </motion.div>
+  );
 }

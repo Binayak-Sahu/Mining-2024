@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Search, Lock, BookMarked, Sigma, Scale } from "lucide-react";
 import { STATUTES, statusLabel } from "@/content/statutes";
 import { allCodex, allFormulas, getSim, UNITS } from "@/content";
+import { REFS } from "@/content/references";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { useStrata } from "@/lib/store";
 import { useHydrated } from "@/lib/useHydrated";
@@ -128,7 +129,7 @@ export function CodexLibrary() {
       ) : tab === "sheets" ? (
         <>
           <div className="grid md:grid-cols-2 gap-4 mt-5 items-start">
-            {unlockedSheets.map(({ entry, lesson, unit: u, sims }) => (
+            {unlockedSheets.map(({ entry, lesson, unit: u, sims, refs }) => (
               <article key={entry.id} className="card p-5 transition-transform hover:-translate-y-0.5">
                 <div className="flex items-baseline justify-between border-b-2 border-slate-900 pb-2.5 mb-3">
                   <h2 className="font-extrabold text-[18px] leading-tight text-slate-900 tracking-tight">{entry.title}</h2>
@@ -161,6 +162,25 @@ export function CodexLibrary() {
                         {f.vars && <div className="readout text-[10.5px] text-[#8B97AE] mt-1">{f.vars}</div>}
                       </div>
                     ))}
+                  </div>
+                )}
+                {refs.length > 0 && (
+                  <div className="mt-3">
+                    <div className="text-[12px] font-bold text-slate-600 mb-1">Sources</div>
+                    <ul className="space-y-1">
+                      {refs.map((id) => {
+                        const r = REFS[id];
+                        if (!r) return null;
+                        return (
+                          <li key={id} className="text-[13px] leading-snug text-slate-700">
+                            <a href={r.url} target="_blank" rel="noreferrer" className="hover:underline">
+                              {r.title}
+                            </a>{" "}
+                            <span className="text-slate-500">— {r.publisher}{r.where ? `, ${r.where}` : ""}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
                 )}
                 <div className="mt-3 flex flex-wrap gap-1">

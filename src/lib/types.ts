@@ -106,6 +106,38 @@ export interface TheoryStage {
   chain?: string[];
   drawers: Drawer[];
   codex: CodexEntry;
+  /** Optional Brilliant-style concept flow (one idea per screen). When present it replaces the briefing layout. */
+  flow?: FlowScreen[];
+}
+
+/** A visual shown on a flow screen: a sim render with optional parameters and focused hotspot pins (indexes into the stage's hotspots). */
+export interface FlowVisual {
+  sim?: string;
+  params?: Vals;
+  focus?: number[];
+}
+
+/** One screen of a concept flow. Every screen cites reference ids from src/content/references.ts. */
+export type FlowScreen =
+  | { kind: "predict"; q: string; options: string[]; answer: number; why: string[]; concept: string; visual?: FlowVisual; src: string[] }
+  | { kind: "explain"; text: string; visual?: FlowVisual; src: string[] }
+  | { kind: "reveal"; prompt: string; hotspot: Hotspot; visual?: FlowVisual; src: string[] }
+  | { kind: "check"; q: string; options: string[]; answer: number; why: string[]; hint?: string; concept: string; src: string[] }
+  | { kind: "misconception"; claim: string; truth: string; visual?: { sim: string; params?: Vals }; src: string[] }
+  | { kind: "nudge"; sim: string; start?: Vals; ask: string; goal: (p: Vals, o: Vals) => boolean; after: string; src: string[] };
+
+export type FlowKind = FlowScreen["kind"];
+
+export interface Reference {
+  title: string;
+  author: string;
+  publisher: string;
+  url: string;
+  accessed: "2026-11-25";
+  tier: 1 | 2 | 3;
+  licence: "public-domain" | "govt-India" | "free-personal-use" | "copyright";
+  /** Where in the source the cited material sits. */
+  where?: string;
 }
 
 export interface SimStage {

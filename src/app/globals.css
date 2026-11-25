@@ -653,3 +653,20 @@ svg[role="img"] {
     opacity: 1;
   }
 }
+
+/* Phase 13: verdict strip inside the bottom action bar */
+.verdict-ok {
+  background: color-mix(in oklab, #10b981 12%, var(--surface));
+}
+.verdict-no {
+  background: color-mix(in oklab, #f59e0b 13%, var(--surface));
+}
+.flow-body {
+  font-size: 17px;
+  line-height: 1.55;
+}
+.flow-q {
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 650;
+}

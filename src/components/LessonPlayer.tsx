@@ -75,12 +75,15 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const [hearts, setHearts] = useState(HEARTS_PER_LESSON);
   const [xp, setXp] = useState(0);
   const [cardMistakes, setCardMistakes] = useState(0);
+  // Visual-only fill of the active progress segment (cards report how far through the stage they are).
+  const [sub, setSub] = useState(0);
   const [mistakesTotal, setMistakesTotal] = useState(0);
   const [finished, setFinished] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [burst, setBurst] = useState<{ id: number; xp: number } | null>(null);
   const [jumped, setJumped] = useState(false);
   const [jumpSeq, setJumpSeq] = useState(0);
+  useEffect(() => setSub(0), [index, jumpSeq, attempt]);
   const [celebrated, setCelebrated] = useState(false);
   const started = useRef(-1);
 
@@ -106,7 +109,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const failed = hearts <= 0;
 
   const onMistake = useCallback(
-    (concept: string) => {
+    (concept: string, opts?: { heart?: boolean }) => {
+      const keepHeart = opts?.heart === false;
       if (!lesson) return;
       // QA flag (localStorage "strata-qa" = "1") keeps one heart so automated walkthroughs can traverse a whole lesson.
       let qa = false;
@@ -115,14 +119,14 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       } catch {
         qa = false;
       }
-      setHearts((h) => Math.max(qa ? 1 : 0, h - 1));
+      if (!keepHeart) setHearts((h) => Math.max(qa ? 1 : 0, h - 1));
       setCardMistakes((m) => m + 1);
       setMistakesTotal((m) => m + 1);
-      sfx.heart();
+      if (!keepHeart) sfx.heart();
       if (sandboxRef.current) return;
       recordAttempt();
       const s = useStrata.getState();
-      s.loseHeart();
+      if (!keepHeart) s.loseHeart();
       s.recordMiss(lesson.id, index, concept);
     },
     [lesson, index, recordAttempt],
@@ -319,7 +323,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
               const c = STAGE_META[s.kind].color;
               return (
                 <div key={i} className="relative h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)]">
-                  <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? "40%" : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
+                  <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? `${Math.round(12 + 88 * sub)}%` : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
                     <span className="absolute left-1.5 right-1.5 top-[3px] h-[4px] rounded-full bg-white/35" />
                   </motion.div>
                 </div>
@@ -372,7 +376,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-            <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} />
+            <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} />
           </motion.div>
         </AnimatePresence>
       </div>

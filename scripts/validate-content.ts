@@ -14,8 +14,38 @@ import { createElement, type ReactNode } from "react";
 import { buildPool, makePaper, isCorrect } from "../src/lib/exam";
 import { TOOLS } from "../src/components/pages/Tools";
 import { STATUTES } from "../src/content/statutes";
+import { REFS } from "../src/content/references";
+import type { FlowScreen } from "../src/lib/types";
 
 let errors = 0;
+let flows = 0;
+const words = (t: string) => t.trim().split(/\s+/).filter(Boolean).length;
+
+/** Concept-flow rules: sourced screens, aligned reasons, ≤ 45-word explanations, Brilliant shape, reachable nudges. */
+function checkFlow(at: string, flow: FlowScreen[], checkSim: (id: string, o?: Vals) => SimDef | null) {
+  flows++;
+  checks++;
+  if (flow[0]?.kind !== "predict") fail(`${at}: flow must open with a predict screen`);
+  if (!flow.some((f) => f.kind === "misconception")) fail(`${at}: flow needs a misconception screen`);
+  if (flow.filter((f) => f.kind === "check").length < 2) fail(`${at}: flow needs at least 2 check screens`);
+  flow.forEach((f, i) => {
+    const w = `${at} flow#${i}(${f.kind})`;
+    if (!f.src || f.src.length === 0) fail(`${w}: no src`);
+    for (const id of f.src ?? []) if (!REFS[id]) fail(`${w}: src "${id}" missing from REFS`);
+    if (f.kind === "predict" || f.kind === "check") {
+      if (f.why.length !== f.options.length) fail(`${w}: why.length ${f.why.length} ≠ options ${f.options.length}`);
+      if (f.answer < 0 || f.answer >= f.options.length) fail(`${w}: answer out of range`);
+      if (f.why.some((x) => !x.trim())) fail(`${w}: every option needs a reason`);
+    }
+    if (f.kind === "explain" && words(f.text) > 45) fail(`${w}: explain is ${words(f.text)} words (> 45)`);
+    if ("visual" in f && f.visual?.sim) checkSim(f.visual.sim, f.visual.params);
+    if (f.kind === "nudge") {
+      const def = checkSim(f.sim, f.start);
+      if (def && !reachable(def, f.goal, defaults(def, f.start))) fail(`${w}: nudge goal unreachable`);
+    }
+    if (f.kind === "reveal" && (f.hotspot.x < 0 || f.hotspot.x > 400 || f.hotspot.y < 0 || f.hotspot.y > 240)) fail(`${w}: reveal hotspot out of bounds`);
+  });
+}
 let checks = 0;
 const fail = (m: string) => {
   errors++;
@@ -122,6 +152,7 @@ for (const u of UNITS) {
           });
           if (!s.codex.id) fail(`${at}: codex id missing`);
           for (const sid of s.codex.sims ?? []) checkSim(sid);
+          if (s.flow) checkFlow(at, s.flow, checkSim);
           break;
         }
         case "sim": {
@@ -213,5 +244,6 @@ for (const st of STATUTES) {
   if (st.q && (st.q.answer < 0 || st.q.answer >= st.q.options.length)) fail(`statute ${st.id}: bad answer`);
 }
 console.log(`exam bank: ${pool.length} questions · tools: ${TOOLS.length} · statutes: ${STATUTES.length}`);
+console.log(`concept flows: ${flows}`);
 console.log(`${checks} stages checked across ${UNITS.length} units — ${errors} error(s).`);
 process.exit(errors ? 1 : 0);
