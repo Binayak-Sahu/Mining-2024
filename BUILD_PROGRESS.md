@@ -156,6 +156,63 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
     - SW cache version changed with the build (`e7909d44712b`).
   - **What's left:** 52 theory stages still use the old briefing (see the plan below); DGMS circulars and McPherson are still unfetched; the design-review items listed above.
 
+- [x] **Phase 14 — Trust, pacing & situations** (plan and owner decisions in `ROADMAP.md`; standing rules in `CLAUDE.md`)
+  - **14.0 Scaffolding.**
+    - `CLAUDE.md`: the content rule, statute gate, copyright, do-not-touch list and push gates.
+    - `ROADMAP.md`: owner decisions 1–7, Phases 14–20 and a run log.
+    - `.claude/agents/fact-checker.md` (opus, high) and `.claude/agents/design-reviewer.md` (sonnet, high).
+    - `.claude/skills/sourced-flow/SKILL.md`: the 7-step pipeline.
+  - **14.1 Trust.**
+    - Audit finding: the correct answer sat at index 1 in 57/66 legacy predicts and first in 92/92 crisis phases.
+    - Fix (`src/lib/shuffle.ts`): every multiple-choice item is displayed in a deterministic order keyed `lesson#stage`, `lesson#stage#phase` or `lesson#stage@screen`. Within each unit the correct option goes to the least-used slot, so balance holds by construction. Content files keep their authored order, and the reasons follow their options.
+    - Validator: prints per-unit A/B/C/D balance (max 33 % now) and fails above 40 %.
+    - Warmup: ConceptFlow misses are queued per screen (`SrsItem.screen`, additive, no version bump). Warmup renders that single screen with a Done button. Older whole-stage entries for a flow stage open its first check.
+  - **14.2 Situation screens.**
+    - New `situation` FlowScreen: role badge with an icon per role, optional focused sim, scene, the claim in a speech bubble, and "What do you do?". Options are balanced; the first miss shows that option's reason, allows a retry with no heart lost, and is reviewed per screen.
+    - Validator: ≥ 1 situation per flow, scene ≤ 40 words, `why`/options aligned, and the correct option may be the longest in at most 40 % of a unit's situation and check screens. Current worst: 1/5.
+    - Content: one sourced situation each.
+      - u7-l1: Ventilation Officer vs the Sirdar's "under 5 %, carry on". The answer turns on CMR 1.25 %, already in `statutes.ts`.
+      - u0-l1: Manager vs "same depth, same margin" (tributary area, FOS).
+      - u10-l3: Safety Officer. The section manager's claim is correct here, so "always disagree" doesn't win.
+    - Check options were rebalanced so length gives nothing away.
+    - Fact-checks: 0 unsupported; 9 partly-supported items reworded.
+  - **14.3 Pacing.**
+    - Theory-first preference (device-local, on by default, Profile "Lesson pace").
+    - Equation/Numeric stages show as collapsed "Bonus maths · optional" with "Skip for now". A lesson completes once the non-bonus stages are done; bonus stages still earn XP, still file formulas and still feed the exam pool.
+    - Resume: a separate `strata-resume` store (never in progress, export or sync) offers "Continue from stage N" or "Start over instead". Jumper and sandbox runs never write it.
+  - **14.4 Phone kit and data safety.**
+    - Inspector Mode adds a floating Report button. It saves {lessonId, stageIndex, screenIndex, route, note, viewport, userAgent, build} to `strata-reports`, exported as JSON from Profile.
+    - FPS meter toggle.
+    - Build stamp (git short hash + date, via `next.config.ts` env) shown in Profile.
+    - The Sound test is now available in production, linked from Profile in Inspector Mode.
+    - `navigator.storage.persist()` runs once after the first saved progress, and a weekly "Back up your progress" toast opens the export.
+  - **14.5 Deferred sim fixes.**
+    - `u10-risk`: elimination now takes residual risk to the floor (1, Low).
+    - Coward nudge: O₂ coupled to CH₄ along the air-dilution line (new `couple()` on nudges, also used by the validator).
+    - u0 predict: the σv working and rule of thumb stay hidden until the reveal (`__predicting`).
+    - Readouts wrap to two lines on phones, with AA tints for warn/crit text.
+    - **Not done:** the 11-unit label floor. It produced 277 clipped labels (60 even at 9), so it moves to Phase 19.
+  - **Design review** (steps 1–3, independent agent): 14 ranked findings. Fixed:
+    - dark-mode AA on role and Bonus badges, and ≥ 3:1 role icon discs;
+    - compact situation header, so options stay above the fold;
+    - the u7 situation now comes after the screen that teaches the 1.25 % limit;
+    - claim-is-always-wrong pattern broken (the u10 speaker is right) and stance punctuation made consistent;
+    - no-break spaces before %/units;
+    - leading "Right." removed;
+    - resume prompt reworked (single action-bar CTA, keyed transition).
+
+    Deferred to Phase 19: a stricter word cap on whole situation screens and `why` text (≤ 25 words), a compact wrong-answer strip without the Try again tap, a switch-track visual for Profile toggles, and 44 px Stage Jumper pills.
+  - **Verified (FINISH):**
+    - Gates: validate (393 stages, 3 flows, 0 errors, balance printed), tsc, lint, base-path build (232 files, 7.0 MB), audit:svg (843 renders, 0 findings).
+    - Headless 390×844 walk, light + dark, on the base-path build:
+      - u7-l1 end to end in theory-first mode: situation badge and bubble shown; wrong-then-retry worked on the situation and 11 other picks; 2 Bonus maths stages collapsed and skipped; lesson completed and saved.
+      - Predict and crisis correct answers landed in varied slots.
+      - Resume prompt offered stage 2 and continued there; the resume store is separate from progress.
+      - Warmup showed a single flow screen ("Review", 4 choices).
+      - 0 overflow, CTA always visible, 0 console errors.
+    - Inspector acceptance: progress byte-identical.
+  - **Owner to-do:** verify 5 claims per sourced lesson and mark them "Verified by Bink" in `research/*.md` (owner decision 2). Put the Phase 15 source files in `sources/`.
+
 ## Totals
 55 lessons + 11 boss exams · 379 stages (3 theory stages now run sourced ConceptFlows)  · 61 textured simulations (29 with on-canvas drag grips, 33 grips in all) · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators · light + dark themes · synthesised sound & haptics.
 
