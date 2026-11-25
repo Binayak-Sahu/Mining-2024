@@ -7,6 +7,7 @@ export { AnimatedNumber };
 import { Hand, Check } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
+import { sfx } from "@/lib/sfx";
 import { toneColor } from "./svg";
 import { Slider } from "@/components/ui/Slider";
 
@@ -87,7 +88,10 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
     const raw = h.toValue(h.axis === "x" ? pt.x : pt.y, values);
     if (!Number.isFinite(raw)) return;
     const v = snap(p, raw);
-    if (v !== values[h.key]) onChange({ ...values, [h.key]: v });
+    if (v !== values[h.key]) {
+      sfx.tick();
+      onChange({ ...values, [h.key]: v });
+    }
   };
 
   return (
