@@ -84,7 +84,7 @@ export const U0L1_FLOW: FlowScreen[] = [
   {
     kind: "check",
     q: "Pillar size stays the same, but the galleries are cut wider. What happens to the average pillar stress?",
-    options: ["It falls, because there is less coal", "It rises, because each pillar carries a bigger share of roof", "It is unchanged, because depth is the same", "It becomes zero in the galleries"],
+    options: ["It falls, because less coal means less load", "It rises: each pillar now carries more roof", "It is unchanged, because the depth is the same", "It falls to zero: the galleries take the load"],
     answer: 1,
     why: [
       "Less coal means less support, so each remaining pillar carries more.",
@@ -105,9 +105,26 @@ export const U0L1_FLOW: FlowScreen[] = [
     src: ["esterhuizen-2008"],
   },
   {
+    kind: "situation",
+    role: "Manager",
+    scene: "A new district is planned at the same depth as the old one. The pillars stay the same size, but the galleries will be cut wider for bigger machines.",
+    claimBy: "The planning engineer",
+    claim: "Same depth, same stress. The old pillars' margin carries straight over.",
+    options: ["Agree: depth alone sets the load on each pillar", "Disagree: wider galleries load each pillar more", "Agree, as long as the virgin stress is measured first", "Disagree: wider galleries lower the virgin stress"],
+    answer: 1,
+    why: [
+      "Depth sets the virgin vertical stress, but each pillar carries the overburden over its whole centre-to-centre area.",
+      "Right. Tributary area is C1 × C2. Wider galleries raise it while the pillar area stays fixed, so average pillar stress rises. The pillars are no stronger, so the safety factor falls.",
+      "Measuring virgin stress is good practice, but it doesn't change how much roof each pillar now carries.",
+      "Virgin stress depends on unit weight and depth, not on gallery width.",
+    ],
+    concept: "Pillar stress depends on tributary area, not depth alone",
+    src: ["esterhuizen-2008", "hoek-pre-ch6", "zipf-ch59"],
+  },
+  {
     kind: "check",
     q: "When is the simple tributary-area estimate least trustworthy?",
-    options: ["A wide, regular panel of identical pillars", "Small panels, irregular pillars, varying cover, or longwall abutments", "Whenever the seam is coal", "At any depth below 100 m"],
+    options: ["A wide, regular panel of identical square pillars", "Irregular pillars, small panels, varying cover", "Whenever the seam is coal rather than stone", "At any depth below about 100 m of cover"],
     answer: 1,
     why: [
       "This is exactly the case the method assumes: an extensive area with identical pillars.",

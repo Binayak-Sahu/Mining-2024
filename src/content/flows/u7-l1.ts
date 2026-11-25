@@ -31,7 +31,7 @@ export const U7L1_FLOW: FlowScreen[] = [
   {
     kind: "check",
     q: "A roof test reads 3 % methane in otherwise clean air. What is the best reading of that?",
-    options: ["It is explosive", "It cannot ignite, but it sits well inside the zone where a large safety margin is needed", "It is safe, so carry on as normal", "It is above the upper limit"],
+    options: ["It is explosive and could ignite right now", "It can't ignite, but the safety margin is thin", "It is safe, so work carries on as normal", "It is above the upper explosive limit of 15 %"],
     answer: 1,
     why: [
       "3 % is below the 5 % lower limit, so this mixture by itself cannot ignite.",
@@ -70,7 +70,7 @@ export const U7L1_FLOW: FlowScreen[] = [
   {
     kind: "check",
     q: "Why is the most sensitive mixture near 9.5 %, rather than right at 15 %?",
-    options: ["15 % holds the most fuel, so it is the worst", "Near 9.5 %, fuel and oxygen are matched for complete burning", "Methane is lighter than air at 9.5 %", "The statute sets it there"],
+    options: ["At 15 % there is the most fuel, so it burns hardest", "Fuel and oxygen are matched for complete burning", "Methane is lighter than air at that strength", "The statute fixes the most dangerous mixture"],
     answer: 1,
     why: [
       "More fuel is not worse. At 15 % there are far fewer than two oxygen molecules per methane, so the mixture sits at the edge of burning, not its peak.",
@@ -120,9 +120,26 @@ export const U7L1_FLOW: FlowScreen[] = [
     src: ["niosh-ic9486-ch10", "niosh-ic9486-ch1"],
   },
   {
+    kind: "situation",
+    role: "Ventilation Officer",
+    scene: "After a roof fall, your detector reads 3 % methane at a working place. The section is short of time and the Sirdar wants to restart.",
+    claimBy: "The Sirdar",
+    claim: "It's under the 5 % explosive limit, so it can't go off. We carry on.",
+    options: ["Yes: under 5 % methane cannot ignite at all", "No: 3 % breaks the 1.25 % limit for any place", "Yes, as long as it stays below the 15 % upper limit", "No: 3 % is already above the upper explosive limit"],
+    answer: 1,
+    why: [
+      "In methane–air alone that is true, but mines need a wide margin below 5 %. The legal limit sits far lower.",
+      "Right. CMR 2017 allows inflammable gas up to 1.25 % at any place. 3 % is well over it, whatever the explosive limit says.",
+      "15 % is where mixtures stop being explosive. Working limits sit far below even the 5 % lower limit.",
+      "The upper limit is 15 %. 3 % sits below the lower limit, not above the upper one.",
+    ],
+    concept: "Statutory gas limits apply well below the LEL",
+    src: ["cmr-2017-153", "niosh-ic9486-ch1"],
+  },
+  {
     kind: "check",
     q: "CMR 2017 allows inflammable gas up to 1.25 % at any place in the mine. Compared with the 5 % lower limit, what does that give you?",
-    options: ["Nothing, both are explosive", "A wide safety margin below the explosive range", "Permission to work up to 5 %", "The stoichiometric point"],
+    options: ["Nothing extra: both values are explosive", "A wide safety margin below the explosive range", "Permission to keep working right up to 5 % methane", "A limit set at the stoichiometric mixture"],
     answer: 1,
     why: [
       "1.25 % is well below 5 %, so neither number is in the explosive range.",

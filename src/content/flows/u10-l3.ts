@@ -56,7 +56,7 @@ export const U10L3_FLOW: FlowScreen[] = [
   {
     kind: "check",
     q: "Which of these is an administrative control?",
-    options: ["A machine guard with an interlock", "Job rotation to shorten each person's exposure", "Respirators", "Redesigning the process to drop the hazard"],
+    options: ["A machine guard with an interlock", "Job rotation to shorten each person's exposure", "Respirators issued to everyone on the line", "Redesigning the process so the hazard is dropped"],
     answer: 1,
     why: [
       "A guard physically separates people from the hazard, so it is an engineering control.",
@@ -77,9 +77,26 @@ export const U10L3_FLOW: FlowScreen[] = [
     src: ["niosh-hoc"],
   },
   {
+    kind: "situation",
+    role: "Safety Officer",
+    scene: "A transfer point keeps exposing the crew to the same hazard. A quick budget review is under way before the next shift.",
+    claimBy: "The contractor's supervisor",
+    claim: "Just issue everyone better PPE. It's the quickest and cheapest fix.",
+    options: ["Agree: PPE protects the whole crew at once", "First try to remove or engineer out the hazard", "Agree, and back it up with a weekly safety talk", "Put up warning signs instead of buying the PPE"],
+    answer: 1,
+    why: [
+      "PPE can seem cheap, but it gets costly over time for a whole crew, and it works only if every worker wears it properly, every time.",
+      "Right. Elimination, substitution and engineering come first: they control exposure with little reliance on what workers do, and over time they usually cost less. PPE can cover the gap while they are put in.",
+      "A safety talk is training, an administrative control. Paired with PPE, it uses only the two weakest levels and leaves the hazard in place.",
+      "Signs are an administrative measure at best, and the hazard stays where it is. Dropping the PPE as well leaves the crew less protected, not more.",
+    ],
+    concept: "Climb the hierarchy before reaching for PPE",
+    src: ["niosh-hoc"],
+  },
+  {
     kind: "check",
     q: "When is PPE the right answer?",
-    options: ["Always first, because it is cheapest", "While better controls are being developed, or when they can't reduce exposure enough", "Never in a mine", "Only for visitors"],
+    options: ["Always first, because it is the cheapest option", "While better controls are pending or fall short", "Never: PPE has no place in a working mine", "Only for visitors who are new to the site"],
     answer: 1,
     why: [
       "PPE can look cheap but can grow costly over time, especially for many workers every day, and it shouldn't be relied on alone when other effective options exist.",
