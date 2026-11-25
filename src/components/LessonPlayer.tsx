@@ -15,6 +15,9 @@ import { nextLesson } from "@/lib/progress";
 import { useHydrated } from "@/lib/useHydrated";
 import { sfx } from "@/lib/sfx";
 import { StageRenderer } from "./cards/StageRenderer";
+import { BonusCard } from "./cards/BonusCard";
+import { useResume } from "@/lib/resume";
+import { useWhere } from "@/lib/reports";
 import { STAGE_META } from "./cards/ui";
 
 export function Hearts({ n, big = false }: { n: number; big?: boolean }) {
@@ -84,6 +87,12 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const [jumped, setJumped] = useState(false);
   const [jumpSeq, setJumpSeq] = useState(0);
   useEffect(() => setSub(0), [index, jumpSeq, attempt]);
+  // Theory-first mode: Equation/Numeric stages are collapsed "Bonus maths" unless opened.
+  const theoryFirst = usePrefs((p) => p.theoryFirst);
+  const [openBonus, setOpenBonus] = useState<number[]>([]);
+  // Resume: offered once when a lesson is reopened mid-way (separate device-local store, not progress).
+  const [resumeAsk, setResumeAsk] = useState<number | null>(null);
+  const resumeChecked = useRef(false);
   const [celebrated, setCelebrated] = useState(false);
   const started = useRef(-1);
 
@@ -131,6 +140,28 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     },
     [lesson, index, recordAttempt],
   );
+
+  /** Theory-first: skip a collapsed Bonus maths stage (no XP); finishing the lesson never requires it. */
+  const skipBonus = useCallback(() => {
+    if (!lesson || failed) return;
+    const sb = sandboxRef.current;
+    setCardMistakes(0);
+    if (index + 1 >= lesson.stages.length) {
+      const s = useStrata.getState();
+      const bonus = lesson.boss ? BOSS_BONUS : LESSON_BONUS;
+      if (!sb) {
+        recordAttempt();
+        s.addXp(bonus);
+        s.completeLesson(lesson.id, hearts, xp + bonus);
+      }
+      setXp(xp + bonus);
+      setFinished(true);
+      sfx.fanfare();
+    } else {
+      setIndex(index + 1);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [lesson, failed, index, hearts, xp, recordAttempt]);
 
   const onDone = useCallback(() => {
     if (!lesson || failed) return;
@@ -192,6 +223,26 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       celebrate(!!lesson.boss);
     }
   }, [finished, celebrated, lesson]);
+
+  // Phone-testing kit: keep "where am I" current for Inspector reports.
+  useEffect(() => {
+    useWhere.setState({ lessonId: lesson?.id ?? null, stageIndex: index, screenIndex: null });
+  }, [lesson, index]);
+
+  // Remember where you are (never in sandbox/jumper runs); forget it once the lesson is finished.
+  useEffect(() => {
+    if (!hydrated || !lesson || jumped) return;
+    const r = useResume.getState();
+    if (finished) r.clear(lesson.id);
+    else if (index > 0) r.setAt(lesson.id, index);
+  }, [hydrated, lesson, index, finished, jumped]);
+
+  useEffect(() => {
+    if (!hydrated || !lesson || resumeChecked.current) return;
+    resumeChecked.current = true;
+    const at = useResume.getState().at[lesson.id];
+    if (at && at.index > 0 && at.index < lesson.stages.length) setResumeAsk(at.index);
+  }, [hydrated, lesson]);
 
   const retry = () => {
     setAttempt((a) => a + 1);
@@ -361,7 +412,26 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-            <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} seed={`${lesson.id}#${index}`} />
+            {resumeAsk !== null && index === 0 ? (
+              <div className="card p-5 sm:p-8 space-y-5">
+                <h2 className="text-[24px] sm:text-[30px] leading-[1.2] font-bold tracking-[-0.015em] text-slate-900">Welcome back</h2>
+                <p className="flow-body text-slate-700">
+                  You left this lesson at stage {resumeAsk + 1} of {lesson.stages.length}.
+                </p>
+                <div className="grid gap-3">
+                  <button type="button" className="btn-3d tone-safe w-full px-4 py-3.5 min-h-[52px]" onClick={() => { setIndex(resumeAsk); setResumeAsk(null); }}>
+                    Continue from stage {resumeAsk + 1}
+                  </button>
+                  <button type="button" className="btn-3d tone-ghost w-full px-4 py-3.5 min-h-[52px]" onClick={() => { useResume.getState().clear(lesson.id); setResumeAsk(null); }}>
+                    Start over
+                  </button>
+                </div>
+              </div>
+            ) : theoryFirst && (stage.kind === "equation" || stage.kind === "numeric") && !openBonus.includes(index) ? (
+              <BonusCard stage={stage} onOpen={() => setOpenBonus((b) => [...b, index])} onSkip={skipBonus} />
+            ) : (
+              <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} seed={`${lesson.id}#${index}`} />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

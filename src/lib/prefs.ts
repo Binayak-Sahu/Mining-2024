@@ -14,6 +14,9 @@ interface Prefs {
   muted: boolean;
   /** Inspector Mode: everything playable as a sandbox. Device-local; never exported with progress. */
   masterUnlock: boolean;
+  /** Theory-first (default on): Equation/Numeric stages collapse into optional "Bonus maths"; a lesson completes without them. */
+  theoryFirst: boolean;
+  setTheoryFirst: (v: boolean) => void;
   setTheme: (t: ThemePref) => void;
   toggleMuted: () => void;
   setMasterUnlock: (v: boolean) => void;
@@ -27,6 +30,8 @@ export const usePrefs = create<Prefs>()(
       theme: "system",
       muted: false,
       masterUnlock: false,
+      theoryFirst: true,
+      setTheoryFirst: (theoryFirst) => set({ theoryFirst }),
       setMasterUnlock: (masterUnlock) => set({ masterUnlock }),
       setTheme: (theme) => {
         set({ theme });

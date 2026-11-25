@@ -13,7 +13,9 @@ import { SyncCard } from "./SyncCard";
 import * as Dialog from "@radix-ui/react-dialog";
 import { toast } from "sonner";
 import { setInspector } from "@/lib/inspector";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Flag, Gauge, Music, Download } from "lucide-react";
+import Link from "next/link";
+import { BUILD, downloadJson, useReports } from "@/lib/reports";
 
 const THEMES: { v: ThemePref; label: string; Icon: typeof Sun }[] = [
   { v: "system", label: "Device", Icon: MonitorSmartphone },
@@ -124,6 +126,20 @@ export function Profile() {
 
       <div className="card p-5 space-y-3">
         <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
+          <BookOpen size={13} /> Lesson pace
+        </div>
+        <button type="button" role="switch" aria-checked={prefs.theoryFirst} onClick={() => prefs.setTheoryFirst(!prefs.theoryFirst)} data-on={prefs.theoryFirst} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+          <BookOpen size={20} className={prefs.theoryFirst ? "text-blue-700" : "text-slate-500"} />
+          <span className="flex-1">
+            <span className="block font-bold text-[14px] text-slate-900">Theory-first lessons</span>
+            <span className="block text-[12.5px] text-slate-500">Equation and numerical stages become optional “Bonus maths”, so a lesson completes without them. They still earn XP and still appear in the exam simulator.</span>
+          </span>
+          <span className={`readout text-[12px] font-extrabold ${prefs.theoryFirst ? "text-blue-700" : "text-slate-400"}`}>{prefs.theoryFirst ? "ON" : "OFF"}</span>
+        </button>
+      </div>
+
+      <div className="card p-5 space-y-3">
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
           <KeyRound size={13} /> Inspector Mode
         </div>
         <button type="button" role="switch" aria-checked={prefs.masterUnlock} onClick={() => setInspector(!prefs.masterUnlock)} data-on={prefs.masterUnlock} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
@@ -134,9 +150,11 @@ export function Profile() {
           </span>
           <span className={`readout text-[12px] font-extrabold ${prefs.masterUnlock ? "text-amber-700" : "text-slate-400"}`}>{prefs.masterUnlock ? "ON" : "OFF"}</span>
         </button>
+        {prefs.masterUnlock && <PhoneKit />}
       </div>
 
       <SyncCard />
+      <p className="text-center readout text-[12px] text-slate-500">STRATA build {BUILD}</p>
 
       <div className="card p-5 space-y-4">
         <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Study settings</div>
@@ -193,6 +211,42 @@ export function Profile() {
       <p className="sr-only">
         <BookOpen aria-hidden /> Profile
       </p>
+    </div>
+  );
+}
+
+/** Inspector-only phone-testing kit: saved reports (export as JSON), FPS meter, sound test. */
+function PhoneKit() {
+  const reports = useReports((r) => r.reports);
+  const fps = useReports((r) => r.fps);
+  const setFps = useReports((r) => r.setFps);
+  const clear = useReports((r) => r.clear);
+  return (
+    <div className="space-y-2 pt-1">
+      <div className="flex items-center gap-2">
+        <button type="button" disabled={!reports.length} onClick={() => downloadJson(`strata-reports-${new Date().toISOString().slice(0, 10)}.json`, { app: "strata", kind: "reports", build: BUILD, reports })} className="tile-3d flex-1 flex items-center gap-2 px-4 py-3 text-left disabled:opacity-60">
+          <Download size={18} className="text-slate-600" />
+          <span className="flex-1 text-[14px] font-bold text-slate-900">Export reports</span>
+          <span className="readout text-[12px] font-extrabold text-slate-600">{reports.length}</span>
+        </button>
+        {reports.length > 0 && (
+          <button type="button" onClick={clear} className="tile-3d px-4 py-3 text-[13px] font-bold text-slate-600">
+            Clear
+          </button>
+        )}
+      </div>
+      <p className="text-[12.5px] text-slate-500 flex items-center gap-1.5">
+        <Flag size={13} /> Tap the amber flag on any screen to save a report.
+      </p>
+      <button type="button" role="switch" aria-checked={fps} onClick={() => setFps(!fps)} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+        <Gauge size={18} className={fps ? "text-emerald-700" : "text-slate-500"} />
+        <span className="flex-1 text-[14px] font-bold text-slate-900">FPS meter</span>
+        <span className={`readout text-[12px] font-extrabold ${fps ? "text-emerald-700" : "text-slate-400"}`}>{fps ? "ON" : "OFF"}</span>
+      </button>
+      <Link href="/sound-test" className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+        <Music size={18} className="text-slate-600" />
+        <span className="flex-1 text-[14px] font-bold text-slate-900">Sound test</span>
+      </Link>
     </div>
   );
 }
