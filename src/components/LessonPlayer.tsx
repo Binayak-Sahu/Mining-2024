@@ -16,6 +16,7 @@ import { useHydrated } from "@/lib/useHydrated";
 import { sfx } from "@/lib/sfx";
 import { StageRenderer } from "./cards/StageRenderer";
 import { BonusCard } from "./cards/BonusCard";
+import { ActionBar, PrimaryButton } from "./cards/ui";
 import { useResume } from "@/lib/resume";
 import { useWhere } from "@/lib/reports";
 import { STAGE_META } from "./cards/ui";
@@ -411,21 +412,21 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-3 sm:pt-6">
         {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
+          <motion.div key={`${attempt}-${index}-${jumpSeq}-${resumeAsk ?? "go"}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
             {resumeAsk !== null && index === 0 ? (
               <div className="card p-5 sm:p-8 space-y-5">
                 <h2 className="text-[24px] sm:text-[30px] leading-[1.2] font-bold tracking-[-0.015em] text-slate-900">Welcome back</h2>
                 <p className="flow-body text-slate-700">
                   You left this lesson at stage {resumeAsk + 1} of {lesson.stages.length}.
                 </p>
-                <div className="grid gap-3">
-                  <button type="button" className="btn-3d tone-safe w-full px-4 py-3.5 min-h-[52px]" onClick={() => { setIndex(resumeAsk); setResumeAsk(null); }}>
+                <button type="button" className="min-h-[44px] px-1 text-[15px] font-semibold text-slate-600 underline underline-offset-4 hover:text-slate-900" onClick={() => { useResume.getState().clear(lesson.id); setResumeAsk(null); }}>
+                  Start over instead
+                </button>
+                <ActionBar>
+                  <PrimaryButton tone="safe" onClick={() => { setIndex(resumeAsk); setResumeAsk(null); }}>
                     Continue from stage {resumeAsk + 1}
-                  </button>
-                  <button type="button" className="btn-3d tone-ghost w-full px-4 py-3.5 min-h-[52px]" onClick={() => { useResume.getState().clear(lesson.id); setResumeAsk(null); }}>
-                    Start over
-                  </button>
-                </div>
+                  </PrimaryButton>
+                </ActionBar>
               </div>
             ) : theoryFirst && (stage.kind === "equation" || stage.kind === "numeric") && !openBonus.includes(index) ? (
               <BonusCard stage={stage} onOpen={() => setOpenBonus((b) => [...b, index])} onSkip={skipBonus} />

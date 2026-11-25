@@ -12,6 +12,7 @@ import { C } from "@/components/sim/svg";
 import { shuffleItem } from "@/lib/shuffle";
 import { useWhere } from "@/lib/reports";
 import { SituationHeader } from "./Situation";
+import { nb } from "./ui";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
 
 /** Source chip: opens a sheet with the reference title, author, publisher and link. */
@@ -162,7 +163,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
         {s.kind === "situation" ? (
           <SituationHeader role={s.role} scene={s.scene} claim={s.claim} claimBy={s.claimBy} visual={s.visual ? <Visual stage={stage} v={s.visual} /> : undefined} />
         ) : (
-          <p className="flow-q text-slate-900">{s.q}</p>
+          <p className="flow-q text-slate-900">{nb(s.q)}</p>
         )}
         <div className="grid gap-2.5" role="radiogroup">
           {s.options.map((o, k) => {
@@ -180,7 +181,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
                 className={`${optionClass(state)} flex items-center !text-[16px] min-h-[56px]`}
               >
                 <OptionKey i={k} state={state} />
-                <span className={tried && !done ? "line-through decoration-slate-400" : ""}>{o}</span>
+                <span className={tried && !done ? "line-through decoration-slate-400" : ""}>{nb(o)}</span>
               </button>
             );
           })}
@@ -195,7 +196,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
       );
     else if (ph.verdict === "wrong" && ph.pick !== null)
       footer = (
-        <VerdictBar ok={false} title="Not quite — try again" why={s.kind === "check" && s.hint && ph.tried.length > 1 ? <span className="font-semibold text-slate-800"><Lightbulb size={14} className="inline -mt-0.5 mr-1" />{s.hint}</span> : s.why[ph.pick]}>
+        <VerdictBar ok={false} title="Not quite" why={s.kind === "check" && s.hint && ph.tried.length > 1 ? <span className="font-semibold text-slate-800"><Lightbulb size={14} className="inline -mt-0.5 mr-1" />{s.hint}</span> : s.why[ph.pick]}>
           <PrimaryButton onClick={() => setPh((p) => ({ ...p, pick: null, verdict: "none" }))}>Try again</PrimaryButton>
         </VerdictBar>
       );
@@ -205,7 +206,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
     body = (
       <div className="space-y-5">
         {s.visual && <Visual stage={stage} v={s.visual} />}
-        <p className="flow-body text-slate-800">{s.text}</p>
+        <p className="flow-body text-slate-800">{nb(s.text)}</p>
       </div>
     );
     footer = <PrimaryButton onClick={next}>Continue</PrimaryButton>;

@@ -9,7 +9,7 @@ export const U0L1_FLOW: FlowScreen[] = [
     answer: 1,
     why: [
       "The rock above still has weight. Removing coal removes support, not the load.",
-      "Right. Excavating redistributes the stresses, and the rock close to the opening picks up new, induced stresses.",
+      "Excavating redistributes the stresses, and the rock close to the opening picks up new, induced stresses.",
       "The disturbance stays local. Around a single circular tunnel, the stress field is back to almost its original state about three radii from the tunnel's centre.",
       "Air carries no meaningful load. The stress has to flow through the remaining rock.",
     ],
@@ -35,7 +35,7 @@ export const U0L1_FLOW: FlowScreen[] = [
     answer: 1,
     why: [
       "The big patch carries 100 times the weight, but over 100 times the area. Load per area is unchanged.",
-      "Right. Virgin vertical stress depends on unit weight and depth, not on how much area you consider.",
+      "Virgin vertical stress depends on unit weight and depth, not on how much area you consider.",
       "A smaller area carries a proportionally smaller column. The ratio stays the same.",
       "In undisturbed rock, the column above any shape gives the same load per area at that depth.",
     ],
@@ -61,7 +61,7 @@ export const U0L1_FLOW: FlowScreen[] = [
     answer: 1,
     why: [
       "High horizontal stress is regularly measured, especially at shallow depth.",
-      "Right. k is the horizontal-to-vertical ratio, and measured values tend to be high near the surface.",
+      "k is the horizontal-to-vertical ratio, and measured values tend to be high near the surface.",
       "This is the old elastic idea, which measurements have shown to be unreliable for k. Poisson's ratio cannot exceed 0.5 in any case.",
       "Vertical stress still follows the overburden weight. The surprise here is in the horizontal stress.",
     ],
@@ -88,7 +88,7 @@ export const U0L1_FLOW: FlowScreen[] = [
     answer: 1,
     why: [
       "Less coal means less support, so each remaining pillar carries more.",
-      "Right. Tributary area is the product of the two centre-to-centre spacings (C1 × C2), so wider roadways put more overburden on the same pillar area.",
+      "Tributary area is the product of the two centre-to-centre spacings (C1 × C2), so wider roadways put more overburden on the same pillar area.",
       "Depth sets the virgin stress, but the pillar concentrates the load from its whole tributary area.",
       "The galleries carry nothing. Their share of the load moves into the pillars.",
     ],
@@ -110,11 +110,11 @@ export const U0L1_FLOW: FlowScreen[] = [
     scene: "A new district is planned at the same depth as the old one. The pillars stay the same size, but the galleries will be cut wider for bigger machines.",
     claimBy: "The planning engineer",
     claim: "Same depth, same stress. The old pillars' margin carries straight over.",
-    options: ["Agree: depth alone sets the load on each pillar", "Disagree: wider galleries load each pillar more", "Agree, as long as the virgin stress is measured first", "Disagree: wider galleries lower the virgin stress"],
+    options: ["Agree: depth alone sets the load on each pillar", "Disagree: wider galleries load each pillar more", "Agree: provided the virgin stress is measured", "Disagree: wider galleries lower the virgin stress"],
     answer: 1,
     why: [
       "Depth sets the virgin vertical stress, but each pillar carries the overburden over its whole centre-to-centre area.",
-      "Right. Tributary area is C1 × C2. Wider galleries raise it while the pillar area stays fixed, so average pillar stress rises. The pillars are no stronger, so the safety factor falls.",
+      "Tributary area is C1 × C2. Wider galleries raise it while the pillar area stays fixed, so average pillar stress rises. The pillars are no stronger, so the safety factor falls.",
       "Measuring virgin stress is good practice, but it doesn't change how much roof each pillar now carries.",
       "Virgin stress depends on unit weight and depth, not on gallery width.",
     ],
@@ -128,7 +128,7 @@ export const U0L1_FLOW: FlowScreen[] = [
     answer: 1,
     why: [
       "This is exactly the case the method assumes: an extensive area with identical pillars.",
-      "Right. It ignores how the rock mass deforms. Centre pillars carry more than edge pillars, and longwall abutment loads need methods beyond it. It also breaks down for irregular pillars, a limited mined area or strongly varying cover.",
+      "It ignores how the rock mass deforms. Centre pillars carry more than edge pillars, and longwall abutment loads need methods beyond it. It also breaks down for irregular pillars, a limited mined area or strongly varying cover.",
       "The method is used for coal and stone pillars alike. Rock type is not the limiting factor.",
       "One depth goes straight into the estimate. It is strongly varying cover over the panel that makes the method unreliable.",
     ],

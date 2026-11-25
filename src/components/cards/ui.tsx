@@ -237,6 +237,11 @@ export interface CardProps<S> {
  * Verdict state of the bottom action bar (Brilliant-style): a tinted strip with the verdict, a short
  * reason and the next action. Plays the chime / thud once when it appears.
  */
+/** Keep "12 %"-style figures on one line (non-breaking space before the unit sign). */
+export function nb(t: string): string {
+  return t.replace(/(\d) %/g, "$1\u00a0%").replace(/(\d) (°C|ppm|MPa|m³)/g, "$1\u00a0$2");
+}
+
 export function VerdictBar({ ok, title, why, children }: { ok: boolean; title: string; why?: ReactNode; children: ReactNode }) {
   useEffect(() => {
     if (ok) sfx.correct();
@@ -251,7 +256,7 @@ export function VerdictBar({ ok, title, why, children }: { ok: boolean; title: s
           </motion.span>
           {title}
         </div>
-        {why && <div className="text-[15px] leading-[1.5] text-slate-700 mt-1 max-h-[32vh] overflow-y-auto">{why}</div>}
+        {why && <div className="text-[15px] leading-[1.5] text-slate-700 mt-1 max-h-[32vh] overflow-y-auto">{typeof why === "string" ? nb(why) : why}</div>}
       </div>
       {children}
     </motion.div>
