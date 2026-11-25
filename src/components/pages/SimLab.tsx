@@ -115,7 +115,7 @@ export function SimLab() {
         </Drawer.Root>
         <SimView key={id} def={def} values={vals} onChange={setVals} objective={ch ? { text: ch.text, met, tag: challenges.length > 1 ? `Challenge ${ci + 1}/${challenges.length}` : "Challenge" } : undefined} />
         {ch && met && ci + 1 < challenges.length && (
-          <button type="button" onClick={() => setCi(ci + 1)} className="btn-3d tone-safe w-full mt-3 py-3 text-[13px]">
+          <button type="button" onClick={() => setCi(ci + 1)} className="btn-3d tone-safe w-full mt-3 py-3 text-[15px]">
             Next challenge
           </button>
         )}

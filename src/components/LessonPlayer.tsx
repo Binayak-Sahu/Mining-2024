@@ -291,15 +291,15 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         </div>
         <div className="sticky bottom-0 border-t border-slate-200/80 bg-canvas/85 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
           <div className="max-w-xl mx-auto px-4 py-3 flex gap-3">
-            <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 py-3.5 text-[13px] inline-flex items-center justify-center gap-2">
+            <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 py-3.5 text-[15px] inline-flex items-center justify-center gap-2">
               <MapIcon size={16} /> Unit map
             </Link>
             {nxt ? (
-              <Link href={`/lesson/${nxt.id}`} className="btn-3d tone-safe flex-[1.4] py-3.5 text-[13px] inline-flex items-center justify-center gap-2 min-w-0">
+              <Link href={`/lesson/${nxt.id}`} className="btn-3d tone-safe flex-[1.4] py-3.5 text-[15px] inline-flex items-center justify-center gap-2 min-w-0">
                 <span className="truncate">{nxt.boss ? "Boss Exam" : "Next lesson"}</span> <ArrowRight size={16} className="shrink-0" />
               </Link>
             ) : (
-              <Link href="/" className="btn-3d tone-safe flex-[1.4] py-3.5 text-[13px] inline-flex items-center justify-center gap-2">
+              <Link href="/" className="btn-3d tone-safe flex-[1.4] py-3.5 text-[15px] inline-flex items-center justify-center gap-2">
                 Expedition <ArrowRight size={16} />
               </Link>
             )}
@@ -357,23 +357,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         )}
       </div>
 
-      <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-2 sm:pt-4">
+      <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-3 sm:pt-6">
         {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
-        <div className="flex items-center justify-between text-[12px] text-slate-500 mb-2 sm:mb-3 px-1.5 gap-3">
-          <span className="font-bold truncate">
-            {lesson.boss ? "Boss Exam · " : `Unit ${unit.n} · `}
-            {lesson.title}
-          </span>
-          <span className="flex items-center gap-2 shrink-0">
-            <span className="readout font-bold text-slate-400">
-              {index + 1}/{lesson.stages.length}
-            </span>
-            <motion.span key={xp} initial={{ scale: 1.4, color: "#F59E0B" }} animate={{ scale: 1, color: "var(--n-500)" }} className="readout font-extrabold inline-flex items-center gap-0.5">
-              <Zap size={13} className="fill-amber-400 text-amber-500" /> {xp}
-            </motion.span>
-          </span>
-        </div>
-
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
             <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} />
@@ -412,10 +397,10 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
                 </div>
               </div>
               <div className="flex gap-2.5">
-                <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 sm:flex-none px-5 py-3 text-[13px] inline-flex items-center justify-center">
+                <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 sm:flex-none px-5 py-3 text-[15px] inline-flex items-center justify-center">
                   Exit
                 </Link>
-                <button type="button" onClick={retry} className="btn-3d tone-crit flex-1 sm:flex-none px-5 py-3 text-[13px] inline-flex items-center justify-center gap-2">
+                <button type="button" onClick={retry} className="btn-3d tone-crit flex-1 sm:flex-none px-5 py-3 text-[15px] inline-flex items-center justify-center gap-2">
                   <RotateCcw size={15} /> Retry
                 </button>
               </div>

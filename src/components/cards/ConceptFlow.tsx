@@ -72,6 +72,19 @@ function Visual({ stage, v }: { stage: TheoryStage; v?: FlowVisual }) {
   return <SimCanvas def={def} values={values} still focus={pins.map((h) => [h.x, h.y] as [number, number])} overlay={pins.length ? overlay : undefined} />;
 }
 
+/** Deterministic per-screen option order so the right answer isn't always in the same slot. */
+function order(n: number, seed: string): number[] {
+  let h = 2166136261;
+  for (let k = 0; k < seed.length; k++) h = Math.imul(h ^ seed.charCodeAt(k), 16777619);
+  const idx = Array.from({ length: n }, (_, k) => k);
+  for (let k = n - 1; k > 0; k--) {
+    h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
+    const j = h % (k + 1);
+    [idx[k], idx[j]] = [idx[j], idx[k]];
+  }
+  return idx;
+}
+
 type Phase = { pick: number | null; tried: number[]; verdict: "none" | "wrong" | "right"; revealed: boolean; met: boolean };
 const FRESH: Phase = { pick: null, tried: [], verdict: "none", revealed: false, met: false };
 
@@ -82,6 +95,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
   const [ph, setPh] = useState<Phase>(FRESH);
   const missed = useRef<Set<number>>(new Set());
   const [nudgeVals, setNudgeVals] = useState<Vals | null>(null);
+  const revealBox = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     onSubProgress?.(i / total);
@@ -94,7 +108,13 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const s: FlowScreen | null = i < screens.length ? screens[i] : null;
+  const raw: FlowScreen | null = i < screens.length ? screens[i] : null;
+  // Shuffle predict/check options (answer and reasons follow their option).
+  const s: FlowScreen | null = useMemo(() => {
+    if (!raw || (raw.kind !== "predict" && raw.kind !== "check")) return raw;
+    const o = order(raw.options.length, `${stage.title}#${i}`);
+    return { ...raw, options: o.map((k) => raw.options[k]), why: o.map((k) => raw.why[k]), answer: o.indexOf(raw.answer) };
+  }, [raw, stage.title, i]);
 
   const nudgeDef = s?.kind === "nudge" ? getSim(s.sim) : null;
   const nudgeStart = useMemo(() => (s?.kind === "nudge" && nudgeDef ? defaults(nudgeDef, s.start) : null), [s, nudgeDef]);
@@ -120,9 +140,9 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
     label = "Summary";
     body = (
       <div className="space-y-5">
-        <p className="flow-body text-slate-700">What you now know about {stage.codex.title.toLowerCase()}:</p>
+        <p className="flow-body text-slate-700">What you now know:</p>
         <ul className="space-y-3">
-          {stage.codex.bullets.map((b, k) => (
+          {(stage.flowSummary ?? stage.codex.bullets.slice(0, 3)).map((b, k) => (
             <motion.li key={k} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 * k }} className="flex gap-3 flow-body text-slate-800">
               <span className="mt-[9px] w-2 h-2 shrink-0 rounded-full bg-emerald-500" />
               <span>{b}</span>
@@ -146,8 +166,8 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
         <div className="grid gap-2.5" role="radiogroup">
           {s.options.map((o, k) => {
             const tried = ph.tried.includes(k);
-            const state = done ? (k === s.answer ? "right" : "dim") : tried ? "dim" : "idle";
             const sel = !done && ph.pick === k && ph.verdict !== "wrong";
+            const state = done ? (k === s.answer ? "right" : "dim") : tried ? "dim" : sel ? "selected" : "idle";
             return (
               <button
                 key={k}
@@ -156,10 +176,10 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
                 aria-checked={ph.pick === k}
                 disabled={done || tried}
                 onClick={() => setPh((p) => ({ ...p, pick: k, verdict: "none" }))}
-                className={`${optionClass(state)} flex items-center !text-[16px] min-h-[56px] ${sel ? "!border-blue-500 !bg-blue-50 !shadow-[0_3px_0_#3B82F6]" : ""} ${tried ? "line-through decoration-slate-400" : ""}`}
+                className={`${optionClass(state)} flex items-center !text-[16px] min-h-[56px]`}
               >
                 <OptionKey i={k} state={state} />
-                <span>{o}</span>
+                <span className={tried && !done ? "line-through decoration-slate-400" : ""}>{o}</span>
               </button>
             );
           })}
@@ -174,7 +194,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
       );
     else if (ph.verdict === "wrong" && ph.pick !== null)
       footer = (
-        <VerdictBar ok={false} title="Not quite — try again" why={<>{s.why[ph.pick]}{s.kind === "check" && s.hint ? <span className="block mt-1.5 font-semibold text-slate-800"><Lightbulb size={14} className="inline -mt-0.5 mr-1" />{s.hint}</span> : null}</>}>
+        <VerdictBar ok={false} title="Not quite — try again" why={s.kind === "check" && s.hint && ph.tried.length > 1 ? <span className="font-semibold text-slate-800"><Lightbulb size={14} className="inline -mt-0.5 mr-1" />{s.hint}</span> : s.why[ph.pick]}>
           <PrimaryButton onClick={() => setPh((p) => ({ ...p, pick: null, verdict: "none" }))}>Try again</PrimaryButton>
         </VerdictBar>
       );
@@ -194,8 +214,17 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
     const values = defaults(def, s.visual?.params ?? stage.simParams);
     const h = s.hotspot;
     const overlay = (
-      <g role="button" aria-label={`Reveal: ${h.title}`} onClick={() => setPh((p) => ({ ...p, revealed: true }))} style={{ cursor: "pointer" }}>
-        <circle cx={h.x} cy={h.y} r={28} fill="transparent" />
+      <g
+        role="button"
+        aria-label={`Reveal: ${h.title}`}
+        tabIndex={0}
+        onClick={() => {
+          setPh((p) => ({ ...p, revealed: true }));
+          window.setTimeout(() => revealBox.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }), 250);
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        <circle cx={h.x} cy={h.y} r={30} fill="transparent" />
         {!ph.revealed && <circle cx={h.x} cy={h.y} r={6} fill="none" stroke={C.tech} strokeWidth={2} className="hotspot-ring" />}
         <circle cx={h.x} cy={h.y} r={9} fill={ph.revealed ? C.safe : C.tech} stroke="white" strokeWidth={2} />
       </g>
@@ -203,10 +232,10 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
     body = (
       <div className="space-y-5">
         <p className="flow-body text-slate-800">{s.prompt}</p>
-        <SimCanvas def={def} values={values} still overlay={overlay} focus={[[h.x, h.y]]} />
+        <SimCanvas def={def} values={values} still overlay={overlay} focus={ph.revealed ? [[h.x, h.y]] : undefined} />
         <AnimatePresence>
           {ph.revealed && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-slate-50 hairline p-4">
+            <motion.div ref={revealBox} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="scroll-mb-40 rounded-2xl bg-slate-50 hairline p-4">
               <div className="text-[15px] font-bold text-slate-900">{h.title}</div>
               <p className="flow-body text-slate-700 mt-1">{h.body}</p>
             </motion.div>
@@ -214,7 +243,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
         </AnimatePresence>
       </div>
     );
-    footer = ph.revealed ? <PrimaryButton onClick={next}>Continue</PrimaryButton> : <PrimaryButton onClick={() => setPh((p) => ({ ...p, revealed: true }))} tone="ghost">Tap the pin</PrimaryButton>;
+    footer = ph.revealed ? <PrimaryButton onClick={next}>Continue</PrimaryButton> : <PrimaryButton disabled>Find the pin to continue</PrimaryButton>;
   } else if (s.kind === "misconception") {
     label = "Common trap";
     body = (
@@ -257,15 +286,15 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
   }
 
   return (
-    <CardFrame kind="theory" title={stage.title} footer={footer}>
-      <div className="flex items-center justify-between gap-3 -mt-1">
-        <span className="text-[13px] font-semibold text-slate-500">
-          {label} · <span className="readout">{i + 1}/{total}</span>
-        </span>
-        {s && <SourceChip ids={s.src} />}
-      </div>
+    <CardFrame kind="theory" title={stage.title} compact={i > 0} footer={footer} footerKey={`${i}-${ph.verdict}-${ph.revealed}-${ph.met}`}>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={i} initial={{ opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -28 }} transition={{ type: "spring", stiffness: 420, damping: 34 }}>
+        <motion.div key={i} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18, ease: "easeOut" }} className="space-y-5">
+          <div className="flex items-center justify-between gap-3 -mt-1">
+            <span className="text-[13px] font-semibold text-slate-600">
+              {label} · <span className="readout">{i + 1}/{total}</span>
+            </span>
+            {s && <SourceChip ids={s.src} />}
+          </div>
           {body}
         </motion.div>
       </AnimatePresence>

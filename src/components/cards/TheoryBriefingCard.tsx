@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Play, Lightbulb, BookMarked } from "lucide-react";
+import { ChevronDown, Lightbulb, BookMarked } from "lucide-react";
 import type { TheoryStage } from "@/lib/types";
 import { getSim } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
@@ -30,11 +30,38 @@ function Briefing({ stage, onDone }: CardProps<TheoryStage>) {
     setSeen((s) => new Set(s).add(i));
   };
 
-  const playChain = () => {
-    if (!stage.chain) return;
-    setChainStep(0);
-    stage.chain.forEach((_, i) => setTimeout(() => setChainStep(i), i * 700));
-  };
+  // The causal chain plays itself once it scrolls into view (no competing Play button); timers are
+  // cleared on unmount.
+  const chainBox = useRef<HTMLDivElement>(null);
+  const chainLen = stage.chain?.length ?? 0;
+  useEffect(() => {
+    const el = chainBox.current;
+    if (!el || !chainLen) return;
+    const timers: number[] = [];
+    const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const play = () => {
+      if (reduce) return setChainStep(chainLen - 1);
+      for (let i = 0; i < chainLen; i++) timers.push(window.setTimeout(() => setChainStep(i), 200 + i * 700));
+    };
+    if (typeof IntersectionObserver === "undefined") {
+      play();
+      return () => timers.forEach(clearTimeout);
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          play();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      timers.forEach(clearTimeout);
+    };
+  }, [chainLen]);
 
   const overlay = (
     <g>
@@ -88,12 +115,9 @@ function Briefing({ stage, onDone }: CardProps<TheoryStage>) {
       </AnimatePresence>
 
       {stage.chain && (
-        <div className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] p-3 sm:p-3.5">
-          <div className="flex items-center justify-between mb-2">
+        <div ref={chainBox} className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] p-4">
+          <div className="mb-2">
             <span className="text-[13px] font-bold text-slate-600">Causal chain</span>
-            <button type="button" onClick={playChain} className="btn-press inline-flex items-center justify-center gap-1 min-w-[48px] rounded-lg bg-blue-500 text-white px-2.5 py-1 text-xs font-extrabold shadow-[0_2px_0_#1D4ED8]">
-              <Play size={12} /> {chainStep < 0 ? "Play" : "Replay"}
-            </button>
           </div>
           <div className="flex flex-col gap-1">
             {stage.chain.map((c, i) => (

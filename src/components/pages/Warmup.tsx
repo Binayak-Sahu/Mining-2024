@@ -156,10 +156,10 @@ export function Warmup() {
             {score}/{queue.length} clean recalls
           </p>
           <div className="flex gap-3">
-            <button type="button" onClick={start} className="btn-3d tone-ghost flex-1 py-3.5 text-[13px]">
+            <button type="button" onClick={start} className="btn-3d tone-ghost flex-1 py-3.5 text-[15px]">
               Another round
             </button>
-            <Link href="/" className="btn-3d tone-safe flex-1 py-3.5 text-[13px] inline-flex items-center justify-center">
+            <Link href="/" className="btn-3d tone-safe flex-1 py-3.5 text-[15px] inline-flex items-center justify-center">
               Expedition
             </Link>
           </div>

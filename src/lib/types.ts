@@ -108,6 +108,8 @@ export interface TheoryStage {
   codex: CodexEntry;
   /** Optional Brilliant-style concept flow (one idea per screen). When present it replaces the briefing layout. */
   flow?: FlowScreen[];
+  /** ≤ 3 short bullets for the flow's closing summary (only what the flow taught). */
+  flowSummary?: string[];
 }
 
 /** A visual shown on a flow screen: a sim render with optional parameters and focused hotspot pins (indexes into the stage's hotspots). */

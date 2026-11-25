@@ -53,7 +53,7 @@ export interface Objective {
   tag?: string;
 }
 
-export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][] }) {
+export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus, corner }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][]; corner?: ReactNode }) {
   const maskId = `focus-${useId().replace(/:/g, "")}`;
   const out = useMemo(() => def.compute(values), [def, values]);
   const wrap = useRef<HTMLDivElement>(null);
@@ -108,6 +108,8 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
           </span>
         </div>
       )}
+      <div className="relative">
+      {corner && <div className="absolute right-1.5 top-1.5 z-[2]">{corner}</div>}
       <svg
         ref={svg}
         viewBox="-24 -24 448 288"
@@ -122,13 +124,17 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
         {def.render(values, out, t)}
         {focus && focus.length > 0 && (
           <g aria-hidden>
+            <radialGradient id={`${maskId}-g`}>
+              <stop offset="0.55" stopColor="black" />
+              <stop offset="1" stopColor="white" />
+            </radialGradient>
             <mask id={maskId}>
               <rect x={-24} y={-24} width={448} height={288} fill="white" />
               {focus.map(([x, y], i) => (
-                <circle key={i} cx={x} cy={y} r={34} fill="black" />
+                <circle key={i} cx={x} cy={y} r={56} fill={`url(#${maskId}-g)`} />
               ))}
             </mask>
-            <rect x={-24} y={-24} width={448} height={288} fill="#0B0F19" opacity={0.5} mask={`url(#${maskId})`} style={{ transition: "opacity 300ms" }} />
+            <motion.rect x={-24} y={-24} width={448} height={288} fill="#0B0F19" initial={{ opacity: 0 }} animate={{ opacity: 0.35 }} transition={{ duration: 0.35 }} mask={`url(#${maskId})`} />
           </g>
         )}
         {overlay}
@@ -183,6 +189,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
             );
           })()}
       </svg>
+      </div>
       {handles.length > 0 && !used && (
         <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
           <Hand size={11} /> Drag the grips on the diagram
@@ -271,10 +278,10 @@ export function Controls({ def, values, onChange, disabled }: { def: SimDef; val
 }
 
 /** Full interactive sim: diorama + telemetry + controls. */
-export function SimView({ def, values, onChange, overlay, disabled, objective }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean; objective?: Objective }) {
+export function SimView({ def, values, onChange, overlay, disabled, objective, corner }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean; objective?: Objective; corner?: ReactNode }) {
   return (
     <div className="space-y-3">
-      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} />
+      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} />
       <Readouts def={def} values={values} />
       <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
         <Controls def={def} values={values} onChange={onChange} disabled={disabled} />

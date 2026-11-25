@@ -30,15 +30,22 @@ export function SimLabCard({ stage, onDone }: CardProps<SimStage>) {
       title={stage.title}
       footer={
         <PrimaryButton onClick={onDone} disabled={!achieved} tone={achieved ? "safe" : "ink"}>
-          {achieved ? "Lock in insight & Continue" : "Reach the objective to continue"}
+          {achieved ? "Continue" : "Reach the objective to continue"}
         </PrimaryButton>
       }
     >
       <Lines lines={[stage.brief]} />
-      <SimView def={def} values={values} onChange={change} objective={{ text: stage.goal.text, met: met && touched, tag: "Objective" }} />
-      <button type="button" onClick={() => setValues(start)} className="btn-press inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100">
-        <RotateCcw size={12} /> Reset rig
-      </button>
+      <SimView
+        def={def}
+        values={values}
+        onChange={change}
+        objective={{ text: stage.goal.text, met: met && touched, tag: "Objective" }}
+        corner={
+          <button type="button" onClick={() => setValues(start)} aria-label="Reset the rig" title="Reset the rig" className="w-11 h-11 rounded-full flex items-center justify-center bg-white/90 text-[#334155] shadow-[0_1px_3px_rgba(15,23,42,0.25)] hover:bg-white">
+            <RotateCcw size={17} />
+          </button>
+        }
+      />
       <Feedback show={achieved} ok title="Objective reached — here's the physics">
         {stage.insight}
       </Feedback>
