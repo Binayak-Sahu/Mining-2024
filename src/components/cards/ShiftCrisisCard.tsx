@@ -1,13 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { arrange } from "@/lib/shuffle";
 import { motion } from "framer-motion";
 import { Siren, Timer } from "lucide-react";
 import type { CrisisStage } from "@/lib/types";
 import { toneColor } from "@/components/sim/svg";
 import { CardFrame, Feedback, Lines, PrimaryButton, optionClass, type CardProps } from "./ui";
 
-export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisStage>) {
+export function ShiftCrisisCard({ stage: authored, onMistake, onDone, seed }: CardProps<CrisisStage>) {
+  // Each decision's options are shown in a balanced, deterministic order (authored order puts the right call first).
+  const stage = useMemo(
+    () => ({
+      ...authored,
+      phases: authored.phases.map((ph, p) => {
+        const perm = arrange(`${seed ?? `crisis:${authored.title}`}#${p}`, ph.options.length, Math.max(0, ph.options.findIndex((o) => o.correct)));
+        return { ...ph, options: perm.map((k) => ph.options[k]) };
+      }),
+    }),
+    [authored, seed],
+  );
   const [phase, setPhase] = useState(0);
   const [pick, setPick] = useState<number | null>(null);
   const [left, setLeft] = useState(stage.seconds);

@@ -16,6 +16,7 @@ import { TOOLS } from "../src/components/pages/Tools";
 import { STATUTES } from "../src/content/statutes";
 import { REFS } from "../src/content/references";
 import type { FlowScreen } from "../src/lib/types";
+import { allMcItems, arrange } from "../src/lib/shuffle";
 
 let errors = 0;
 let flows = 0;
@@ -28,11 +29,16 @@ function checkFlow(at: string, flow: FlowScreen[], checkSim: (id: string, o?: Va
   if (flow[0]?.kind !== "predict") fail(`${at}: flow must open with a predict screen`);
   if (!flow.some((f) => f.kind === "misconception")) fail(`${at}: flow needs a misconception screen`);
   if (flow.filter((f) => f.kind === "check").length < 2) fail(`${at}: flow needs at least 2 check screens`);
+  if (!flow.some((f) => f.kind === "situation")) fail(`${at}: flow needs at least 1 situation screen`);
   flow.forEach((f, i) => {
     const w = `${at} flow#${i}(${f.kind})`;
     if (!f.src || f.src.length === 0) fail(`${w}: no src`);
     for (const id of f.src ?? []) if (!REFS[id]) fail(`${w}: src "${id}" missing from REFS`);
-    if (f.kind === "predict" || f.kind === "check") {
+    if (f.kind === "situation") {
+      if (words(f.scene) > 40) fail(`${w}: situation scene is ${words(f.scene)} words (> 40)`);
+      if (!f.role) fail(`${w}: situation needs a role`);
+    }
+    if (f.kind === "predict" || f.kind === "check" || f.kind === "situation") {
       if (f.why.length !== f.options.length) fail(`${w}: why.length ${f.why.length} ≠ options ${f.options.length}`);
       if (f.answer < 0 || f.answer >= f.options.length) fail(`${w}: answer out of range`);
       if (f.why.some((x) => !x.trim())) fail(`${w}: every option needs a reason`);
@@ -245,5 +251,35 @@ for (const st of STATUTES) {
 }
 console.log(`exam bank: ${pool.length} questions · tools: ${TOOLS.length} · statutes: ${STATUTES.length}`);
 console.log(`concept flows: ${flows}`);
+
+// ---- Answer-slot balance (after render-time shuffling) and correct-option length bias ----
+{
+  const items = allMcItems();
+  const byUnit = new Map<string, { slots: number[]; total: number; longest: number; lenTotal: number }>();
+  for (const it of items) {
+    const perm = arrange(it.key, it.n, it.answer);
+    const slot = perm.indexOf(it.answer);
+    const u = byUnit.get(it.unitId) ?? { slots: [0, 0, 0, 0, 0, 0], total: 0, longest: 0, lenTotal: 0 };
+    u.slots[slot]++;
+    u.total++;
+    if (it.kind === "check" || it.kind === "situation") {
+      u.lenTotal++;
+      const len = (t: string) => t.trim().length;
+      const a = len(it.options[it.answer]);
+      if (it.options.every((o, k) => k === it.answer || len(o) < a)) u.longest++;
+    }
+    byUnit.set(it.unitId, u);
+  }
+  const rows: string[] = [];
+  for (const [unit, u] of byUnit) {
+    const max = Math.max(...u.slots);
+    const share = max / u.total;
+    checks++;
+    if (u.total >= 5 && share > 0.4) fail(`${unit}: ${Math.round(share * 100)} % of correct answers sit in one slot (> 40 %)`);
+    if (u.lenTotal >= 3 && u.longest / u.lenTotal > 0.4) fail(`${unit}: correct option is the longest in ${u.longest}/${u.lenTotal} situation+check screens (> 40 %)`);
+    rows.push(`${unit.padEnd(4)} n=${String(u.total).padStart(3)}  A/B/C/D=${u.slots.slice(0, 4).join("/")}  max ${Math.round(share * 100)}%${u.lenTotal ? `  longest-correct ${u.longest}/${u.lenTotal}` : ""}`);
+  }
+  console.log(`answer-slot balance (${items.length} multiple-choice items):\n  ` + rows.join("\n  "));
+}
 console.log(`${checks} stages checked across ${UNITS.length} units — ${errors} error(s).`);
 process.exit(errors ? 1 : 0);

@@ -126,7 +126,14 @@ export type FlowScreen =
   | { kind: "reveal"; prompt: string; hotspot: Hotspot; visual?: FlowVisual; src: string[] }
   | { kind: "check"; q: string; options: string[]; answer: number; why: string[]; hint?: string; concept: string; src: string[] }
   | { kind: "misconception"; claim: string; truth: string; visual?: { sim: string; params?: Vals }; src: string[] }
-  | { kind: "nudge"; sim: string; start?: Vals; ask: string; goal: (p: Vals, o: Vals) => boolean; after: string; src: string[] };
+  | { kind: "nudge"; sim: string; start?: Vals; ask: string; goal: (p: Vals, o: Vals) => boolean; after: string; src: string[] }
+  /**
+   * Role-based situation: you are someone on the job, a scene (≤ 40 words, framing may be invented) and
+   * optionally someone's claim (often the wrong belief). The fact that decides the answer must be sourced.
+   */
+  | { kind: "situation"; role: SituationRole; scene: string; claim?: string; claimBy?: string; options: string[]; answer: number; why: string[]; concept: string; visual?: FlowVisual; src: string[] };
+
+export type SituationRole = "Manager" | "Overman" | "Sirdar" | "Shotfirer" | "Ventilation Officer" | "Surveyor" | "Safety Officer" | "DGMS Inspector" | "Exam candidate";
 
 export type FlowKind = FlowScreen["kind"];
 

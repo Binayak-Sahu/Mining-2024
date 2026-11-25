@@ -217,6 +217,8 @@ export function Lines({ lines }: { lines: string[] }) {
 export interface MistakeOpts {
   /** false = record the miss for spaced repetition but keep the heart (a kind retry). */
   heart?: boolean;
+  /** ConceptFlow screen index: the miss is queued for review as that single screen (`lesson#stage@screen`). */
+  screen?: number;
 }
 
 export interface CardProps<S> {
@@ -225,6 +227,10 @@ export interface CardProps<S> {
   onDone: () => void;
   /** Fraction (0–1) of the current stage completed; fills the active lesson progress segment. Visual only. */
   onSubProgress?: (f: number) => void;
+  /** Stable item key `${lessonId}#${stageIndex}` — seeds the balanced option order. */
+  seed?: string;
+  /** Warmup: render only this ConceptFlow screen (a per-screen review item). */
+  screen?: number;
 }
 
 /**

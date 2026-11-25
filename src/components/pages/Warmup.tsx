@@ -19,6 +19,15 @@ interface Item {
   stage: Stage;
   srs: boolean;
   concept: string;
+  /** ConceptFlow screen to review on its own (per-screen SRS items). */
+  screen?: number;
+}
+
+/** First check screen of a flow — where legacy whole-stage SRS entries for a flow theory stage now point. */
+function firstCheck(st: Stage): number | undefined {
+  if (st.kind !== "theory" || !st.flow) return undefined;
+  const k = st.flow.findIndex((f) => f.kind === "check");
+  return k >= 0 ? k : 0;
 }
 
 const WARMUP_SIZE = 5;
@@ -33,7 +42,7 @@ function buildQueue(): Item[] {
   const items: Item[] = [];
   for (const d of due) {
     const st = getLesson(d.lessonId)?.stages[d.stageIndex];
-    if (st) items.push({ key: d.key, lessonId: d.lessonId, stageIndex: d.stageIndex, stage: st, srs: true, concept: d.concept });
+    if (st) items.push({ key: d.key, lessonId: d.lessonId, stageIndex: d.stageIndex, stage: st, srs: true, concept: d.concept, screen: d.screen ?? firstCheck(st) });
     if (items.length >= WARMUP_SIZE) break;
   }
   if (items.length < WARMUP_SIZE) {
@@ -73,9 +82,9 @@ export function Warmup() {
   const cur = queue?.[i];
 
   const onMistake = useCallback(
-    (concept: string) => {
+    (concept: string, opts?: { screen?: number }) => {
       setMissed(true);
-      if (cur && !cur.srs) useStrata.getState().recordMiss(cur.lessonId, cur.stageIndex, concept);
+      if (cur && !cur.srs) useStrata.getState().recordMiss(cur.lessonId, cur.stageIndex, concept, opts?.screen ?? cur.screen);
     },
     [cur],
   );
@@ -191,7 +200,7 @@ export function Warmup() {
       </div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={`${cur.key}-${i}`} initial={{ opacity: 0, x: 48 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -48 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-          <StageRenderer stage={cur.stage} onMistake={onMistake} onDone={onDone} />
+          <StageRenderer stage={cur.stage} onMistake={onMistake} onDone={onDone} seed={`${cur.lessonId}#${cur.stageIndex}`} screen={cur.screen} />
         </motion.div>
       </AnimatePresence>
     </div>

@@ -9,6 +9,8 @@ import { getSim } from "@/content";
 import { REFS } from "@/content/references";
 import { SimCanvas, SimView, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
+import { shuffleItem } from "@/lib/shuffle";
+import { SituationHeader } from "./Situation";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
 
 /** Source chip: opens a sheet with the reference title, author, publisher and link. */
@@ -72,36 +74,26 @@ function Visual({ stage, v }: { stage: TheoryStage; v?: FlowVisual }) {
   return <SimCanvas def={def} values={values} still focus={pins.map((h) => [h.x, h.y] as [number, number])} overlay={pins.length ? overlay : undefined} />;
 }
 
-/** Deterministic per-screen option order so the right answer isn't always in the same slot. */
-function order(n: number, seed: string): number[] {
-  let h = 2166136261;
-  for (let k = 0; k < seed.length; k++) h = Math.imul(h ^ seed.charCodeAt(k), 16777619);
-  const idx = Array.from({ length: n }, (_, k) => k);
-  for (let k = n - 1; k > 0; k--) {
-    h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
-    const j = h % (k + 1);
-    [idx[k], idx[j]] = [idx[j], idx[k]];
-  }
-  return idx;
-}
-
 type Phase = { pick: number | null; tried: number[]; verdict: "none" | "wrong" | "right"; revealed: boolean; met: boolean };
 const FRESH: Phase = { pick: null, tried: [], verdict: "none", revealed: false, met: false };
 
-export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardProps<TheoryStage>) {
+export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, screen }: CardProps<TheoryStage>) {
   const screens = stage.flow ?? [];
-  const total = screens.length + 1; // + summary
-  const [i, setI] = useState(0);
+  // Warmup review renders exactly one screen (a per-screen SRS item) and finishes after it.
+  const single = screen !== undefined && screen >= 0 && screen < screens.length;
+  const total = single ? 1 : screens.length + 1; // + summary
+  const [i, setI] = useState(single ? (screen as number) : 0);
   const [ph, setPh] = useState<Phase>(FRESH);
   const missed = useRef<Set<number>>(new Set());
   const [nudgeVals, setNudgeVals] = useState<Vals | null>(null);
   const revealBox = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    onSubProgress?.(i / total);
-  }, [i, total, onSubProgress]);
+    if (!single) onSubProgress?.(i / total);
+  }, [i, total, onSubProgress, single]);
 
   const next = () => {
+    if (single) return onDone();
     setPh(FRESH);
     setNudgeVals(null);
     setI((n) => Math.min(n + 1, screens.length));
@@ -109,24 +101,24 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
   };
 
   const raw: FlowScreen | null = i < screens.length ? screens[i] : null;
-  // Shuffle predict/check options (answer and reasons follow their option).
+  // Balanced deterministic option order (answer and reasons follow their option); key `${lesson}#${stage}@${screen}`.
   const s: FlowScreen | null = useMemo(() => {
-    if (!raw || (raw.kind !== "predict" && raw.kind !== "check")) return raw;
-    const o = order(raw.options.length, `${stage.title}#${i}`);
-    return { ...raw, options: o.map((k) => raw.options[k]), why: o.map((k) => raw.why[k]), answer: o.indexOf(raw.answer) };
-  }, [raw, stage.title, i]);
+    if (!raw || (raw.kind !== "predict" && raw.kind !== "check" && raw.kind !== "situation")) return raw;
+    const sh = shuffleItem(`${seed ?? stage.title}@${i}`, raw.options, raw.answer, raw.why);
+    return { ...raw, options: sh.options, why: sh.why as string[], answer: sh.answer };
+  }, [raw, stage.title, seed, i]);
 
   const nudgeDef = s?.kind === "nudge" ? getSim(s.sim) : null;
   const nudgeStart = useMemo(() => (s?.kind === "nudge" && nudgeDef ? defaults(nudgeDef, s.start) : null), [s, nudgeDef]);
 
   const check = () => {
-    if (!s || (s.kind !== "predict" && s.kind !== "check") || ph.pick === null) return;
+    if (!s || (s.kind !== "predict" && s.kind !== "check" && s.kind !== "situation") || ph.pick === null) return;
     if (ph.pick === s.answer) {
       setPh((p) => ({ ...p, verdict: "right" }));
     } else {
       if (!missed.current.has(i)) {
         missed.current.add(i);
-        onMistake(s.concept, { heart: false });
+        onMistake(s.concept, { heart: false, screen: i });
       }
       setPh((p) => ({ ...p, verdict: "wrong", tried: [...p.tried, p.pick as number] }));
     }
@@ -156,13 +148,17 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
         <BookMarked size={17} /> File to Codex
       </PrimaryButton>
     );
-  } else if (s.kind === "predict" || s.kind === "check") {
-    label = s.kind === "predict" ? "Predict first" : "Check yourself";
+  } else if (s.kind === "predict" || s.kind === "check" || s.kind === "situation") {
+    label = s.kind === "predict" ? "Predict first" : s.kind === "situation" ? "On the job" : "Check yourself";
     const done = ph.verdict === "right";
     body = (
       <div className="space-y-5">
         {s.kind === "predict" && s.visual && <Visual stage={stage} v={s.visual} />}
-        <p className="flow-q text-slate-900">{s.q}</p>
+        {s.kind === "situation" ? (
+          <SituationHeader role={s.role} scene={s.scene} claim={s.claim} claimBy={s.claimBy} visual={s.visual ? <Visual stage={stage} v={s.visual} /> : undefined} />
+        ) : (
+          <p className="flow-q text-slate-900">{s.q}</p>
+        )}
         <div className="grid gap-2.5" role="radiogroup">
           {s.options.map((o, k) => {
             const tried = ph.tried.includes(k);
@@ -188,8 +184,8 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
     );
     if (ph.verdict === "right")
       footer = (
-        <VerdictBar ok title={s.kind === "predict" && ph.tried.length === 0 ? "Good prediction" : "That's it"} why={s.why[s.answer]}>
-          <PrimaryButton tone="safe" onClick={next}>Continue</PrimaryButton>
+        <VerdictBar ok title={s.kind === "predict" && ph.tried.length === 0 ? "Good prediction" : s.kind === "situation" && ph.tried.length === 0 ? "Right call" : "That's it"} why={s.why[s.answer]}>
+          <PrimaryButton tone="safe" onClick={next}>{single ? "Done" : "Continue"}</PrimaryButton>
         </VerdictBar>
       );
     else if (ph.verdict === "wrong" && ph.pick !== null)
@@ -286,12 +282,18 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress }: CardPro
   }
 
   return (
-    <CardFrame kind="theory" title={stage.title} compact={i > 0} footer={footer} footerKey={`${i}-${ph.verdict}-${ph.revealed}-${ph.met}`}>
+    <CardFrame kind="theory" title={stage.title} compact={i > 0 && !single} footer={footer} footerKey={`${i}-${ph.verdict}-${ph.revealed}-${ph.met}`}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={i} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18, ease: "easeOut" }} className="space-y-5">
           <div className="flex items-center justify-between gap-3 -mt-1">
             <span className="text-[13px] font-semibold text-slate-600">
-              {label} · <span className="readout">{i + 1}/{total}</span>
+              {single ? "Review" : label}
+              {!single && (
+                <>
+                  {" "}
+                  · <span className="readout">{i + 1}/{total}</span>
+                </>
+              )}
             </span>
             {s && <SourceChip ids={s.src} />}
           </div>

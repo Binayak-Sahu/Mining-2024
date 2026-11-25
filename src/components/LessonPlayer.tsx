@@ -109,7 +109,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const failed = hearts <= 0;
 
   const onMistake = useCallback(
-    (concept: string, opts?: { heart?: boolean }) => {
+    (concept: string, opts?: { heart?: boolean; screen?: number }) => {
       const keepHeart = opts?.heart === false;
       if (!lesson) return;
       // QA flag (localStorage "strata-qa" = "1") keeps one heart so automated walkthroughs can traverse a whole lesson.
@@ -127,7 +127,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       recordAttempt();
       const s = useStrata.getState();
       if (!keepHeart) s.loseHeart();
-      s.recordMiss(lesson.id, index, concept);
+      s.recordMiss(lesson.id, index, concept, opts?.screen);
     },
     [lesson, index, recordAttempt],
   );
@@ -361,7 +361,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-            <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} />
+            <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} onSubProgress={setSub} seed={`${lesson.id}#${index}`} />
           </motion.div>
         </AnimatePresence>
       </div>

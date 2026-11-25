@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { shuffleItem } from "@/lib/shuffle";
 import type { PredictStage } from "@/lib/types";
 import { getSim } from "@/content";
 import { SimCanvas, Readouts, defaults } from "@/components/sim/SimView";
@@ -10,7 +11,12 @@ import { CardFrame, Feedback, PrimaryButton, optionClass, OptionKey, type CardPr
  * Predict-then-reveal. A first wrong pick shows why that option fails and allows one retry without
  * costing a heart; a second miss costs the heart and reveals the outcome.
  */
-export function PredictOutcomeCard({ stage, onMistake, onDone }: CardProps<PredictStage>) {
+export function PredictOutcomeCard({ stage: authored, onMistake, onDone, seed }: CardProps<PredictStage>) {
+  // Balanced, deterministic option order (content keeps its authored order); reasons follow their option.
+  const stage = useMemo(() => {
+    const sh = shuffleItem(seed ?? `predict:${authored.title}`, authored.options, authored.answer, authored.optionWhy);
+    return { ...authored, options: sh.options, answer: sh.answer, optionWhy: sh.why };
+  }, [authored, seed]);
   const [pick, setPick] = useState<number | null>(null);
   const [tried, setTried] = useState<number[]>([]);
   const [hint, setHint] = useState(false);

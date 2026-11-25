@@ -8,9 +8,11 @@ import { addDays, dayDiff, todayKey } from "./date";
 export const SRS_INTERVALS = [1, 2, 4, 7, 15, 30];
 
 export interface SrsItem {
-  key: string; // `${lessonId}#${stageIndex}`
+  key: string; // `${lessonId}#${stageIndex}` or, for a ConceptFlow screen, `${lessonId}#${stageIndex}@${screen}`
   lessonId: string;
   stageIndex: number;
+  /** ConceptFlow screen index (per-screen review items only; additive optional field, no version bump). */
+  screen?: number;
   concept: string;
   box: number;
   due: string; // YYYY-MM-DD
@@ -62,7 +64,7 @@ interface StrataState {
   completeLesson: (lessonId: string, hearts: number, xp: number) => void;
   unlockCodex: (entryId: string, lessonId: string) => void;
   unlockFormula: (entryId: string, lessonId: string) => void;
-  recordMiss: (lessonId: string, stageIndex: number, concept: string) => void;
+  recordMiss: (lessonId: string, stageIndex: number, concept: string, screen?: number) => void;
   reviewResult: (key: string, correct: boolean) => void;
   markWarmupDone: () => void;
   setFreeRoam: (v: boolean) => void;
@@ -140,8 +142,8 @@ export const useStrata = create<StrataState>()(
         set((s) => ({ formulas: { ...s.formulas, [entryId]: { unlockedAt: todayKey(), lessonId } } }));
       },
 
-      recordMiss: (lessonId, stageIndex, concept) => {
-        const key = `${lessonId}#${stageIndex}`;
+      recordMiss: (lessonId, stageIndex, concept, screen) => {
+        const key = screen === undefined ? `${lessonId}#${stageIndex}` : `${lessonId}#${stageIndex}@${screen}`;
         const day = todayKey();
         const prev = get().srs[key];
         set((s) => ({
@@ -151,6 +153,7 @@ export const useStrata = create<StrataState>()(
               key,
               lessonId,
               stageIndex,
+              ...(screen === undefined ? {} : { screen }),
               concept,
               box: 0,
               due: addDays(day, 1),
