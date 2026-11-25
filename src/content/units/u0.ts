@@ -1,4 +1,5 @@
 import type { Unit } from "@/lib/types";
+import { U0L1_FLOW } from "../flows/u0-l1";
 
 /** Orientation unit: one lesson touching all seven card engines on a single concept (σv = ρgH). */
 export const U0: Unit = {
@@ -40,6 +41,12 @@ export const U0: Unit = {
             formulas: [{ expr: "σv = ρ·g·H", meaning: "Vertical stress from overburden weight", vars: "ρ density kg/m³ · g 9.81 m/s² · H depth m" }],
             tags: ["rock mechanics", "orientation"],
           },
+          flow: U0L1_FLOW,
+          flowSummary: [
+            "Virgin vertical stress = unit weight × depth: about 27 MPa at 1000 m.",
+            "Horizontal stress = k × vertical stress. k is often high near the surface and should be measured wherever stresses matter.",
+            "Openings push load into the rock around them. Pillars carry their tributary share of the overburden.",
+          ],
         },
         {
           kind: "sim",
