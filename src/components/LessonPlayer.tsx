@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import confetti from "canvas-confetti";
+import { toast } from "sonner";
 import { X, Heart, BookMarked, RotateCcw, ArrowRight, ShieldAlert, Crown, Trophy, Zap, Map as MapIcon, KeyRound } from "lucide-react";
 import { getLesson, getUnit, UNITS } from "@/content";
 import { usePrefs } from "@/lib/prefs";
@@ -46,32 +48,21 @@ export function Hearts({ n, big = false }: { n: number; big?: boolean }) {
 
 const CONFETTI = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0EA5E9", "#F472B6"];
 
-function Confetti() {
-  const bits = useMemo(
-    () =>
-      Array.from({ length: 56 }, (_, i) => {
-        const r = (k: number) => {
-          const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
-          return x - Math.floor(x);
-        };
-        return { x: (r(1) - 0.5) * 720, y: -260 - r(2) * 240, rot: (r(3) - 0.5) * 900, w: 6 + r(4) * 8, h: 8 + r(5) * 10, c: CONFETTI[i % CONFETTI.length], d: r(6) * 0.25, round: r(7) > 0.6 };
-      }),
-    [],
-  );
-  return (
-    <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center overflow-hidden" aria-hidden>
-      {bits.map((b, i) => (
-        <motion.span
-          key={i}
-          className="absolute"
-          style={{ width: b.w, height: b.round ? b.w : b.h, background: b.c, borderRadius: b.round ? 999 : 2 }}
-          initial={{ x: 0, y: 80, opacity: 1, rotate: 0, scale: 0.6 }}
-          animate={{ x: [0, b.x * 0.6, b.x], y: [80, b.y, b.y + 900], rotate: b.rot, opacity: [1, 1, 0], scale: 1 }}
-          transition={{ duration: 2.6, delay: b.d, ease: [0.2, 0.7, 0.4, 1], times: [0, 0.35, 1] }}
-        />
-      ))}
-    </div>
-  );
+/** canvas-confetti celebration: a full emerald + amber burst for Boss Exams (unit cleared), a small one for lessons. */
+function celebrate(big: boolean) {
+  const colors = ["#10B981", "#34D399", "#047857", "#F59E0B", "#FBBF24"];
+  const base = { colors, disableForReducedMotion: true, ticks: 140, scalar: 0.95 };
+  if (!big) {
+    void confetti({ ...base, particleCount: 70, spread: 70, startVelocity: 38, origin: { y: 0.35 } });
+    return;
+  }
+  const end = Date.now() + 1500;
+  const frame = () => {
+    void confetti({ ...base, particleCount: 6, angle: 60, spread: 60, startVelocity: 55, origin: { x: 0, y: 0.6 } });
+    void confetti({ ...base, particleCount: 6, angle: 120, spread: 60, startVelocity: 55, origin: { x: 1, y: 0.6 } });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  };
+  frame();
 }
 
 export function LessonPlayer({ lessonId }: { lessonId: string }) {
@@ -87,10 +78,10 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const [mistakesTotal, setMistakesTotal] = useState(0);
   const [finished, setFinished] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
-  const [toast, setToast] = useState<string | null>(null);
   const [burst, setBurst] = useState<{ id: number; xp: number } | null>(null);
   const [jumped, setJumped] = useState(false);
   const [jumpSeq, setJumpSeq] = useState(0);
+  const [celebrated, setCelebrated] = useState(false);
   const started = useRef(-1);
 
   // Inspector Mode: a lesson opened only because Inspector unlocked it — or any run where the Stage
@@ -151,7 +142,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     if (stage.kind === "theory") {
       if (!sb && !s.codex[stage.codex.id]) {
         setUnlocked((u) => [...u, stage.codex.title]);
-        setToast(`Field Codex: “${stage.codex.title}” unlocked`);
+        toast.success(`Field Codex: “${stage.codex.title}” unlocked`, { icon: <BookMarked size={16} /> });
         filed = true;
       }
       if (!sb) s.unlockCodex(stage.codex.id, lesson.id);
@@ -160,7 +151,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       const id = `${lesson.id}#eq${index}`;
       if (!sb && !s.formulas[id]) {
         setUnlocked((u) => [...u, stage.formula.expr]);
-        setToast(`Verified formula filed: ${stage.formula.expr}`);
+        toast.success(`Verified formula filed: ${stage.formula.expr}`, { icon: <BookMarked size={16} /> });
         filed = true;
       }
       if (!sb) s.unlockFormula(id, lesson.id);
@@ -184,17 +175,19 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     setXp(total);
   }, [lesson, index, cardMistakes, xp, hearts, failed, recordAttempt]);
 
-  useEffect(() => {
-    if (!toast) return;
-    const id = setTimeout(() => setToast(null), 2800);
-    return () => clearTimeout(id);
-  }, [toast]);
 
   useEffect(() => {
     if (!burst) return;
     const id = setTimeout(() => setBurst(null), 1200);
     return () => clearTimeout(id);
   }, [burst]);
+
+  useEffect(() => {
+    if (finished && !celebrated && lesson) {
+      setCelebrated(true);
+      celebrate(!!lesson.boss);
+    }
+  }, [finished, celebrated, lesson]);
 
   const retry = () => {
     setAttempt((a) => a + 1);
@@ -243,7 +236,6 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     const acc = Math.max(0, Math.round(((stagesN - Math.min(stagesN, mistakesTotal)) / stagesN) * 100));
     return (
       <div className="min-h-[100dvh] flex flex-col">
-        <Confetti />
         <div className="flex-1 max-w-xl w-full mx-auto px-4 pt-10 sm:pt-16 pb-8 flex flex-col items-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 260, damping: 14, delay: 0.1 }} className="relative">
             <div className="absolute inset-0 rounded-full blur-2xl opacity-60" style={{ background: lesson.boss ? "#F59E0B" : "#10B981" }} />
@@ -314,11 +306,10 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   }
 
   const stage = lesson.stages[index];
-  const meta = STAGE_META[stage.kind];
 
   return (
     <div className="min-h-[100dvh]">
-      <div className="sticky top-0 z-20 bg-canvas/85 backdrop-blur-xl border-b border-slate-200/60 pt-[env(safe-area-inset-top)]">
+      <div className="sticky top-0 z-20 hairline-b surface-sticky pt-[env(safe-area-inset-top)]">
         <div className="max-w-2xl mx-auto px-2 sm:px-4 h-14 sm:h-16 flex items-center gap-2.5 sm:gap-3">
           <Link href={`/unit/${unit.id}`} aria-label="Exit lesson" className="-ml-1 flex items-center justify-center w-11 h-11 shrink-0 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100">
             <X size={24} strokeWidth={2.6} />
@@ -380,7 +371,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         </div>
 
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 340, damping: 32 }}>
+          <motion.div key={`${attempt}-${index}-${jumpSeq}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
             <StageRenderer stage={stage} onMistake={onMistake} onDone={onDone} />
           </motion.div>
         </AnimatePresence>
@@ -401,27 +392,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ y: -30, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -30, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 28 }}
-            className="fixed top-[64px] sm:top-[76px] left-1/2 -translate-x-1/2 z-40 rounded-2xl text-white px-4 py-2.5 text-[13px] font-bold flex items-center gap-2 max-w-[92vw]"
-            style={{ background: meta.color === "#8B5CF6" ? "#7C3AED" : "#2563EB", boxShadow: "0 4px 0 #1E3A8A, 0 16px 32px -12px rgba(30,58,138,0.6)" }}
-          >
-            <span className="relative shrink-0">
-              <BookMarked size={16} />
-              {Array.from({ length: 8 }).map((_, i) => {
-                const ang = (i / 8) * Math.PI * 2;
-                return <motion.span key={i} className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full bg-[#FDE68A]" initial={{ x: 0, y: 0, opacity: 1, scale: 1 }} animate={{ x: Math.cos(ang) * 18, y: Math.sin(ang) * 18, opacity: 0, scale: 0.4 }} transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }} />;
-              })}
-            </span>{" "}
-            <span className="truncate">{toast}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       <AnimatePresence>
         {failed && (

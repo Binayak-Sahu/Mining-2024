@@ -190,7 +190,7 @@ export function Warmup() {
         {getLesson(cur.lessonId)?.title}
       </div>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={`${cur.key}-${i}`} initial={{ opacity: 0, x: 48 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -48 }} transition={{ type: "spring", stiffness: 340, damping: 32 }}>
+        <motion.div key={`${cur.key}-${i}`} initial={{ opacity: 0, x: 48 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -48 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
           <StageRenderer stage={cur.stage} onMistake={onMistake} onDone={onDone} />
         </motion.div>
       </AnimatePresence>

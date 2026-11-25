@@ -293,7 +293,7 @@ export function Tools() {
                 <select
                   value={v[f.key]}
                   onChange={(e) => setVals((all) => ({ ...all, [id]: { ...all[id], [f.key]: Number(e.target.value) } }))}
-                  className="mt-1.5 w-full rounded-xl border-2 border-slate-200 px-3 py-2.5 text-[15px] font-semibold text-slate-900 bg-surface outline-none focus:border-blue-500"
+                  className="mt-1.5 w-full rounded-xl border border-slate-400 px-3 py-2.5 text-[15px] font-semibold text-slate-900 bg-surface outline-none focus:border-blue-500"
                 >
                   {f.options.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -307,7 +307,7 @@ export function Tools() {
                   aria-label={f.label}
                   value={raw[`${id}.${f.key}`] ?? String(v[f.key])}
                   onChange={(e) => setField(f.key, e.target.value)}
-                  className="readout mt-1.5 w-full rounded-xl border-2 border-slate-200 bg-surface px-3 py-2.5 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
+                  className="readout mt-1.5 w-full rounded-xl border border-slate-400 bg-surface px-3 py-2.5 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
                 />
               )}
             </label>

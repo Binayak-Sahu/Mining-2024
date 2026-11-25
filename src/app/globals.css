@@ -84,6 +84,9 @@
     0 22px 44px -22px rgba(15, 23, 42, 0.14);
   --shadow-pop: 0 0 0 1px rgba(15, 23, 42, 0.06), 0 12px 32px -8px rgba(15, 23, 42, 0.2), 0 32px 64px -32px rgba(15, 23, 42, 0.25);
   --edge-neutral: #d9dde3;
+  --hairline: rgba(15, 23, 42, 0.09);
+  --hairline-strong: rgba(15, 23, 42, 0.16);
+  --sticky-bg: rgba(247, 247, 245, 0.78);
 
   --n-50: #f8fafc;
   --n-100: #f1f5f9;
@@ -145,10 +148,13 @@
   --plate: #eef0ea;
   --plate-line: rgba(15, 23, 42, 0.06);
   --shadow-card:
-    inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 0 0 1px rgba(148, 163, 184, 0.09), 0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(148, 163, 184, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3),
     0 16px 40px -16px rgba(0, 0, 0, 0.7);
   --shadow-pop: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(148, 163, 184, 0.14), 0 24px 64px -16px rgba(0, 0, 0, 0.8);
   --edge-neutral: #070a12;
+  --hairline: rgba(148, 163, 184, 0.14);
+  --hairline-strong: rgba(148, 163, 184, 0.26);
+  --sticky-bg: rgba(11, 15, 25, 0.74);
 
   --n-50: #161d2d;
   --n-100: #1b2336;
@@ -216,6 +222,23 @@ body {
 }
 ::selection {
   background: rgba(59, 130, 246, 0.25);
+}
+
+/* ---------- Surface system utilities (Linear / Brilliant-style hairlines and glass bars) ---------- */
+@utility hairline {
+  border: 1px solid var(--hairline);
+}
+@utility hairline-b {
+  border-bottom: 1px solid var(--hairline);
+}
+@utility hairline-t {
+  border-top: 1px solid var(--hairline);
+}
+/* Translucent, blurred sticky bar (headers, tab bar, action drawer) */
+@utility surface-sticky {
+  background: var(--sticky-bg);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
 }
 
 /* Soft studio backdrop: a faint dot lattice with a warm top glow */
@@ -322,15 +345,15 @@ body {
   --c: var(--surface);
   --e: var(--edge-neutral);
   --t: var(--n-700);
-  border: 2px solid var(--n-200);
+  border: 1px solid var(--hairline-strong);
 }
 
 /* Chunky selectable tile (answer options, segmented picks) */
 .tile-3d {
   background: var(--surface);
-  border: 2px solid var(--n-200);
+  border: 1px solid var(--hairline-strong);
   border-radius: 1rem;
-  box-shadow: 0 3px 0 var(--n-200);
+  box-shadow: 0 3px 0 var(--hairline-strong);
   transition:
     transform 70ms ease,
     box-shadow 70ms ease,
@@ -342,12 +365,14 @@ body {
 }
 .tile-3d:active:not(:disabled) {
   transform: translateY(3px);
-  box-shadow: 0 0 0 var(--n-200);
+  box-shadow: 0 0 0 var(--hairline-strong);
 }
 .tile-3d[data-on="true"] {
   border-color: #3b82f6;
   background: var(--bl-50);
-  box-shadow: 0 3px 0 #3b82f6;
+  box-shadow:
+    inset 0 0 0 1px #3b82f6,
+    0 3px 0 #3b82f6;
 }
 
 /* Legacy press helper (still used by small inline buttons) */
@@ -617,5 +642,14 @@ svg[role="img"] {
   body:has(nav[aria-label="Primary"]) .action-bar {
     bottom: calc(76px + env(safe-area-inset-bottom));
     padding-bottom: 0;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

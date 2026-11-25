@@ -11,6 +11,8 @@ import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { setInspector } from "@/lib/inspector";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import type { ReactNode } from "react";
 
 const NAV = [
   { href: "/", label: "Path", Icon: Map, tint: "#3B82F6" },
@@ -49,6 +51,21 @@ export function Logo({ compact = false }: { compact?: boolean }) {
   );
 }
 
+/** Radix tooltip for icon-only header buttons (hover/focus on desktop). */
+function Tip({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <Tooltip.Root>
+      <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-[#0E1424] px-2.5 py-1.5 text-[12px] font-semibold text-[#F1F5F9] shadow-lg">
+          {label}
+          <Tooltip.Arrow className="fill-[#0E1424]" />
+        </Tooltip.Content>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  );
+}
+
 const THEME_NEXT: Record<ThemePref, ThemePref> = { system: "light", light: "dark", dark: "system" };
 
 export function ThemeToggle() {
@@ -59,11 +76,13 @@ export function ThemeToggle() {
   const Icon = t === "light" ? Sun : t === "dark" ? Moon : MonitorSmartphone;
   const label = t === "light" ? "Crisp Daylight" : t === "dark" ? "Underground Shift Mode" : "Match device theme";
   return (
-    <button type="button" onClick={() => setTheme(THEME_NEXT[t])} title={`Theme: ${label}`} aria-label={`Theme: ${label}. Tap to change.`} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+    <Tip label={`Theme: ${label}`}>
+      <button type="button" onClick={() => setTheme(THEME_NEXT[t])} aria-label={`Theme: ${label}. Tap to change.`} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
       <motion.span key={t} initial={{ rotate: -90, scale: 0.6, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }}>
         <Icon size={18} />
       </motion.span>
     </button>
+    </Tip>
   );
 }
 
@@ -74,14 +93,18 @@ export function InspectorBadge() {
   if (!hydrated) return null;
   if (!on)
     return (
-      <button type="button" onClick={() => setInspector(true)} title="Inspector Mode (Shift+M)" aria-label="Turn on Inspector Mode" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+      <Tip label={"Inspector Mode (Shift+M)"}>
+      <button type="button" onClick={() => setInspector(true)} aria-label="Turn on Inspector Mode" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100">
         <KeyRound size={17} />
       </button>
+    </Tip>
     );
   return (
-    <button type="button" onClick={() => setInspector(false)} title="Inspector Mode is on — tap to turn off (Shift+M)" aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 bg-amber-50">
+    <Tip label={"Inspector Mode is on — turn off (Shift+M)"}>
+      <button type="button" onClick={() => setInspector(false)} aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 bg-amber-50">
       <KeyRound size={18} />
     </button>
+    </Tip>
   );
 }
 
@@ -91,9 +114,11 @@ export function MuteToggle() {
   const toggle = usePrefs((s) => s.toggleMuted);
   const m = hydrated && muted;
   return (
-    <button type="button" onClick={toggle} data-silent="1" title={m ? "Sound off" : "Sound on"} aria-label={m ? "Unmute sound effects" : "Mute sound effects"} aria-pressed={m} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+    <Tip label={m ? "Sound off" : "Sound on"}>
+      <button type="button" onClick={toggle} data-silent="1" aria-label={m ? "Unmute sound effects" : "Mute sound effects"} aria-pressed={m} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
       {m ? <VolumeX size={18} /> : <Volume2 size={18} />}
     </button>
+    </Tip>
   );
 }
 
@@ -123,7 +148,7 @@ export function TopBar() {
   const st = hydrated ? liveStreak(streak, last) : 0;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-canvas/80 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-30 hairline-b surface-sticky pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-2 sm:gap-4">
         <Link href="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="STRATA home">
           <Logo />
@@ -152,9 +177,11 @@ export function TopBar() {
           <span className="hidden sm:inline-flex">
             <ThemeToggle />
           </span>
-          <Link href="/profile/#sync" title="Export / import progress" aria-label="Export or import progress" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+          <Tip label={"Export / import progress"}>
+      <Link href="/profile/#sync" aria-label="Export or import progress" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
             <ArrowLeftRight size={17} />
           </Link>
+    </Tip>
           <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-white text-[11px] font-black readout shadow-[0_2px_0_rgba(15,23,42,0.25)] ring-2 ring-surface">
             {["T", "OM", "AM", "2C", "1C"][index]}
           </Link>
@@ -171,7 +198,7 @@ export function BottomNav() {
   return (
     <>
       <div className="md:hidden h-[calc(76px+env(safe-area-inset-bottom))]" aria-hidden />
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-slate-200/70 bg-canvas/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]" aria-label="Primary">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 hairline-t surface-sticky pb-[env(safe-area-inset-bottom)]" aria-label="Primary">
         <div className="grid grid-cols-6 px-1.5 pt-1.5 pb-1">
           {NAV.map(({ href, label, Icon, tint }) => {
             const on = isOn(href, path);

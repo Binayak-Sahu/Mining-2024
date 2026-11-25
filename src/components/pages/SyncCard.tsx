@@ -3,12 +3,12 @@
 import { useRef, useState } from "react";
 import { Download, Upload, Smartphone } from "lucide-react";
 import { downloadProgress, importProgress } from "@/lib/sync";
+import { toast } from "sonner";
 
 /** Export / import progress JSON so XP, streaks, Codex unlocks and SRS move between PC and phone. */
 export function SyncCard() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"merge" | "replace">("merge");
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const onFile = async (f: File | undefined) => {
     if (!f) return;
@@ -16,9 +16,9 @@ export function SyncCard() {
       const text = await f.text();
       if (mode === "replace" && !window.confirm("Replace ALL progress on this device with the imported file?")) return;
       const r = importProgress(text, mode);
-      setMsg({ ok: true, text: `Imported (${mode}): ${r.xp} XP, ${r.lessons} lessons, ${r.codex} Codex sheets.` });
+      toast.success(`Imported (${mode}): ${r.xp} XP, ${r.lessons} lessons, ${r.codex} Codex sheets.`);
     } catch (e) {
-      setMsg({ ok: false, text: (e as Error).message });
+      toast.error((e as Error).message);
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
@@ -51,7 +51,6 @@ export function SyncCard() {
           Replace this device
         </label>
       </div>
-      {msg && <p className={`text-sm font-semibold ${msg.ok ? "text-emerald-700" : "text-red-600"}`}>{msg.text}</p>}
     </div>
   );
 }

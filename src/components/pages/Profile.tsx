@@ -10,6 +10,8 @@ import { addDays, todayKey } from "@/lib/date";
 import { allLessons, allCodex } from "@/content";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { SyncCard } from "./SyncCard";
+import * as Dialog from "@radix-ui/react-dialog";
+import { toast } from "sonner";
 import { setInspector } from "@/lib/inspector";
 import { KeyRound } from "lucide-react";
 
@@ -145,28 +147,40 @@ export function Profile() {
             <b className="text-slate-900">Free-roam mode</b> — unlock every lesson and boss exam (for revision before DGMS exams)
           </span>
         </label>
-        {!confirm ? (
-          <button type="button" onClick={() => setConfirm(true)} className="btn-press inline-flex items-center gap-2 rounded-xl border-2 border-red-300 px-4 py-2.5 text-[13px] font-bold text-red-600 hover:bg-red-50">
-            <Trash2 size={15} /> Reset all progress
-          </button>
-        ) : (
-          <div className="flex flex-wrap items-center gap-2 text-sm rounded-xl bg-red-50 p-3">
-            <span className="text-red-700 font-bold flex-1 min-w-[200px]">Erase XP, streaks, codex and SRS queue?</span>
-            <button
-              type="button"
-              onClick={() => {
-                s.resetAll();
-                setConfirm(false);
-              }}
-              className="btn-3d tone-crit px-4 py-2 text-[12px]"
-            >
-              Erase
+        <Dialog.Root open={confirm} onOpenChange={setConfirm}>
+          <Dialog.Trigger asChild>
+            <button type="button" className="btn-press inline-flex items-center gap-2 rounded-xl border border-red-300 px-4 py-2.5 text-[13px] font-bold text-red-700 hover:bg-red-50">
+              <Trash2 size={15} /> Reset all progress
             </button>
-            <button type="button" onClick={() => setConfirm(false)} className="btn-3d tone-ghost px-4 py-2 text-[12px]">
-              Cancel
-            </button>
-          </div>
-        )}
+          </Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px] data-[state=open]:animate-[fadein_160ms_ease-out]" />
+            <Dialog.Content className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,420px)] card card-pop p-6 space-y-4 focus:outline-none">
+              <Dialog.Title className="text-[19px] font-extrabold text-slate-900">Erase all progress?</Dialog.Title>
+              <Dialog.Description className="text-[14px] text-slate-600 leading-relaxed">
+                XP, streaks, completed lessons, Field Codex unlocks, exam history and the review queue on this device will be deleted. Export your progress first if you want a backup.
+              </Dialog.Description>
+              <div className="flex gap-3 pt-1">
+                <Dialog.Close asChild>
+                  <button type="button" className="btn-3d tone-ghost flex-1 py-3 text-[12.5px]">
+                    Cancel
+                  </button>
+                </Dialog.Close>
+                <button
+                  type="button"
+                  onClick={() => {
+                    s.resetAll();
+                    setConfirm(false);
+                    toast("Progress erased");
+                  }}
+                  className="btn-3d tone-crit flex-1 py-3 text-[12.5px]"
+                >
+                  Erase
+                </button>
+              </div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
       </div>
 
       <div className="rounded-2xl bg-amber-50 p-4 text-[12.5px] text-slate-600 flex gap-3 leading-relaxed shadow-[inset_0_0_0_1.5px_#F59E0B33]">

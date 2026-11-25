@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Siren, Timer } from "lucide-react";
 import type { CrisisStage } from "@/lib/types";
 import { toneColor } from "@/components/sim/svg";
-import { CardFrame, Feedback, PrimaryButton, optionClass, type CardProps } from "./ui";
+import { CardFrame, Feedback, Lines, PrimaryButton, optionClass, type CardProps } from "./ui";
 
 export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisStage>) {
   const [phase, setPhase] = useState(0);
@@ -16,6 +16,11 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
   const finished = phase >= stage.phases.length;
   const onMistakeRef = useRef(onMistake);
   onMistakeRef.current = onMistake;
+  const promptRef = useRef<HTMLDivElement>(null);
+  // Each new decision scrolls its prompt to the top so the options sit on screen above the action bar.
+  useEffect(() => {
+    if (started && !finished && phase > 0) promptRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [phase, started, finished]);
 
   useEffect(() => {
     if (!started || finished || timedOut) return;
@@ -53,7 +58,36 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
   };
 
   return (
-    <CardFrame kind="crisis" title={stage.title} footer={finished && <PrimaryButton onClick={onDone}>Debrief complete — Continue</PrimaryButton>}>
+    <CardFrame
+      kind="crisis"
+      title={stage.title}
+      footer={
+        finished ? (
+          <PrimaryButton onClick={onDone}>Debrief complete — Continue</PrimaryButton>
+        ) : (
+          // Thumb-zone decision bar: which decision, the clock, and the primary action.
+          <div className="flex items-center gap-3">
+            <div className="shrink-0 leading-tight">
+              <div className="readout text-[12px] font-extrabold text-red-700">
+                Decision {phase + 1}/{stage.phases.length}
+              </div>
+              <div className={`readout text-[15px] font-extrabold flex items-center gap-1 ${left <= 10 ? "text-red-700" : "text-slate-800"}`}>
+                <Timer size={14} /> {left}s
+              </div>
+            </div>
+            <PrimaryButton
+              disabled={pick === null}
+              onClick={() => {
+                setPhase((p) => p + 1);
+                setPick(null);
+              }}
+            >
+              {pick === null ? "Choose an action above" : phase + 1 < stage.phases.length ? "Next decision" : "Stand down & debrief"}
+            </PrimaryButton>
+          </div>
+        )
+      }
+    >
       <div className={`${finished ? "bg-[#1E293B]" : "alarm-flash"} rounded-2xl text-white px-4 py-3 flex items-center justify-between font-extrabold text-sm`}>
         <span className="flex items-center gap-2">
           <Siren size={16} /> {stage.alarm}
@@ -77,7 +111,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
           ))}
         </div>
       )}
-      <p className="text-sm leading-snug text-slate-700">{stage.scenario}</p>
+      <Lines lines={[stage.scenario]} />
       {timedOut && !finished && (
         <Feedback show ok={false} title="Response window lapsed — heart lost">
           Hazards escalate while you deliberate. Finish the sequence to learn the correct response.
@@ -85,7 +119,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
       )}
 
       {!finished ? (
-        <div className="space-y-2">
+        <div ref={promptRef} className="space-y-2 scroll-mt-20">
           <div className="text-[13px] font-extrabold text-red-600">
             {cur.label} · {phase + 1}/{stage.phases.length}
           </div>
@@ -106,16 +140,7 @@ export function ShiftCrisisCard({ stage, onMistake, onDone }: CardProps<CrisisSt
               );
             })}
           </div>
-          {pick !== null && (
-            <PrimaryButton
-              onClick={() => {
-                setPhase((p) => p + 1);
-                setPick(null);
-              }}
-            >
-              {phase + 1 < stage.phases.length ? "Next decision" : "Stand down & debrief"}
-            </PrimaryButton>
-          )}
+
         </div>
       ) : (
         <Feedback show ok title="Shift debrief">

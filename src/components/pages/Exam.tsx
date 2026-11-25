@@ -321,7 +321,7 @@ export function Exam() {
                 value={r ?? ""}
                 onChange={(e) => setResp((p) => ({ ...p, [i]: e.target.value }))}
                 placeholder="number or expression"
-                className="readout flex-1 min-w-0 rounded-xl border-2 border-slate-300 bg-surface px-3 py-3 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
+                className="readout flex-1 min-w-0 rounded-xl border border-slate-400 bg-surface px-3 py-3 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
               />
               <span className="readout text-sm text-slate-600">{q.unit}</span>
             </div>

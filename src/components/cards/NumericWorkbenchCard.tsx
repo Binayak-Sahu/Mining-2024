@@ -65,7 +65,54 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
   const def = stage.sim ? getSim(stage.sim) : null;
 
   return (
-    <CardFrame kind="numeric" title={stage.title} footer={done && <PrimaryButton onClick={onDone} tone="safe">Calculation signed off — Continue</PrimaryButton>}>
+    <CardFrame
+      kind="numeric"
+      title={stage.title}
+      footer={
+        done ? (
+          <PrimaryButton onClick={onDone} tone="safe">
+            Calculation signed off — Continue
+          </PrimaryButton>
+        ) : (
+          // Thumb-zone step bar: step indicator, the active answer field and the primary action stay on screen.
+          <div className="space-y-2">
+            <div className="flex items-baseline gap-2 text-[13px] leading-snug">
+              <span className="readout shrink-0 rounded-md bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[11.5px] font-extrabold">
+                Step {step + 1}/{stage.steps.length}
+              </span>
+              <span className="font-semibold text-slate-800 line-clamp-2">{cur.prompt}</span>
+            </div>
+            <div className="flex gap-2 items-stretch">
+              <label className="flex-1 min-w-0 flex items-center rounded-xl border border-slate-400 bg-surface focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/30">
+                <input
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    if (state === "wrong") setState("idle");
+                  }}
+                  onKeyDown={(e) => e.key === "Enter" && state !== "right" && state !== "revealed" && input && check()}
+                  disabled={state === "right" || state === "revealed"}
+                  placeholder="answer"
+                  aria-label={`Answer for step ${step + 1}`}
+                  inputMode="decimal"
+                  className="readout flex-1 min-w-0 bg-transparent px-3 py-2.5 text-[16px] font-bold text-slate-900 outline-none"
+                />
+                <span className="readout pr-3 text-[13px] text-slate-600 shrink-0">{cur.unit}</span>
+              </label>
+              {state === "right" || state === "revealed" ? (
+                <PrimaryButton onClick={next} tone={state === "right" ? "safe" : "ink"} className="!w-auto shrink-0 px-5">
+                  Next step
+                </PrimaryButton>
+              ) : (
+                <PrimaryButton onClick={check} disabled={!input} tone="hazard" className="!w-auto shrink-0 px-5">
+                  Check
+                </PrimaryButton>
+              )}
+            </div>
+          </div>
+        )
+      }
+    >
       <p className="text-[16px] leading-relaxed text-slate-700">{stage.problem}</p>
       {def && <SimCanvas def={def} values={defaults(def, stage.params)} />}
 
@@ -128,34 +175,10 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
       )}
 
       {!done && (
-        <div className="rounded-2xl border-2 border-amber-400 bg-amber-50/40 p-3.5 space-y-3">
+        <div className="rounded-2xl hairline bg-amber-50/40 p-3.5 space-y-3">
           <div className="text-sm font-semibold text-slate-900">
             Step {step + 1}/{stage.steps.length}: {cur.prompt}
           </div>
-          <div className="flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                if (state === "wrong") setState("idle");
-              }}
-              onKeyDown={(e) => e.key === "Enter" && state !== "right" && state !== "revealed" && input && check()}
-              disabled={state === "right" || state === "revealed"}
-              placeholder="answer"
-              inputMode="decimal"
-              className="readout flex-1 min-w-0 rounded-xl border-2 border-slate-300 bg-surface px-3 py-2.5 text-[16px] font-bold outline-none focus:border-amber-500"
-            />
-            <span className="readout self-center text-sm text-slate-600 shrink-0">{cur.unit}</span>
-          </div>
-          {state === "right" || state === "revealed" ? (
-            <PrimaryButton onClick={next} tone={state === "right" ? "safe" : "ink"}>
-              Next step
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton onClick={check} disabled={!input} tone="hazard">
-              Check
-            </PrimaryButton>
-          )}
           <Feedback show={state === "wrong"} ok={false} title="Not within tolerance — one more try">
             Hint: {cur.hint}
           </Feedback>

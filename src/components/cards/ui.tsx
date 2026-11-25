@@ -45,18 +45,28 @@ export function CardFrame({ kind, title, children, footer }: { kind: StageKind; 
 /** Fixed bottom action drawer; animates in whenever its content appears. */
 export function ActionBar({ children }: { children?: ReactNode }) {
   const has = !!children;
+  const bar = useRef<HTMLDivElement>(null);
+  const [h, setH] = useState(112);
+  useEffect(() => {
+    const el = bar.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setH(Math.max(112, Math.ceil(el.getBoundingClientRect().height) + 16)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [has]);
   return (
     <>
-      <div className="h-28" aria-hidden />
+      <div style={{ height: h }} aria-hidden />
       <AnimatePresence>
         {has && (
           <motion.div
             key="bar"
+            ref={bar}
             initial={{ y: 120, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 34 }}
-            className="action-bar fixed inset-x-0 bottom-0 z-30 border-t border-slate-200/80 bg-canvas/85 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]"
+            transition={{ type: "spring", stiffness: 420, damping: 32 }}
+            className="action-bar fixed inset-x-0 bottom-0 z-30 hairline-t surface-sticky pb-[env(safe-area-inset-bottom)]"
           >
             <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3">{children}</div>
           </motion.div>

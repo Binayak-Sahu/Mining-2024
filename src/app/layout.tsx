@@ -4,6 +4,7 @@ import { TopBar, BottomNav } from "@/components/shell/TopBar";
 import { PwaRegister } from "@/components/shell/PwaRegister";
 import { ClientEffects } from "@/components/shell/ClientEffects";
 import { AppToaster } from "@/components/shell/AppToaster";
+import { Providers } from "@/components/shell/Providers";
 import { SvgDefs } from "@/components/sim/defs";
 import { THEME_BOOT } from "@/lib/prefs";
 
@@ -33,13 +34,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen studio-bg" suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        <Providers>
         <SvgDefs />
         <TopBar />
         <main>{children}</main>
         <BottomNav />
         <PwaRegister />
         <ClientEffects />
-        <AppToaster />
+          <AppToaster />
+        </Providers>
       </body>
     </html>
   );
