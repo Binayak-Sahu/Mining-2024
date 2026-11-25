@@ -92,9 +92,11 @@ export const U7L1_FLOW: FlowScreen[] = [
     kind: "nudge",
     sim: "u7-coward",
     start: { ch4: 24, o2: 15.9 },
-    ask: "A rich pocket at 24 % meets fresh air. Drag methane down. Does it stay safe?",
+    ask: "A rich pocket at 24 % meets fresh air. Drag methane down: oxygen rises with it. Does it stay safe?",
     goal: (_p, o) => o.zone === 1,
-    after: "Inside 5–15 % with enough oxygen, it can explode. In a real airway, air lowers the methane and raises the oxygen together.",
+    // Mixing with fresh air moves the point along the air-dilution line: O₂ = 20.93 × (1 − CH₄/100).
+    couple: (p) => ({ ...p, o2: Math.round(209.3 * (1 - p.ch4 / 100)) / 10 }),
+    after: "Fresh air lowered the methane and raised the oxygen together, along the air-dilution line, and carried the pocket straight into the explosive window.",
     src: ["niosh-ic9486-ch1"],
   },
   {

@@ -126,7 +126,8 @@ export type FlowScreen =
   | { kind: "reveal"; prompt: string; hotspot: Hotspot; visual?: FlowVisual; src: string[] }
   | { kind: "check"; q: string; options: string[]; answer: number; why: string[]; hint?: string; concept: string; src: string[] }
   | { kind: "misconception"; claim: string; truth: string; visual?: { sim: string; params?: Vals }; src: string[] }
-  | { kind: "nudge"; sim: string; start?: Vals; ask: string; goal: (p: Vals, o: Vals) => boolean; after: string; src: string[] }
+  /** `couple` maps every change to a constrained state (e.g. O₂ tied to CH₄ along the air-dilution line). */
+  | { kind: "nudge"; sim: string; start?: Vals; ask: string; goal: (p: Vals, o: Vals) => boolean; couple?: (p: Vals) => Vals; after: string; src: string[] }
   /**
    * Role-based situation: you are someone on the job, a scene (≤ 40 words, framing may be invented) and
    * optionally someone's claim (often the wrong belief). The fact that decides the answer must be sourced.

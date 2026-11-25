@@ -269,7 +269,8 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
         <SimView
           def={nudgeDef}
           values={vals}
-          onChange={(v) => {
+          onChange={(raw) => {
+            const v = s.couple ? s.couple(raw) : raw;
             setNudgeVals(v);
             if (s.goal(v, nudgeDef.compute(v))) setPh((p) => ({ ...p, met: true }));
           }}

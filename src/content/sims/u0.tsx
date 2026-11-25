@@ -49,21 +49,28 @@ export const overburden: SimDef = {
         <Txt x={230} y={40} size={11} weight={700}>
           σv = ρ·g·H
         </Txt>
-        <Txt x={230} y={58} size={10} mono>
-          {`= ${p.rho.toFixed(2)}×9.81×${p.H}`}
-        </Txt>
+        {/* Predict stages pass __predicting = 1 before the reveal: hide the working that gives the answer away. */}
+        {p.__predicting !== 1 && (
+          <Txt x={230} y={58} size={10} mono>
+            {`= ${p.rho.toFixed(2)}×9.81×${p.H}`}
+          </Txt>
+        )}
         <Txt x={230} y={78} size={15} weight={800} mono fill={o.sv > 20 ? C.crit : C.ink}>
           {`${o.sv.toFixed(2)} MPa`}
         </Txt>
-        <Txt x={230} y={104} size={9} fill={C.slate}>
-          Rule of thumb: ≈ 0.025 MPa per metre
-        </Txt>
-        <Txt x={230} y={118} size={9} fill={C.slate}>
-          (2.5 t/m³ rock). Pillars, roof bolts
-        </Txt>
-        <Txt x={230} y={132} size={9} fill={C.slate}>
-          and shaft linings all start here.
-        </Txt>
+        {p.__predicting !== 1 && (
+          <>
+            <Txt x={230} y={104} size={9} fill={C.slate}>
+              Rule of thumb: ≈ 0.025 MPa per metre
+            </Txt>
+            <Txt x={230} y={118} size={9} fill={C.slate}>
+              (2.5 t/m³ rock). Pillars, roof bolts
+            </Txt>
+            <Txt x={230} y={132} size={9} fill={C.slate}>
+              and shaft linings all start here.
+            </Txt>
+          </>
+        )}
       </g>
     );
   },

@@ -214,14 +214,16 @@ export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
         const tone = o.tone ? o.tone(v, out, values) : "info";
         const text = o.format ? o.format(v, out, values) : fmt(v, o.digits ?? 2);
         const col = tone === "info" ? "#93C5FD" : toneColor(tone);
+        // Text on the dark strip uses lighter tints so warning/critical words stay ≥ AA.
+        const txt = tone === "info" ? "#F1F5F9" : tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : col;
         return (
-          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-[132px] sm:min-w-0 shrink-0 sm:shrink">
-            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight truncate" title={o.label}>
+          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-[150px] max-w-[190px] sm:max-w-none sm:min-w-0 shrink-0 sm:shrink">
+            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight line-clamp-2" title={o.label}>
               {o.label}
             </div>
             <div className="readout text-[14px] font-bold flex items-center gap-1.5 mt-0.5 text-[#F1F5F9] min-w-0">
               <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />
-              <span className="truncate" style={{ color: tone === "info" ? "#F1F5F9" : col }}>
+              <span className="line-clamp-2 break-words leading-tight" style={{ color: txt }}>
                 {o.format ? text : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
               </span>
               {o.unit && !o.format && <span className="text-[#8B97AE] font-medium text-[11px] shrink-0">{o.unit}</span>}

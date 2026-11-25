@@ -47,7 +47,9 @@ function checkFlow(at: string, flow: FlowScreen[], checkSim: (id: string, o?: Va
     if ("visual" in f && f.visual?.sim) checkSim(f.visual.sim, f.visual.params);
     if (f.kind === "nudge") {
       const def = checkSim(f.sim, f.start);
-      if (def && !reachable(def, f.goal, defaults(def, f.start))) fail(`${w}: nudge goal unreachable`);
+      const couple = f.couple;
+      const test = couple ? (p: Vals) => { const q = couple(p); return f.goal(q, def!.compute(q)); } : f.goal;
+      if (def && !reachable(def, test, defaults(def, f.start))) fail(`${w}: nudge goal unreachable`);
     }
     if (f.kind === "reveal" && (f.hotspot.x < 0 || f.hotspot.x > 400 || f.hotspot.y < 0 || f.hotspot.y > 240)) fail(`${w}: reveal hotspot out of bounds`);
   });

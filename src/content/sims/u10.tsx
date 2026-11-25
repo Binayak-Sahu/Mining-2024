@@ -142,8 +142,10 @@ const CONTROLS = [
 
 export function risk(p: Record<string, number>) {
   const c = CONTROLS[p.ctrl];
-  const L2 = Math.max(1, p.L - c.dL);
-  const C2 = Math.max(1, p.C - c.dC);
+  // Elimination removes the hazard itself: nothing left to rate, so residual risk falls to the floor (1).
+  const elim = c.name === "Elimination";
+  const L2 = elim ? 1 : Math.max(1, p.L - c.dL);
+  const C2 = elim ? 1 : Math.max(1, p.C - c.dC);
   const band = (r: number) => (r <= 4 ? 0 : r <= 9 ? 1 : r <= 16 ? 2 : 3);
   return { inh: p.L * p.C, res: L2 * C2, L2, C2, bi: band(p.L * p.C), br: band(L2 * C2) };
 }

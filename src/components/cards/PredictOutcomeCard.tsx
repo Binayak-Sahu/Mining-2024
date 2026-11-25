@@ -23,7 +23,8 @@ export function PredictOutcomeCard({ stage: authored, onMistake, onDone, seed }:
   const [sel, setSel] = useState<number | null>(null);
   const def = stage.sim ? getSim(stage.sim) : null;
   const revealed = pick !== null;
-  const values = def ? defaults(def, revealed ? { ...stage.before, ...stage.after } : stage.before) : {};
+  // `__predicting` lets a sim hide annotations that would give the answer away until the reveal.
+  const values = def ? defaults(def, revealed ? { ...stage.before, ...stage.after } : { ...stage.before, __predicting: 1 }) : {};
 
   const choose = (i: number | null) => {
     if (i === null || revealed || tried.includes(i)) return;
