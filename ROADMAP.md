@@ -28,12 +28,14 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 | 20 | Maintenance | planned |
 
 ### 14 — Trust, pacing & situations
-- 14.0 CLAUDE.md, ROADMAP, reviewer agents, sourced-flow skill.
-- 14.1 Answer shuffling for predict and crisis stages (deterministic seed), a slot-balance validator rule, and per-screen Warmup review for ConceptFlow misses.
-- 14.2 Situation screens (role badge, scene, speech-bubble claim) with validator rules; one situation each in u7-l1, u0-l1 and u10-l3.
-- 14.3 Theory-first mode (Bonus maths) and lesson resume.
-- 14.4 Phone-testing kit (Report button, FPS meter, build version, Sound test in production), `navigator.storage.persist()` and a weekly backup nudge.
-- 14.5 (optional) Deferred sim fixes: label font floor, two-line readouts, O₂ coupled to CH₄ in the Coward nudge, elimination → near-zero residual in `u10-risk`, u0 predict rule-of-thumb hidden until reveal.
+- [x] 14.0 CLAUDE.md, ROADMAP, reviewer agents, sourced-flow skill.
+- [x] 14.1 Answer shuffling. Predict stages, every crisis phase and every flow screen use a balanced, deterministic order. The validator rule allows at most 40 % of correct answers in one slot per unit; current max is 33 %. Warmup reviews ConceptFlow misses one screen at a time.
+- [x] 14.2 Situation screens with validator rules; one situation each in u7-l1 (Ventilation Officer), u0-l1 (Manager) and u10-l3 (Safety Officer). Fact-checked: 0 unsupported, 5 partly-supported whys rewritten.
+- [x] 14.3 Theory-first mode (Bonus maths) and lesson resume.
+- [x] 14.4 Phone-testing kit (Report button, FPS meter, build version, Sound test in production), `navigator.storage.persist()` and a weekly backup nudge.
+- [~] 14.5 Deferred sim fixes.
+  - Done: two-line readouts, O₂ coupled to CH₄ in the Coward nudge, elimination → floor residual in `u10-risk`, u0 predict working hidden until reveal.
+  - **Not done:** the 11-unit label font floor. Tried and reverted: 277 clipped labels, and still 60 at a 9-unit floor. It needs per-sim layout work, so it moves to Phase 19.
 
 ### 15 — Sources & coverage map
 The owner places these in `sources/`:
@@ -74,6 +76,7 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 
 ### 19 — Real-phone polish
 - Fixes from the owner's Report exports.
+- Sim label font floor (11 viewBox units) via per-sim layout work, carried over from 14.5; audit:svg must stay at 0.
 - Performance budget: precache ≤ 10 MB.
 - Sound decision: keep the synth or move to a CC0 pack.
 - Final reviewer sweep.

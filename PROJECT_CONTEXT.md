@@ -120,11 +120,31 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
     - an explain screen over 45 words
     - a flow that doesn't open with a predict, or lacks a misconception or two checks
     - an unreachable nudge goal
-  - Flows never feed the exam pool. Options are shuffled per screen with a fixed seed.
+  - **Situation screens** (Phase 14): `{ kind: "situation", role, scene (≤ 40 words), claim?, claimBy?, options, answer, why[], concept, visual?, src }`.
+    - `role` is one of: Manager, Overman, Sirdar, Shotfirer, Ventilation Officer, Surveyor, Safety Officer, DGMS Inspector, Exam candidate.
+    - The scene may be invented framing, but the fact that decides the answer must be sourced.
+    - Rendered by `cards/Situation.tsx`: a role badge, an animated vignette or focused sim, and the claim in a speech bubble.
+  - Nudge screens may carry `couple(p)` to constrain movement, e.g. O₂ tied to CH₄ along the air-dilution line.
+  - Flows never feed the exam pool.
+- **Balanced option order** (`src/lib/shuffle.ts`, Phase 14): content keeps its authored option order. Every multiple-choice item is displayed in a deterministic order derived from its key:
+  - `lesson#stage` for legacy predict;
+  - `lesson#stage#phase` for each crisis decision;
+  - `lesson#stage@screen` for flow predict, check and situation screens.
+
+  Within each unit the correct option goes to the least-used slot. The validator prints the per-unit balance and fails if any slot holds more than 40 %, or if the correct option is the longest in more than 40 % of a unit's situation and check screens.
+- **Validator flow rules** now also require ≥ 1 situation per flow, matching `why`/options counts on situations, and a scene of ≤ 40 words.
 
 ### 6.2 State and persistence
 - **Progress store** — `localStorage["strata-progress-v1"]`, zustand `persist` **version 2** with `migrateState` (re-indexes SRS/formula keys for six lessons that gained a stage in Phase 6). Holds xp, xpByDay, streak, longestStreak, lastActiveDay, heartsLost, lessons, attempts, codex, formulas, srs, warmupDoneDay, exams (last 30), freeRoam.
-- **Prefs store** — `localStorage["strata-prefs"]` (version 1): `theme` (system/light/dark), `muted`, `masterUnlock`. Device-local; **never exported**.
+- **Prefs store** — `localStorage["strata-prefs"]` (version 1): `theme` (system/light/dark), `muted`, `masterUnlock`, `theoryFirst` (default **on**). Device-local; **never exported**.
+- **Other device-local stores (Phase 14; never in progress, export or sync):**
+  - `strata-resume`: `{ at: { [lessonId]: { index, t } } }`, the last stage per lesson, which powers "Continue from stage N".
+  - `strata-reports`: Inspector phone-testing reports plus the FPS toggle.
+  - `strata-storage-persist` and `strata-backup-nudge`: flag keys for `navigator.storage.persist()` and the weekly backup toast.
+- **Per-screen review:**
+  - A ConceptFlow miss is queued as `lesson#stage@screen`, using an optional `SrsItem.screen` field (additive, no version bump).
+  - Warmup renders only that screen (`StageRenderer screen=`).
+  - Older whole-stage entries for a flow stage open its first check screen.
 - **Export/import** (`src/lib/sync.ts`, Profile → Sync card or header ⇄): file `{ app: "strata", schema: 2, exportedAt, data }`; import validates, migrates and either **replaces** or **merges** (union of unlocks, best lesson records, max counters); malformed files are rejected with a toast.
 - **QA flag:** `localStorage["strata-qa"] = "1"` keeps one heart so automated walkthroughs can traverse lessons.
 
@@ -134,7 +154,17 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 - **Sandbox rule:** a run writes nothing to progress if the lesson is open only because of Inspector Mode, or once the Stage Jumper is used. A lesson's attempt is recorded on the first real answer, never on open. Verified: progress stays byte-identical after Inspector play.
 
 ### 6.4 Lesson runtime
-`LessonPlayer` owns hearts, local XP, transitions (framer spring 420/32), the XP burst, sonner unlock toasts, out-of-hearts drawer, completion screen (canvas-confetti; full two-sided burst for Boss Exams) and all progress writes. Cards are pure: they call `onMistake(concept, {heart?})` (`heart: false` records the miss without costing a heart), `onDone()` and the optional visual-only `onSubProgress(f)`. Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
+`LessonPlayer` owns hearts, local XP, transitions (framer spring 420/32), the XP burst, sonner unlock toasts, out-of-hearts drawer, completion screen (canvas-confetti; full two-sided burst for Boss Exams) and all progress writes. Cards are pure:
+- They call `onMistake(concept, {heart?, screen?})`. `heart: false` records the miss without costing a heart; `screen` makes it a per-screen review item.
+- They call `onDone()` and the optional, visual-only `onSubProgress(f)`.
+- They receive `seed` (`lesson#stage`) for the balanced option order.
+
+**Theory-first mode** (on by default):
+- Equation and Numeric stages render as a collapsed `BonusCard` ("Bonus maths · optional", open or "Skip for now"). Skipping never blocks completion; doing them still earns XP and files formulas.
+- The exam pool is unchanged.
+- Reopening a lesson mid-way offers to resume.
+
+**Inspector phone kit:** a floating Report button (saves route, lesson/stage/screen, viewport, user agent and build) and an FPS meter. Profile can export reports as JSON, open the Sound test (now available in production) and shows the build stamp (`NEXT_PUBLIC_BUILD`, git short hash + date, injected in `next.config.ts`). Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
 
 ### 6.5 Design system ("Tactile Engineering Studio")
 - Light **Crisp Daylight** (canvas `#F7F7F5`) and dark **Underground Shift Mode** (`#0B0F19`). UI is authored in light-mode semantics; `.dark` on `<html>` remaps the `slate-*` ramp and accent tints through CSS variables. A no-flash theme boot script runs at the start of `<body>`.
@@ -194,6 +224,7 @@ npm start            # serve out/ locally (respects NEXT_PUBLIC_BASE_PATH)
 | 11 | Story hooks for all 55 briefings, 198 per-option explanations, equation diagnosis, in-canvas objectives + Sim Lab challenges, drag tooltip, header declutter, micro-delight |
 | 12 | Inspector Mode (sandboxed master unlock), studio Web Audio engine, UI craft (sonner, canvas-confetti, vaul, Radix, hairline surface tokens, sticky Workbench/Crisis bars) |
 | 13 | ConceptFlow engine + source registry, Brilliant-style feedback and type, 3 sourced and fact-checked theory flows (u7-l1, u0-l1, u10-l3) |
+| 14 | Trust, pacing & situations: balanced answer order, per-screen review, situation screens, theory-first mode + resume, phone-testing kit, storage persistence, deferred sim fixes. Plan in `ROADMAP.md`; rules in `CLAUDE.md` |
 
 ## 10. Key decisions and conventions
 
