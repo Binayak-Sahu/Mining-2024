@@ -19,12 +19,12 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 | # | Phase | Status |
 |---|---|---|
 | 1–13 | Platform, content, design system, ConceptFlow, first 3 sourced flows | done (see BUILD_PROGRESS.md) |
-| 14 | Trust, pacing & situations | **this run** (see run log) |
+| 14 | Trust, pacing & situations | done (14.5 partial, see below) |
 | 15 | Sources & coverage map | waiting on owner files in `sources/` |
 | 16 | Deep theory for the 52 remaining theory stages | planned |
 | 17 | Code Underground merge | planned |
 | 18 | Exam realism | planned |
-| 19 | Real-phone polish | planned |
+| 19 | Real-phone polish | planned (+ carried-over items from 14) |
 | 20 | Maintenance | planned |
 
 ### 14 — Trust, pacing & situations
@@ -77,6 +77,12 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 ### 19 — Real-phone polish
 - Fixes from the owner's Report exports.
 - Sim label font floor (11 viewBox units) via per-sim layout work, carried over from 14.5; audit:svg must stay at 0.
+- From the Phase 14 design review:
+  - word caps on whole situation screens (scene ≤ 25 words, screen ≤ 65) and `why` ≤ 25 words, with trims;
+  - a compact wrong-answer strip so the learner taps another option directly, with no Try again tap;
+  - a switch-track visual for Profile toggles;
+  - 44 px Stage Jumper/Refill pills;
+  - a validator rule for role variety once a unit has ≥ 2 situations.
 - Performance budget: precache ≤ 10 MB.
 - Sound decision: keep the synth or move to a CC0 pack.
 - Final reviewer sweep.
@@ -90,4 +96,4 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 | date (UTC) | run | outcome |
 |---|---|---|
 | 2026-11-25 | Phase 13: ConceptFlow + 3 sourced flows | shipped to main (`d1c3d51`) |
-| 2026-11-25 | Phase 14: trust, pacing, situations | in progress |
+| 2026-11-25 | Phase 14: trust, pacing, situations | shipped. All gates passed (validate, tsc, lint, base-path build, audit:svg 0 findings, 390×844 light/dark walk, Inspector byte-identical). Skipped: 11-unit label floor (→ 19), stricter situation word caps, compact wrong-answer strip, switch-track toggles, 44 px jumper pills (→ 19). Note: `sources/` is absent, so Phase 15 is waiting on the owner. |
