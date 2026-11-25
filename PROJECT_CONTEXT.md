@@ -33,13 +33,17 @@ STRATA is an interactive study platform for **B.Tech Mining Engineering and the 
 ## 3. Pedagogy and gamification
 
 **Five-stage mastery loop** (every lesson):
-1. **Field Theory** (`TheoryBriefingCard`) — a hook line, short explanation, interactive hotspot diagram, causal-chain animation and "first principles" drawers. Completing it files a cheat sheet to the Field Codex.
+1. **Field Theory** (`TheoryBriefingCard`) — completing it files a cheat sheet to the Field Codex. It comes in two forms:
+   - **ConceptFlow** (Phase 13; 3 stages so far: u0-l1, u7-l1, u10-l3) is a Brilliant-style flow with one idea per screen. It opens with a prediction, then explains the mechanism (≤ 45 words a screen), tackles a misconception, and has ≥ 2 checks and an optional sim nudge. Every option carries its own reason, and a wrong pick gets a kind retry with no heart lost (the miss still goes to spaced repetition). Each screen has a Source chip, and the flow ends with a 3-bullet summary. Every claim comes from a source fetched while writing it (see `research/<lessonId>.md`).
+   - **Classic briefing** (the other 52 stages): a hook line, short explanation, hotspot diagram, an auto-playing causal chain and "first principles" drawers.
 2. **Intuition Lab** (`SimLabCard`) or **Predict the Outcome** (`PredictOutcomeCard`) — drive a live simulation to an objective shown inside the diagram frame, or commit to a prediction before the sim reveals the result.
 3. **Equation Forge** (`EquationForgeCard`) — proportionality statements first, then tap-to-assemble the governing equation; each failed attempt is diagnosed block by block.
 4. **Quantitative Workbench** (`NumericWorkbenchCard`) — multi-step numericals with a scratch calculator; givens and earlier results usable as variables.
 5. **Shift Crisis** (`ShiftCrisisCard`) / **Statutory Swipe** (`RapidStatutorySwipeCard`) — timed emergencies requiring diagnosis and the correct DGMS action; rapid true/false statutory drills.
 
-**Feedback quality:** every wrong option in all 66 predict questions has its own field-specific explanation (`optionWhy`); crisis options and swipe cards each carry their own reason; the validator enforces that every predict wrong option is explained.
+**Feedback quality:** every wrong option in all 66 predict questions has its own field-specific explanation (`optionWhy`). Predict stages use select → Check, and the first miss shows that reason with a heart-free retry. Crisis options and swipe cards each carry their own reason. Verdicts appear as a tinted strip in the bottom action bar. The validator enforces explained options everywhere.
+
+**Content rule (Phase 13 onward):** STRATA writes the wording, never the knowledge. Flow claims must trace to a fetched source in `src/content/references.ts` (tier 1 Indian statutory → tier 2 open academic; tier-3 textbooks are further reading only). Each lesson is fact-checked by an independent reviewer before commit. Statutory numbers come only from `statutes.ts`.
 
 **Gamification:** XP and ranks (Trainee 0 → Overman 600 → Assistant Manager 2000 → Second Class Manager 4500 → First Class Unrestricted Manager 8000), daily streak, 3 safety hearts per lesson, Field Codex unlocks, a Leitner spaced-repetition warmup (intervals 1, 2, 4, 7, 15, 30 days) fed by missed concepts, free-roam mode, and a winding "expedition" home map that descends through eleven geological strata to the "DGMS Command Level" at −1200 m.
 
@@ -102,6 +106,21 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 - A **SimDef** is `params` (sliders or segmented options) + `compute(p)` + `outputs` (format/tone) + `render(p, o, t)` returning SVG. Optional `animated` (receives time `t`) and `handles` (on-canvas drag grips: `{ key, axis, at(p,o) → [x,y], toValue(coord,p) }`; the runtime clamps, snaps to step and ignores NaN).
 - Canvases use `viewBox="-24 -24 448 288"` — a 24-unit margin round the 400 × 240 drawing — inside a daylight "plate" that stays light in both themes.
 - SRS key `${lessonId}#${stageIndex}`; formula key `${lessonId}#eq${stageIndex}`.
+- **Concept flows:**
+  - `TheoryStage.flow?: FlowScreen[]` and `flowSummary?: string[]`, with flow files in `src/content/flows/<lessonId>.ts`. Screen kinds:
+    - `predict` and `check`: `options`, `answer`, a `why` per option, `concept`, optional `hint`
+    - `explain`: ≤ 45 words, optional `visual {sim, params, focus}` where `focus` indexes the stage hotspots
+    - `reveal`: tap a hotspot
+    - `misconception`: `claim` plus `truth`
+    - `nudge`: sim, `ask`, `goal(p,o)`, `after`
+  - Every screen has `src: string[]` of ids from `REFS` (`src/content/references.ts`: title, author, publisher, url, accessed, tier, licence, where), and the research trail is in `research/<lessonId>.md`.
+  - The validator rejects:
+    - a screen with no `src`, or a `src` id missing from `REFS`
+    - a `why` list that doesn't match the options, or an answer out of range
+    - an explain screen over 45 words
+    - a flow that doesn't open with a predict, or lacks a misconception or two checks
+    - an unreachable nudge goal
+  - Flows never feed the exam pool. Options are shuffled per screen with a fixed seed.
 
 ### 6.2 State and persistence
 - **Progress store** — `localStorage["strata-progress-v1"]`, zustand `persist` **version 2** with `migrateState` (re-indexes SRS/formula keys for six lessons that gained a stage in Phase 6). Holds xp, xpByDay, streak, longestStreak, lastActiveDay, heartsLost, lessons, attempts, codex, formulas, srs, warmupDoneDay, exams (last 30), freeRoam.
@@ -115,13 +134,19 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 - **Sandbox rule:** a run writes nothing to progress if the lesson is open only because of Inspector Mode, or once the Stage Jumper is used. A lesson's attempt is recorded on the first real answer, never on open. Verified: progress stays byte-identical after Inspector play.
 
 ### 6.4 Lesson runtime
-`LessonPlayer` owns hearts, local XP, transitions (framer spring 420/32), the XP burst, sonner unlock toasts, out-of-hearts drawer, completion screen (canvas-confetti; full two-sided burst for Boss Exams) and all progress writes. Cards are pure: they call `onMistake(concept)` and `onDone()`. Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
+`LessonPlayer` owns hearts, local XP, transitions (framer spring 420/32), the XP burst, sonner unlock toasts, out-of-hearts drawer, completion screen (canvas-confetti; full two-sided burst for Boss Exams) and all progress writes. Cards are pure: they call `onMistake(concept, {heart?})` (`heart: false` records the miss without costing a heart), `onDone()` and the optional visual-only `onSubProgress(f)`. Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
 
 ### 6.5 Design system ("Tactile Engineering Studio")
 - Light **Crisp Daylight** (canvas `#F7F7F5`) and dark **Underground Shift Mode** (`#0B0F19`). UI is authored in light-mode semantics; `.dark` on `<html>` remaps the `slate-*` ramp and accent tints through CSS variables. A no-flash theme boot script runs at the start of `<body>`.
 - Tokens/utilities: `bg-canvas`, `bg-surface`, `--hairline`, `--hairline-strong`, `--sticky-bg`, `hairline`, `hairline-b`, `hairline-t`, `surface-sticky`, `.card` (layered shadow; dark cards get `inset 0 1px 0 rgba(255,255,255,0.08)`), `.btn-3d` with tones (ink, safe, crit, tech, hazard, violet, ghost), `.tile-3d` answer tiles, `.plate`, custom `Slider` with floating value pill.
 - Accessibility: WCAG AA text contrast in both themes (verified by sweep), ≥ 44 px touch targets on coarse pointers, `prefers-reduced-motion` honoured (CSS and framer `MotionConfig reducedMotion="user"`; confetti disabled), visible focus rings, sentence-case labels.
-- Mobile: bottom tab bar (Path, Warmup, Exam, Lab, Tools, Codex); compact lesson header; story copy clamped to three lines with "Read more"; Sim Lab simulation browser in a vaul bottom sheet.
+- Type and spacing (Phase 13):
+  - `.btn-3d` is sentence case, weight 700, 15 px, letter-spacing 0, at least 52 px tall.
+  - Card titles are 24 px (30 px on sm+) at weight 700, and collapse after the first flow screen.
+  - Body text (`.flow-body`) is 17/1.55 and questions (`.flow-q`) are 19 px. Cards use p-5 (sm:p-8) with space-y-5/6.
+- Verdicts render as `.verdict-ok` / `.verdict-no` strips inside the ActionBar. `Feedback` portals into the bar's slot, so they never scroll out of view.
+- `SimCanvas` also takes `focus` (a feathered, fading dim around chosen pins) and `corner` (an overlay control, such as Sim lab's Reset icon).
+- Mobile: bottom tab bar (Path, Warmup, Exam, Lab, Tools, Codex); compact lesson header with a progress segment that fills as you move through a stage; story copy shown in full (no clamp); Sim Lab simulation browser in a vaul bottom sheet.
 
 ### 6.6 Simulations
 61 dioramas built from a shared SVG material library (`MAT`: soil, sand, shale, coal, rock, lime, ore, goaf, hatch, metal, steel, wood, glass, sky, water, heat; shadow/glow filters). Motion where it carries meaning (airflow streamlines scaled by Q, spinning drums/impellers/fans/Koepe wheel, blast fronts and shock rings, rising gas and smoke, tumbling mill charge), animated fracture cracks and shaking when factors of safety drop below 1, live telemetry strip with springing numbers, objective bar that lights emerald when a goal is met, and drag grips with a floating value tooltip. Animated sims pause when off-screen. The Sim Lab turns every lesson goal into chained challenges.
@@ -168,6 +193,7 @@ npm start            # serve out/ locally (respects NEXT_PUBLIC_BASE_PATH)
 | 10 | 390 × 844 light/dark QA sweep, AA contrast fixes, Codex visual previews, off-screen animation pause |
 | 11 | Story hooks for all 55 briefings, 198 per-option explanations, equation diagnosis, in-canvas objectives + Sim Lab challenges, drag tooltip, header declutter, micro-delight |
 | 12 | Inspector Mode (sandboxed master unlock), studio Web Audio engine, UI craft (sonner, canvas-confetti, vaul, Radix, hairline surface tokens, sticky Workbench/Crisis bars) |
+| 13 | ConceptFlow engine + source registry, Brilliant-style feedback and type, 3 sourced and fact-checked theory flows (u7-l1, u0-l1, u10-l3) |
 
 ## 10. Key decisions and conventions
 

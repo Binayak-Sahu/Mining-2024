@@ -108,8 +108,90 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
     - Verified: fold test at 390×844 in light and dark across workbench and crisis stages in Units 0, 3, 5, 7, 8 and 10 (reached with the Stage Jumper) — step indicator, active input/first option and primary action all inside the viewport, 0 failures (screenshots saved); audit:svg 843 renders · 0 clip/overlap/occlude/pin; 390×844 sweep of all 61 sims and 66 lessons in both themes — 0 runtime errors, 0 overflow, 0 WCAG-AA contrast failures, every lesson diagram above the drawer; Inspector acceptance re-run at 390×844 and 1366×900 (progress byte-identical); a progress file exported by the §1 build imports unchanged (14/14 fields identical, no `masterUnlock`); service-worker cache version changed with the build (`strata-7cf3a55c604a`, 232 files), five unvisited pages load offline, export → reset → import → merge round-trip and malformed-file rejection all work (toasts), 0 lesson tap targets < 44 px, 0 console errors. Sounds are synthesized at runtime, so they need no network or cache entries.
   - Deferred: real-device 60 fps profiling (only headless checks were possible here); `/sound-test` stays development-only as requested, so it cannot be auditioned on the live site.
 
-## Totals
-55 lessons + 11 boss exams · 379 stages · 61 textured simulations (29 with on-canvas drag grips, 33 grips in all) · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators · light + dark themes · synthesised sound & haptics.
+- [x] **Phase 13 — ConceptFlow: Brilliant-style, sourced theory** (13.1 engine → 13.2 polish → 13.3 three sourced lessons)
+  - **Content rule followed:** STRATA writes the wording, never the knowledge. Every flow screen carries `src` ids from `src/content/references.ts`, and every claim traces to `research/<lessonId>.md` (claim → ref → URL → < 15-word excerpt → location, plus disagreements and dropped claims). Network setup: the default environment blocked every source host, so a personal `Mining-2024` cloud environment was created that allows only the source hosts (CDC Stacks/cdc.gov, DGMS, Rocscience incl. `static.rocscience.cloud`, MVS, NPTEL, India Code, OSHA). `www.mvsengineering.com` did not resolve and `dgms.gov.in` PDFs timed out (connection opened, no data in 400 s), so McPherson and the DGMS circulars were **not** used.
+  - **13.1 ConceptFlow engine (shipped).**
+    - `TheoryStage.flow?: FlowScreen[]` (+ optional `flowSummary`). Screen kinds: predict, explain, reveal, check, misconception, nudge. `TheoryBriefingCard` renders `ConceptFlow` when a flow exists; otherwise the old briefing stays as it was (52 stages unchanged).
+    - One idea per screen, with AnimatePresence slides and one ActionBar CTA. Predict/check use select → Check. A wrong pick shows that option's own reason and allows a retry; `onMistake(concept, { heart: false })` fires once per screen, so the miss reaches spaced repetition but no heart is lost.
+    - A Source chip opens a Radix sheet (title, author, publisher, location, link). An auto summary ends the flow, with "File to Codex" calling `onDone`.
+    - `onSubProgress(f)` fills the active lesson segment (visual only; it was a static 40 %).
+    - `SimCanvas.focus` gives a feathered, fading dim except around the listed pins. The Codex sheet gains a "Sources" list built from the flow's refs.
+    - Validator: fails on screens without `src`, unknown ref ids, `why`/options mismatch, out-of-range answers, blank reasons, explain screens over 45 words, flows that don't open with predict, flows without a misconception or with fewer than 2 checks, unreachable nudges, and out-of-bounds reveal pins.
+    - Flows stay out of the exam pool (`buildPool` never reads `flow`), and stage `hotspots` are kept, so audit:svg is unchanged. Stage order and count, statutes, store version, sync schema, SW and basePath are untouched; progress writes stay in `LessonPlayer`.
+  - **13.2 Brilliant feedback & type (shipped).**
+    - Feedback is now a tinted verdict strip inside the bottom ActionBar: verdict, reason, "Why?" only when the reason is long, and the bar's own action. It is portalled from `Feedback`, so all 7 card types got it with no per-card changes, and `scrollIntoView` is gone.
+    - Predict stages: select → Check. The first wrong pick shows the option's reason with a heart-free retry; the second miss costs the heart and reveals the outcome.
+    - Type and spacing: `.btn-3d` is sentence case, 700, 15 px, letter-spacing 0. Titles 24/30 px at 700; body 17 px/1.55; cards p-5/sm:p-8 with space-y-5/6. The hook clamp is removed.
+    - Lesson player: duplicate meta row removed. The causal chain autoplays when 50 % visible (instant under reduced motion), with timers and the observer cleared on unmount, and no Play button.
+    - Sim lab: Reset is an icon in the canvas corner, and the CTA reads "Continue" once the goal is met.
+  - **13.3 Sourced flows (shipped, 3 lessons):**
+    | lesson | screens | sources (fetched) | fact-check |
+    |---|---|---|---|
+    | u7-l1 Mine gases & Coward's triangle | 13 + summary | NIOSH IC 9486 ch. 1 & ch. 10; Zlochower & Green 2009; Zipf et al. 2013; CMR 2017 Reg. 153(2)(c) value from `statutes.ts` (5 refs) | 0 unsupported; PARTLY items fixed (UEL mechanism reframed as the fuel/oxygen ratio; cell-size data attributed correctly; nose 10.7–12 % for N₂; 2 copy-close lines rephrased) |
+    | u0-l1 σv = ρgH, k, redistribution, tributary area | 12 + summary | Hoek *Practical Rock Engineering* ch. 6; Zipf ch. 59; Esterhuizen 2008; Mark (4 refs) | 0 unsupported; PARTLY items fixed (circular-tunnel scope for "three radii", C1×C2, nudge mechanism corrected, Hoek wording de-paraphrased) |
+    | u10-l3 Hierarchy of controls | 9 + summary | NIOSH "Hierarchy of Controls" (1 ref; DGMS SMP circulars unreachable, so no SMP claims) | 0 unsupported; 5 PARTLY items reworded |
+  - **Reviewer summaries.**
+    - DESIGN REVIEWER: 14 ranked fixes, all of the top 10 applied.
+      1. Every correct answer was B: options are now shuffled deterministically per screen.
+      2. Explanation came before prediction: a predict now comes before the stoichiometry screens, and the nudge comes before the "rich gas is safe" trap.
+      3. The summary listed untaught codex bullets: replaced by 3-bullet `flowSummary`s.
+      4. Label and footer switched before the body: both are now inside keyed transitions with an 0.18 s slide.
+      5. Reveal had a competing ghost CTA and a pre-lit target: the CTA is disabled until found, the hit radius is 30, and the answer scrolls into view.
+      6. The focus mask was hard-edged with no fade: it is now feathered and fades to 0.35.
+      7. Retry text gave the answer away: rewritten. Only the reason shows; the hint appears from the second miss.
+      8. Over-long title: the title collapses after screen 1.
+      9. White-on-emerald option keys were 2.47:1: now #047857 / #B91C1C / #1D4ED8, with a selected state.
+      10. Verdict titles were near the AA limit (4.59 / 4.97): now emerald/amber-800, with a stronger dark-mode verdict tint.
 
-## Next checkpoint (optional enhancements)
-All phases are complete. Possible future work: per-unit statutory reference pages, a teacher dashboard, and periodic re-verification of statutory figures as OSH&WC Code regulations are notified. Run `npm run audit:svg` after any diagram change.
+      Not done (next checkpoint): sim label font floor of 11 units (sim geometry is frozen this phase), two-line readouts on narrow screens, coupling O₂ to CH₄ in the Coward nudge, and the u0 predict diagram showing the rule of thumb before the reveal.
+    - FACT-CHECKERS (one per lesson, independent): 76 claims checked in total.
+      - 0 UNSUPPORTED. Every PARTLY verdict was reworded with the checker's replacement text before its lesson was committed.
+      - The only statutory number used (1.25 %) is in `statutes.ts`.
+      - Flagged for later: in the `u10-risk` sim, elimination scores Medium (residual 1×5); the model should zero the hazard.
+  - **Verified:**
+    - validate (382 stages, 3 flows, 0 errors), tsc, lint (0), root build, and `NEXT_PUBLIC_BASE_PATH=/Mining-2024` build.
+    - audit:svg: 843 renders, 0 clip/overlap/occlude/pin.
+    - Headless 390×844 light + dark end-to-end walk of u7-l1 on the base-path build: 14 screens, 8 wrong-then-retry picks, 0 hearts lost, misses recorded to spaced repetition, Source sheet opens, progress segment fills 12 % → 94 %, CTA always on screen, 0 horizontal overflow, Codex filed, 0 console errors.
+    - Inspector acceptance: locked u10-l3 flow played with retries plus a Stage Jumper jump, progress string byte-identical, 0 errors.
+    - SW cache version changed with the build (`e7909d44712b`).
+  - **What's left:** 52 theory stages still use the old briefing (see the plan below); DGMS circulars and McPherson are still unfetched; the design-review items listed above.
+
+## Totals
+55 lessons + 11 boss exams · 379 stages (3 theory stages now run sourced ConceptFlows)  · 61 textured simulations (29 with on-canvas drag grips, 33 grips in all) · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators · light + dark themes · synthesised sound & haptics.
+
+## Next checkpoint
+**Convert the remaining 52 theory stages with the Phase 13 pipeline**, in batches of 3–4 lessons per session, one commit per lesson:
+1. Read the stage and its sim, then list the concepts the stage must teach.
+2. Fetch sources (tier 1 statutory → tier 2 open academic), write `research/<lessonId>.md` (claim → ref → URL → excerpt → location, disagreements, dropped claims), and add the refs to `references.ts`.
+3. Write the flow in `src/content/flows/<lessonId>.ts` (predict first, mechanism, misconception, ≥ 2 checks, nudge where a sim fits, ≤ 45 words per explain) and a 3-bullet `flowSummary`.
+4. `npm run validate`, then an independent fact-checker subagent. Fix every PARTLY/UNSUPPORTED before committing.
+5. Every few lessons: design-reviewer pass and the 390×844 walk script.
+
+Suggested order, by learner value (weak-theory topics first): U3 rock mechanics (Kirsch, failure criteria, RMR, bolting, pillars, slopes, subsidence) → U7 ventilation (Atkinson, fans, natural ventilation, heat, dust) → U4 blasting → U6 methods → U5 opencast/HEMM → U8 → U9 → U2 → U1 → remaining U10.
+
+Source prerequisites:
+- `dgms.gov.in` downloads must work (they timed out this session). The DGMS circular compilation, CMR 2017, MMR 1961 and the Mines Rescue Rules are needed for U10 and statutory screens. Retry, or ask the user for local copies.
+- `www.mvsengineering.com` did not resolve. Find the current host of McPherson's web edition.
+- NPTEL course PDFs (123106002, 113105001, 123105006) for U6/U7.
+
+Also carried over: sim label font floor (11 units) with an audit:svg re-run; two-line readouts on phones; O₂ coupled to CH₄ in the Coward nudge; elimination → zero residual in `u10-risk`; hide the u0 predict "rule of thumb" annotation until reveal.
+
+**Coverage-gap map (to complete next checkpoint).** The two syllabi could **not** be fetched this session (`nitrkl.ac.in` is not in the environment's allowed hosts; `dgms.gov.in` timed out). Per the content rule, the syllabus columns are left blank rather than filled from memory.
+
+| STRATA unit | lessons (= theory stages) | sourced flows | NIT Rourkela B.Tech Mining course(s) | DGMS First Class paper | gap |
+|---|---|---|---|---|---|
+| U0 Orientation (σv) | 1 | 1 | _fetch_ | _fetch_ | _fetch_ |
+| U1 Geology & exploration | 6 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U2 Mine development | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U3 Rock mechanics & ground control | 7 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U4 Drilling & blasting | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U5 Opencast & HEMM | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U6 UG coal & metal methods | 4 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U7 Ventilation & hazards | 7 | 1 | _fetch_ | _fetch_ | _fetch_ |
+| U8 Survey, processing, electrical | 6 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U9 Economics & planning | 4 | 0 | _fetch_ | _fetch_ | _fetch_ |
+| U10 Legislation, safety, rescue | 5 | 1 | _fetch_ | _fetch_ | _fetch_ |
+
+Syllabus sources to fetch: NIT Rourkela curricula (https://www.nitrkl.ac.in/MN/CuricullaSyllabi, "Mining Engineering (B.Tech. – 4yrs)"); DGMS First Class Manager syllabus/notifications (e.g. https://dgms.gov.in/writereaddata/UploadFile/FinalNotificationCBT_02022025.pdf). Before fetching, add `www.nitrkl.ac.in` to the `Mining-2024` environment.
+
+Run `npm run audit:svg` after any diagram change.
