@@ -95,4 +95,14 @@ export const REFS: Record<string, Reference> = {
     licence: "copyright",
     where: "Abstract and introduction",
   },
+  "niosh-hoc": {
+    title: "Hierarchy of Controls",
+    author: "National Institute for Occupational Safety and Health (NIOSH)",
+    publisher: "CDC, US Dept. of Health and Human Services (page dated Oct. 28, 2026)",
+    url: "https://www.cdc.gov/niosh/hierarchy-of-controls/about/index.html",
+    accessed: "2026-11-25",
+    tier: 2,
+    licence: "public-domain",
+    where: "Key points; Overview; each control level",
+  },
 };

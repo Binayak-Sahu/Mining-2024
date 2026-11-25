@@ -1,4 +1,5 @@
 import type { Unit } from "@/lib/types";
+import { U10L3_FLOW } from "../flows/u10-l3";
 import { fta, scba } from "../sims/u10";
 
 export const U10: Unit = {
@@ -264,6 +265,12 @@ export const U10: Unit = {
             formulas: [{ expr: "R = L × C", meaning: "Risk score on a 5×5 matrix" }],
             tags: ["SMP", "HIRA", "WRAC"],
           },
+          flow: U10L3_FLOW,
+          flowSummary: [
+            "Control order: elimination, substitution, engineering, administrative, then PPE.",
+            "The top three control exposure with little reliance on what workers do.",
+            "PPE is the last line, used while better controls are pending or not enough.",
+          ],
         },
         {
           kind: "sim",
