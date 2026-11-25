@@ -52,11 +52,18 @@ export const cowardSim: SimDef = {
     { key: "def", label: "O₂ below air-dilution line (inert/consumed)", unit: "%", digits: 1 },
   ],
   caption: "LEL 5 %, UEL 15 %, nose ≈ 5.9 % CH₄ / 12.2 % O₂. Air-dilution line: O₂ = 20.93 − 0.2093·CH₄.",
+  handles: [
+    { key: "ch4", axis: "x", at: (p) => [40 + (p.ch4 / 30) * 340, 204], toValue: (x) => ((x - 40) / 340) * 30, color: "#EF4444" },
+    { key: "o2", axis: "y", at: (p) => [40, 204 - (p.o2 / 22) * 190], toValue: (y) => ((204 - y) / 190) * 22, color: "#3B82F6" },
+  ],
   render: (p, o) => (
     <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={30} ymin={0} ymax={22} xlabel="CH₄ %" ylabel="O₂ %">
       {(sx, sy) => (
         <g>
-          <polygon points={polyline(TRI.map(([a, b]) => [sx(a), sy(b)]))} fill="#fecaca" stroke={C.crit} strokeWidth={2} />
+          <polygon points={polyline(TRI.map(([a, b]) => [sx(a), sy(b)]))} fill="#fecaca" stroke={C.crit} strokeWidth={2} strokeLinejoin="round" />
+          {o.zone === 1 && <polygon points={polyline(TRI.map(([a, b]) => [sx(a), sy(b)]))} fill={C.crit} opacity={0.25} filter="url(#f-glow)" />}
+          <line x1={sx(p.ch4)} x2={sx(p.ch4)} y1={sy(0)} y2={sy(p.o2)} stroke={C.slate} strokeDasharray="2 3" />
+          <line x1={sx(0)} x2={sx(p.ch4)} y1={sy(p.o2)} y2={sy(p.o2)} stroke={C.slate} strokeDasharray="2 3" />
           <polyline points={sample((x) => 20.93 - 0.2093 * x, 0, 30, 2, sx, sy)} fill="none" stroke={C.tech} strokeWidth={1.5} />
           <Txt x={sx(18)} y={sy(17.4)} size={8} fill={C.tech}>
             air-dilution line
@@ -65,7 +72,7 @@ export const cowardSim: SimDef = {
             EXPLOSIVE
           </Txt>
           {o.zone === 2 && <line x1={sx(p.ch4)} y1={sy(p.o2)} x2={sx(0)} y2={sy(20.93)} stroke={C.hazard} strokeWidth={2} strokeDasharray="5 3" />}
-          <circle cx={sx(p.ch4)} cy={sy(p.o2)} r={6} fill={o.zone === 1 ? C.crit : o.zone === 2 ? C.hazard : o.zone === 3 ? C.slate : C.safe} stroke="white" strokeWidth={2} />
+          <circle cx={sx(p.ch4)} cy={sy(p.o2)} r={7} fill={o.zone === 1 ? C.crit : o.zone === 2 ? C.hazard : o.zone === 3 ? C.slate : C.safe} stroke="white" strokeWidth={2} filter={o.zone === 1 ? "url(#f-glow)" : "url(#f-shadow)"} />
           <Txt x={sx(5)} y={sy(19.9) - 6} size={7} anchor="middle" mono fill={C.slate}>
             LEL
           </Txt>
@@ -230,16 +237,26 @@ export const fanSim: SimDef = {
     { key: "power", label: "Shaft power (η 0.75)", unit: "kW", digits: 0 },
   ],
   caption: "Fan laws: Q ∝ N, P ∝ N², power ∝ N³. NVP adds to (assists) or opposes the fan; it shifts the mine curve.",
-  render: (p, o) => (
+  animated: true,
+  render: (p, o, t) => (
     <Plot x={44} y={14} w={336} h={190} xmin={0} xmax={160} ymin={0} ymax={3500} xlabel="Q (m³/s)" ylabel="P (Pa)">
       {(sx, sy) => (
         <g>
           <rect x={sx(0)} y={sy(3500)} width={sx(o.qPeak) - sx(0)} height={sy(0) - sy(3500)} fill="#fee2e2" opacity={0.7} />
+          <rect x={sx(0)} y={sy(3500)} width={sx(o.qPeak) - sx(0)} height={sy(0) - sy(3500)} fill={MAT.hatch} opacity={0.4} />
+          <g transform={`rotate(${((t * p.N * (o.stall ? 2.4 : 4)) % 360).toFixed(0)} 356 38)`}>
+            <circle cx={356} cy={38} r={15} fill={MAT.metal} stroke="#334155" />
+            {[0, 72, 144, 216, 288].map((a) => (
+              <path key={a} d="M356 38 C 351 30, 352 26, 356 24 C 360 27, 360 32, 356 38 Z" fill={o.stall ? C.crit : C.tech} transform={`rotate(${a} 356 38)`} />
+            ))}
+            <circle cx={356} cy={38} r={3} fill="#0F172A" />
+          </g>
           <Txt x={sx(4)} y={sy(3000)} size={8} fill={C.crit} weight={700}>
             stall zone
           </Txt>
           <polyline points={sample((q) => Math.max(0, fanP(q, p.N)), 0, 160, 120, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} />
           <polyline points={sample((q) => Math.max(0, p.R * q * q - p.nvp), 0, 160, 80, sx, sy)} fill="none" stroke={C.ink} strokeWidth={2} strokeDasharray="6 3" />
+          {Number.isFinite(o.Q) && <circle cx={sx(o.Q)} cy={sy(Math.max(0, o.P))} r={12} fill={o.stall ? C.crit : C.safe} opacity={0.18} />}
           {Number.isFinite(o.Q) && <circle cx={sx(o.Q)} cy={sy(Math.max(0, o.P))} r={6} fill={o.stall ? C.crit : C.safe} stroke="white" strokeWidth={2} />}
           <Txt x={sx(120)} y={sy(800)} size={8} fill={C.tech} weight={700}>
             fan @ {p.N}%
@@ -280,14 +297,24 @@ export const psychroSim: SimDef = {
     { key: "status", label: "Statutory status (CMR)", format: (v) => ["Compliant", "Wet bulb > 30.5 °C: needs ≥ 1 m/s air", "Wet bulb > 33.5 °C: no work permitted"][v], tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
   caption: "Sweat evaporation (the body's main cooling) depends on wet-bulb temperature and air speed — dry-bulb alone misleads.",
+  handles: [
+    { key: "Td", axis: "y", at: (p) => [72, 186 - clamp(((p.Td - 15) / 30) * 150, 5, 150)], toValue: (y) => 15 + ((186 - y) / 150) * 30, color: "#EF4444" },
+    { key: "v", axis: "x", at: (p) => [190 + clamp(p.v * 45, 10, 180), 110], toValue: (x) => (x - 190) / 45, color: "#10B981" },
+  ],
   render: (p, o) => {
-    const th = (t: number, x: number, label: string, col: string) => {
+    const th = (t: number, x: number, label: string, col: string, wet = false) => {
       const h = clamp(((t - 15) / 30) * 150, 5, 150);
       return (
         <g>
-          <rect x={x} y={30} width={18} height={160} rx={9} fill="#e2e8f0" />
+          <rect x={x} y={30} width={18} height={160} rx={9} fill="#F1F5F9" stroke="#CBD5E1" />
+          {Array.from({ length: 7 }).map((_, i) => (
+            <line key={i} x1={x + 13} x2={x + 18} y1={186 - i * 25} y2={186 - i * 25} stroke="#94A3B8" />
+          ))}
           <rect x={x + 4} y={186 - h} width={10} height={h} rx={5} fill={col} />
-          <circle cx={x + 9} cy={196} r={12} fill={col} />
+          <rect x={x + 2} y={34} width={5} height={150} rx={2.5} fill={MAT.glass} />
+          <circle cx={x + 9} cy={196} r={12} fill={col} filter="url(#f-shadow)" />
+          {wet && <circle cx={x + 9} cy={196} r={12} fill={MAT.hatch} opacity={0.6} />}
+          <circle cx={x + 5} cy={192} r={3.5} fill="white" opacity={0.5} />
           <Txt x={x + 9} y={225} size={9} anchor="middle" weight={800}>
             {label}
           </Txt>
@@ -302,7 +329,7 @@ export const psychroSim: SimDef = {
     return (
       <g>
         {th(p.Td, 40, "DRY", C.crit)}
-        {th(o.tw, 100, "WET", C.tech)}
+        {th(o.tw, 100, "WET", C.tech, true)}
         <line x1={90} x2={135} y1={y305} y2={y305} stroke={C.hazard} strokeWidth={2} />
         <line x1={90} x2={135} y1={y335} y2={y335} stroke={C.crit} strokeWidth={2} />
         <Txt x={140} y={y305 + 3} size={8} fill={C.hazard} weight={700}>
@@ -315,9 +342,12 @@ export const psychroSim: SimDef = {
           Air velocity
         </Txt>
         {[0, 1, 2].map((i) => (
-          <Arrow key={i} x1={190} y1={70 + i * 16} x2={190 + clamp(p.v * 45, 10, 180)} y2={70 + i * 16} color={p.v >= 1 ? C.safe : C.slate} width={2} />
+          <g key={i}>
+            <Arrow x1={190} y1={70 + i * 16} x2={190 + clamp(p.v * 45, 10, 180)} y2={70 + i * 16} color={p.v >= 1 ? C.safe : C.slate} width={2} />
+            <Stream d={`M190 ${70 + i * 16} L${186 + clamp(p.v * 45, 10, 180)} ${70 + i * 16}`} color="white" width={1.2} speed={clamp(p.v / 4, 0.05, 1)} />
+          </g>
         ))}
-        <Txt x={190} y={135} size={9} mono>
+        <Txt x={190} y={138} size={9} mono>
           {`v = ${p.v.toFixed(1)} m/s · RH ${o.rh.toFixed(0)}%`}
         </Txt>
         <Txt x={190} y={170} size={12} weight={900} fill={o.status === 0 ? C.safe : o.status === 1 ? C.hazard : C.crit}>
@@ -360,7 +390,8 @@ export const sponcomSim: SimDef = {
     { key: "jtr", label: "Jones–Trickett ratio", digits: 2, format: (v) => (!Number.isFinite(v) ? "—" : v < 0.4 ? `${v.toFixed(2)} (no fire / bad sample)` : v < 0.5 ? `${v.toFixed(2)} (methane burning)` : v < 1 ? `${v.toFixed(2)} (oil/belt/mixed)` : v <= 1.6 ? `${v.toFixed(2)} (coal/timber)` : `${v.toFixed(2)} (invalid > 1.6)`) },
   ],
   caption: "Ratios use oxygen deficiency so dilution by fresh air cancels out. Trend them over time — a rising Graham's ratio matters more than one value.",
-  render: (p, o) => {
+  animated: true,
+  render: (p, o, t) => {
     const gx = (v: number) => 40 + (clamp(v, 0, 3) / 3) * 320;
     return (
       <g>
@@ -375,6 +406,7 @@ export const sponcomSim: SimDef = {
         ].map((z) => (
           <g key={z.t}>
             <rect x={gx(z.a)} y={34} width={gx(z.b) - gx(z.a)} height={22} fill={z.c} />
+            <rect x={gx(z.a)} y={34} width={gx(z.b) - gx(z.a)} height={8} fill={MAT.glass} />
             <Txt x={(gx(z.a) + gx(z.b)) / 2} y={49} size={8} anchor="middle" fill="white" weight={800}>
               {z.t}
             </Txt>
@@ -391,12 +423,22 @@ export const sponcomSim: SimDef = {
           { k: "CO×100", v: (p.co / 1e4) * 100, c: C.crit },
         ].map((g, i) => (
           <g key={g.k}>
-            <rect x={40} y={110 + i * 24} width={clamp(g.v * 3.6, 1, 320)} height={16} fill={g.c} />
-            <Txt x={44 + clamp(g.v * 3.6, 1, 320)} y={122 + i * 24} size={8} mono>
+            <rect x={40} y={110 + i * 24} width={clamp(g.v * 3.6, 1, 320)} height={16} rx={3} fill={g.c} />
+            <rect x={40} y={110 + i * 24} width={clamp(g.v * 3.6, 1, 320)} height={6} rx={3} fill={MAT.glass} />
+            <Txt x={clamp(g.v * 3.6, 1, 320) > 240 ? 36 + clamp(g.v * 3.6, 1, 320) : 44 + clamp(g.v * 3.6, 1, 320)} anchor={clamp(g.v * 3.6, 1, 320) > 240 ? "end" : "start"} fill={clamp(g.v * 3.6, 1, 320) > 240 ? "white" : C.ink} weight={700} y={122 + i * 24} size={8} mono>
               {`${g.k} ${g.k === "CO×100" ? p.co + " ppm" : g.k === "CO₂" ? p.co2.toFixed(2) + "%" : g.v.toFixed(2) + "%"}`}
             </Txt>
           </g>
         ))}
+        <g transform="translate(350 206)">
+          <path d="M-26 6 L-16 -6 L-4 -2 L6 -12 L18 -4 L26 6 Z" fill={MAT.coal} stroke="#0F172A" strokeWidth={0.8} />
+          {o.grc >= 1 && <circle cx={0} cy={-2} r={8 + o.grc * 2} fill={o.grc >= 2 ? "#F97316" : "#FBBF24"} opacity={0.35} filter="url(#f-glow)" />}
+          {o.grc >= 1 &&
+            [0, 1, 2].map((k) => {
+              const ph = (t * 0.5 + k / 3) % 1;
+              return <circle key={k} cx={Math.sin(ph * 5 + k) * 6} cy={-10 - ph * 34} r={4 + ph * 7} fill="#64748B" opacity={0.4 * (1 - ph)} />;
+            })}
+        </g>
         <Txt x={40} y={225} size={11} weight={900} mono fill={o.grc >= 2 ? C.crit : o.grc === 1 ? C.hazard : C.safe}>
           {Number.isFinite(o.gr) ? `GR ${o.gr.toFixed(2)} · JTR ${o.jtr.toFixed(2)}` : "No O₂ deficiency"}
         </Txt>
@@ -435,16 +477,22 @@ export const dustSim: SimDef = {
     { key: "conc", label: "If raised in 12 m² roadway", unit: "g/m³", digits: 0, tone: (v) => (v >= 50 ? "crit" : "ok") },
   ],
   caption: "Teaching targets: ≥ 75 % incombustible generally, higher (85 %) where firedamp is present. Coal dust clouds above roughly 50 g/m³ can propagate explosions.",
-  render: (p, o) => {
+  animated: true,
+  render: (p, o, t) => {
     const frac = clamp(o.inc / 100, 0, 1);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e7e5e4" />
-        <path d="M 30 200 L 30 90 Q 200 20 370 90 L 370 200 Z" fill="#f8fafc" stroke={C.ink} />
-        <rect x={30} y={190} width={340} height={10} fill={C.coal} />
-        <rect x={30} y={190} width={340 * frac} height={10} fill="#f1f5f9" opacity={0.9} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.coal} />
+        <rect x={0} y={0} width={400} height={240} fill="#57534E" opacity={0.4} />
+        <path d="M 30 200 L 30 90 Q 200 20 370 90 L 370 200 Z" fill="#F1F5F9" stroke="#0F172A" strokeWidth={2} />
+        <path d="M 30 200 L 30 90 Q 200 20 370 90 L 370 200 Z" fill="url(#grad-lamp)" opacity={0.5} />
+        {[60, 140, 220, 300].map((x) => (
+          <path key={x} d={`M${x} 200 L${x} ${92 - Math.sin(((x - 30) / 340) * Math.PI) * 52} `} stroke="#94A3B8" strokeWidth={3} opacity={0.5} />
+        ))}
+        <rect x={30} y={190} width={340} height={10} fill={MAT.coal} />
+        <rect x={30} y={190} width={340 * frac} height={10} fill="#F8FAFC" opacity={0.92} />
         {Array.from({ length: 40 }).map((_, i) => (
-          <circle key={i} cx={40 + ((i * 37) % 320)} cy={120 + ((i * 23) % 60)} r={1.6} fill={i / 40 < frac ? "#cbd5e1" : C.coal} opacity={0.7} />
+          <circle key={i} cx={40 + ((i * 37 + t * (8 + (i % 5) * 3)) % 320)} cy={120 + ((i * 23) % 60) + Math.sin(t + i) * 3} r={1.6} fill={i / 40 < frac ? "#cbd5e1" : C.coal} opacity={0.75} />
         ))}
         <Txt x={200} y={80} size={10} anchor="middle" weight={800}>
           ROADWAY DUST SAMPLE
@@ -494,28 +542,40 @@ export const pumpSim: SimDef = {
     { key: "margin", label: "NPSH margin", unit: "m", digits: 2, tone: (v) => (v < 0 ? "crit" : v < 0.5 ? "warn" : "ok") },
   ],
   caption: "NPSHa = (Patm − Pv)/ρg − suction lift − suction losses (0.5 m). Atmospheric pressure taken as 101.3 kPa (conservative underground).",
-  render: (p, o) => {
+  animated: true,
+  handles: [{ key: "lift", axis: "y", at: (p) => [214, 164 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (164 - y) / 8, color: "#0EA5E9" }],
+  render: (p, o, t) => {
     const cav = o.margin < 0;
+    const off = clamp(p.lift * 8, -20, 70);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#e7e5e4" />
-        <rect x={20} y={180} width={120} height={50} fill={C.water} />
+        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
+        <rect x={0} y={0} width={400} height={240} fill="#E7E5E4" opacity={0.55} />
+        <rect x={20} y={180} width={120} height={50} rx={3} fill={MAT.water} />
+        <path d={`M20 ${181 + Math.sin(t * 2) * 1.5} Q 50 ${178 + Math.sin(t * 2 + 1) * 2} 80 ${181} T 140 ${181 + Math.sin(t * 2 + 2) * 1.5}`} fill="none" stroke="#E0F2FE" strokeWidth={1.5} />
         <Txt x={80} y={210} size={9} anchor="middle" weight={800}>
           SUMP
         </Txt>
-        <line x1={150} y1={180 - clamp(p.lift * 8, -20, 70)} x2={150} y2={215} stroke={C.ink} strokeWidth={3} />
-        <line x1={150} y1={215} x2={120} y2={215} stroke={C.ink} strokeWidth={3} />
-        <rect x={140} y={150 - clamp(p.lift * 8, -20, 70)} width={60} height={28} rx={4} fill={cav ? C.crit : C.tech} />
+        <path d={`M120 215 L150 215 L150 ${180 - off}`} fill="none" stroke="#334155" strokeWidth={6} />
+        <path d={`M120 215 L150 215 L150 ${180 - off}`} fill="none" stroke={MAT.metalH} strokeWidth={3} />
+        <rect x={140} y={150 - off} width={60} height={28} rx={6} fill={cav ? C.crit : C.tech} stroke="#0F172A" filter="url(#f-shadow)" />
+        <rect x={142} y={152 - off} width={56} height={9} rx={4} fill={MAT.glass} />
+        <g transform={`rotate(${((t * (cav ? 200 : 420)) % 360).toFixed(0)} 186 ${164 - off})`}>
+          <circle cx={186} cy={164 - off} r={7} fill="#E2E8F0" stroke="#0F172A" />
+          {[0, 90, 180, 270].map((a) => (
+            <line key={a} x1={186} y1={164 - off} x2={186} y2={158 - off} stroke="#0F172A" strokeWidth={1.6} transform={`rotate(${a} 186 ${164 - off})`} />
+          ))}
+        </g>
         <Txt x={170} y={168 - clamp(p.lift * 8, -20, 70)} size={8} anchor="middle" fill="white" weight={800}>
           {`${o.stages}-STAGE`}
         </Txt>
-        <line x1={200} y1={164 - clamp(p.lift * 8, -20, 70)} x2={240} y2={164 - clamp(p.lift * 8, -20, 70)} stroke={C.ink} strokeWidth={4} />
-        <line x1={240} y1={164 - clamp(p.lift * 8, -20, 70)} x2={240} y2={20} stroke={C.ink} strokeWidth={4} />
+        <path d={`M200 ${164 - off} L240 ${164 - off} L240 20`} fill="none" stroke="#334155" strokeWidth={7} />
+        <Stream d={`M200 ${164 - off} L240 ${164 - off} L240 20`} color="#7DD3FC" width={2.5} speed={cav ? 0.1 : 0.6} />
         <Txt x={248} y={30} size={9} weight={700}>
           rising main to surface
         </Txt>
         {cav &&
-          [0, 1, 2, 3, 4].map((i) => <circle key={i} cx={150 + i * 10} cy={145 - clamp(p.lift * 8, -20, 70) - (i % 2) * 6} r={3} fill="white" stroke={C.crit} />)}
+          [0, 1, 2, 3, 4].map((i) => <circle key={i} cx={150 + i * 10} cy={145 - off - (i % 2) * 6 - ((t * 20 + i * 4) % 12)} r={2.5 + ((t * 3 + i) % 1.5)} fill="white" stroke={C.crit} />)}
         <Txt x={250} y={80} size={10} weight={800}>
           {`Total head ${o.Ht.toFixed(0)} m`}
         </Txt>
