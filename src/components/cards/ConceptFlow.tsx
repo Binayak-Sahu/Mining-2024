@@ -10,6 +10,7 @@ import { REFS } from "@/content/references";
 import { SimCanvas, SimView, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { shuffleItem } from "@/lib/shuffle";
+import { useWhere } from "@/lib/reports";
 import { SituationHeader } from "./Situation";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
 
@@ -87,6 +88,10 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   const missed = useRef<Set<number>>(new Set());
   const [nudgeVals, setNudgeVals] = useState<Vals | null>(null);
   const revealBox = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    useWhere.setState({ screenIndex: i });
+  }, [i]);
 
   useEffect(() => {
     if (!single) onSubProgress?.(i / total);

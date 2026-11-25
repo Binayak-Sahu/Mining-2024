@@ -3,12 +3,9 @@
 import { SFX_PALETTE, sfx } from "@/lib/sfx";
 import { usePrefs } from "@/lib/prefs";
 
-/** Dev-only audition panel for the synthesized sound palette (production builds show a notice). */
+/** Audition panel for the synthesized sound palette (linked from Profile while Inspector Mode is on). */
 export function SoundTest() {
   const muted = usePrefs((p) => p.muted);
-  if (process.env.NODE_ENV === "production") {
-    return <div className="max-w-xl mx-auto px-4 py-10 text-slate-600">The sound test panel is available in development builds (`npm run dev`).</div>;
-  }
   return (
     <div className="max-w-xl mx-auto px-4 py-8 space-y-3">
       <h1 className="text-2xl font-extrabold text-slate-900">Sound test</h1>

@@ -4,6 +4,7 @@ import { TopBar, BottomNav } from "@/components/shell/TopBar";
 import { PwaRegister } from "@/components/shell/PwaRegister";
 import { ClientEffects } from "@/components/shell/ClientEffects";
 import { AppToaster } from "@/components/shell/AppToaster";
+import { InspectorKit } from "@/components/shell/InspectorKit";
 import { Providers } from "@/components/shell/Providers";
 import { SvgDefs } from "@/components/sim/defs";
 import { THEME_BOOT } from "@/lib/prefs";
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <BottomNav />
         <PwaRegister />
         <ClientEffects />
+        <InspectorKit />
           <AppToaster />
         </Providers>
       </body>
