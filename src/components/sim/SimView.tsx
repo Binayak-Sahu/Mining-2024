@@ -38,11 +38,23 @@ function snap(p: SimParam, v: number): number {
 }
 
 const PARAM_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#0EA5E9"];
+/** Text shades that keep each parameter colour legible (AA) on the control panel in both themes. */
+const PARAM_TEXT = ["text-blue-700", "text-emerald-700", "text-amber-700", "text-violet-600", "text-red-700", "text-slate-700"];
 
 /** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
-export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void }) {
+export function SimCanvas({ def, values, overlay, onChange, still = false }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean }) {
   const out = useMemo(() => def.compute(values), [def, values]);
-  const t = useClock(!!def.animated);
+  const wrap = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(true);
+  // Animated dioramas pause while scrolled out of view (Codex pages hold dozens of them).
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el || still || !def.animated || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { rootMargin: "120px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [still, def.animated]);
+  const t = useClock(!!def.animated && !still && onScreen);
   const svg = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<number | null>(null);
   const [used, setUsed] = useState(false);
@@ -69,7 +81,7 @@ export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; val
   };
 
   return (
-    <div className="plate max-sm:-mx-1.5">
+    <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"}`}>
       <svg
         ref={svg}
         viewBox="-24 -24 448 288"
@@ -118,7 +130,7 @@ export function SimCanvas({ def, values, overlay, onChange }: { def: SimDef; val
           <Hand size={11} /> Drag the grips on the diagram
         </motion.div>
       )}
-      {def.animated && (
+      {def.animated && !still && (
         <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
           <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
         </span>
@@ -188,7 +200,7 @@ export function Controls({ def, values, onChange, disabled }: { def: SimDef; val
           <div key={p.key}>
             <div className="flex items-baseline justify-between gap-3 text-[13px] mb-0.5">
               <span className="text-slate-600 font-semibold">{p.label}</span>
-              <span className="readout font-bold shrink-0" style={{ color }}>
+              <span className={`readout font-bold shrink-0 ${PARAM_TEXT[k % PARAM_TEXT.length]}`}>
                 {display}
               </span>
             </div>

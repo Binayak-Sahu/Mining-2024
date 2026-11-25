@@ -1,5 +1,5 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, clamp, polyline, Cracks, Stream } from "@/components/sim/svg";
+import { C, Txt, clamp, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Depillaring goaf & main fall ---------------- */

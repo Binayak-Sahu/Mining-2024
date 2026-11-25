@@ -145,12 +145,12 @@ export const draglineSim: SimDef = {
         <rect x={X(0)} y={coalTop} width={X(p.W) - X(0)} height={4.5} fill={MAT.coal} opacity={0.9} />
         <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={MAT.shale} />
         <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="#fde68a" opacity={0.6} />
-        <Txt x={(X(0) + X(p.W)) / 2} y={(surf + coalTop) / 2} size={8} anchor="middle" weight={800}>
-          CUT
-        </Txt>
         <polygon points={polyline([[X(shiftedPeak - d.b / 2), coalBot], [X(shiftedPeak), coalBot - hp], [X(shiftedPeak + d.b / 2), coalBot]])} fill={d.reh > 0 ? "#fca5a5" : MAT.goaf} stroke={C.ink} />
         <Txt x={X(shiftedPeak)} y={coalBot - hp - 4} size={8} anchor="middle" weight={700}>
           SPOIL
+        </Txt>
+        <Txt x={(X(0) + X(p.W)) / 2} y={(surf + coalTop) / 2} size={8} anchor="middle" weight={800}>
+          CUT
         </Txt>
         <rect x={X(p.W + d.e) - 12} y={surf - 16} width={24} height={14} rx={2} fill={C.hazard} stroke="#92400E" filter="url(#f-shadow)" />
         <rect x={X(p.W + d.e) - 14} y={surf - 3} width={28} height={4} rx={2} fill={MAT.steel} />

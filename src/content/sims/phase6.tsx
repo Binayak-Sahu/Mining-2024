@@ -794,7 +794,7 @@ export const zonesSim: SimDef = {
             const a = (i / 16) * Math.PI * 2;
             return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
           });
-          return <polygon points={polyline(pts)} fill={C.crit} opacity={0.85} />;
+          return <polygon points={polyline(pts)} fill={C.crit} opacity={0.45} stroke="#FDE68A" strokeWidth={2} />;
         })()}
         {p.ev === 2 && <line x1={300} y1={150} x2={330} y2={134} stroke={C.hazard} strokeWidth={3} strokeDasharray="3 2" />}
         {p.ev === 2 && (

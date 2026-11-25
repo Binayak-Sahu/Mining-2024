@@ -110,6 +110,6 @@ const { chromium } = require("playwright");
   writeFileSync(join(dir, "findings.txt"), uniq.join("\n") + "\n");
   const by = (k: string) => uniq.filter((f) => f.startsWith(k)).length;
   console.log(uniq.slice(0, Number(process.env.AUDIT_SHOW ?? 60)).join("\n"));
-  console.log(`\n${cases.length} renders · clip ${by("clip")} · overlap ${by("overlap")} · pin ${by("pin")}  (full list: ${join(dir, "findings.txt")})`);
+  console.log(`\n${cases.length} renders · clip ${by("clip")} · overlap ${by("overlap")} · occlude ${by("occlude")} · pin ${by("pin")}  (full list: ${join(dir, "findings.txt")})`);
   process.exit(uniq.length ? 1 : 0);
 })();

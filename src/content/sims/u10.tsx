@@ -200,7 +200,8 @@ export const riskSim: SimDef = {
         </Txt>
         {(p.C !== o.C2 || p.L !== o.L2) && <Stream d={`M${cx(p.C)} ${cy(p.L)} Q ${(cx(p.C) + cx(o.C2)) / 2 + 16} ${(cy(p.L) + cy(o.L2)) / 2 - 16} ${cx(o.C2)} ${cy(o.L2)}`} color={C.tech} width={2} speed={0.5} />}
         <circle cx={cx(p.C)} cy={cy(p.L)} r={12} fill="none" stroke={C.crit} strokeWidth={3} />
-        <circle cx={cx(o.C2)} cy={cy(o.L2)} r={9} fill={C.tech} stroke="white" strokeWidth={2} />
+        <circle cx={cx(o.C2)} cy={cy(o.L2)} r={9} fill="none" stroke={C.tech} strokeWidth={3.5} />
+        <circle cx={cx(o.C2)} cy={cy(o.L2)} r={11} fill="none" stroke="white" strokeWidth={1} />
         <Txt x={235} y={40} size={10} weight={800}>
           ○ inherent ({o.inh})
         </Txt>

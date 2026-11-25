@@ -98,8 +98,8 @@ export function TheoryBriefingCard({ stage, onDone }: CardProps<TheoryStage>) {
                 className="flex items-start gap-2 text-sm"
               >
                 <span
-                  className="readout mt-0.5 shrink-0 w-5 h-5 rounded-full text-[10px] flex items-center justify-center text-white"
-                  style={{ background: chainStep >= i ? (i === stage.chain!.length - 1 ? C.crit : C.tech) : "var(--n-400)" }}
+                  className="readout mt-0.5 shrink-0 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center"
+                  style={chainStep >= i ? { background: i === stage.chain!.length - 1 ? "#DC2626" : "#2563EB", color: "#fff" } : { background: "var(--n-200)", color: "var(--n-700)" }}
                 >
                   {i + 1}
                 </span>

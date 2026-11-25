@@ -27,6 +27,26 @@ window.measureSvgs = function (meta) {
         const ov = inter(a, b);
         if (ov > 6 && ov > 0.12 * Math.min(a.w * a.h, b.w * b.h)) res.push(`overlap  ${where}: "${a.t}" × "${b.t}"`);
       }
+    // occlusion: a small opaque shape painted after a label that covers a good part of it
+    const all = [...svg.querySelectorAll("text, circle, rect, ellipse, path, polygon")].filter((el) => !el.closest("defs, pattern") && !el.hasAttribute("data-pin"));
+    all.forEach((el, idx) => {
+      if (el.tagName !== "text" || !(el.textContent || "").trim()) return;
+      const tr = el.getBoundingClientRect();
+      if (tr.width === 0) return;
+      const t = toUser(tr, (el.textContent || "").trim());
+      const area = t.w * t.h * 0.64;
+      for (const sh of all.slice(idx + 1)) {
+        if (sh.tagName === "text" || sh.contains(el)) continue;
+        const fill = sh.getAttribute("fill");
+        if (!fill || fill === "none" || fill === "transparent" || fill.startsWith("url(#grad-glass") || fill.startsWith("url(#pat-hatch") || fill.startsWith("url(#grad-rock-shade") || fill.startsWith("url(#grad-lamp")) continue;
+        const op = Number(sh.getAttribute("opacity") ?? 1);
+        if (op < 0.5) continue;
+        const r = toUser(sh.getBoundingClientRect(), "");
+        if (r.w * r.h > 6000 || r.w * r.h < 4) continue;
+        const ov = inter({ x: t.x, y: t.y + t.h * 0.18, w: t.w, h: t.h * 0.64 }, r);
+        if (ov > 0.3 * area) { res.push(`occlude  ${where}: "${t.t}" under a ${sh.tagName}`); break; }
+      }
+    });
     const pins = [...svg.querySelectorAll("circle[data-pin]")].map((c) => ({ x: Number(c.getAttribute("cx")), y: Number(c.getAttribute("cy")), i: Number(c.dataset.pin) + 1 }));
     const heads = [];
     svg.querySelectorAll("polygon, line").forEach((el) => {

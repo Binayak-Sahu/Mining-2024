@@ -11,6 +11,7 @@ npm run build      # static export to out/ + offline precache manifest
 npm start          # serve out/ locally (http://localhost:3000)
 npm run validate   # proves every lesson, exam question, calculator and statute is well-formed
 npm run typecheck && npm run lint
+NODE_PATH=$(npm root -g) npm run audit:svg   # measures every diagram for clipped/overlapping/covered labels and pin collisions (needs Playwright)
 ```
 
 ### Deploy (GitHub Pages)

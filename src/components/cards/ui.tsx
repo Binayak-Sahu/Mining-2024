@@ -6,14 +6,14 @@ import type { StageKind } from "@/lib/types";
 import { BookOpen, FlaskConical, Eye, Sigma, Calculator, Siren, Scale, CheckCircle2, XCircle } from "lucide-react";
 import { sfx } from "@/lib/sfx";
 
-export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; Icon: typeof BookOpen }> = {
-  theory: { label: "Field theory", short: "Field Theory", color: "#3B82F6", Icon: BookOpen },
-  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#10B981", Icon: FlaskConical },
-  predict: { label: "Predict the outcome", short: "Predict", color: "#10B981", Icon: Eye },
-  equation: { label: "Equation forge", short: "Equation Forge", color: "#8B5CF6", Icon: Sigma },
-  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F59E0B", Icon: Calculator },
-  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#EF4444", Icon: Siren },
-  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#EF4444", Icon: Scale },
+export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; text: string; Icon: typeof BookOpen }> = {
+  theory: { label: "Field theory", short: "Field Theory", color: "#3B82F6", text: "text-blue-700", Icon: BookOpen },
+  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#10B981", text: "text-emerald-700", Icon: FlaskConical },
+  predict: { label: "Predict the outcome", short: "Predict", color: "#10B981", text: "text-emerald-700", Icon: Eye },
+  equation: { label: "Equation forge", short: "Equation Forge", color: "#8B5CF6", text: "text-violet-600", Icon: Sigma },
+  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F59E0B", text: "text-amber-700", Icon: Calculator },
+  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#EF4444", text: "text-red-700", Icon: Siren },
+  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#EF4444", text: "text-red-700", Icon: Scale },
 };
 
 /**
@@ -27,7 +27,7 @@ export function CardFrame({ kind, title, children, footer }: { kind: StageKind; 
       <div className="card p-3.5 sm:p-7 overflow-hidden relative">
         <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${m.color}, ${m.color}55)` }} aria-hidden />
         <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 sm:py-1 text-[12.5px] font-bold" style={{ color: m.color, background: `${m.color}18` }}>
+          <span className={`inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 sm:py-1 text-[12.5px] font-bold ${m.text}`} style={{ background: `${m.color}18` }}>
             <span className="inline-flex w-5 h-5 rounded-full items-center justify-center text-white" style={{ background: m.color }}>
               <m.Icon size={11} strokeWidth={2.6} />
             </span>

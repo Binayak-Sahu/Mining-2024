@@ -50,7 +50,7 @@ export function SimLab() {
               key={s.id}
               type="button"
               onClick={() => pick(s.id)}
-              className={`w-full flex items-start gap-2.5 text-left rounded-xl px-2.5 py-2 text-[13px] font-semibold leading-snug transition-colors ${s.id === id ? "bg-violet-500 text-white shadow-[0_2px_0_#6D28D9]" : "text-slate-700 hover:bg-slate-100"}`}
+              className={`w-full flex items-start gap-2.5 text-left rounded-xl px-2.5 py-2 text-[13px] font-semibold leading-snug transition-colors ${s.id === id ? "bg-[#7C3AED] text-white shadow-[0_2px_0_#5B21B6]" : "text-slate-700 hover:bg-slate-100"}`}
             >
               <span className={`readout shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-extrabold ${s.id === id ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>U{UNIT_OF(s.id)}</span>
               <span className="min-w-0">{s.title}</span>

@@ -177,11 +177,20 @@ export function CodexLibrary() {
           {lockedSheets.length > 0 && (
             <div className="mt-8">
               <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3">Locked ({lockedSheets.length})</div>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
-                {lockedSheets.map(({ entry, lesson, unit: u }) => (
-                  <Link key={entry.id} href={`/unit/${u.id}`} className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1.5px_var(--n-200)] p-3 flex items-center gap-2.5 text-slate-400 hover:shadow-[inset_0_0_0_1.5px_var(--n-300)]">
-                    <span className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0"><Lock size={14} /></span>
-                    <div className="min-w-0">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {lockedSheets.map(({ entry, lesson, unit: u, sims }) => (
+                  <Link key={entry.id} href={`/unit/${u.id}`} className="group rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1.5px_var(--n-200)] p-2.5 flex flex-col gap-2 text-slate-400 hover:shadow-[inset_0_0_0_1.5px_var(--n-300)] min-w-0">
+                    <div className="relative rounded-xl overflow-hidden">
+                      <div className="grayscale opacity-45 group-hover:opacity-70 transition-opacity pointer-events-none" aria-hidden>
+                        <SimCanvas def={getSim(sims[0])} values={defaults(getSim(sims[0]))} still />
+                      </div>
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span className="w-9 h-9 rounded-full bg-surface/90 shadow-[0_2px_8px_rgba(15,23,42,0.2)] flex items-center justify-center text-slate-500">
+                          <Lock size={15} />
+                        </span>
+                      </span>
+                    </div>
+                    <div className="min-w-0 px-0.5">
                       <div className="text-[13.5px] font-bold text-slate-500 truncate">{entry.title}</div>
                       <div className="text-[10.5px] font-semibold truncate">
                         U{u.n} · {lesson.title}

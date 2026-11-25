@@ -560,13 +560,13 @@ export const pumpSim: SimDef = {
         <path d={`M120 215 L150 215 L150 ${180 - off}`} fill="none" stroke={MAT.metalH} strokeWidth={3} />
         <rect x={140} y={150 - off} width={60} height={28} rx={6} fill={cav ? C.crit : C.tech} stroke="#0F172A" filter="url(#f-shadow)" />
         <rect x={142} y={152 - off} width={56} height={9} rx={4} fill={MAT.glass} />
-        <g transform={`rotate(${((t * (cav ? 200 : 420)) % 360).toFixed(0)} 186 ${164 - off})`}>
-          <circle cx={186} cy={164 - off} r={7} fill="#E2E8F0" stroke="#0F172A" />
+        <g transform={`rotate(${((t * (cav ? 200 : 420)) % 360).toFixed(0)} 189 ${164 - off})`}>
+          <circle cx={189} cy={164 - off} r={7} fill="#E2E8F0" stroke="#0F172A" />
           {[0, 90, 180, 270].map((a) => (
-            <line key={a} x1={186} y1={164 - off} x2={186} y2={158 - off} stroke="#0F172A" strokeWidth={1.6} transform={`rotate(${a} 186 ${164 - off})`} />
+            <line key={a} x1={189} y1={164 - off} x2={189} y2={158 - off} stroke="#0F172A" strokeWidth={1.6} transform={`rotate(${a} 189 ${164 - off})`} />
           ))}
         </g>
-        <Txt x={170} y={168 - clamp(p.lift * 8, -20, 70)} size={8} anchor="middle" fill="white" weight={800}>
+        <Txt x={160} y={168 - off} size={8} anchor="middle" fill="white" weight={800}>
           {`${o.stages}-STAGE`}
         </Txt>
         <path d={`M200 ${164 - off} L240 ${164 - off} L240 20`} fill="none" stroke="#334155" strokeWidth={7} />
