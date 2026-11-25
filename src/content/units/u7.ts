@@ -1,5 +1,6 @@
 import type { Unit } from "@/lib/types";
 import { dust, es, pump, ratios } from "../sims/u7";
+import { U7L1_FLOW } from "../flows/u7-l1";
 
 export const U7: Unit = {
   id: "u7",
@@ -42,6 +43,12 @@ export const U7: Unit = {
             formulas: [{ expr: "O₂ = 20.93·(1 − CH₄/100)", meaning: "Oxygen expected when methane dilutes fresh air" }],
             tags: ["gases", "methane", "Coward"],
           },
+          flow: U7L1_FLOW,
+          flowSummary: [
+            "Methane–air can explode only from 5 % to 15 %, and diluting gas always passes through that window.",
+            "Near 9.4 %, fuel and oxygen are matched, so this is the most sensitive mixture.",
+            "Rich or inerted gas can become explosive once fresh air mixes in.",
+          ],
         },
         {
           kind: "sim",
