@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Plot, clamp, polyline, Dim } from "@/components/sim/svg";
+import { C, Txt, Arrow, Plot, clamp, polyline, Dim, Stream } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 
 /* ---------------- Closed traverse & Bowditch ---------------- */
 
@@ -73,13 +74,17 @@ export const bowditchSim: SimDef = {
     const truth = [...V, V[0]].map(([x, y]): [number, number] => [X(x), Y(y)]);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <polyline points={polyline(truth)} fill="none" stroke={C.line} strokeWidth={6} />
+        <rect x={0} y={0} width={400} height={240} fill="#F0FDF4" />
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <path key={i} d={`M-10 ${40 + i * 38} C 90 ${20 + i * 38}, 200 ${70 + i * 34}, 410 ${30 + i * 40}`} fill="none" stroke="#86EFAC" strokeWidth={1} opacity={0.8} />
+        ))}
+        <polyline points={polyline(truth)} fill="none" stroke="#CBD5E1" strokeWidth={6} strokeLinejoin="round" />
         {p.show ? <polyline points={polyline(cor)} fill="none" stroke={C.safe} strokeWidth={2.5} /> : <polyline points={polyline(meas)} fill="none" stroke={C.crit} strokeWidth={2.5} />}
         {!p.show && <line x1={meas[meas.length - 1][0]} y1={meas[meas.length - 1][1]} x2={meas[0][0]} y2={meas[0][1]} stroke={C.hazard} strokeWidth={2} strokeDasharray="3 2" />}
         {V.map(([x, y], i) => (
           <g key={i}>
-            <circle cx={X(x)} cy={Y(y)} r={4} fill={C.ink} />
+            <path d={`M${X(x)} ${Y(y) - 7} l5 9 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={0.8} />
+            <circle cx={X(x)} cy={Y(y)} r={2} fill={C.ink} />
             <Txt x={X(x) + 6} y={Y(y) - 4} size={8} mono>
               {String.fromCharCode(65 + i)}
             </Txt>
@@ -124,6 +129,7 @@ export const weisbachSim: SimDef = {
     { key: "err", label: "Orientation error carried underground", unit: "″", digits: 2, tone: (v) => (v <= 1 ? "ok" : v <= 3 ? "warn" : "crit") },
   ],
   caption: "Sine rule with small angles: β ≈ (b/c)·α, so any error in α is multiplied by b/c. Keep the instrument close to the near wire, wires far apart, and α under ~1°.",
+  handles: [{ key: "b", axis: "x", at: (p) => [360 - p.c * 22 - p.b * 22, 132], toValue: (x, p) => (360 - p.c * 22 - x) / 22, color: "#F59E0B" }],
   render: (p) => {
     const k = 22;
     const y = 120;
@@ -133,20 +139,23 @@ export const weisbachSim: SimDef = {
     const off = clamp(p.al / 60, 2, 50);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20)} fill="#e2e8f0" stroke={C.slate} strokeDasharray="4 3" />
-        <Txt x={(xW1 + xW2) / 2} y={y - Math.max(60, (p.c * k) / 2 + 20) + 14} size={8} anchor="middle" fill={C.slate}>
+        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
+        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.6} />
+        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill="#9CA3AF" />
+        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill={MAT.hatch} />
+        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20)} fill="#1E293B" />
+        <Txt x={(xW1 + xW2) / 2} y={y - Math.max(60, (p.c * k) / 2 + 20) + 14} size={8} anchor="middle" fill="#CBD5E1" weight={700}>
           SHAFT
         </Txt>
-        <line x1={xC} y1={y} x2={xW2} y2={y - off} stroke={C.tech} strokeWidth={1.5} />
-        <line x1={xC} y1={y} x2={xW1} y2={y} stroke={C.tech} strokeWidth={1.5} />
-        <line x1={xW1} y1={y} x2={xW2} y2={y - off} stroke={C.ink} strokeWidth={2} />
-        <circle cx={xW1} cy={y} r={5} fill={C.crit} />
-        <circle cx={xW2} cy={y - off} r={5} fill={C.crit} />
-        <Txt x={xW1} y={y + 18} size={9} anchor="middle" weight={800}>
+        <Stream d={`M${xC} ${y} L${xW2} ${y - off}`} color="#38BDF8" width={1.5} speed={0.7} />
+        <Stream d={`M${xC} ${y} L${xW1} ${y}`} color="#38BDF8" width={1.5} speed={0.7} />
+        <line x1={xW1} y1={y} x2={xW2} y2={y - off} stroke="#F8FAFC" strokeWidth={2} />
+        <circle cx={xW1} cy={y} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
+        <circle cx={xW2} cy={y - off} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
+        <Txt x={xW1} y={y + 18} size={9} anchor="middle" weight={800} fill="#F8FAFC">
           W₁
         </Txt>
-        <Txt x={xW2} y={y - off - 10} size={9} anchor="middle" weight={800}>
+        <Txt x={xW2} y={y - off - 10} size={9} anchor="middle" weight={800} fill="#F8FAFC">
           W₂
         </Txt>
         <polygon points={`${xC - 7},${y + 12} ${xC + 7},${y + 12} ${xC},${y - 2}`} fill={C.hazard} stroke={C.ink} />
@@ -187,7 +196,12 @@ export const bondSim: SimDef = {
     { key: "rr", label: "Reduction ratio F80/P80", digits: 0 },
   ],
   caption: "Rittinger (E ∝ new surface, 1/x) suits fine grinding; Kick (E ∝ log ratio) suits coarse crushing; Bond (E ∝ 1/√x) sits between and is the industry design standard.",
-  render: (p, o) => {
+  animated: true,
+  handles: [
+    { key: "F", axis: "x", at: (p) => [30 + ((Math.log10(p.F * 1000) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)) / 1000, color: "#0F172A" },
+    { key: "P", axis: "x", at: (p) => [30 + ((Math.log10(p.P) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)), color: "#3B82F6" },
+  ],
+  render: (p, o, t) => {
     const lx = (um: number) => 30 + ((Math.log10(um) - 1) / (Math.log10(300000) - 1)) * 340;
     return (
       <g>
@@ -216,10 +230,19 @@ export const bondSim: SimDef = {
         <Txt x={lx(p.P)} y={96} size={8} anchor="middle" weight={700} fill={C.tech}>
           P80
         </Txt>
-        <circle cx={90} cy={165} r={45} fill="#cbd5e1" stroke={C.ink} strokeWidth={3} />
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <circle key={i} cx={75 + (i % 3) * 15} cy={170 + Math.floor(i / 3) * 14} r={6} fill={C.slate} />
-        ))}
+        <circle cx={90} cy={165} r={47} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} filter="url(#f-shadow)" />
+        <circle cx={90} cy={165} r={41} fill="#E2E8F0" />
+        <g transform={`rotate(${((t * 60) % 360).toFixed(0)} 90 165)`}>
+          {[0, 60, 120, 180, 240, 300].map((a) => (
+            <rect key={a} x={88} y={124} width={4} height={6} fill="#64748B" transform={`rotate(${a} 90 165)`} />
+          ))}
+        </g>
+        {Array.from({ length: 9 }).map((_, i) => {
+          // charge cascades up the rising side and tumbles back
+          const a = ((t * 1.3 + i / 9) % 1) * Math.PI * 1.1 + Math.PI * 0.35;
+          const rr = 18 + (i % 3) * 7;
+          return <circle key={i} cx={90 + Math.cos(a) * rr} cy={170 + Math.sin(a) * rr * 0.8} r={5.5} fill="#475569" stroke="#1E293B" strokeWidth={0.6} />;
+        })}
         <Txt x={90} y={226} size={8} anchor="middle" weight={700}>
           ball mill
         </Txt>
@@ -307,7 +330,9 @@ export const washSim: SimDef = {
       <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={35} ymin={0} ymax={100} xlabel="cumulative ash of floats (%)" ylabel="yield %">
         {(sx, sy) => (
           <g>
-            <polyline points={polyline(cum.slice(1).map(([a, yv]) => [sx(a), sy(yv)]))} fill="none" stroke={C.tech} strokeWidth={2.5} />
+            <rect x={sx(0)} y={sy(100)} width={sx(17) - sx(0)} height={sy(0) - sy(100)} fill={C.safe} opacity={0.06} />
+            <polygon points={polyline([[sx(0), sy(0)], ...cum.slice(1).map(([a, yv]): [number, number] => [sx(a), sy(yv)]), [sx(cum[cum.length - 1][0]), sy(0)]])} fill={C.tech} opacity={0.08} />
+            <polyline points={polyline(cum.slice(1).map(([a, yv]) => [sx(a), sy(yv)]))} fill="none" stroke={C.tech} strokeWidth={2.5} strokeLinejoin="round" />
             {cum.slice(1).map(([a, yv], i) => (
               <circle key={i} cx={sx(a)} cy={sy(yv)} r={2.5} fill={C.tech} />
             ))}
@@ -315,6 +340,7 @@ export const washSim: SimDef = {
             <Txt x={sx(17) + 3} y={sy(95)} size={8} fill={C.hazard} weight={700}>
               17 % ash target
             </Txt>
+            <circle cx={sx(clamp(o.cleanAsh, 0, 35))} cy={sy(o.y)} r={13} fill={o.cleanAsh <= 17 ? C.safe : C.crit} opacity={0.15} />
             <circle cx={sx(clamp(o.cleanAsh, 0, 35))} cy={sy(o.y)} r={7} fill={o.cleanAsh <= 17 ? C.safe : C.crit} stroke="white" strokeWidth={2} />
             <Txt x={sx(clamp(o.cleanAsh, 0, 35)) + 10} y={sy(o.y) + 4} size={9} weight={800} mono>
               {`${p.rho.toFixed(2)} g/cc`}
@@ -356,8 +382,12 @@ export const earthSim: SimDef = {
   caption: "Underground coal mine systems commonly restrict earth-fault current to 750 mA via a neutral earthing resistor, with earth-leakage protection tripping well below that.",
   render: (p, o) => (
     <g>
-      <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-      <circle cx={60} cy={70} r={26} fill="none" stroke={C.ink} strokeWidth={2} />
+      <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
+      <rect x={0} y={190} width={400} height={50} fill={MAT.soil} opacity={0.45} />
+      {!o.tripped && <Stream d="M86 70 L318 70 L326 100 L335 110 L335 190 L60 190 L60 96" color={C.crit} width={2} speed={clamp(o.If / 20, 0.08, 1)} opacity={0.75} />}
+      <circle cx={60} cy={70} r={26} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} />
+      <circle cx={52} cy={70} r={11} fill="none" stroke="#B45309" strokeWidth={2} />
+      <circle cx={68} cy={70} r={11} fill="none" stroke="#B45309" strokeWidth={2} />
       <Txt x={60} y={74} size={9} anchor="middle" weight={800}>
         TX
       </Txt>
@@ -365,7 +395,8 @@ export const earthSim: SimDef = {
       <Txt x={190} y={62} size={8} anchor="middle" mono>
         {`phase ${o.vph.toFixed(0)} V`}
       </Txt>
-      <rect x={300} y={50} width={70} height={60} rx={6} fill={C.hazard} stroke={C.ink} />
+      <rect x={300} y={50} width={70} height={60} rx={8} fill={C.hazard} stroke={C.ink} filter="url(#f-shadow)" />
+      <rect x={302} y={52} width={66} height={14} rx={6} fill={MAT.glass} />
       <Txt x={335} y={84} size={8} anchor="middle" weight={800}>
         MOTOR FRAME
       </Txt>
@@ -387,7 +418,7 @@ export const earthSim: SimDef = {
         {p.Rn > 0 ? `NER ${p.Rn} Ω` : "solidly earthed"}
       </Txt>
       <line x1={60} y1={164} x2={60} y2={190} stroke={C.ink} strokeWidth={2} />
-      <rect x={110} y={100} width={64} height={30} rx={4} fill={o.tripped ? C.safe : C.crit} />
+      <rect x={110} y={100} width={64} height={30} rx={6} fill={o.tripped ? C.safe : C.crit} filter="url(#f-shadow)" />
       <Txt x={142} y={119} size={8} anchor="middle" fill="white" weight={800}>
         {o.tripped ? "ELR TRIP" : "ELR —"}
       </Txt>
@@ -434,25 +465,35 @@ export const koepeSim: SimDef = {
     { key: "amax", label: "Max a before slip", unit: "m/s²", digits: 2 },
   ],
   caption: "Euler–Eytelwein: no slip while T₁/T₂ ≤ e^(μθ). Worst cases: accelerating a loaded skip up, or emergency braking a loaded skip descending.",
-  render: (p, o) => {
+  animated: true,
+  render: (p, o, t) => {
     const cx = 200;
     const cy = 50;
     const r = 30;
+    const slip = o.margin < 1;
+    const travel = Math.sin(t * 0.6) * 12;
     const col = o.margin >= 1.1 ? C.safe : o.margin >= 1 ? C.hazard : C.crit;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <rect x={150} y={10} width={100} height={8} fill={C.slate} />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke={col} strokeWidth={6} />
-        <circle cx={cx} cy={cy} r={4} fill={C.ink} />
-        <line x1={cx - r} y1={cy} x2={cx - r} y2={170} stroke={C.ink} strokeWidth={3} />
-        <line x1={cx + r} y1={cy} x2={cx + r} y2={150} stroke={C.ink} strokeWidth={3} />
-        <rect x={cx - r - 16} y={170} width={32} height={40} fill={C.coal} />
-        <Txt x={cx - r} y={194} size={8} anchor="middle" fill="white" weight={800}>
+        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
+        <path d={`M ${cx - 60} 120 L ${cx - 44} 10 L ${cx + 44} 10 L ${cx + 60} 120`} fill="none" stroke="#475569" strokeWidth={3} />
+        <path d={`M ${cx - 52} 65 L ${cx + 52} 65 M ${cx - 48} 38 L ${cx + 48} 38`} stroke="#94A3B8" strokeWidth={1.5} />
+        <rect x={150} y={10} width={100} height={8} rx={2} fill={MAT.steel} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={col} strokeWidth={6} filter={slip ? "url(#f-glow)" : undefined} />
+        <g transform={`rotate(${((t * (slip ? 160 : 60)) % 360).toFixed(0)} ${cx} ${cy})`}>
+          {[0, 60, 120].map((a) => (
+            <line key={a} x1={cx - r + 4} y1={cy} x2={cx + r - 4} y2={cy} stroke="#334155" strokeWidth={2.5} transform={`rotate(${a} ${cx} ${cy})`} />
+          ))}
+        </g>
+        <circle cx={cx} cy={cy} r={5} fill={MAT.metal} stroke={C.ink} />
+        <line x1={cx - r} y1={cy} x2={cx - r} y2={170 + travel} stroke="#334155" strokeWidth={3} />
+        <line x1={cx + r} y1={cy} x2={cx + r} y2={150 - travel} stroke="#334155" strokeWidth={3} />
+        <rect x={cx - r - 16} y={170 + travel} width={32} height={40} rx={2} fill={MAT.coal} stroke="#0F172A" />
+        <Txt x={cx - r} y={194 + travel} size={8} anchor="middle" fill="white" weight={800}>
           {`${p.Q} t`}
         </Txt>
-        <rect x={cx + r - 16} y={150} width={32} height={34} fill="#94a3b8" />
-        <path d={`M ${cx - r} 210 Q ${cx} 238 ${cx + r} 184`} fill="none" stroke={C.slate} strokeWidth={2} strokeDasharray="5 3" />
+        <rect x={cx + r - 16} y={150 - travel} width={32} height={34} rx={2} fill={MAT.metal} stroke="#475569" />
+        <path d={`M ${cx - r} ${210 + travel} Q ${cx} 238 ${cx + r} ${184 - travel}`} fill="none" stroke={C.slate} strokeWidth={2} strokeDasharray="5 3" />
         <Txt x={cx} y={234} size={7} anchor="middle" fill={C.slate}>
           tail rope
         </Txt>

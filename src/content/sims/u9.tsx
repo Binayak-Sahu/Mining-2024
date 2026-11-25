@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Plot, sample, clamp, polyline } from "@/components/sim/svg";
+import { MAT } from "@/components/sim/defs";
 import { erf } from "./u3";
 
 /* ---------------- DCF: NPV, IRR, payback with Indian levies ---------------- */
@@ -71,9 +72,11 @@ export const npvSim: SimDef = {
     }
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
+        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
+        <rect x={30} y={zero} width={340} height={100} fill={C.crit} opacity={0.04} />
         <line x1={30} x2={370} y1={zero} y2={zero} stroke={C.ink} />
-        <rect x={30 + 1} y={zero} width={bw - 2} height={Math.min(p.capex * k, 86)} fill={C.crit} />
+        <rect x={30 + 1} y={zero} width={bw - 2} height={Math.min(p.capex * k, 86)} rx={1.5} fill={C.crit} />
+        <rect x={30 + 1} y={zero} width={(bw - 2) / 3} height={Math.min(p.capex * k, 86)} fill={MAT.glass} />
         {p.capex * k > 86 && <line x1={28} x2={30 + bw} y1={zero + 80} y2={zero + 74} stroke="white" strokeWidth={3} />}
         {Array.from({ length: years }).map((_, i) => {
           const t = i + 1;
@@ -83,10 +86,24 @@ export const npvSim: SimDef = {
             <g key={t}>
               <rect x={30 + t * bw + 1} y={zero - Math.max(h, 0)} width={bw - 2} height={Math.abs(h)} fill="#bfdbfe" />
               <rect x={30 + t * bw + 1} y={zero - Math.max(hd, 0)} width={bw - 2} height={Math.abs(hd)} fill={C.tech} />
+              <rect x={30 + t * bw + 1} y={zero - Math.max(hd, 0)} width={(bw - 2) / 3} height={Math.abs(hd)} fill={MAT.glass} />
             </g>
           );
         })}
-        <polyline points={polyline(pts.map(([x, y]) => [x, clamp(y, 5, 235)]))} fill="none" stroke={C.hazard} strokeWidth={2.5} />
+        <polyline points={polyline(pts.map(([x, y]) => [x, clamp(y, 5, 235)]))} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeLinejoin="round" />
+        {(() => {
+          const i = pts.findIndex(([, y], j) => j > 0 && y <= zero);
+          if (i < 1) return null;
+          return (
+            <g>
+              <circle cx={pts[i][0]} cy={zero} r={9} fill={C.safe} opacity={0.2} />
+              <circle cx={pts[i][0]} cy={zero} r={4.5} fill={C.safe} stroke="white" strokeWidth={1.5} />
+              <Txt x={pts[i][0]} y={zero + 16} size={8} anchor="middle" weight={800} fill="#047857">
+                {`payback yr ${i}`}
+              </Txt>
+            </g>
+          );
+        })()}
         <Txt x={34} y={20} size={9} weight={700} fill={C.slate}>
           light = nominal CF · dark = discounted · amber = cumulative discounted (¼ scale)
         </Txt>
@@ -141,18 +158,21 @@ export const cutoffSim: SimDef = {
     { key: "profit", label: "Undiscounted profit", unit: "₹ cr", digits: 0, tone: (v) => (v >= 0 ? "ok" : "crit") },
   ],
   caption: "Lognormal grade distribution; each tonne above cut-off is mined and processed. Lane's theory raises the cut-off above break-even when the mill (or mine/market) is the bottleneck and time value matters.",
+  handles: [{ key: "c", axis: "x", at: (p) => [40 + (p.c / 5) * 320, 204], toValue: (x) => ((x - 40) / 320) * 5, color: "#0F172A" }],
   render: (p, o) => (
     <Plot x={40} y={14} w={320} h={190} xmin={0} xmax={5} ymin={0} ymax={10} xlabel="cut-off grade (g/t)" ylabel="Mt above">
       {(sx, sy) => (
         <g>
+          <polygon points={`${sx(p.c)},${sy(0)} ${sample((c) => 10 * gradeTonnage(p.mean, p.cv, c).frac, p.c, 5, 50, sx, sy)} ${sx(5)},${sy(0)}`} fill={C.ore} opacity={0.18} />
           <polyline points={sample((c) => 10 * gradeTonnage(p.mean, p.cv, c).frac, 0, 5, 80, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} />
           <polyline points={sample((c) => Math.min(10, gradeTonnage(p.mean, p.cv, c).g), 0.01, 5, 80, sx, sy)} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeDasharray="6 3" />
           <line x1={sx(o.gbe)} x2={sx(o.gbe)} y1={sy(0)} y2={sy(10)} stroke={C.crit} strokeDasharray="4 3" />
-          <Txt x={sx(o.gbe) + 3} y={sy(9.5)} size={8} fill={C.crit} weight={700}>
+          <Txt x={sx(o.gbe) + 3} y={sy(6.2)} size={8} fill={C.crit} weight={700}>
             break-even
           </Txt>
           <line x1={sx(p.c)} x2={sx(p.c)} y1={sy(0)} y2={sy(10)} stroke={C.ink} strokeWidth={2} />
-          <circle cx={sx(p.c)} cy={sy(o.tonnes)} r={5} fill={C.tech} />
+          <circle cx={sx(p.c)} cy={sy(o.tonnes)} r={10} fill={C.tech} opacity={0.18} />
+          <circle cx={sx(p.c)} cy={sy(o.tonnes)} r={5} fill={C.tech} stroke="white" strokeWidth={1.5} />
           <Txt x={sx(3.2)} y={sy(9.3)} size={8} fill={C.tech} weight={700}>
             — tonnes (Mt)
           </Txt>
@@ -268,7 +288,7 @@ export const pitOptSim: SimDef = {
       for (let c = 0; c < COLS; c++) {
         const g = blockGrade(row, c);
         const ore = g > 0.3;
-        cells.push(<rect key={`${row}-${c}`} x={x0 + c * cw} y={y0 + row * cw} width={cw - 1} height={cw - 1} fill={ore ? `rgba(217,119,6,${clamp(0.25 + g / 4, 0.25, 1)})` : "#e2e8f0"} />);
+        cells.push(<rect key={`${row}-${c}`} x={x0 + c * cw} y={y0 + row * cw} width={cw - 1} height={cw - 1} fill={ore ? `rgba(217,119,6,${clamp(0.25 + g / 4, 0.25, 1)})` : MAT.rock} opacity={ore ? 1 : 0.55} />);
       }
     const pts: [number, number][] = [[x0, y0]];
     r.depth.forEach((d, c) => {
@@ -278,12 +298,15 @@ export const pitOptSim: SimDef = {
     pts.push([x0 + COLS * cw, y0]);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
+        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
+        <rect x={x0} y={y0 - 8} width={COLS * cw} height={8} fill={MAT.sky} />
         <Txt x={20} y={20} size={9} weight={700} fill={C.slate}>
           BLOCK MODEL SECTION · amber = ore (darker richer)
         </Txt>
         {cells}
-        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={3} />
+        <polygon points={polyline(pts)} fill="#0EA5E9" opacity={0.12} />
+        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={6} opacity={0.2} strokeLinejoin="round" />
+        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={3} strokeLinejoin="round" />
         <Txt x={20} y={228} size={11} weight={900} mono fill={C.crit}>
           {`optimal pit · ${r.ore} ore / ${r.waste} waste blocks`}
         </Txt>
@@ -336,19 +359,27 @@ export const radarSim: SimDef = {
     { key: "lead", label: "Lead time remaining", unit: "h", digits: 0, tone: (v) => (v >= 12 ? "ok" : "crit") },
   ],
   caption: "For accelerating creep, 1/velocity falls roughly linearly to zero at failure (Fukuzono). Later forecasts are more accurate but leave less time to evacuate — set alarm thresholds, don't wait for certainty.",
-  render: (p) => {
+  animated: true,
+  handles: [{ key: "tf", axis: "x", at: (p) => [40 + (p.tf / 130) * 340, 204], toValue: (x) => ((x - 40) / 340) * 130, color: "#EF4444" }],
+  render: (p, _o, tt) => {
     const r = inverseVelocity(p);
     const ymax = Math.max(...r.pts.map((q) => q[1]), 0.4) * 1.1;
     return (
       <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={130} ymin={0} ymax={Math.ceil(ymax * 10) / 10} xlabel="time (h)" ylabel="1/v (h/mm)">
         {(sx, sy) => (
           <g>
+            <g transform="translate(352 34)">
+              <path d="M-14 10 A 16 16 0 0 1 14 10" fill="none" stroke="#475569" strokeWidth={2} />
+              <path d="M0 10 L0 18 M-6 18 L6 18" stroke="#475569" strokeWidth={2} />
+              <path d={`M0 6 L ${(Math.cos(tt * 2) * 22).toFixed(1)} ${(6 - Math.abs(Math.sin(tt * 2)) * 18).toFixed(1)}`} stroke={C.safe} strokeWidth={2} opacity={0.8} />
+              <circle cx={0} cy={6} r={2.5} fill={C.safe} />
+            </g>
             {r.pts.map(([t, y], i) => (
-              <circle key={i} cx={sx(t)} cy={sy(y)} r={3} fill={C.tech} />
+              <circle key={i} cx={sx(t)} cy={sy(y)} r={3} fill={C.tech} opacity={i === r.pts.length - 1 ? 0.6 + 0.4 * Math.abs(Math.sin(tt * 3)) : 1} />
             ))}
             {Number.isFinite(r.tfp) && <line x1={sx(0)} y1={sy(r.a)} x2={sx(Math.min(r.tfp, 130))} y2={sy(Math.max(0, r.a + r.b * Math.min(r.tfp, 130)))} stroke={C.hazard} strokeWidth={2} strokeDasharray="6 3" />}
             <line x1={sx(p.tf)} x2={sx(p.tf)} y1={sy(0)} y2={sy(ymax)} stroke={C.crit} strokeWidth={1.5} />
-            <Txt x={sx(p.tf) + 3} y={sy(ymax) + 12} size={8} fill={C.crit} weight={700}>
+            <Txt x={sx(p.tf) > 300 ? sx(p.tf) - 3 : sx(p.tf) + 3} anchor={sx(p.tf) > 300 ? "end" : "start"} y={sy(ymax) + 12} size={8} fill={C.crit} weight={700}>
               actual failure
             </Txt>
             <line x1={sx(r.tnow)} x2={sx(r.tnow)} y1={sy(0)} y2={sy(ymax)} stroke={C.ink} strokeDasharray="2 2" />
