@@ -69,7 +69,7 @@ export function ThemeToggle() {
   const label = t === "light" ? "Crisp Daylight" : t === "dark" ? "Underground Shift Mode" : "Match device theme";
   return (
     <Tip label={`Theme: ${label}`}>
-      <button type="button" onClick={() => setTheme(THEME_NEXT[t])} aria-label={`Theme: ${label}. Tap to change.`} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+      <button type="button" onClick={() => setTheme(THEME_NEXT[t])} aria-label={`Theme: ${label}. Tap to change.`} className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
       <motion.span key={t} initial={{ rotate: -90, scale: 0.6, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={tactilePress}>
         <Icon size={18} />
       </motion.span>
@@ -86,14 +86,14 @@ export function InspectorBadge() {
   if (!on)
     return (
       <Tip label={"Inspector Mode (Shift+M)"}>
-      <button type="button" onClick={() => setInspector(true)} aria-label="Turn on Inspector Mode" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+      <button type="button" onClick={() => setInspector(true)} aria-label="Turn on Inspector Mode" className="hidden sm:flex w-11 h-11 rounded-xl items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100">
         <KeyRound size={17} />
       </button>
     </Tip>
     );
   return (
     <Tip label={"Inspector Mode is on — turn off (Shift+M)"}>
-      <button type="button" onClick={() => setInspector(false)} aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-energy-tint-text bg-energy-tint">
+      <button type="button" onClick={() => setInspector(false)} aria-label="Inspector Mode on. Turn off" className="w-11 h-11 rounded-xl flex items-center justify-center text-energy-tint-text bg-energy-tint">
       <KeyRound size={18} />
     </button>
     </Tip>
@@ -107,7 +107,7 @@ export function MuteToggle() {
   const m = hydrated && muted;
   return (
     <Tip label={m ? "Sound off" : "Sound on"}>
-      <button type="button" onClick={toggle} data-silent="1" aria-label={m ? "Unmute sound effects" : "Mute sound effects"} aria-pressed={m} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+      <button type="button" onClick={toggle} data-silent="1" aria-label={m ? "Unmute sound effects" : "Mute sound effects"} aria-pressed={m} className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
       {m ? <VolumeX size={18} /> : <Volume2 size={18} />}
     </button>
     </Tip>
@@ -142,7 +142,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-canvas pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-2 sm:gap-4">
-        <Link href="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="STRATA home">
+        <Link href="/" className="flex items-center shrink-0 min-h-[44px] min-w-[44px]" aria-label="STRATA home">
           <Logo />
         </Link>
         <nav className="hidden md:flex items-center gap-0.5 ml-3 rounded-2xl bg-surface-2 p-1">
@@ -171,11 +171,11 @@ export function TopBar() {
             <ThemeToggle />
           </span>
           <Tip label={"Export / import progress"}>
-      <Link href="/profile/#sync" aria-label="Export or import progress" className="hidden sm:flex w-10 h-10 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+      <Link href="/profile/#sync" aria-label="Export or import progress" className="hidden sm:flex w-11 h-11 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
             <ArrowLeftRight size={17} />
           </Link>
     </Tip>
-          <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-10 h-10 rounded-full bg-action text-white text-[14px] font-extrabold readout">
+          <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-11 h-11 rounded-full bg-action text-white text-[14px] font-extrabold readout">
             {["T", "OM", "AM", "2C", "1C"][index]}
           </Link>
         </div>

@@ -41,7 +41,7 @@ export function SituationHeader({ role, scene, claim, claimBy, visual }: { role:
       {claim && (
         <motion.div initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: "spring", stiffness: 420, damping: 30, delay: 0.15 }} className="relative ml-3 rounded-2xl rounded-tl-md bg-slate-100 px-4 py-3">
           <span className="absolute -top-2 left-3 w-4 h-4 rotate-45 bg-slate-100" aria-hidden />
-          {claimBy && <div className="relative text-[13px] font-bold text-slate-600 mb-0.5">{claimBy} says</div>}
+          {claimBy && <div className="relative t-label text-fg-2 mb-0.5">{claimBy} says</div>}
           <p className="relative flow-body text-slate-900">“{nb(claim)}”</p>
         </motion.div>
       )}
