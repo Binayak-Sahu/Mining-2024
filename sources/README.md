@@ -53,4 +53,10 @@ NIT Rourkela B.Tech Mining (4 yr) curriculum, fetched 2026-11-26 from https://ww
 - The page lists old and new codes of the same subject (e.g. MN3001/MN3103/MN3105 Mining Machinery). Identical text is mapped once in `coverage/`.
 
 ## Missing
-- The First Class Manager syllabus in the bye-laws **G.S.R. 910(E), 14-09-2018** is not here. See `ROADMAP.md` ("syllabus source missing"). `AMENDMENTS…CMR, 2017.pdf` holds only the 2021 amendments to it (G.S.R. 555(E)–559(E)).
+- Nothing outstanding. G.S.R. 910(E) was added on 2026-11-26 (see below).
+
+## G.S.R. 910(E): exam bye-laws (added 2026-11-26 by Bink)
+- `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` + `.txt`: Gazette of India, G.S.R. 910(E), Dhanbad, **14 September 2018** (Board of Mining Examinations (Coal)), under CMR 2017 Regs 12(1) and 12(4). 105 pages, Hindi then English; native text layer (no OCR).
+- English part starts at the line "G.S.R. 910(E).—In accordance with…". §11 lists subjects per qualification; **Annexure I** (English) is the First Class Manager's syllabus; Annexures II–IV cover Second Class and the opencast-restricted certificates.
+- The marks scheme in §2.4–2.6 (80 CBT + 20 oral per subject) was later amended by the 2021 notifications in `AMENDMENTS…CMR, 2017.pdf` (3-hour CBT, 150 marks per subject). Where they differ, the 2021 amendment wins.
+- The DGMS circulars OCR text gives this notification's date as 24-09-2018; the gazette itself prints 14-09-2018, which is authoritative.
