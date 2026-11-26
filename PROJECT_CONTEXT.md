@@ -174,6 +174,8 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 ### 6.5 Design system ("Tactile Engineering Studio")
 DESIGN.md is the app-wide design system; existing screens move to it in Phase 15.5. DESIGN.md wins on any conflict.
 
+- **v2 (Phase 15.5a):** DESIGN.md §2 tokens (`--line`, `--text-2`, `--action`, `--success-tint`, …) and v2 `.card`/`.btn-3d`/`.tile-3d`/`.t-*` type styles apply only inside a `.ds2` wrapper (light `.ds2`, dark `:root.dark .ds2`; `.ds2-light`/`.ds2-dark` force a theme on a sub-tree). Motion presets: `src/lib/motion.ts`. Reference components: `src/components/ds/`, shown at `/design-system` (QA flag link in Profile). Screenshot/pixel-diff harness: `scripts/shots.mjs`.
+
 - Light **Crisp Daylight** (canvas `#F7F7F5`) and dark **Underground Shift Mode** (`#0B0F19`). UI is authored in light-mode semantics; `.dark` on `<html>` remaps the `slate-*` ramp and accent tints through CSS variables. A no-flash theme boot script runs at the start of `<body>`.
 - Tokens/utilities: `bg-canvas`, `bg-surface`, `--hairline`, `--hairline-strong`, `--sticky-bg`, `hairline`, `hairline-b`, `hairline-t`, `surface-sticky`, `.card` (layered shadow; dark cards get `inset 0 1px 0 rgba(255,255,255,0.08)`), `.btn-3d` with tones (ink, safe, crit, tech, hazard, violet, ghost), `.tile-3d` answer tiles, `.plate`, custom `Slider` with floating value pill.
 - Accessibility: WCAG AA text contrast in both themes (verified by sweep), ≥ 44 px touch targets on coarse pointers, `prefers-reduced-motion` honoured (CSS and framer `MotionConfig reducedMotion="user"`; confetti disabled), visible focus rings, sentence-case labels.

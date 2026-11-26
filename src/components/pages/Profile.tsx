@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Trash2, Unlock, Zap, BookOpen, BookMarked, Sigma, Flame, Trophy, HeartCrack, Repeat, Sun, Moon, MonitorSmartphone, Volume2, VolumeX, Palette } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
@@ -213,10 +213,30 @@ export function Profile() {
           text, DGMS circulars and your mine&apos;s approved Safety Management Plan before acting in the field.
         </p>
       </div>
+      <QaDesignLink />
       <p className="sr-only">
         <BookOpen aria-hidden /> Profile
       </p>
     </div>
+  );
+}
+
+/** QA-only link to the /design-system sandbox (Phase 15.5a): rendered only when localStorage "strata-qa" is "1". */
+function QaDesignLink() {
+  const [qa, setQa] = useState(false);
+  useEffect(() => {
+    try {
+      setQa(localStorage.getItem("strata-qa") === "1");
+    } catch {
+      /* storage blocked */
+    }
+  }, []);
+  if (!qa) return null;
+  return (
+    <Link href="/design-system" className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+      <Palette size={18} className="text-slate-600" />
+      <span className="flex-1 text-[14px] font-bold text-slate-900">Design system sandbox</span>
+    </Link>
   );
 }
 

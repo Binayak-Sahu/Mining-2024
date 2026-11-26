@@ -691,3 +691,568 @@ svg[role="img"] {
 .dark .verdict-no {
   background: color-mix(in oklab, #f59e0b 22%, var(--surface));
 }
+
+/* =====================================================================================================
+ * Design system v2 (DESIGN.md §2–§5), Phase 15.5a.
+ * Everything below applies only inside a `.ds2` wrapper (today: the /design-system sandbox). The old
+ * :root / :root.dark palette above is untouched, so production screens render exactly as before.
+ * Light: `.ds2`. Dark: `:root.dark .ds2`. The sandbox can also force one theme on a sub-tree
+ * (`.ds2-light` / `.ds2-dark` inside `.ds2`) to show light and dark swatches side by side.
+ * ===================================================================================================== */
+.ds2,
+.ds2 .ds2-light {
+  color-scheme: light;
+  /* §2.1 neutrals */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f5f5;
+  --line: #e5e5e5;
+  --line-strong: #d4d4d4;
+  --text: #141414;
+  --text-2: #5c5c5c;
+  --text-3: #6b6b6b;
+  --n-50: #fafafa;
+  --n-100: #f5f5f5;
+  --n-200: #e5e5e5;
+  --n-300: #d4d4d4;
+  --n-400: #6b6b6b;
+  --n-500: #5c5c5c;
+  --n-600: #525252;
+  --n-700: #404040;
+  --n-800: #262626;
+  --n-900: #141414;
+  --n-950: #0a0a0a;
+  /* §2.2 accents: face / ledge / text-on / tint bg / tint text */
+  --action: #3b5bf6;
+  --action-ledge: #2a43c2;
+  --action-on: #ffffff;
+  --action-tint: #eef1ff;
+  --action-tint-text: #2a43c2;
+  --success: #15803d;
+  --success-ledge: #0f5e2c;
+  --success-on: #ffffff;
+  --success-tint: #dcfce7;
+  --success-tint-text: #15803d;
+  --danger: #dc2626;
+  --danger-ledge: #991b1b;
+  --danger-on: #ffffff;
+  --danger-tint: #fee2e2;
+  --danger-tint-text: #b91c1c;
+  --energy: #f5b417;
+  --energy-ledge: #b47f06;
+  --energy-on: #2a1e00;
+  --energy-tint: #fef6dc;
+  --energy-tint-text: #92600a;
+  --ink: #141414;
+  --ink-ledge: #000000;
+  --ink-on: #ffffff;
+  /* §5.7: the only shadow allowed (sheets, popovers) */
+  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+:root.dark .ds2,
+.ds2 .ds2-dark {
+  color-scheme: dark;
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --surface-2: #242424;
+  --line: #2e2e2e;
+  --line-strong: #3a3a3a;
+  --text: #f5f5f5;
+  --text-2: #a3a3a3;
+  --text-3: #949494;
+  --n-50: #1c1c1c;
+  --n-100: #242424;
+  --n-200: #2e2e2e;
+  --n-300: #3a3a3a;
+  --n-400: #949494;
+  --n-500: #a3a3a3;
+  --n-600: #bdbdbd;
+  --n-700: #d4d4d4;
+  --n-800: #e5e5e5;
+  --n-900: #f5f5f5;
+  --n-950: #ffffff;
+  --action: #3b5bf6;
+  --action-ledge: #2a43c2;
+  --action-on: #ffffff;
+  --action-tint: #1a2040;
+  --action-tint-text: #9daeff;
+  --success: #15803d;
+  --success-ledge: #0f5e2c;
+  --success-on: #ffffff;
+  --success-tint: #0f2e1a;
+  --success-tint-text: #4ade80;
+  --danger: #dc2626;
+  --danger-ledge: #8f1d1d;
+  --danger-on: #ffffff;
+  --danger-tint: #3a1215;
+  --danger-tint-text: #f87171;
+  --energy: #f5b417;
+  --energy-ledge: #9c6e05;
+  --energy-on: #2a1e00;
+  --energy-tint: #2e2508;
+  --energy-tint-text: #f5c84a;
+  --ink: #d4d4d4;
+  --ink-ledge: #949494;
+  --ink-on: #141414;
+  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+}
+/* Forced-light sub-tree inside a dark page: re-declare it after the dark block so it wins on equal footing. */
+:root.dark .ds2 .ds2-light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f5f5;
+  --line: #e5e5e5;
+  --line-strong: #d4d4d4;
+  --text: #141414;
+  --text-2: #5c5c5c;
+  --text-3: #6b6b6b;
+  --n-50: #fafafa;
+  --n-100: #f5f5f5;
+  --n-200: #e5e5e5;
+  --n-300: #d4d4d4;
+  --n-400: #6b6b6b;
+  --n-500: #5c5c5c;
+  --n-600: #525252;
+  --n-700: #404040;
+  --n-800: #262626;
+  --n-900: #141414;
+  --n-950: #0a0a0a;
+  --action-tint: #eef1ff;
+  --action-tint-text: #2a43c2;
+  --success-tint: #dcfce7;
+  --success-tint-text: #15803d;
+  --danger-ledge: #991b1b;
+  --danger-tint: #fee2e2;
+  --danger-tint-text: #b91c1c;
+  --energy-ledge: #b47f06;
+  --energy-tint: #fef6dc;
+  --energy-tint-text: #92600a;
+  --ink: #141414;
+  --ink-ledge: #000000;
+  --ink-on: #ffffff;
+  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+}
+.ds2 {
+  background: var(--bg);
+  color: var(--text);
+}
+.ds2 .ds2-light,
+.ds2 .ds2-dark {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* §3 type scale */
+.ds2 .t-display {
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.ds2 .t-title {
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.ds2 .t-heading {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.ds2 .t-body {
+  font-size: 18px;
+  line-height: 29px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.ds2 .t-body-lg {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.ds2 .t-secondary {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+.ds2 .t-eyebrow {
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.ds2 .t-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.ds2 .t-tab {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.ds2 .t-readout {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* §5.3 card: 2 px border, 5 px bottom ledge, radius 20, no shadow */
+.ds2 .card {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-bottom-width: 5px;
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+/* §5.1 buttons: 56 px pill, face --c, ledge --e, text --t; press sinks 4 px */
+.ds2 .btn-3d {
+  --c: var(--ink);
+  --e: var(--ink-ledge);
+  --t: var(--ink-on);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 56px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--c);
+  color: var(--t);
+  box-shadow: 0 4px 0 var(--e);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  filter: none;
+}
+.ds2 .btn-3d:hover:not(:disabled) {
+  filter: none;
+}
+.ds2 .btn-3d:active:not(:disabled),
+.ds2 .btn-3d[data-pressed="true"] {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--e);
+}
+.ds2 .btn-3d:disabled {
+  --c: var(--surface-2) !important;
+  --e: transparent !important;
+  --t: var(--text-3) !important;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.ds2 .btn-3d:focus-visible,
+.ds2 .tile-3d:focus-visible,
+.ds2 .ds-focus:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
+  outline-offset: 3px;
+}
+.ds2 .tone-tech,
+.ds2 .tone-violet {
+  --c: var(--action);
+  --e: var(--action-ledge);
+  --t: var(--action-on);
+}
+.ds2 .tone-safe {
+  --c: var(--success);
+  --e: var(--success-ledge);
+  --t: var(--success-on);
+}
+.ds2 .tone-crit {
+  --c: var(--danger);
+  --e: var(--danger-ledge);
+  --t: var(--danger-on);
+}
+.ds2 .tone-hazard {
+  --c: var(--energy);
+  --e: var(--energy-ledge);
+  --t: var(--energy-on);
+}
+:root .ds2 .tone-ink {
+  /* :root prefix so it beats the old `:root.dark .tone-ink` ledge */
+  --c: var(--ink);
+  --e: var(--ink-ledge);
+  --t: var(--ink-on);
+}
+.ds2 .tone-ghost {
+  --c: var(--surface);
+  --e: var(--line-strong);
+  --t: var(--text);
+  border: 2px solid var(--line-strong);
+}
+/* Small secondary pill ("Why?", "Hint", "All readouts (n)") */
+.ds2 .btn-3d.btn-sm {
+  height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* §5.2 answer tiles and word-bank chips */
+.ds2 .tile-3d {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--line-strong);
+  border-bottom-width: 4px;
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: none;
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 600;
+  text-align: left;
+}
+.ds2 .tile-3d:hover:not(:disabled) {
+  border-color: var(--line-strong);
+}
+.ds2 .tile-3d:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.ds2 .tile-3d.tile-chip {
+  color: var(--action-tint-text);
+  text-align: center;
+}
+.ds2 .tile-3d[data-on="true"],
+.ds2 .tile-3d[data-state="selected"] {
+  border-color: var(--action);
+  background: var(--action-tint);
+  box-shadow: none;
+}
+.ds2 .tile-3d[data-state="correct"] {
+  border-color: var(--success);
+  background: var(--success-tint);
+}
+.ds2 .tile-3d[data-state="wrong"] {
+  border-color: var(--danger);
+  background: var(--danger-tint);
+}
+/* Word-bank well and the blank slot inside a sentence */
+.ds2 .ds-well {
+  background: var(--surface-2);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+.ds2 .ds-blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  min-height: 44px;
+  border: 2px dashed var(--text-3);
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
+/* §5.5 / §5.5b path nodes ("pedestals"): 72 px face over a 10 px rim */
+.ds2 .ds-node {
+  position: relative;
+  width: 72px;
+  height: 82px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.ds2 .ds-node-rim,
+.ds2 .ds-node-face {
+  position: absolute;
+  left: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+}
+.ds2 .ds-node-rim {
+  top: 10px;
+  background: var(--rim);
+}
+.ds2 .ds-node-face {
+  top: 0;
+  background: var(--face);
+  color: var(--glyph);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 70ms ease;
+}
+.ds2 .ds-node:active .ds-node-face {
+  transform: translateY(6px);
+}
+.ds2 .ds-node[data-state="done"] {
+  --face: var(--success);
+  --rim: var(--success-ledge);
+  --glyph: var(--success-on);
+}
+.ds2 .ds-node[data-state="current"] {
+  --face: var(--action);
+  --rim: var(--action-ledge);
+  --glyph: var(--action-on);
+}
+.ds2 .ds-node[data-state="locked"] {
+  --face: var(--surface-2);
+  --rim: var(--line-strong);
+  --glyph: var(--text-3);
+}
+.ds2 .ds-node[data-state="boss"] {
+  --face: var(--energy);
+  --rim: var(--energy-ledge);
+  --glyph: var(--energy-on);
+}
+/* Current node: 3 px action ring 8 px outside the face, pulsing 1 → 1.08 (2 s); stops under reduced motion */
+.ds2 .ds-node-ring {
+  position: absolute;
+  left: -11px;
+  top: -11px;
+  width: 94px;
+  height: 94px;
+  border-radius: 9999px;
+  border: 3px solid var(--action);
+  pointer-events: none;
+  animation: ds-node-pulse 2s ease-in-out infinite;
+}
+@keyframes ds-node-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds2 .ds-node-ring {
+    animation: none;
+  }
+}
+.ds2 .ds-node-badge {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--energy);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* §5.4 course spine: 4 px --line, centred, drawn only in the 32 px gaps between cards */
+.ds2 .ds-spine {
+  display: flex;
+  flex-direction: column;
+}
+.ds2 .ds-spine-gap {
+  align-self: center;
+  width: 4px;
+  height: 32px;
+  background: var(--line);
+}
+
+/* §5.7 sheets and popovers: --surface-2 face, 2 px --line border, the one allowed shadow */
+.ds2 .ds-pop,
+.ds-pop.ds2 {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--sheet-shadow);
+}
+.ds2 .ds-sheet {
+  border-radius: 24px 24px 0 0;
+  padding: 20px 24px calc(16px + env(safe-area-inset-bottom));
+}
+.ds2 .ds-sheet[data-ok="true"] {
+  background: var(--success-tint);
+}
+.ds2 .ds-sheet[data-ok="false"] {
+  background: var(--danger-tint);
+}
+
+/* §5.6 lesson progress bar: one 10 px pill with 2 px --bg notches at stage boundaries */
+.ds2 .ds-progress {
+  position: relative;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.ds2 .ds-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--success);
+  border-radius: 9999px;
+}
+.ds2 .ds-progress-notch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--bg);
+}
+
+/* §5.8 bottom tab bar */
+.ds2 .ds-tabbar {
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  height: calc(64px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.ds2 .ds-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-3);
+  min-height: 44px;
+}
+.ds2 .ds-tab-icon {
+  width: 56px;
+  height: 32px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds2 .ds-tab[aria-current="page"] {
+  color: var(--text);
+}
+.ds2 .ds-tab[aria-current="page"] .ds-tab-icon {
+  background: var(--surface-2);
+}
+.ds2 .ds-tab[aria-current="page"] .t-tab {
+  font-weight: 700;
+}
+
+/* §5.9 sim readout rows */
+.ds2 .ds-readout-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
