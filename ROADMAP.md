@@ -4,7 +4,10 @@ The owner's decisions, the phase plan and a run log. `BUILD_PROGRESS.md` holds t
 
 ## Owner decisions (Bink)
 1. **Theory-first mode is on by default.** A lesson counts as complete without its Equation/Numeric stages. Those stages become optional "Bonus maths".
-2. **Owner verification.** The owner personally verifies 5 claims per sourced lesson. Verified claims are marked "Verified by Bink" in that lesson's `research/<id>.md`.
+2. **Automated quote verification** (replaces the earlier "owner verifies 5 claims" decision, 2026-11-26).
+   - `scripts/verify-quotes.ts` (in `npm run validate`) checks every research excerpt against its source text. NOT FOUND claims are fixed or dropped.
+   - Each screen's Source sheet shows its excerpt and location.
+   - Owner verification is optional, and only for field or statutory practice he knows.
 3. **Phase 16 lesson order** follows the DGMS/NITR coverage map from Phase 15.
 4. **Code Underground law books** use STRATA's map language, but every stop must be highly interactive and animated, not static cards.
 5. **The Management book** is re-sourced through the sourced-flow pipeline.
@@ -13,6 +16,19 @@ The owner's decisions, the phase plan and a run log. `BUILD_PROGRESS.md` holds t
 
 ## Statute gate: pending
 _(none. Proposed statutory changes are listed here as old → new, source, location, and are applied only after owner approval.)_
+
+## Owner approval needed: service-worker change (do-not-touch exception)
+- **Found (Phase 14.5 hotfix, real repro):** `public/sw.js` serves RSC payloads (`*.txt`) cache-first with `ignoreSearch`. After a deploy, the new app can be fed payloads from the old build.
+  - The Sim Lab symptom is fixed without touching the SW: the picker no longer navigates.
+  - Other client navigations stay exposed until the SW changes.
+- **Proposed one-line change:** treat `url.pathname.endsWith(".txt")` like navigations (network-first, cache as offline fallback).
+- **Status:** an automated safety check blocked the edit because `sw.js` is on the do-not-touch list. Approve it explicitly and it ships in the next run. Meanwhile, Profile → Troubleshooting → **Repair app** clears stale caches without touching progress.
+
+## Sources policy (2026-11-26)
+- The OSH (Central) Rules 2026 (G.S.R. 345(E), 08-05-2026) supersede the Mines Rules 1955, the Mines Rescue Rules 1985 and the MVTR 1966. Those three are historical only.
+- A new Tier 2 source, the owner's private library: books stay in the private repo `Binayak-Sahu/strata-library` or outside this repo, never here. `sources/private/` is gitignored.
+  - Cite title + page; paraphrase only.
+  - At most one quote under 15 words per book per lesson.
 
 ## Phases
 

@@ -42,3 +42,7 @@ next-env.d.ts
 
 # SVG audit output
 .audit/
+
+# Copyright guard: never commit private library books or copyrighted source text
+sources/private/
+research/cache/private/

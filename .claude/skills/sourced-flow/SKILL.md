@@ -10,6 +10,9 @@ Follow CLAUDE.md's CONTENT RULE, STATUTE GATE and COPYRIGHT sections throughout.
 1. **Read the stage and its sim.** Open the theory stage in `src/content/units/<unit>.ts`, its sim in `src/content/sims/`, and the lesson's other stages. List the concepts the stage must teach, the hotspots (x/y are frozen) and the sim parameters and outputs usable for nudges.
 2. **Fetch sources by tier.**
    - Tier 1 (Indian statutory): dgms.gov.in, indiacode.nic.in, cea.nic.in, labour.gov.in, and files in `sources/`.
+     - The OSH (Central) Rules 2026 (G.S.R. 345(E), 08-05-2026) supersede the Mines Rules 1955, the Mines Rescue Rules 1985 and the MVTR 1966. Cite those three as historical only.
+   - Tier 2 (owner's private library): books in the private repo `Binayak-Sahu/strata-library` or outside this repo, never committed here (`sources/private/` is gitignored).
+     - Cite title + page; paraphrase only; at most one quote under 15 words per book per lesson.
    - Tier 2 (open academic): NIOSH/CDC (stacks.cdc.gov), Hoek's Corner (rocscience), NPTEL, open-access papers.
    - Tier 3: textbooks, listed only as "Further reading" and never cited for a claim.
    - Never use Scribd, SlideShare, blogs or coaching sites.
@@ -30,6 +33,10 @@ Follow CLAUDE.md's CONTENT RULE, STATUTE GATE and COPYRIGHT sections throughout.
    - Add a nudge where a sim fits.
    - Add a 3-bullet `flowSummary` covering only what the flow taught.
    - Every screen carries `src` ids.
-5. **Validate, then fact-check.** Run `npm run validate` (0 errors). Then run the `fact-checker` agent on the lesson. Fix every PARTLY/UNSUPPORTED claim with sourced wording, or drop it. Append a fact-check summary to the research file.
+5. **Validate, then fact-check.**
+   - Cache the source text:
+     - public domain → `research/cache/<id>.txt`, committed;
+     - copyrighted → `research/cache/private/<id>.txt`, gitignored; add the URL to `scripts/fetch-sources.mjs`.
+   - Run `npm run validate`. It includes `verify-quotes`: every excerpt must be FOUND, and the run needs 0 errors. Then run the `fact-checker` agent on the lesson. Fix every PARTLY/UNSUPPORTED claim with sourced wording, or drop it. Append a fact-check summary to the research file.
 6. **Every 2 lessons, run the `design-reviewer` agent** and apply its top fixes.
 7. **Commit** "sourced flow <lessonId>" with the session attribution lines. Add a row to the ROADMAP run log.

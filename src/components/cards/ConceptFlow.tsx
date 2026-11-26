@@ -7,6 +7,7 @@ import { BookMarked, BookOpenCheck, ExternalLink, Lightbulb, X } from "lucide-re
 import type { FlowScreen, FlowVisual, TheoryStage, Vals } from "@/lib/types";
 import { getSim } from "@/content";
 import { REFS } from "@/content/references";
+import { EXCERPTS } from "@/content/excerpts.gen";
 import { SimCanvas, SimView, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { shuffleItem } from "@/lib/shuffle";
@@ -18,7 +19,7 @@ import { nb } from "./ui";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
 
 /** Source chip: opens a sheet with the reference title, author, publisher and link. */
-function SourceChip({ ids }: { ids: string[] }) {
+function SourceChip({ ids, lessonId }: { ids: string[]; lessonId?: string }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -44,8 +45,15 @@ function SourceChip({ ids }: { ids: string[] }) {
                   <div className="text-[16px] font-semibold text-slate-900 leading-snug">{r.title}</div>
                   <div className="text-[14px] text-slate-600 mt-1">
                     {r.author} · {r.publisher}
-                    {r.where ? ` · ${r.where}` : ""}
                   </div>
+                  {/* Copyright: copyrighted sources show one quote per lesson; public-domain / Gazette up to three. */}
+                  {(lessonId ? EXCERPTS[lessonId]?.[id] ?? [] : []).slice(0, r.licence === "public-domain" || r.licence === "govt-India" ? 3 : 1).map((e, k) => (
+                    <blockquote key={k} className="mt-2 border-l-[3px] border-slate-300 pl-3">
+                      <p className="text-[15px] text-slate-800 leading-snug">“{e.excerpt}”</p>
+                      {e.location && <p className="text-[12.5px] text-slate-500 mt-0.5">{e.location}</p>}
+                    </blockquote>
+                  ))}
+                  {r.where && <div className="text-[12.5px] text-slate-500 mt-2">Section: {r.where}</div>}
                   <a href={r.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 min-h-[44px] text-[14px] font-semibold text-blue-700 break-all">
                     <ExternalLink size={14} className="shrink-0" /> Open source
                   </a>
@@ -357,7 +365,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
                 </>
               )}
             </span>
-            {s && <SourceChip ids={s.src} />}
+            {s && <SourceChip ids={s.src} lessonId={seed?.split("#")[0]} />}
           </div>
           {body}
         </motion.div>

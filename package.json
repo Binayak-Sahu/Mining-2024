@@ -8,7 +8,9 @@
     "start": "node scripts/serve-out.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "validate": "tsx --tsconfig scripts/tsconfig.json scripts/validate-content.ts",
+    "validate": "tsx --tsconfig scripts/tsconfig.json scripts/validate-content.ts && tsx --tsconfig scripts/tsconfig.json scripts/verify-quotes.ts",
+    "test:touch": "node scripts/touch-tests.cjs",
+    "fetch:sources": "node scripts/fetch-sources.mjs",
     "audit:svg": "tsx --tsconfig scripts/tsconfig.json scripts/audit-svg.tsx"
   },
   "dependencies": {
