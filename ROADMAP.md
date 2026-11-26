@@ -53,6 +53,7 @@ Claude then maps every syllabus line to a lesson/screen or a gap and produces a 
 - Gap lessons are appended at the end of their units, so existing stage indexes are untouched.
 
 ### 17 — Code Underground merge
+Input: the owner's app, `sources/code-underground/code-underground.html` (uploaded 2026-11-26; single-file app; progress key `osh-tour-v2`). Not processed yet.
 - **A. Data.** The 4 books become lazy-loaded JSON:
   - situation → situation screen;
   - cards → explain screens, split at sentence boundaries without rewording (law cap 60 words);
