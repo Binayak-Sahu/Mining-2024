@@ -53,7 +53,7 @@ export function LessonTopBar({ inspector = false }: { inspector?: boolean }) {
           <MoreHorizontal size={24} />
           <span aria-hidden className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: "var(--action)" }} />
         </button>
-        <div className="shrink-0 flex items-center gap-1.5 h-9 px-3 rounded-full" style={{ background: "var(--surface-2)" }} aria-label="3 hearts">
+        <div className="shrink-0 flex items-center gap-2 h-10 px-3 rounded-full" style={{ background: "var(--surface-2)" }} aria-label="3 hearts">
           <Heart size={20} fill="var(--danger)" stroke="var(--danger)" aria-hidden />
           <span className="t-label" style={{ fontWeight: 700 }}>
             3
@@ -61,7 +61,7 @@ export function LessonTopBar({ inspector = false }: { inspector?: boolean }) {
         </div>
       </div>
       {inspector && (
-        <div className="t-label -mx-5 px-5 py-2" style={{ background: "var(--energy-tint)", color: "var(--energy-tint-text)" }}>
+        <div className="t-label -mx-5 px-5 sm:-mx-6 sm:px-6 py-2" style={{ background: "var(--energy-tint)", color: "var(--energy-tint-text)" }}>
           Inspector mode: this run is a sandbox
         </div>
       )}

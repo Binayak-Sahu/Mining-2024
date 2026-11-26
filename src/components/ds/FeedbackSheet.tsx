@@ -27,7 +27,7 @@ export function FeedbackSheet() {
           Show wrong
         </button>
       </div>
-      <div className="relative overflow-hidden rounded-[20px] h-[420px]" style={{ border: "2px solid var(--line)", background: "var(--bg)" }}>
+      <div className="relative overflow-hidden rounded-[20px] h-[460px]" style={{ border: "2px solid var(--line)", background: "var(--bg)" }}>
         <div className="p-5">
           <p className="t-body">A roof test reads 3 % methane in clean air. What is the best reading of that?</p>
           <div data-state={verdict === "ok" ? "correct" : verdict === "no" ? "wrong" : "selected"} className="tile-3d mt-4" style={{ fontSize: 18, lineHeight: "28px" }}>

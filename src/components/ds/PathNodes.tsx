@@ -1,20 +1,21 @@
 "use client";
 
 import * as Popover from "@radix-ui/react-popover";
-import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, Crown, Lock, Star } from "lucide-react";
-import { fadeQuick, feedbackSheet } from "@/lib/motion";
+import { fadeQuick, feedbackSheet, tactilePress } from "@/lib/motion";
 
 type Kind = "done" | "current" | "locked" | "boss" | "boss-locked" | "perfect" | "master";
 
 const NODES: { kind: Kind; title: string; stages: number; caption: string }[] = [
   { kind: "done", title: "Mine air", stages: 5, caption: "Done" },
   { kind: "perfect", title: "Methane limits", stages: 6, caption: "Perfect" },
-  { kind: "current", title: "Gas detection", stages: 5, caption: "Current (pulsing)" },
+  { kind: "current", title: "Gas detection", stages: 5, caption: "Current" },
   { kind: "locked", title: "Firedamp layering", stages: 4, caption: "Locked" },
   { kind: "boss", title: "Ventilation boss", stages: 8, caption: "Boss" },
   { kind: "boss-locked", title: "Unit 8 boss", stages: 8, caption: "Locked boss" },
-  { kind: "master", title: "Fan laws", stages: 5, caption: "Master (Inspector sandbox)" },
+  { kind: "master", title: "Fan laws", stages: 5, caption: "Master" },
 ];
 
 function face(kind: Kind) {
@@ -38,16 +39,17 @@ function Node({ kind, title, stages, caption }: (typeof NODES)[number]) {
   const f = face(kind);
   const a = action(kind);
   const lockedLabel = kind === "locked" || kind === "boss-locked" || kind === "master";
+  const [open, setOpen] = useState(false);
   return (
     <li className="flex flex-col items-center">
-      <Popover.Root>
+      <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <button type="button" className="ds-node ds-focus" data-state={f.state} aria-label={`${title} (${caption})`}>
             {kind === "current" && <span className="ds-node-ring" aria-hidden />}
             <span className="ds-node-rim" aria-hidden />
-            <span className="ds-node-face" aria-hidden>
+            <motion.span className="ds-node-face" aria-hidden whileTap={reduce ? undefined : { y: 6 }} transition={reduce ? fadeQuick : tactilePress}>
               {f.glyph}
-            </span>
+            </motion.span>
             {kind === "perfect" && (
               <span className="ds-node-badge" aria-hidden>
                 <Star size={13} fill="currentColor" strokeWidth={0} />
@@ -55,9 +57,11 @@ function Node({ kind, title, stages, caption }: (typeof NODES)[number]) {
             )}
           </button>
         </Popover.Trigger>
-        <Popover.Portal>
-          <Popover.Content side="bottom" sideOffset={12} collisionPadding={16} asChild>
-            <motion.div initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={reduce ? fadeQuick : feedbackSheet} className="ds2 ds-pop z-50 w-[300px] max-w-[calc(100vw-32px)] p-5 focus:outline-none">
+        <AnimatePresence>
+          {open && (
+        <Popover.Portal forceMount>
+          <Popover.Content forceMount side="bottom" align="center" sideOffset={12} collisionPadding={16} asChild>
+            <motion.div initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }} transition={reduce ? fadeQuick : feedbackSheet} className="ds2 ds-pop z-50 w-[300px] max-w-[calc(100vw-32px)] p-5 focus:outline-none">
               <div className="t-heading">{title}</div>
               {a ? (
                 <>
@@ -74,6 +78,8 @@ function Node({ kind, title, stages, caption }: (typeof NODES)[number]) {
             </motion.div>
           </Popover.Content>
         </Popover.Portal>
+          )}
+        </AnimatePresence>
       </Popover.Root>
       <div className="mt-5 flex items-center gap-2 flex-wrap justify-center text-center">
         <span className="t-heading" style={{ fontWeight: 600, color: lockedLabel ? "var(--text-3)" : "var(--text)" }}>

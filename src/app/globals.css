@@ -1062,6 +1062,9 @@ svg[role="img"] {
   border-radius: 8px;
   vertical-align: middle;
 }
+.ds2 .ds-blank[data-filled="true"] {
+  border-color: transparent;
+}
 
 /* §5.5 / §5.5b path nodes ("pedestals"): 72 px face over a 10 px rim */
 .ds2 .ds-node {
@@ -1091,10 +1094,6 @@ svg[role="img"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 70ms ease;
-}
-.ds2 .ds-node:active .ds-node-face {
-  transform: translateY(6px);
 }
 .ds2 .ds-node[data-state="done"] {
   --face: var(--success);

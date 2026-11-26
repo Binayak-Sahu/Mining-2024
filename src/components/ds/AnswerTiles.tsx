@@ -38,9 +38,9 @@ export function AnswerTiles() {
           </div>
           <p className="t-body-lg">
             Methane in air can explode between 5 % and{" "}
-            <button type="button" aria-label={placed ? `Blank: ${placed}. Tap to clear` : "Empty blank"} onClick={() => setPlaced(null)} className="ds-blank ds-focus align-middle">
+            <button type="button" aria-label={placed ? `Blank: ${placed}. Tap to clear` : "Empty blank"} onClick={() => setPlaced(null)} className="ds-blank ds-focus align-middle" data-filled={placed ? "true" : undefined}>
               {placed && (
-                <motion.span layoutId={`chip-${placed}`} transition={reduce ? fadeQuick : tactilePress} className="tile-3d tile-chip" style={{ padding: "4px 12px", lineHeight: "28px" }}>
+                <motion.span layoutId={`chip-${placed}`} transition={reduce ? fadeQuick : tactilePress} className="tile-3d tile-chip" style={{ padding: "4px 12px", lineHeight: "32px" }}>
                   {placed}
                 </motion.span>
               )}
