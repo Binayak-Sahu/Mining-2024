@@ -11,6 +11,8 @@ import { SimCanvas, SimView, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { shuffleItem } from "@/lib/shuffle";
 import { useWhere } from "@/lib/reports";
+import { useNotes, stageOf } from "@/lib/notes";
+import { ChevronLeft } from "lucide-react";
 import { SituationHeader } from "./Situation";
 import { nb } from "./ui";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
@@ -89,6 +91,12 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   const missed = useRef<Set<number>>(new Set());
   const [nudgeVals, setNudgeVals] = useState<Vals | null>(null);
   const revealBox = useRef<HTMLDivElement>(null);
+  // Back navigation: screens before `furthest` are already done and reopen in a review state (their final
+  // answer shown, no re-scoring, no hearts). `done` keeps each finished screen's end state.
+  const [furthest, setFurthest] = useState(single ? (screen as number) : 0);
+  const done = useRef<Map<number, Phase>>(new Map());
+  const review = !single && i < furthest;
+  const touch0 = useRef<{ x: number; y: number; ok: boolean } | null>(null);
 
   useEffect(() => {
     useWhere.setState({ screenIndex: i });
@@ -98,13 +106,45 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
     if (!single) onSubProgress?.(i / total);
   }, [i, total, onSubProgress, single]);
 
-  const next = () => {
-    if (single) return onDone();
-    setPh(FRESH);
+  const go = (to: number) => {
+    const target = Math.max(0, Math.min(to, screens.length));
     setNudgeVals(null);
-    setI((n) => Math.min(n + 1, screens.length));
+    setPh(done.current.get(target) ?? FRESH);
+    setI(target);
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const next = () => {
+    if (single) return onDone();
+    if (!review) done.current.set(i, { ...ph, verdict: ph.verdict === "none" ? "right" : ph.verdict, revealed: true, met: true });
+    setFurthest((f) => Math.max(f, i + 1));
+    go(i + 1);
+  };
+  const back = () => {
+    if (single || i === 0) return;
+    if (!review && i >= furthest) setFurthest(i);
+    go(i - 1);
+  };
+  // Swipe right (outside sliders, grips and the diagram) goes back one screen.
+  const swipe = {
+    onTouchStart: (e: React.TouchEvent) => {
+      const t = e.touches[0];
+      const el = e.target as Element;
+      touch0.current = { x: t.clientX, y: t.clientY, ok: !el.closest(".slider, [data-grip], svg, input, textarea, button[role=radio]") };
+    },
+    onTouchEnd: (e: React.TouchEvent) => {
+      const s0 = touch0.current;
+      touch0.current = null;
+      const t = e.changedTouches[0];
+      if (!s0 || !s0.ok || !t) return;
+      const dx = t.clientX - s0.x;
+      const dy = Math.abs(t.clientY - s0.y);
+      if (dx > 70 && dy < 45) back();
+    },
+  };
+
+  // Notes: every explain / misconception / revealed screen seen in this lesson run.
+  const addNote = useNotes((n) => n.add);
+  const stageIndex = stageOf(seed);
 
   const raw: FlowScreen | null = i < screens.length ? screens[i] : null;
   // Balanced deterministic option order (answer and reasons follow their option); key `${lesson}#${stage}@${screen}`.
@@ -117,7 +157,16 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   const nudgeDef = s?.kind === "nudge" ? getSim(s.sim) : null;
   const nudgeStart = useMemo(() => (s?.kind === "nudge" && nudgeDef ? defaults(nudgeDef, s.start) : null), [s, nudgeDef]);
 
+  useEffect(() => {
+    if (!s || single) return;
+    const key = `${stageIndex}@${i}`;
+    if (s.kind === "explain") addNote({ key, stageIndex, kind: "explain", text: s.text });
+    if (s.kind === "misconception") addNote({ key, stageIndex, kind: "misconception", title: `Not: “${s.claim}”`, text: s.truth });
+    if (s.kind === "reveal" && ph.revealed) addNote({ key, stageIndex, kind: "reveal", title: s.hotspot.title, text: s.hotspot.body });
+  }, [s, i, ph.revealed, single, stageIndex, addNote]);
+
   const check = () => {
+    if (review) return;
     if (!s || (s.kind !== "predict" && s.kind !== "check" && s.kind !== "situation") || ph.pick === null) return;
     if (ph.pick === s.answer) {
       setPh((p) => ({ ...p, verdict: "right" }));
@@ -291,9 +340,15 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   return (
     <CardFrame kind="theory" title={stage.title} compact={i > 0 && !single} footer={footer} footerKey={`${i}-${ph.verdict}-${ph.revealed}-${ph.met}`}>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={i} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18, ease: "easeOut" }} className="space-y-5">
+        <motion.div key={i} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18, ease: "easeOut" }} className="space-y-5" {...swipe}>
           <div className="flex items-center justify-between gap-3 -mt-1">
-            <span className="text-[13px] font-semibold text-slate-600">
+            <span className="flex items-center gap-1 text-[13px] font-semibold text-slate-600">
+              {!single && i > 0 && (
+                <button type="button" onClick={back} aria-label="Previous screen" className="-ml-2 w-11 h-11 -my-2 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100">
+                  <ChevronLeft size={20} />
+                </button>
+              )}
+              {review && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[12px] font-bold text-slate-600 mr-1">Review</span>}
               {single ? "Review" : label}
               {!single && (
                 <>

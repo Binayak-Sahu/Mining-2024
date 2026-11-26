@@ -19,6 +19,8 @@ import { BonusCard } from "./cards/BonusCard";
 import { ActionBar, PrimaryButton } from "./cards/ui";
 import { useResume } from "@/lib/resume";
 import { InspectorMenu } from "./shell/InspectorMenu";
+import { NotesButton, RecapSheet } from "./shell/LessonSheets";
+import { useNotes } from "@/lib/notes";
 import { useWhere } from "@/lib/reports";
 import { STAGE_META } from "./cards/ui";
 
@@ -96,6 +98,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const [resumeAsk, setResumeAsk] = useState<number | null>(null);
   const resumeChecked = useRef(false);
   const [celebrated, setCelebrated] = useState(false);
+  const [recap, setRecap] = useState<number | null>(null);
   const started = useRef(-1);
 
   // Inspector Mode: a lesson opened only because Inspector unlocked it — or any run where the Stage
@@ -225,6 +228,11 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       celebrate(!!lesson.boss);
     }
   }, [finished, celebrated, lesson]);
+
+  // Lesson notes (session only): a fresh list per lesson run.
+  useEffect(() => {
+    if (lesson) useNotes.getState().start(`${lesson.id}#${attempt}`);
+  }, [lesson, attempt]);
 
   // Phone-testing kit: keep "where am I" current for Inspector reports.
   useEffect(() => {
@@ -374,15 +382,22 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
           <div className="flex-1 flex gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={lesson.stages.length} aria-valuenow={index} aria-label="Lesson progress">
             {lesson.stages.map((s, i) => {
               const c = STAGE_META[s.kind].color;
+              // Completed segments open that stage read-only (re-read the facts; nothing is scored).
+              const Seg = i < index ? "button" : "div";
               return (
-                <div key={i} className="relative h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)]">
+                <Seg
+                  key={i}
+                  {...(i < index ? { type: "button" as const, onClick: () => setRecap(i), "aria-label": `Re-read stage ${i + 1}: ${s.title}` } : {})}
+                  className={`relative h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)] ${i < index ? "cursor-pointer before:absolute before:-inset-y-3 before:inset-x-0 before:content-['']" : ""}`}
+                >
                   <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? `${Math.round(12 + 88 * sub)}%` : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
                     <span className="absolute left-1.5 right-1.5 top-[3px] h-[4px] rounded-full bg-white/35" />
                   </motion.div>
-                </div>
+                </Seg>
               );
             })}
           </div>
+          <NotesButton />
           {hydrated && master && (
             <InspectorMenu
               stages={lesson.stages.map((st) => STAGE_META[st.kind].label)}
@@ -439,6 +454,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       </AnimatePresence>
 
 
+
+      <RecapSheet stage={recap !== null ? lesson.stages[recap] : null} onClose={() => setRecap(null)} />
 
       <AnimatePresence>
         {failed && (

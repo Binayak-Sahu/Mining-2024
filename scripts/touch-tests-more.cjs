@@ -94,5 +94,98 @@ module.exports = async function more(t) {
     await ctx.close();
   }
 
+  // ---- 3/4. u7-l1 by touch: back navigation, review state, swipe back, Notes, recap, sim stage ----
+  for (const scheme of ["light", "dark"]) {
+    const phone = await newPhone(b, scheme);
+    const { page, cdp } = phone;
+    const L = `u7-l1 ${scheme}`;
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.evaluate(() => { localStorage.clear(); localStorage.setItem("strata-qa", "1"); });
+    await page.goto(`${base}/lesson/u7-l1/`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(700);
+    const tapEl = async (loc) => { await loc.evaluate((el) => el.scrollIntoView({ block: "center" })); await page.waitForTimeout(150); const bb = await loc.boundingBox(); await touchTap(cdp, bb.x + bb.width / 2, bb.y + bb.height / 2); };
+    const hearts = () => page.locator('[aria-label$="safety hearts"]').first().getAttribute("aria-label");
+    const h0 = await hearts();
+    // Screen 1 (predict): answer by touch until right, Continue.
+    for (let k = 0; k < 4; k++) {
+      const r = page.locator('[role="radio"]:not([disabled])').first();
+      await tapEl(r);
+      await tapEl(page.getByRole("button", { name: /^Check$/ }));
+      await page.waitForTimeout(350);
+      if (await page.getByRole("button", { name: /Try again/ }).count()) { await tapEl(page.getByRole("button", { name: /Try again/ })); continue; }
+      break;
+    }
+    await page.waitForTimeout(400);
+    await tapEl(page.getByRole("button", { name: /^Continue$/ }).first());
+    await page.waitForTimeout(600);
+    ok(`${L}: Back button on screen 2`, (await page.getByRole("button", { name: "Previous screen" }).count()) === 1);
+    await tapEl(page.getByRole("button", { name: "Previous screen" }));
+    await page.waitForTimeout(600);
+    const reviewBadge = (await page.getByText(/^Review$/).count()) > 0;
+    const radiosDisabled = await page.locator('[role="radio"]').evaluateAll((els) => els.length > 0 && els.every((e) => e.disabled));
+    ok(`${L}: back shows the answered screen in review state (no re-scoring)`, reviewBadge && radiosDisabled);
+    ok(`${L}: hearts unchanged by back navigation`, (await hearts()) === h0, `${h0} → ${await hearts()}`);
+    // Forward again, then swipe right on the explanation to go back.
+    await tapEl(page.getByRole("button", { name: /^Continue$/ }).first());
+    await page.waitForTimeout(600);
+    const txt = page.locator(".card p.flow-body").first();
+    const tb = await txt.boundingBox();
+    const before = await page.locator(".card").first().innerText();
+    await t.touchDrag(cdp, tb.x + 30, tb.y + tb.height / 2, tb.x + 230, tb.y + tb.height / 2 + 6, 10);
+    await page.waitForTimeout(700);
+    const after = await page.locator(".card").first().innerText();
+    ok(`${L}: swipe right goes back a screen`, before !== after && /Review/.test(after), "");
+    // Notes sheet lists the explanation seen.
+    await tapEl(page.getByRole("button", { name: /Lesson notes/ }));
+    await page.waitForTimeout(500);
+    const notes = await page.locator('[role="dialog"] li').count();
+    ok(`${L}: Notes sheet lists explanations seen so far`, notes >= 1, `${notes} note(s)`);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(300);
+    if (phone.errors.length) ok(`${L}: console errors`, false, phone.errors.slice(0, 2).join(" | "));
+    await phone.ctx.close();
+  }
+  // Recap + sim stage (Inspector jumper reaches stage 2; the run is a sandbox).
+  for (const scheme of ["light", "dark"]) {
+    const phone = await newPhone(b, scheme);
+    const { page, cdp } = phone;
+    const L = `u7-l1 sim ${scheme}`;
+    await page.goto(`${base}/`, { waitUntil: "networkidle" });
+    await page.evaluate(() => { localStorage.clear(); localStorage.setItem("strata-qa", "1"); localStorage.setItem("strata-prefs", JSON.stringify({ state: { theme: "system", muted: true, masterUnlock: true, theoryFirst: true }, version: 1 })); });
+    await page.goto(`${base}/lesson/u7-l1/`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(600);
+    await page.getByRole("button", { name: "Inspector menu" }).click();
+    await page.waitForTimeout(400);
+    await page.locator('[aria-label="Stage jumper"] button').nth(1).click();
+    await page.waitForTimeout(1000);
+    // Tap the completed first segment → read-only recap.
+    const seg = page.getByRole("button", { name: /Re-read stage 1/ });
+    const sb = await seg.boundingBox();
+    await touchTap(cdp, sb.x + sb.width / 2, sb.y + sb.height / 2);
+    await page.waitForTimeout(500);
+    ok(`${L}: tapping a completed segment opens it read-only`, (await page.getByText(/read-only/).count()) > 0);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(300);
+    // Sticky diagram: after scrolling, the canvas is still on screen.
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const cv = await page.locator("svg[role=img]").first().boundingBox();
+    ok(`${L}: diagram stays visible while controls scroll (sticky)`, cv && cv.y >= 40 && cv.y + cv.height <= 844, cv ? `top ${Math.round(cv.y)}` : "no canvas");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await t.sliderDiagonal(phone, L);
+    await t.gripDiagonal(phone, L);
+    // Compact success strip: reach the objective (fuel-rich zone) via the fine-tune sliders.
+    await page.evaluate(() => {
+      const set = (i, v) => { const el = document.querySelectorAll('.slider input[type=range]')[i]; const s = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; s.call(el, String(v)); el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true })); };
+      set(0, 25); set(1, 12);
+    });
+    await page.waitForTimeout(800);
+    const bar = await page.locator(".action-bar").boundingBox();
+    ok(`${L}: success strip is compact (≤ 150 px incl. Continue)`, bar && bar.height <= 150, bar ? `${Math.round(bar.height)} px` : "no bar");
+    ok(`${L}: success strip offers Why? and Continue`, (await page.getByRole("button", { name: "Why?" }).count()) === 1 && (await page.getByRole("button", { name: /^Continue$/ }).count()) >= 1);
+    if (phone.errors.length) ok(`${L}: console errors`, false, phone.errors.slice(0, 2).join(" | "));
+    await phone.ctx.close();
+  }
+
   if (t.extra) await t.extra(t);
 };

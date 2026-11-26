@@ -9,13 +9,20 @@ import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { CardFrame, Lines, PrimaryButton, type CardProps } from "./ui";
 import { ConceptFlow } from "./ConceptFlow";
+import { useNotes, stageOf } from "@/lib/notes";
 
 export function TheoryBriefingCard(props: CardProps<TheoryStage>) {
   if (props.stage.flow?.length) return <ConceptFlow {...props} />;
   return <Briefing {...props} />;
 }
 
-function Briefing({ stage, onDone }: CardProps<TheoryStage>) {
+function Briefing({ stage, onDone, seed }: CardProps<TheoryStage>) {
+  // Lesson notes: the briefing lines, plus each hotspot the learner opens.
+  const addNote = useNotes((n) => n.add);
+  const si = stageOf(seed);
+  useEffect(() => {
+    addNote({ key: `${si}@lines`, stageIndex: si, kind: "briefing", title: stage.title, text: stage.lines.join(" ") });
+  }, [addNote, si, stage.title, stage.lines]);
   const def = getSim(stage.sim);
   const values = defaults(def, stage.simParams);
   const [active, setActive] = useState<number | null>(null);
@@ -28,6 +35,7 @@ function Briefing({ stage, onDone }: CardProps<TheoryStage>) {
   const tap = (i: number) => {
     setActive(i);
     setSeen((s) => new Set(s).add(i));
+    addNote({ key: `${si}@h${i}`, stageIndex: si, kind: "reveal", title: stage.hotspots[i].title, text: stage.hotspots[i].body });
   };
 
   // The causal chain plays itself once it scrolls into view (no competing Play button); timers are
