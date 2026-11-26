@@ -6,6 +6,7 @@ Read first:
 - `PROJECT_CONTEXT.md`: architecture, stores, design system, conventions.
 - `ROADMAP.md`: owner decisions, phase plan and status, run log.
 - `BUILD_PROGRESS.md`: detailed log of every shipped phase.
+- `DESIGN.md`: the app-wide design system (tokens, type, components, motion, Never List). Every UI change follows it; it wins over PROJECT_CONTEXT.md §6.5.
 
 ## CONTENT RULE (non-negotiable)
 AI writes the wording, never the knowledge.
