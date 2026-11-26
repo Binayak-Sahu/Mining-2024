@@ -37,7 +37,8 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 | 1–13 | Platform, content, design system, ConceptFlow, first 3 sourced flows | done (see BUILD_PROGRESS.md) |
 | 14 | Trust, pacing & situations | done (14.5 partial, see below) |
 | 15 | Sources & coverage map | done 2026-11-26 (DGMS First Class syllabus source missing, see below) |
-| 16 | Deep theory for the 52 remaining theory stages | planned |
+| 15.5 | Design overhaul (DESIGN.md v2) | in progress: 15.5-setup done; 15.5a–e planned |
+| 16 | Deep theory for the 52 remaining theory stages | after 15.5 |
 | 17 | Code Underground merge | planned |
 | 18 | Exam realism | planned |
 | 19 | Real-phone polish | planned (+ carried-over items from 14) |
@@ -66,6 +67,8 @@ Delivered:
 - So the DGMS side of the map uses CMR 2017 regulation headings as proxy syllabus lines. Per-paper weights are unknown, so the gap rank uses the number of CMR regulations touching a topic.
 - **Owner action:** place the G.S.R. 910(E) text (egazette PDF, or the DGMS "Gazette Notification of Exam Bye Laws") in `sources/`, or allow `egazette.gov.in` and `www.dgms.gov.in`, and the map's DGMS side can be rebuilt against the real syllabus.
 
+**G.S.R. 910(E) check (2026-11-26, 15.5-setup): not in `sources/`.** No file holds it. It is only *referenced*, in `sources/AMENDMENTS IN EARLIER BYE-LAWS NOTIFIED UNDER CMR, 2017.txt` (G.S.R. 555(E) amends it) and in `sources/DGMScircularsfrom20182024_06122024.txt`, an OCR page that lists G.S.R. 910(E)–915(E). That OCR page dates them 24-09-2018; G.S.R. 555(E) says 14-09-2018. The coverage map was not rebuilt.
+
 **Top gaps (full list in `coverage/MAP.md`).** DGMS-first rank:
 1. Officials, returns, certificates and duties (CMR Ch II–V, XVII; 85 regs): new lesson in u10. Phase 17's law books may supersede it, and statutory numbers go through the statute gate.
 2. Mining machinery and haulage (23 regs; 13 NITR lines): new lesson in u8.
@@ -78,7 +81,16 @@ Delivered:
 9. Tailings and mine closure, environment (NITR 21 lines each): new lessons in u5.
 10. NITR-only: numerical modelling (19), levelling/tacheometry/GPS (17), mine planning (14), ground instrumentation (11), data analytics (8), special mining (7), geostatistics, sustainability, mine finance.
 
-### 16 — Deep theory (52 remaining theory stages)
+### 15.5 — Design overhaul (DESIGN.md v2)
+`DESIGN.md` (root) is the app-wide design system; this phase brings existing screens up to it. Violations found before the work: `docs/design-audit-15.5.md`. Phase 16 waits until 15.5 is done. The owner checks the deployed app on a phone after each slice.
+- [x] 15.5-setup: DESIGN.md wired into PROJECT_CONTEXT §6.5 and the design-reviewer agent; slice plan; "before" audit (2026-11-26).
+- [ ] 15.5a tokens + /design-system sandbox (production screens untouched): planned
+- [ ] 15.5b global switch: palette, buttons, tiles, cards, tab bar, remove studio-bg: planned
+- [ ] 15.5c lesson player: top bar, prose on canvas, footer CTA, feedback sheet, word bank: planned
+- [ ] 15.5d Campaign, UnitMap/ExpeditionPath header, level card, pedestal nodes, start popover: planned
+- [ ] 15.5e sim stages + remaining pages + full gate sweep: planned
+
+### 16 — Deep theory (52 remaining theory stages): after 15.5
 - **Order (from the Phase 15 map, DGMS proxy count first, NITR lines as tie-break):** U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9. Lines mapped per unit (DGMS regs / NITR lines): U7 34/16, U4 27/17, U8 10/10, U2 8/12, U6 7/17, U10 7/11, U5 4/27, U3 3/38, U1 3/11, U9 0/16.
 - This moves U3 (the old default first) down, because CMR regulations mention it least. U3 carries the most NITR lines, so move it up if the owner prefers university weight. The order rests on the CMR proxy, not on published paper weights.
 - Convert 4–5 lessons per run through `.claude/skills/sourced-flow/SKILL.md`.
@@ -141,5 +153,6 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 |---|---|---|
 | 2026-11-25 | Phase 13: ConceptFlow + 3 sourced flows | shipped to main (`d1c3d51`) |
 | 2026-11-26 | Phase 14.5 hotfix: real-phone bugs (slider scroll-steal, stuck Sim Lab picker, sim-stage declutter, back navigation + Notes, quote verification, sources policy) | see BUILD_PROGRESS; SW change approved and applied; touch regression suite added; deferred: SVG label size (19), predict-with-sim layout |
+| 2026-11-26 | Phase 15.5-setup: DESIGN.md wired in, slice plan, before-audit | Docs only: PROJECT_CONTEXT §6.5 pointer, design-reviewer reviews against DESIGN.md, Phase 15.5 slices in ROADMAP, `docs/design-audit-15.5.md` (9 questions for the owner, incl. 3 failing DESIGN.md contrast pairs). Screenshots in `.audit/15.5-before/` (local, not committed). G.S.R. 910(E): not in sources/. Gates: validate, tsc, lint. audit:svg, touch suite and Inspector check skipped (no src/ change). |
 | 2026-11-26 | Phase 15: sources & coverage map | OCR + text for all `sources/` PDFs; NITR curriculum (64 syllabi, 29 "not found" on site); `coverage/MAP.md` + `map.json`; gap list; Phase 16 order and Phase 18 paper facts recorded. DGMS First Class syllabus source missing (G.S.R. 910(E) not obtainable). Task 1 (reviewer agents: sonnet, medium, design review once per run) was already committed in `5b1d3e2`. Gates: validate 0 errors, tsc, lint, base-path build, touch suite 49/49, 390×844 light+dark smoke (5 routes: 0 console errors, no overflow) all passed. audit:svg and Inspector acceptance not re-run: no `src/` code changed. Caution: `npm run validate` regenerates `src/content/excerpts.gen.ts` and drops the private-source excerpts when `research/cache/private/` is empty. Run `npm run fetch:sources` first, or `git checkout` that file before committing. |
 | 2026-11-25 | Phase 14: trust, pacing, situations | shipped. All gates passed (validate, tsc, lint, base-path build, audit:svg 0 findings, 390×844 light/dark walk, Inspector byte-identical). Skipped: 11-unit label floor (→ 19), stricter situation word caps, compact wrong-answer strip, switch-track toggles, 44 px jumper pills (→ 19). Note: `sources/` was absent then; the owner added it for Phase 15. |
