@@ -73,6 +73,11 @@ export function Campaign() {
             </div>
             <h1 className="mt-2 text-[26px] sm:text-[34px] leading-[1.1] font-extrabold tracking-[-0.02em] text-balance">{rec ? rec.title : "Every stratum mastered"}</h1>
             <p className="mt-1.5 text-[13.5px] text-[#C7D2FE]/80">{rec ? `${rec.unit} · ${recSt.name}` : "You hold every lesson. Sit a DGMS paper to stay sharp."}</p>
+            {hydrated && lessonsDone === 0 && xp === 0 && (
+              <Link href="/profile/#sync" className="mt-3 inline-flex items-center gap-1.5 min-h-[44px] text-[14px] font-semibold text-[#BFDBFE] underline underline-offset-4">
+                Restore from backup
+              </Link>
+            )}
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Link href={rec ? `/lesson/${rec.id}` : "/exam"} className="btn-3d tone-safe px-6 py-3.5 text-sm inline-flex items-center gap-2">
                 <Play size={16} className="fill-white" /> {rec ? (hydrated && lessonsDone > 0 ? "Continue" : "Start shift") : "Open exam hall"}

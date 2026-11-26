@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { setInspector } from "@/lib/inspector";
 import { KeyRound, Flag, Gauge, Music, Download } from "lucide-react";
 import Link from "next/link";
+import { RepairButton } from "@/components/shell/RepairButton";
 import { BUILD, downloadJson, useReports } from "@/lib/reports";
 
 const THEMES: { v: ThemePref; label: string; Icon: typeof Sun }[] = [
@@ -154,6 +155,10 @@ export function Profile() {
       </div>
 
       <SyncCard />
+      <div className="card p-5 space-y-3">
+        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Troubleshooting</div>
+        <RepairButton />
+      </div>
       <p className="text-center readout text-[12px] text-slate-500">STRATA build {BUILD}</p>
 
       <div className="card p-5 space-y-4">
