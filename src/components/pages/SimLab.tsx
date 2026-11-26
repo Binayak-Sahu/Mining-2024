@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FlaskConical, RotateCcw, Search, ListFilter } from "lucide-react";
 import { Drawer } from "vaul";
 import { ALL_SIMS } from "@/content/sims";
@@ -23,11 +23,13 @@ const CHALLENGES: Record<string, SimStage["goal"][]> = (() => {
   return m;
 })();
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const isSim = (s: string | null): s is string => !!s && ALL_SIMS.some((x) => x.id === s);
+
 export function SimLab() {
   const params = useSearchParams();
-  const router = useRouter();
-  const initial = params.get("sim") ?? ALL_SIMS[1].id;
-  const [id, setId] = useState(ALL_SIMS.some((s) => s.id === initial) ? initial : ALL_SIMS[1].id);
+  const fromUrl = params.get("sim");
+  const [id, setId] = useState(isSim(fromUrl) ? fromUrl : ALL_SIMS[1].id);
   const def = useMemo(() => ALL_SIMS.find((s) => s.id === id)!, [id]);
   const [vals, setVals] = useState<Vals>(() => defaults(def));
   const [q, setQ] = useState("");
@@ -47,8 +49,21 @@ export function SimLab() {
     setId(sid);
     setCi(0);
     setVals(defaults(d));
-    router.replace(`/lab?sim=${sid}`, { scroll: false });
+    // Shallow URL update (no router navigation, no RSC fetch): the picker never depends on the network or
+    // on a cached payload, so it keeps working offline and across deploys.
+    window.history.replaceState(null, "", `${BASE}/lab/?sim=${sid}`);
   };
+
+  // Follow the URL when it changes underneath us (e.g. a Codex thumbnail link while the lab is open).
+  useEffect(() => {
+    if (!isSim(fromUrl)) return;
+    setId((cur) => {
+      if (cur === fromUrl) return cur;
+      setCi(0);
+      setVals(defaults(ALL_SIMS.find((s) => s.id === fromUrl)!));
+      return fromUrl;
+    });
+  }, [fromUrl]);
 
   const list = ALL_SIMS.filter((s) => s.title.toLowerCase().includes(q.toLowerCase()) || s.id.includes(q.toLowerCase())).sort((a, b) => UNIT_OF(a.id) - UNIT_OF(b.id));
 
