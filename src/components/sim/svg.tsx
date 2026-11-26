@@ -211,6 +211,7 @@ export function Plot({
   ymax,
   xlabel,
   ylabel,
+  grips,
   children,
 }: {
   x: number;
@@ -223,6 +224,8 @@ export function Plot({
   ymax: number;
   xlabel?: string;
   ylabel?: string;
+  /** Axes that carry a draggable grip: their tick values and titles move clear of the grip's track. */
+  grips?: "x" | "y" | "xy";
   children: (sx: (v: number) => number, sy: (v: number) => number) => ReactNode;
 }) {
   const sx = (v: number) => x + ((v - xmin) / (xmax - xmin)) * w;
@@ -237,28 +240,38 @@ export function Plot({
         </g>
       ))}
       {children(sx, sy)}
-      <Txt x={x} y={y + h + 10} size={8} fill={C.slate} mono>
-        {xmin}
-      </Txt>
-      <Txt x={x + w} y={y + h + 10} size={8} fill={C.slate} anchor="end" mono>
-        {xmax}
-      </Txt>
-      <Txt x={x - 3} y={y + h} size={8} fill={C.slate} anchor="end" mono>
-        {ymin}
-      </Txt>
-      <Txt x={x - 3} y={y + 7} size={8} fill={C.slate} anchor="end" mono>
-        {ymax}
-      </Txt>
-      {xlabel && (
-        <Txt x={x + w / 2} y={y + h + 11} size={8} fill={C.slate} anchor="middle">
-          {xlabel}
-        </Txt>
-      )}
-      {ylabel && (
-        <Txt x={x + 3} y={y + 10} size={8} fill={C.slate}>
-          {ylabel}
-        </Txt>
-      )}
+      {(() => {
+        const gx = grips === "x" || grips === "xy";
+        const gy = grips === "y" || grips === "xy";
+        const tx = gx ? y + h + 22 : y + h + 10; // x-axis text row (below a grip riding the axis)
+        const ty = gy ? x - 13 : x - 3; // y-axis tick column (left of a grip riding the axis)
+        return (
+          <>
+            <Txt x={x} y={tx} size={8} fill={C.slate} mono>
+              {xmin}
+            </Txt>
+            <Txt x={x + w} y={tx} size={8} fill={C.slate} anchor="end" mono>
+              {xmax}
+            </Txt>
+            <Txt x={ty} y={y + h} size={8} fill={C.slate} anchor="end" mono>
+              {ymin}
+            </Txt>
+            <Txt x={ty} y={y + 7} size={8} fill={C.slate} anchor="end" mono>
+              {ymax}
+            </Txt>
+            {xlabel && (
+              <Txt x={x + w / 2} y={gx ? tx : y + h + 11} size={8} fill={C.slate} anchor="middle">
+                {xlabel}
+              </Txt>
+            )}
+            {ylabel && (
+              <Txt x={gy ? x + 14 : x + 3} y={y + 10} size={8} fill={C.slate}>
+                {ylabel}
+              </Txt>
+            )}
+          </>
+        );
+      })()}
     </g>
   );
 }

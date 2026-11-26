@@ -6,7 +6,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Flag, X } from "lucide-react";
 import { toast } from "sonner";
 import { usePrefs } from "@/lib/prefs";
-import { BUILD, useReports, useWhere } from "@/lib/reports";
+import { BUILD, useReportUi, useReports, useWhere } from "@/lib/reports";
 import { useHydrated } from "@/lib/useHydrated";
 
 /** Rolling frames-per-second readout (Inspector Mode toggle). */
@@ -36,13 +36,14 @@ function FpsMeter() {
   );
 }
 
-/** Floating "Report" button + FPS meter, shown only while Inspector Mode is on. */
+/** Inspector "Report this screen" sheet (opened from the header flag) + FPS meter. Nothing floats over content. */
 export function InspectorKit() {
   const hydrated = useHydrated();
   const on = usePrefs((p) => p.masterUnlock);
   const fps = useReports((r) => r.fps);
   const path = usePathname();
-  const [open, setOpen] = useState(false);
+  const open = useReportUi((u) => u.open);
+  const setOpen = useReportUi((u) => u.setOpen);
   const note = useRef<HTMLTextAreaElement>(null);
   if (!hydrated || !on) return null;
   const inLesson = path.startsWith("/lesson");
@@ -67,11 +68,6 @@ export function InspectorKit() {
     <>
       {fps && <FpsMeter />}
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Trigger asChild>
-          <button type="button" aria-label="Report a problem on this screen" className={`fixed right-3 z-40 w-12 h-12 rounded-full bg-amber-500 text-white shadow-[0_3px_0_#B45309,0_8px_20px_-6px_rgba(0,0,0,0.4)] flex items-center justify-center ${inLesson ? "bottom-[calc(env(safe-area-inset-bottom)+96px)]" : "bottom-[calc(env(safe-area-inset-bottom)+88px)] md:bottom-6"}`}>
-            <Flag size={20} />
-          </button>
-        </Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
           <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-xl rounded-t-3xl bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl focus:outline-none" aria-describedby={undefined}>
@@ -90,5 +86,18 @@ export function InspectorKit() {
         </Dialog.Portal>
       </Dialog.Root>
     </>
+  );
+}
+
+/** Header flag that opens the report sheet (Inspector Mode only). */
+export function ReportFlag({ className = "" }: { className?: string }) {
+  const hydrated = useHydrated();
+  const on = usePrefs((p) => p.masterUnlock);
+  const setOpen = useReportUi((u) => u.setOpen);
+  if (!hydrated || !on) return null;
+  return (
+    <button type="button" onClick={() => setOpen(true)} aria-label="Report a problem on this screen" title="Report this screen" className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-amber-700 hover:bg-amber-50 ${className}`}>
+      <Flag size={18} />
+    </button>
   );
 }

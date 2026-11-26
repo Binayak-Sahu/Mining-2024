@@ -85,7 +85,7 @@ export const U7L1_FLOW: FlowScreen[] = [
   {
     kind: "reveal",
     prompt: "Inert gas squeezes the window from both sides. Tap the nose of the triangle, where the two limits meet.",
-    hotspot: { x: 101, y: 103, title: "The nose: limiting oxygen", body: "Add nitrogen or CO₂ and the range narrows until the two limits meet. With nitrogen, lab tests put that point at about 11–12 % oxygen (10.7 % in one vessel). The handbook's rule of thumb: keep oxygen reliably below 12 %." },
+    hotspot: { x: 101, y: 174, title: "The nose: limiting oxygen", body: "Add nitrogen or CO₂ and the range narrows until the two limits meet. With nitrogen, lab tests put that point at about 11–12 % oxygen (10.7 % in one vessel). The handbook's rule of thumb: keep oxygen reliably below 12 %." },
     src: ["zlochower-2009", "niosh-ic9486-ch10", "niosh-ic9486-ch1"],
   },
   {

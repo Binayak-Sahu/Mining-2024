@@ -178,6 +178,8 @@ export function closeEnough(got: number, want: number, tol = 0.02): boolean {
 
 export function fmt(v: number, digits = 2): string {
   if (!Number.isFinite(v)) return "—";
+  // Anything that rounds to zero at this precision shows as a clean zero (never "-0.0" or "4e-4").
+  if (Math.abs(v) < 0.5 * Math.pow(10, -digits)) return (0).toFixed(digits);
   const a = Math.abs(v);
   if (a !== 0 && (a >= 1e6 || a < 1e-3)) return v.toExponential(Math.max(1, digits));
   return v.toFixed(digits);

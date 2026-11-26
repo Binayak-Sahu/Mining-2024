@@ -29,7 +29,7 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
   const ctx = useMemo(() => ({ el: slot, bump }), [slot, bump]);
   return (
     <FeedbackSlot.Provider value={ctx}>
-      <div className="card p-5 sm:p-8 overflow-hidden relative">
+      <div className="card p-5 sm:p-8 overflow-clip relative">
         <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${m.color}, ${m.color}55)` }} aria-hidden />
         <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
           <span className={`inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 sm:py-1 text-[12.5px] font-bold ${m.text}`} style={{ background: `${m.color}18` }}>
@@ -128,7 +128,7 @@ const FeedbackSlot = createContext<{ el: HTMLElement | null; bump: (d: number) =
  * verdict, a short reason (expandable with "Why?") and the bar's own action underneath. Plays a chime /
  * thud once when it appears.
  */
-export function Feedback({ show, ok, title, children }: { show: boolean; ok: boolean; title: string; children?: ReactNode }) {
+export function Feedback({ show, ok, title, children, compact = false }: { show: boolean; ok: boolean; title: string; children?: ReactNode; /** one-line verdict; the reason only on "Why?" */ compact?: boolean }) {
   const ctx = useContext(FeedbackSlot);
   const played = useRef(false);
   const [open, setOpen] = useState(false);
@@ -172,13 +172,13 @@ export function Feedback({ show, ok, title, children }: { show: boolean; ok: boo
           {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-amber-500 text-white" />}
         </motion.span>
         <span className="flex-1 min-w-0">{title}</span>
-        {children && !short && (
+        {children && (compact || !short) && (
           <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="shrink-0 min-h-[44px] -my-2 px-2 text-[14px] font-semibold text-slate-700 hover:text-slate-900">
             {open ? "Less" : "Why?"}
           </button>
         )}
       </div>
-      {children && <div ref={txt} className={`text-[15px] leading-[1.5] text-slate-700 mt-1 ${open || short ? "max-h-[40vh] overflow-y-auto" : "line-clamp-2"}`}>{children}</div>}
+      {children && (!compact || open) && <div ref={txt} className={`text-[15px] leading-[1.5] text-slate-700 mt-1 ${open || short ? "max-h-[40vh] overflow-y-auto" : "line-clamp-2"}`}>{children}</div>}
     </motion.div>,
     ctx.el,
   );

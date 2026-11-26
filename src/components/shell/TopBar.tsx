@@ -11,6 +11,7 @@ import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { setInspector } from "@/lib/inspector";
+import { ReportFlag } from "./InspectorKit";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import type { ReactNode } from "react";
 
@@ -173,6 +174,7 @@ export function TopBar() {
             <Zap size={18} className="fill-blue-400/40" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
           <InspectorBadge />
+          <ReportFlag />
           <MuteToggle />
           <span className="hidden sm:inline-flex">
             <ThemeToggle />

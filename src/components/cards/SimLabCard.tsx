@@ -46,7 +46,7 @@ export function SimLabCard({ stage, onDone }: CardProps<SimStage>) {
           </button>
         }
       />
-      <Feedback show={achieved} ok title="Objective reached — here's the physics">
+      <Feedback show={achieved} ok compact title="Objective reached">
         {stage.insight}
       </Feedback>
     </CardFrame>

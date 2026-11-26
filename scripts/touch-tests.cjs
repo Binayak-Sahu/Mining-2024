@@ -56,6 +56,9 @@ async function centre(page, locator) {
 
 async function sliderDiagonal(phone, label) {
   const { page, cdp } = phone;
+  // Grip parameters keep their sliders in a collapsed "Fine-tune" row — open it so every slider is tested.
+  await page.evaluate(() => document.querySelectorAll("details").forEach((d) => (d.open = true)));
+  await page.waitForTimeout(200);
   const sliders = page.locator(".slider");
   const n = await sliders.count();
   let failures = 0;

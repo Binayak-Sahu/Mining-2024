@@ -51,6 +51,9 @@ export const useWhere = create<Where>()(() => ({ lessonId: null, stageIndex: nul
 
 export const BUILD = process.env.NEXT_PUBLIC_BUILD ?? "dev";
 
+/** Open state of the Inspector "Report this screen" sheet (triggered from the headers). */
+export const useReportUi = create<{ open: boolean; setOpen: (v: boolean) => void }>()((set) => ({ open: false, setOpen: (open) => set({ open }) }));
+
 export function downloadJson(name: string, data: unknown) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);

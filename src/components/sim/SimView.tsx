@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 export { AnimatedNumber };
-import { Hand, Check } from "lucide-react";
+import { Hand, Check, ChevronDown } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
 import { sfx } from "@/lib/sfx";
@@ -44,6 +44,15 @@ const PARAM_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#0
 /** Text shades that keep each parameter colour legible (AA) on the control panel in both themes. */
 const PARAM_TEXT = ["text-blue-700", "text-emerald-700", "text-amber-700", "text-violet-600", "text-red-700", "text-slate-700"];
 
+const HINT_KEY = "strata-grip-hint";
+function markHintSeen() {
+  try {
+    localStorage.setItem(HINT_KEY, "1");
+  } catch {
+    /* private mode */
+  }
+}
+
 /** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
 /** A live objective shown in the diagram's own frame; the frame lights up emerald while it is met. */
 export interface Objective {
@@ -70,6 +79,15 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
   const svg = useRef<SVGSVGElement>(null);
   const [drag, setDrag] = useState<number | null>(null);
   const [used, setUsed] = useState(false);
+  // The grip hint is a one-time tutorial: once you've dragged any grip it never shows again.
+  const [hintSeen, setHintSeen] = useState(true);
+  useEffect(() => {
+    try {
+      setHintSeen(localStorage.getItem(HINT_KEY) === "1");
+    } catch {
+      setHintSeen(false);
+    }
+  }, []);
   const handles = onChange ? (def.handles ?? []) : [];
   // Chrome ignores touch-action on SVG children, so a touch that starts on a grip claims the gesture with
   // a non-passive touchstart (no page scroll mid-drag). Elsewhere on the diagram the page scrolls normally.
@@ -166,6 +184,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
                 e.preventDefault();
                 setDrag(i);
                 setUsed(true);
+                markHintSeen();
               }}
             >
               <circle cx={x} cy={y} r={28} fill="transparent" />
@@ -202,11 +221,13 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
           })()}
       </svg>
       </div>
-      {handles.length > 0 && !used && (
-        <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute left-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-          <Hand size={11} /> Drag the grips on the diagram
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {handles.length > 0 && !used && !hintSeen && (
+          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[11px] font-bold text-white">
+            <Hand size={12} /> Drag the grips on the diagram
+          </motion.div>
+        )}
+      </AnimatePresence>
       {def.animated && !still && (
         <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
           <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
@@ -220,7 +241,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
 export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
   const out = useMemo(() => def.compute(values), [def, values]);
   return (
-    <div className="rounded-2xl bg-[#0E1424] p-1.5 flex overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] max-sm:-mx-1.5">
+    <div className="rounded-2xl bg-[#0E1424] p-1.5 grid grid-cols-2 sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] max-sm:-mx-1.5">
       {def.outputs.map((o, i) => {
         const v = out[o.key];
         const tone = o.tone ? o.tone(v, out, values) : "info";
@@ -229,13 +250,13 @@ export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
         // Text on the dark strip uses lighter tints so warning/critical words stay ≥ AA.
         const txt = tone === "info" ? "#F1F5F9" : tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : col;
         return (
-          <div key={`${o.key}-${i}`} className="rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-[150px] max-w-[190px] sm:max-w-none sm:min-w-0 shrink-0 sm:shrink">
-            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight line-clamp-2" title={o.label}>
+          <div key={`${o.key}-${i}`} className={`rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0 ${def.outputs.length % 2 === 1 && i === def.outputs.length - 1 ? "max-sm:col-span-2" : ""}`}>
+            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight break-words" title={o.label}>
               {o.label}
             </div>
             <div className="readout text-[14px] font-bold flex items-center gap-1.5 mt-0.5 text-[#F1F5F9] min-w-0">
               <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />
-              <span className="line-clamp-2 break-words leading-tight" style={{ color: txt }}>
+              <span className="break-words leading-tight min-w-0" style={{ color: txt }}>
                 {o.format ? text : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
               </span>
               {o.unit && !o.format && <span className="text-[#8B97AE] font-medium text-[11px] shrink-0">{o.unit}</span>}
@@ -247,10 +268,11 @@ export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
   );
 }
 
-export function Controls({ def, values, onChange, disabled }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; disabled?: boolean }) {
+export function Controls({ def, values, onChange, disabled, only }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; disabled?: boolean; only?: string[] }) {
   return (
     <div className="space-y-3">
       {def.params.map((p, k) => {
+        if (only && !only.includes(p.key)) return null;
         const color = PARAM_COLORS[k % PARAM_COLORS.length];
         const display = p.options
           ? (p.options.find((o) => o.value === values[p.key])?.label ?? "")
@@ -291,15 +313,36 @@ export function Controls({ def, values, onChange, disabled }: { def: SimDef; val
   );
 }
 
-/** Full interactive sim: diorama + telemetry + controls. */
+/**
+ * Full interactive sim: diorama + telemetry + controls. On phones the diagram stays pinned under the
+ * header while the controls scroll beneath it, so the effect of every change stays in view. Parameters
+ * with an on-canvas grip are driven by the grip; their sliders live in a collapsed "Fine-tune" row.
+ */
 export function SimView({ def, values, onChange, overlay, disabled, objective, corner }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean; objective?: Objective; corner?: ReactNode }) {
+  const gripKeys = disabled ? [] : [...new Set((def.handles ?? []).map((h) => h.key))];
+  const rest = def.params.map((p) => p.key).filter((k) => !gripKeys.includes(k));
   return (
     <div className="space-y-3">
-      <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} />
-      <Readouts def={def} values={values} />
-      <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
-        <Controls def={def} values={values} onChange={onChange} disabled={disabled} />
+      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 max-sm:bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:pb-1">
+        <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} />
       </div>
+      <Readouts def={def} values={values} />
+      {rest.length > 0 && (
+        <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
+          <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={rest} />
+        </div>
+      )}
+      {gripKeys.length > 0 && (
+        <details className="group rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
+          <summary className="list-none cursor-pointer select-none min-h-[48px] px-3 sm:px-4 flex items-center justify-between text-[14px] font-semibold text-slate-700">
+            <span>Fine-tune {gripKeys.length === 1 ? "the grip" : `the ${gripKeys.length} grips`} with sliders</span>
+            <ChevronDown size={18} className="text-slate-500 transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+            <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={gripKeys} />
+          </div>
+        </details>
+      )}
       {def.caption && <p className="text-[12px] text-slate-500 leading-relaxed">{def.caption}</p>}
     </div>
   );

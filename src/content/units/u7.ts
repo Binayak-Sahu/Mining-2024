@@ -26,10 +26,10 @@ export const U7: Unit = {
           ],
           sim: "u7-coward",
           hotspots: [
-            { x: 120, y: 70, title: "Explosive zone", body: "Between LEL (5 %) and UEL (15 %) CH₄ with enough oxygen. Most violent near 9.5 % (stoichiometric)." },
-            { x: 103, y: 36, title: "Lower explosive limit", body: "Below 5 % there is too little fuel to propagate a flame." },
-            { x: 101, y: 103, title: "Nose", body: "Below ~12 % O₂ no methane mixture can explode — the basis of inertisation with N₂/CO₂." },
-            { x: 272, y: 64, title: "Air-dilution line", body: "Composition of methane mixed with fresh air only. Points below it have lost oxygen (consumed by oxidation or diluted by inert gas)." },
+            { x: 120, y: 117, title: "Explosive zone", body: "Between LEL (5 %) and UEL (15 %) CH₄ with enough oxygen. Most violent near 9.5 % (stoichiometric)." },
+            { x: 103, y: 51, title: "Lower explosive limit", body: "Below 5 % there is too little fuel to propagate a flame." },
+            { x: 101, y: 174, title: "Nose", body: "Below ~12 % O₂ no methane mixture can explode — the basis of inertisation with N₂/CO₂." },
+            { x: 272, y: 103, title: "Air-dilution line", body: "Composition of methane mixed with fresh air only. Points below it have lost oxygen (consumed by oxidation or diluted by inert gas)." },
           ],
           drawers: [
             { q: "Why is CO so toxic?", a: "Haemoglobin binds CO roughly 200–250 times more strongly than O₂, forming carboxyhaemoglobin and starving tissue of oxygen. Effects depend on concentration × time; symptoms (headache, confusion, collapse) can be sudden." },

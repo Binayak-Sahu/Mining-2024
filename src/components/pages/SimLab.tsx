@@ -103,7 +103,7 @@ export function SimLab() {
         </div>
         <div className="card p-2.5">{browser(false)}</div>
       </aside>
-      <section className="order-1 lg:order-2 card p-4 sm:p-6 min-w-0">
+      <section className="order-1 lg:order-2 card p-4 sm:p-6 min-w-0" style={{ ["--sim-top" as string]: "4rem" }}>
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-violet-600">Sim Lab · Unit {UNIT_OF(def.id)}</div>

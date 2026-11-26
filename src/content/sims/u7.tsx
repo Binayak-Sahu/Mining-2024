@@ -37,6 +37,9 @@ export function cowardZone(ch4: number, o2: number): number {
   return 0;
 }
 
+/** Bottom of the cropped O₂ axis. */
+const O2_MIN = 10;
+
 const ZONES = ["Not explosive", "EXPLOSIVE", "Fuel-rich: explosive if diluted with air", "Impossible (O₂ above air-dilution line)"];
 
 export const cowardSim: SimDef = {
@@ -54,25 +57,31 @@ export const cowardSim: SimDef = {
   caption: "LEL 5 %, UEL 15 %, nose ≈ 5.9 % CH₄ / 12.2 % O₂. Air-dilution line: O₂ = 20.93 − 0.2093·CH₄.",
   handles: [
     { key: "ch4", axis: "x", at: (p) => [40 + (p.ch4 / 30) * 340, 204], toValue: (x) => ((x - 40) / 340) * 30, color: "#EF4444" },
-    { key: "o2", axis: "y", at: (p) => [40, 204 - (p.o2 / 22) * 190], toValue: (y) => ((204 - y) / 190) * 22, color: "#3B82F6" },
+    // O₂ axis is cropped to 10–22 % (where the triangle lives); readings below 10 % pin to the bottom edge.
+    { key: "o2", axis: "y", at: (p) => [40, 204 - (Math.max(p.o2, O2_MIN) - O2_MIN) / (22 - O2_MIN) * 190], toValue: (y) => O2_MIN + ((204 - y) / 190) * (22 - O2_MIN), color: "#3B82F6" },
   ],
   render: (p, o) => (
-    <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={30} ymin={0} ymax={22} xlabel="CH₄ %" ylabel="O₂ %">
+    <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={30} ymin={O2_MIN} ymax={22} xlabel="CH₄ %" ylabel="O₂ %" grips="xy">
       {(sx, sy) => (
         <g>
           <polygon points={polyline(TRI.map(([a, b]) => [sx(a), sy(b)]))} fill="#fecaca" stroke={C.crit} strokeWidth={2} strokeLinejoin="round" />
           {o.zone === 1 && <polygon points={polyline(TRI.map(([a, b]) => [sx(a), sy(b)]))} fill={C.crit} opacity={0.25} filter="url(#f-glow)" />}
-          <line x1={sx(p.ch4)} x2={sx(p.ch4)} y1={sy(0)} y2={sy(p.o2)} stroke={C.slate} strokeDasharray="2 3" />
-          <line x1={sx(0)} x2={sx(p.ch4)} y1={sy(p.o2)} y2={sy(p.o2)} stroke={C.slate} strokeDasharray="2 3" />
-          <polyline points={sample((x) => 20.93 - 0.2093 * x, 0, 30, 2, sx, sy)} fill="none" stroke={C.tech} strokeWidth={1.5} />
+          <line x1={sx(p.ch4)} x2={sx(p.ch4)} y1={sy(O2_MIN)} y2={sy(Math.max(p.o2, O2_MIN))} stroke={C.slate} strokeDasharray="2 3" />
+          <line x1={sx(0)} x2={sx(p.ch4)} y1={sy(Math.max(p.o2, O2_MIN))} y2={sy(Math.max(p.o2, O2_MIN))} stroke={C.slate} strokeDasharray="2 3" />
+          <polyline points={sample((x) => Math.max(O2_MIN, 20.93 - 0.2093 * x), 0, 30, 2, sx, sy)} fill="none" stroke={C.tech} strokeWidth={1.5} />
           <Txt x={sx(18)} y={sy(17.4)} size={8} fill={C.tech}>
             air-dilution line
           </Txt>
           <Txt x={sx(7)} y={sy(17.2)} size={9} weight={800} fill={C.crit}>
             EXPLOSIVE
           </Txt>
-          {o.zone === 2 && <line x1={sx(p.ch4)} y1={sy(p.o2)} x2={sx(0)} y2={sy(20.93)} stroke={C.hazard} strokeWidth={2} strokeDasharray="5 3" />}
-          <circle cx={sx(p.ch4)} cy={sy(p.o2)} r={7} fill={o.zone === 1 ? C.crit : o.zone === 2 ? C.hazard : o.zone === 3 ? C.slate : C.safe} stroke="white" strokeWidth={2} filter={o.zone === 1 ? "url(#f-glow)" : "url(#f-shadow)"} />
+          {o.zone === 2 && <line x1={sx(p.ch4)} y1={sy(Math.max(p.o2, O2_MIN))} x2={sx(0)} y2={sy(20.93)} stroke={C.hazard} strokeWidth={2} strokeDasharray="5 3" />}
+          {p.o2 < O2_MIN && (
+            <Txt x={sx(p.ch4) + 10} y={sy(O2_MIN) - 6} size={9} weight={700} mono fill={C.slate}>
+              {`↓ O₂ ${p.o2.toFixed(1)} %`}
+            </Txt>
+          )}
+          <circle cx={sx(p.ch4)} cy={sy(Math.max(p.o2, O2_MIN))} r={7} fill={o.zone === 1 ? C.crit : o.zone === 2 ? C.hazard : o.zone === 3 ? C.slate : C.safe} stroke="white" strokeWidth={2} filter={o.zone === 1 ? "url(#f-glow)" : "url(#f-shadow)"} />
           <Txt x={sx(5)} y={sy(19.9) - 6} size={7} anchor="middle" mono fill={C.slate}>
             LEL
           </Txt>

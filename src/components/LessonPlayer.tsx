@@ -18,6 +18,7 @@ import { StageRenderer } from "./cards/StageRenderer";
 import { BonusCard } from "./cards/BonusCard";
 import { ActionBar, PrimaryButton } from "./cards/ui";
 import { useResume } from "@/lib/resume";
+import { InspectorMenu } from "./shell/InspectorMenu";
 import { useWhere } from "@/lib/reports";
 import { STAGE_META } from "./cards/ui";
 
@@ -382,31 +383,16 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
               );
             })}
           </div>
+          {hydrated && master && (
+            <InspectorMenu
+              stages={lesson.stages.map((st) => STAGE_META[st.kind].label)}
+              index={index}
+              onJump={jumpTo}
+              onRefill={sandbox ? () => setHearts(HEARTS_PER_LESSON) : undefined}
+            />
+          )}
           <Hearts n={hearts} />
         </div>
-        {hydrated && master && (
-          <div className="max-w-2xl mx-auto px-2 sm:px-4 pb-2 flex items-center gap-2">
-            <div className="flex-1 min-w-0 flex gap-1 overflow-x-auto no-scrollbar" role="group" aria-label="Stage jumper">
-              {lesson.stages.map((st, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => jumpTo(i)}
-                  aria-current={i === index ? "step" : undefined}
-                  title={`Jump to stage ${i + 1}: ${STAGE_META[st.kind].label}`}
-                  className={`readout shrink-0 min-h-0 h-7 min-w-7 px-2 rounded-full text-[12px] font-extrabold transition-colors ${i === index ? "bg-slate-900 text-slate-50" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-            {sandbox && (
-              <button type="button" onClick={() => setHearts(HEARTS_PER_LESSON)} className="shrink-0 min-h-0 h-7 inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 px-2.5 text-[12px] font-extrabold" title="Refill sandbox hearts">
-                <Heart size={13} className="fill-current" /> Refill
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-3 sm:pt-6">
