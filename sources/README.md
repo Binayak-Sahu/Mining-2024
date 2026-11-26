@@ -11,6 +11,7 @@ Primary documents supplied by the owner. Text versions sit next to each PDF (`<n
 | `GAZETTE_NOTIFICATIONS_03072024.pdf` | 140 | native text layer |
 | `OSH Code 2020.pdf` | 86 | native text layer |
 | `Occupational_Safety_Rules, 2026.pdf` | 180 | native text layer |
+| `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` | 105 | native text layer (G.S.R. 910(E), see below) |
 
 Note: the owner brief said 137 of 156 pages were scanned. `pdfinfo` reports 155 pages and the per-page check found 135 without a text layer (a page counts as scanned when `pdftotext` returns under 40 characters).
 
