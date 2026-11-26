@@ -211,6 +211,17 @@ export const fadeQuick     = { duration: 0.16, ease: "easeOut" } as const;      
 
 ---
 
+## 7b. Approved UI dependencies
+
+Approved by Bink on 2026-11-26 (installed in package.json). Nothing else may be added without his approval (CLAUDE.md).
+
+| Package | Use it for | Rules |
+|---|---|---|
+| `@radix-ui/react-popover` | Path-node start card (§5.5b) and any small anchored card | Style it only with §5 tokens (no Radix default styles exist). Keep its focus handling, Escape-to-close and collision padding 16 px so it never leaves the screen. |
+| `@rive-app/react-canvas` | Original interactive animations: unit art, a future mascot, celebration moments | **Offline rule:** Rive downloads its engine (`rive.wasm`) from a CDN by default, which breaks offline use. Copy `node_modules/@rive-app/canvas/rive.wasm` into `public/` at build time and call `RuntimeLoader.setWasmUrl()` with the basePath-aware URL before any Rive mounts, so the service worker precaches it. Load Rive only on screens that show a `.riv` file (dynamic import). Every Rive animation needs a static fallback and stops under reduced motion. Only original art made by or for Bink; never Brilliant's or anyone else's. |
+
+Already in the app and still approved: `framer-motion`, `@radix-ui/react-dialog`, `@radix-ui/react-tooltip`, `vaul`, `sonner`, `lucide-react`, `canvas-confetti`, the two font packages.
+
 ## 8. Never List
 
 - Never use Brilliant's mascot (Koji), illustrations, icons, course art, wordmark or wording. STRATA uses its own unit icons and lucide. A STRATA mascot, if ever, is an original design in a later phase.
