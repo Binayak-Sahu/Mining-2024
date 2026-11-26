@@ -1,0 +1,49 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8889 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2104 : Mine Surveying { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Surveying definition, importance of mine surveying, types of survey and principles 
+ [2 L]
+Module 2: Traditional Surveying Methods 
+Linear and angular measurement techniques, Linear measurement in obstacles, Field work & Plotting of maps. [5 L]
+Module 3: Traversing: Traverse survey using Compass and Theodolite. Open and closed traverse, Concept of bearing, traverse calculations, error corrections and adjustments. [5 L]
+Module 4: Levelling [4 L]
+Types of levels survey for RL calculations of points, Concept of contour, uses of contouring, Methods of contour plotting. 
+Module 5: Correlation Survey [3 L]
+Correlation of surface and underground surveys: Verticality of shafts, shaft depth measurement, Direct traversing in inclined shaft, correlation in vertical shaft –single and two shafts .
+Module 6: Setting out curves – surface and underground. [3 L]
+Module 7: Computation of areas and volumes of earthworks [4 L]
+Module 8: GPS: Theory and principles of GPS & DGPS Surveying and its applications in mines.
+ [3 L]
+Module 9: Digital Mine Plan Preparation: Tools for Digital mine map preparation. Photogrammetry Survey, Basics of GIS, Projection systems of maps. [5 L]
+Module 10: Statutory requirements of mine Surveying: General requirements about mine plans and
+sections, Types of plans and sections. [2 L]
+ Course Objective
+ 1 .
+Make understanding the role of Mine survey course in mine operations
+ 2 .
+Enable to learn the method of conducting the mine survey
+ 3 .
+Enable to prepare and understand the mine maps
+ 4 .
+Learn about the modern mine surveying tools
+ Course Outcome
+ 1 .
+CO1: Understanding basic theory of basic tools and techniques of mine survey.
+CO2: Develop necessary skills to conduct mine survey using different tools and technique. 
+CO3: Develop analytical skills for solving mine survey problems. 
+CO4: Develop skills for handling advanced survey technique for digital mine map preparation.
+CO5: Understanding the applications of Drone Survey for mining industry.
+ Essential Reading
+ 1 .
+ W. Schofield and M. Breach, Engineering Surveying, ELSEVIER, B & H 
+ 2 .
+ B. C. Punmia, Ashok K. Jain and Arun K Jain, Surveying, Vol - I, II, III, Laxmi Publication Pvt. Ltd. 
+ Supplementary Reading
+ 1 .
+ T. P. Kanetkar, Surveying and Levelling, Pune Vidyarthi Griha Prakashan 
+ 2 .
+ S. K. Roy, Fundamentals of Surveying, Prentice Hall of India Pvt. Ltd

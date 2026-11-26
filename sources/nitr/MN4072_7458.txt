@@ -1,0 +1,31 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7458 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4072 : Mine System Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+Lab 1: Introduction to mathematical formulation of optimization problem for a defined mining systems and Software for solving the problems.
+Lab 2: Formulation of linear programming problem (LPP) for a defined mining system and solve using suitable software or computer programming. Generation and interpretation of sensitivity analysis of the defined problem.
+Lab 3: Formulation of transportation problem for a defined mining system as LPP and Solve using suitable software or computer programming. 
+Lab 4: Formulation of integer programming problem for a defined mining system and solve using suitable software or computer programming.
+Lab 5: Formulation of assignment problem as an Integer programming problem and solve using suitable software.
+Lab 6: Formulation of dynamic programming problem for a defined mining system (pit optimization/maximized NPV) and solve using suitable computer programming.
+Lab 7: Determination of best Fitting Probability Distribution Curve for a typical field data of a mining systems.
+Lab 8: Simulation for optimizing the queuing system in mines.
+Lab 9: Reliability analysis of a mining system for estimating the schedule maintenance time using suitable software or computer programming.
+Lab 10: Mathematical formulation of non-linear programming problem for a defined mining system and solving using suitable software or computer programming. 
+Lab 11: Mathematical formulation of the inventory for a defined mining system and solving using suitable software or computer programming.
+Lab 12: Introduction to evolutionary algorithms for solving the optimization problems of a defined mining system.
+ Course Objective
+ 1 .
+The primary objective is to develop skills for mathematical formulation of the optimizations problems for different mining systems.
+ 2 .
+The other objective of the course is to develop skills for writing computer programming or handling optimization software for solving the optimization problems.
+ Course Outcome
+ 1 .
+CO1: Develop necessary software skills for defining a mining systems and mathematical formulation of the problems. 
+CO2: Develop necessary software skills and methods to optimize the mining systems.
+ Essential Reading
+ 1 .
+ A K Gorai, Laboratory Manual of Mine Systems Laboratory, NA , NA

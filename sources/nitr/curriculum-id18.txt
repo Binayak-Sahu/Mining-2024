@@ -1,0 +1,1594 @@
+Source: https://www.nitrkl.ac.in/Academic/Curriculum/?id=18 (fetched 2026-11-26)
+Curriculum
+Mining Engineering (B.Tech. - 4yrs)
+ Knowledge and Attitude Profile (WK)
+1 
+ A systematic, theory-based understanding of the natural sciences applicable to the discipline and awareness of relevant social sciences. 
+2 
+ Conceptually-based mathematics, numerical analysis, data analysis, statistics and formal aspects of computer and information science to support detailed analysis and modelling applicable to the discipline. 
+3 
+ A systematic, theory-based formulation of engineering fundamentals required in the engineering discipline. 
+4 
+ Engineering specialist knowledge that provides theoretical frameworks and bodies of knowledge for the accepted practice areas in the engineering discipline; much is at the forefront of the discipline. 
+5 
+ Knowledge, including efficient resource use, environmental impacts, whole-life cost, re-use of resources, net zero carbon, and similar concepts, that supports engineering design and operations in a practice area. 
+6 
+ Knowledge of engineering practice (technology) in the practice areas in the engineering discipline. 
+7 
+ Knowledge of the role of engineering in society and identified issues in engineering practice in the discipline, such as the professional responsibility of an engineer to public safety and sustainable development. 
+8 
+ Engagement with selected knowledge in the current research literature of the discipline, awareness of the power of critical thinking and creative approaches to evaluate emerging issues. 
+9 
+ Ethics, inclusive behavior and conduct. Knowledge of professional ethics, responsibilities, and norms of engineering practice. Awareness of the need for diversity by reason of ethnicity, gender, age, physical ability etc. with mutual understanding and respect, and of inclusive attitudes.
+ Programme Outcomes (POs)
+1 
+Engineering Knowledge:
+ Apply knowledge of mathematics, natural
+science, computing, engineering fundamentals and an engineering specialization
+as specified in WK1 to WK4 respectively to develop to the solution of complex
+engineering problems.
+2 
+Problem Analysis:
+ Identify, formulate, review research literature and
+analyze complex engineering problems reaching substantiated conclusions with
+consideration for sustainable development. (WK1 to WK4)
+3 
+Design/Development of Solutions:
+ Design creative solutions for complex engineering problems and design/develop systems/components/processes to meet identified needs with consideration for the public health and safety, whole-life cost, net zero carbon, culture, society and environment as required. (WK5)
+4 
+Conduct Investigations of Complex Problems:
+ Conduct investigations of complex engineering problems using research-based knowledge including design of experiments, modelling, analysis & interpretation of data to provide valid conclusions. (WK8).
+5 
+Engineering Tool Usage: 
+ Create, select and apply appropriate techniques, resources and modern engineering & IT tools, including prediction and modelling recognizing their limitations to solve complex engineering problems. (WK2 and WK6)
+6 
+The Engineer and The World: 
+ Analyze and evaluate societal and environmental aspects while solving complex engineering problems for its impact on sustainability with reference to economy, health, safety, legal framework, culture and environment. (WK1, WK5, and WK7).
+7 
+Ethics: 
+ Apply ethical principles and commit to professional ethics, human values, diversity and inclusion; adhere to national & international laws. (WK9)
+8 
+Individual and Collaborative Teamwork: 
+ Function effectively as an individual, and as a member or leader in diverse/multi-disciplinary teams.
+9 
+Communication:
+ Communicate effectively and inclusively within the engineering community and society at large, such as being able to comprehend and write effective reports and design documentation, make effective presentations considering cultural, language, and learning differences
+10 
+Project Management and Finance:
+ Apply knowledge and understanding of engineering management principles and economic decision-making and apply these to one’s own work, as a member and leader in a team, and to manage projects and in multidisciplinary environments.
+11 
+Life-Long Learning: 
+ Recognize the need for and have the preparation and ability for i) independent and life-long learning ii) adaptability to new and emerging technologies and iii) critical thinking in the broadest context of technological change. (WK8)
+ Program Educational Objectives (PEOs)
+1 
+ To provide necessary foundation and professional knowledge in the field of Mining Engineering.
+2 
+ To develop the ability among the students to evaluate and analyse different practical aspects of Mining Engineering.
+3 
+ To equip the students with the application of computer knowledge/software to solve mining engineering problems and prototype development
+4 
+ To provide a broad knowledge in multi-disciplinary engineering subjects in order to equip them to cope with the demand of industries other than mining.
+5 
+ To develop among the students, self-learning and research ability through field experience and two semester project work to solve real life problems faced by the mining industry.
+ Program Specific Outcomes (PSOs)
+1 
+ Mining Engineering Graduates will be able to understand the impact of mining on society and environment and to demonstrate awareness of the contemporary issues
+2 
+ Mining Engineering Graduates will be able to apply engineering solutions to mining and associated industrial problems.
+3 
+ Mining Engineering Graduates will be able to compete and succeed in higher education competitive examinations.
+ 1st Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+CE1100 
+Engineering Mechanics 
+3-0-0 
+3 
+Syllabus 
+MA1003 
+Mathematics - I 
+3-0-0 
+3 
+Syllabus 
+PH1003 
+Waves and Optics 
+3-0-0 
+3 
+Syllabus 
+LS1001 
+Biology 
+2-0-0 
+2 
+Syllabus 
+EA1270 
+Value Education and Ethics 
+1-0-0 
+1 
+Syllabus 
+CS1010 
+Programming for Problem Solving 
+1-0-2 
+2 
+Syllabus 
+ME1000 
+Workshop Practice 
+0-0-3 
+2 
+Syllabus 
+PH1070 
+Physics Laboratory 
+0-0-3 
+2 
+Syllabus 
+Extra Academic Activity - I 
+ 2nd Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+CH1400 
+Environment and Safety Engineering 
+3-0-0 
+3 
+Syllabus 
+CY1002 
+Chemistry of Materials for Energy Applications 
+3-0-0 
+3 
+Syllabus 
+EC1000 
+Basic Electronics Engineering 
+3-0-0 
+3 
+Syllabus 
+EE1000 
+Basic Electrical Engineering 
+3-0-0 
+3 
+Syllabus 
+MA1004 
+Mathematics - II 
+3-0-0 
+3 
+Syllabus 
+HS1300 
+Communicative English 
+2-0-0 
+2 
+Syllabus 
+CE1010 
+Computer Aided Drawing and Graphics 
+0-0-3 
+2 
+Syllabus 
+CY1170 
+Chemistry Laboratory 
+0-0-3 
+2 
+Syllabus 
+ 3rd Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN2101 
+Surface Mining Technology 
+3-1-0 
+4 
+Syllabus 
+MN2105 
+Underground Coal Mining 
+3-1-0 
+4 
+Syllabus 
+ER2251 
+Mining Geology 
+3-0-0 
+3 
+Syllabus 
+CS2011 
+Introduction to AI and ML 
+2-0-0 
+2 
+Syllabus 
+ER2271 
+Mining Geology Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2701 
+Hazard and Rescue Laboratory 
+1-0-2 
+2 
+Syllabus 
+EC2700 
+Basic Electronics Laboratory 
+0-0-2 
+1 
+Syllabus 
+Value Added Course - I 
+Humanities Elective - I 
+Additional Course - I 
+ 4th Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN2202 
+Mine Ventilation 
+3-1-0 
+4 
+Syllabus 
+MN2104 
+Mine Surveying 
+3-0-0 
+3 
+Syllabus 
+MN2106 
+Rock Mechanics 
+3-0-0 
+3 
+Syllabus 
+MN2702 
+Mine Surveying Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2704 
+Rock Mechanics Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2706 
+Mine ventilation Laboratory 
+0-0-3 
+2 
+Syllabus 
+CS2672 
+AI and ML Laboratory 
+0-0-2 
+1 
+Syllabus 
+HS2270 
+Language Laboratory 
+0-0-2 
+1 
+Syllabus 
+Value Added Course - II 
+Technology in Society - I 
+Humanities Elective - II 
+Additional Course - II 
+ 5th Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN3103 
+Mining Machinery 
+3-1-0 
+4 
+Syllabus 
+MN3107 
+Underground Metal Mining 
+3-0-0 
+3 
+Syllabus 
+MN3701 
+Mining Machinery Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3703 
+Coal and Mineral Processing Laboratory 
+0-0-3 
+2 
+Syllabus 
+Stream Elective - I 
+Stream Elective - II 
+Multidisciplinary Elective - I 
+Advanced Skill Development - I 
+Additional Course - III 
+ 6th Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN3202 
+Mine Legislation and Safety 
+3-0-0 
+3 
+Syllabus 
+MN3702 
+Environmental Engineering Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3704 
+Coal Characterization Laboraory 
+0-0-3 
+2 
+Syllabus 
+MN3706 
+Geomechanics Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3670 
+Product Development Laboratory 
+0-0-2 
+1 
+Syllabus 
+Value Added Course - III 
+Stream Elective - III 
+Stream Elective - IV 
+Multidisciplinary Elective - II 
+Additional Course - IV 
+ 7th Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN4095 
+Capstone Project - I 
+0-0-0 
+4 
+Syllabus 
+MN4555 
+Special Topics by Industry Experts 
+0-0-0 
+1 
+Syllabus 
+MN4901 
+Seminar and Technical Writing 
+0-0-2 
+1 
+Syllabus 
+Stream Elective Laboratory - I 
+Stream Elective Laboratory - II 
+Stream Elective Laboratory - III 
+Stream Elective - V 
+Cluster Elective - I 
+SIRE / EPICS Elective 
+Multidisciplinary Elective - III 
+Additional Course - V 
+ 8th Semester
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN4908 
+Comprehensive Viva Voce 
+0-0-0 
+2 
+Syllabus 
+Cluster Elective - II 
+Multidisciplinary Elective - IV 
+Multidisciplinary Elective - V 
+Capstone Project Elective - II 
+ List of Elective Courses
+Subject Code
+Subject Name
+L-T-P
+Credit
+MN2001 
+Mine Development 
+3-0-0 
+3 
+Syllabus 
+MN2002 
+Sustainable Development of Mineral Resources 
+2-0-0 
+2 
+Syllabus 
+MN2004 
+Mine Surveying 
+3-0-0 
+3 
+Syllabus 
+MN2101 
+Surface Mining Technology 
+3-1-0 
+4 
+Syllabus 
+MN2102 
+Underground Coal Mining 
+3-0-0 
+3 
+Syllabus 
+MN2103 
+Rock Mechanics 
+3-0-0 
+3 
+Syllabus 
+MN2104 
+Mine Surveying 
+3-0-0 
+3 
+Syllabus 
+MN2105 
+Underground Coal Mining 
+3-1-0 
+4 
+Syllabus 
+MN2106 
+Rock Mechanics 
+3-0-0 
+3 
+Syllabus 
+MN2202 
+Mine Ventilation 
+3-1-0 
+4 
+Syllabus 
+MN2206 
+Mine Ventilation 
+3-0-0 
+3 
+Syllabus 
+MN3001 
+Mining Machinery 
+3-0-0 
+3 
+Syllabus 
+MN3003 
+Statistics for Engineers 
+3-0-0 
+3 
+Syllabus 
+MN3004 
+Data Analytics for Mining 
+3-0-0 
+3 
+Syllabus 
+MN3005 
+Mine Economics 
+3-0-0 
+3 
+Syllabus 
+MN3006 
+Mineral Resource Evaluation and Geostatistics 
+3-0-0 
+3 
+Syllabus 
+MN3007 
+Introduction to Numerical Modelling 
+3-0-0 
+3 
+Syllabus 
+MN3024 
+Ground Control Instrumentation 
+3-0-0 
+3 
+Syllabus 
+MN3025 
+Blasting Technology 
+3-0-0 
+3 
+Syllabus 
+MN3101 
+Underground Metal Mining 
+3-0-0 
+3 
+Syllabus 
+MN3103 
+Mining Machinery 
+3-1-0 
+4 
+Syllabus 
+MN3104 
+Surface Mining Technology 
+3-0-0 
+3 
+Syllabus 
+MN3105 
+Mining Machinery 
+3-1-0 
+4 
+Syllabus 
+MN3106 
+Geomechanics 
+3-0-0 
+3 
+Syllabus 
+MN3107 
+Underground Metal Mining 
+3-0-0 
+3 
+Syllabus 
+MN3109 
+Coal and Mineral Processing Technology 
+3-0-0 
+3 
+Syllabus 
+MN3201 
+Mine Waste Management 
+3-0-0 
+3 
+Syllabus 
+MN3202 
+Mine Legislation and Safety 
+3-0-0 
+3 
+Syllabus 
+MN3203 
+Underground Hazards and Rescue 
+3-0-0 
+3 
+Syllabus 
+MN3204 
+Surface Mine Environmental Engineering 
+3-0-0 
+3 
+Syllabus 
+MN3206 
+Solid Fuels and Clean Coal Technology 
+3-0-0 
+3 
+Syllabus 
+MN3207 
+Coal and Mineral Processing Technology 
+3-0-0 
+3 
+Syllabus 
+MN3208 
+Mine Economics 
+3-0-0 
+3 
+Syllabus 
+MN3222 
+Solid Fuel and Clean Coal Technology 
+3-0-0 
+3 
+Syllabus 
+MN4001 
+Mining Technology 
+0-0-0 
+1 
+Syllabus 
+MN4021 
+Mine Planning and Design 
+3-0-0 
+3 
+Syllabus 
+MN4101 
+Mine System Engineering 
+3-0-0 
+3 
+Syllabus 
+MN4103 
+Computerized Mine Planning and Design 
+3-0-0 
+3 
+Syllabus 
+MN4105 
+Computer Application in Mining 
+3-0-0 
+3 
+Syllabus 
+MN4201 
+Surface Mine Environmental Engineering 
+3-0-0 
+3 
+Syllabus 
+MN4223 
+Eco-friendly Mining 
+3-0-0 
+3 
+Syllabus 
+MN5002 
+Computer Application in Mining 
+3-0-0 
+3 
+Syllabus 
+MN5021 
+Bulk Material Handling 
+3-0-0 
+3 
+Syllabus 
+MN5027 
+Novel and innovative mining practices 
+3-0-0 
+3 
+Syllabus 
+MN5242 
+Advanced Mine Ventilation 
+3-0-0 
+3 
+Syllabus 
+MN5244 
+Coal Bed Methane 
+3-0-0 
+3 
+Syllabus 
+MN5244 
+Coal Bed Methane and CO2 Sequestration 
+3-0-0 
+3 
+Syllabus 
+MN5246 
+Mine Waste Management 
+3-0-0 
+3 
+Syllabus 
+MN6043 
+Ground Control Instrumentation 
+3-0-0 
+3 
+Syllabus 
+MN6103 
+Design of Underground Structures 
+3-0-0 
+3 
+Syllabus 
+MN6120 
+Mining of Deep Seated Deposits 
+3-0-0 
+3 
+Syllabus 
+MN6122 
+Rock Slope Technology 
+3-0-0 
+3 
+Syllabus 
+MN6124 
+Design of Underground Structures 
+3-0-0 
+3 
+Syllabus 
+MN6162 
+Advanced Coal Mining 
+3-0-0 
+3 
+Syllabus 
+MN2074 
+Mine Surveying Laboratory 
+0-0-2 
+1 
+Syllabus 
+MN2172 
+Rock Mechanics Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2271 
+Mining Geology Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2701 
+Hazard and Rescue Laboratory 
+1-0-2 
+2 
+Syllabus 
+MN2702 
+Mine Surveying Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2704 
+Rock Mechanics Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN2706 
+Mine ventilation Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3010 
+Product Development 
+0-0-0 
+1 
+Syllabus 
+MN3073 
+Mining Machinery Laboratory 
+0-0-2 
+1 
+Syllabus 
+MN3172 
+Geomechanics Laboratory 
+0-0-2 
+1 
+Syllabus 
+MN3271 
+Mine Ventilation Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3272 
+Hazard and Rescue Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3273 
+Coal and Mineral Processing Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3274 
+Coal Characterization Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3301 
+Mini Project 
+0-0-0 
+2 
+Syllabus 
+MN3670 
+Product Development Laboratory 
+0-0-2 
+1 
+Syllabus 
+MN3701 
+Mining Machinery Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3702 
+Environmental Engineering Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3703 
+Coal and Mineral Processing Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3704 
+Coal Characterization Laboraory 
+0-0-3 
+2 
+Syllabus 
+MN3706 
+Geomechanics Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3708 
+Mine Modelling , Automation and Digitization Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN3724 
+Ground Control Instrumentation Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4072 
+Mine System Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4271 
+Environmental Engineering Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4303 
+Summer Project/ Research Experience/ Community Service Project 
+0-0-0 
+2 
+Syllabus 
+MN4701 
+Mine System Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4703 
+Computerized Mine Planning and Design Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4705 
+Computer Application in Mining Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN4721 
+Mine Planning and Design Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN5022 
+Computer Application in Mining Laboratory 
+3-0-0 
+3 
+Syllabus 
+MN5023 
+Computer Application in Mining Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN6074 
+Mine Planning and Design Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN6171 
+Geotechnical Laboratory 
+0-0-3 
+2 
+Syllabus 
+MN6701 
+Ground Control Instrumentation Laboratory 
+0-0-3 
+2 
+Syllabus 
+ List of Elective Courses Offered by Other Departments
+Subject Code
+Subject Name
+L-T-P
+Credit
+CE2502 
+Environmental Engineering 
+3-0-0 
+3 
+Syllabus 
+CE3001 
+Estimation and Construction Management 
+3-0-0 
+3 
+Syllabus 
+CE3301 
+Transportation Engineering 
+3-0-0 
+3 
+Syllabus 
+CE3302 
+Advanced Transportation Engineering 
+3-0-0 
+3 
+Syllabus 
+CE4010 
+Application of AI and ML in Civil Engineering 
+3-0-0 
+3 
+Syllabus 
+CE4101 
+Design of Steel Structure 
+3-0-0 
+3 
+Syllabus 
+CE4209 
+Design of Steel Structure 
+3-0-0 
+3 
+Syllabus 
+CH1400 
+Environment and Safety Engineering 
+3-0-0 
+3 
+Syllabus 
+CH3117 
+Design and Analysis of Mass Transfer Applications 
+3-0-0 
+3 
+Syllabus 
+CH3213 
+Colloidal and Interfacial Science and Engineering 
+3-0-0 
+3 
+Syllabus 
+CH3511 
+Microfabrication Techniques 
+2-0-0 
+2 
+Syllabus 
+CH4413 
+Nuclear Energy Technology 
+3-0-0 
+3 
+Syllabus 
+CR6103 
+Advanced Materials Processing 
+3-0-0 
+3 
+Syllabus 
+CR6107 
+Mechanical Behavior of Materials 
+3-0-0 
+3 
+Syllabus 
+CR6231 
+Advanced Materials Characterization 
+3-0-0 
+3 
+Syllabus 
+CS1002 
+Programming Fundamentals 
+2-0-0 
+2 
+Syllabus 
+CS2011 
+Introduction to AI and ML 
+2-0-0 
+2 
+Syllabus 
+CS3063 
+Object Oriented System Design 
+3-0-0 
+3 
+Syllabus 
+CS3064 
+Foundations of Data Science 
+3-0-0 
+3 
+Syllabus 
+CS4064 
+AI in Healthcare 
+3-0-0 
+3 
+Syllabus 
+CS4065 
+Machine Learning for Non-Programmers 
+3-0-0 
+3 
+Syllabus 
+CS4066 
+Programming for Machine Learning 
+3-0-0 
+3 
+Syllabus 
+CS4067 
+Principles of Soft Computing 
+3-0-0 
+3 
+Syllabus 
+CS4213 
+Cybersecurity for Cyber Physical Systems 
+3-0-0 
+3 
+Syllabus 
+CS4214 
+Data Acquisition and Signal Processing 
+3-0-0 
+3 
+Syllabus 
+CS6659 
+Number Theory and Cryptography 
+3-0-0 
+3 
+Syllabus 
+CY5308 
+Principles of Molecular Modeling and Applications 
+3-0-0 
+3 
+Syllabus 
+CY5403 
+Environmental Chemistry 
+3-0-0 
+3 
+Syllabus 
+EC3608 
+Neural Networks and Deep Learning 
+3-0-0 
+3 
+Syllabus 
+EE2003 
+Electrical Measurement and Instrumentation 
+3-0-0 
+3 
+Syllabus 
+EE2060 
+ELECTRICAL INSTALLATION DESIGN 
+2-0-0 
+2 
+Syllabus 
+EE2202 
+Power Electronics 
+3-0-0 
+3 
+Syllabus 
+EE2401 
+Network Theory 
+3-0-0 
+3 
+Syllabus 
+EE3004 
+Electromagnetic Field Theory 
+3-0-0 
+3 
+Syllabus 
+EE3011 
+Electrical Machines 
+3-0-0 
+3 
+Syllabus 
+EE3100 
+Power Systems Operation and Control 
+3-0-0 
+3 
+Syllabus 
+EE3112 
+Power Systems 
+3-0-0 
+3 
+Syllabus 
+EE3201 
+Electric Drives 
+3-0-0 
+3 
+Syllabus 
+EE3213 
+Semiconductor Fabrication Technology 
+2-0-0 
+2 
+Syllabus 
+EE3301 
+Principles of Control Systems Engineering 
+3-0-0 
+3 
+Syllabus 
+EE3311 
+Industrial Automation, Control and Communication 
+3-0-0 
+3 
+Syllabus 
+EE3412 
+Digital Electronics and Microprocessors 
+3-0-0 
+3 
+Syllabus 
+EE6243 
+Soft Computing Techniques 
+3-0-0 
+3 
+Syllabus 
+EE6245 
+Silicon Solar Cell Technology 
+3-0-0 
+3 
+Syllabus 
+EE6268 
+Energy Storage Systems 
+3-0-0 
+3 
+Syllabus 
+ER2251 
+Mining Geology 
+3-0-0 
+3 
+Syllabus 
+ER4131 
+Mineral Sciences 
+3-0-0 
+3 
+Syllabus 
+ER4132 
+Remote Sensing & GIS 
+3-0-0 
+3 
+Syllabus 
+ER4134 
+Exploration Geophysics 
+3-0-0 
+3 
+Syllabus 
+ER4231 
+Science of Climate and Climate Change 
+3-0-0 
+3 
+Syllabus 
+ER5132 
+Remote Sensing & GIS 
+3-0-0 
+3 
+Syllabus 
+ER5133 
+Geophysical Exploration 
+3-0-0 
+3 
+Syllabus 
+ER5135 
+Geology of Fuels 
+3-0-0 
+3 
+Syllabus 
+ER5136 
+Introduction to Atmosphere and Ocean 
+3-0-0 
+3 
+Syllabus 
+ER5233 
+Applied Meteorology 
+3-0-0 
+3 
+Syllabus 
+ER5237 
+Climate Modeling 
+3-0-0 
+3 
+Syllabus 
+HS1313 
+Creative Writing 
+3-0-0 
+3 
+Syllabus 
+HS1314 
+Gender, Diversity, and Inclusion 
+3-0-0 
+3 
+Syllabus 
+HS1333 
+Post-Liberalization Social Transformation in India 
+3-0-0 
+3 
+Syllabus 
+HS1345 
+Optimization Theory in Economics 
+3-0-0 
+3 
+Syllabus 
+HS1349 
+Industry and Development 
+3-0-0 
+3 
+Syllabus 
+MA1003 
+Mathematics - I 
+3-0-0 
+3 
+Syllabus 
+MA1004 
+Mathematics - II 
+3-0-0 
+3 
+Syllabus 
+MA2001 
+Probability and Statistics 
+3-0-0 
+3 
+Syllabus 
+MA2005 
+Numerical Methods 
+3-0-0 
+3 
+Syllabus 
+MA2104 
+Complex Analysis 
+3-1-0 
+4 
+Syllabus 
+MA2305 
+Numerical Analysis 
+3-1-0 
+4 
+Syllabus 
+ME4254 
+Semiconductor Manufacturing 
+3-0-0 
+3 
+Syllabus 
+ME4333 
+Refrigeration and Air-Conditioning 
+3-0-0 
+3 
+Syllabus 
+MM2102 
+Phase Transformation 
+3-0-0 
+3 
+Syllabus 
+MM2307 
+Introduction to Metal Extraction and Refining 
+3-0-0 
+3 
+Syllabus 
+MM2309 
+Metallurgical Thermodynamics and Kinetics 
+3-0-0 
+3 
+Syllabus 
+MM2318 
+Iron and Steel Making 
+3-0-0 
+3 
+Syllabus 
+MM2502 
+History and Evolution of Materials 
+2-0-0 
+2 
+Syllabus 
+MM3107 
+Fundamentals of Physical Metallurgy 
+3-0-0 
+3 
+Syllabus 
+MM3205 
+Non-Destructive Evaluation of Metallic Materials 
+2-0-0 
+2 
+Syllabus 
+MM3206 
+Fundamentals of Mechanical Metallurgy 
+3-0-0 
+3 
+Syllabus 
+MM3301 
+Non-ferrous Metal Extraction 
+3-0-0 
+3 
+Syllabus 
+MM3302 
+Secondary Steel Making 
+3-0-0 
+3 
+Syllabus 
+MM3502 
+Additive Manufacturing 
+3-0-0 
+3 
+Syllabus 
+MM3508 
+Science and Engineering of Composite Materials 
+3-0-0 
+3 
+Syllabus 
+MM3510 
+Characterization of Materials 
+3-0-0 
+3 
+Syllabus 
+MM4109 
+Stainless Steel Technology 
+3-0-0 
+3 
+Syllabus 
+MM4111 
+Casting and Solidification of Metals 
+3-0-0 
+3 
+Syllabus 
+MM4502 
+Advanced Materials and Processing 
+3-0-0 
+3 
+Syllabus 
+MM4504 
+High Temperature Materials 
+3-0-0 
+3 
+Syllabus 
+MM4506 
+Nanostructured Materials 
+3-0-0 
+3 
+Syllabus 
+MM4514 
+Materials and Manufacturing Informatics 
+3-0-0 
+3 
+Syllabus 
+PH2011 
+Foundations of Quantum Technology 
+3-0-0 
+3 
+Syllabus 
+PH2012 
+Quantum Materials and Devices 
+3-0-0 
+3 
+Syllabus 
+PH2014 
+Semiconductor Technology 
+2-0-0 
+2 
+Syllabus 
+PH3011 
+Structural Analysis of Advanced Materials 
+2-0-0 
+2 
+Syllabus 
+PH3051 
+Science of Nano-materials 
+3-0-0 
+3 
+Syllabus 
+SM5622 
+Entrepreneurship and Start-up Ecosystem 
+3-0-0 
+3 
+Syllabus 
+SM6101 
+Financial and Cost Accounting 
+3-0-0 
+3 
+Syllabus 
+SM6102 
+Financial Management 
+3-0-0 
+3 
+Syllabus 
+SM6121 
+Financial Derivatives 
+3-0-0 
+3 
+Syllabus 
+SM6412 
+Operations Strategy 
+3-0-0 
+3 
+Syllabus 
+SM6421 
+Logistics and Supply Chain Management 
+3-0-0 
+3 
+Syllabus 
+SM6441 
+Production Planning and Control 
+3-0-0 
+3 
+Syllabus 
+SM6642 
+Business Ethics and Corporate Governance 
+3-0-0 
+3 
+Syllabus 
+CE4703 
+Steel Structures Design Practice 
+0-0-2 
+1 
+Syllabus 
+CR6272 
+Advanced Materials Characterization Laboratory 
+0-0-3 
+2 
+Syllabus 
+CS1010 
+Programming for Problem Solving 
+1-0-2 
+2 
+Syllabus 
+CS2083 
+Hands-On with Operating Systems 
+0-0-3 
+2 
+Syllabus 
+CS2084 
+Object-Oriented Design & Development Laboratory 
+0-0-3 
+2 
+Syllabus 
+CS2091 
+Python Programming for ML Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS2093 
+Data Preprocessing Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS2094 
+Text Analysis and NLP Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS2095 
+IoT Prototyping Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS2096 
+Cybersecurity for Cyber Physical Systems Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS2098 
+Industrial IoT 
+0-0-2 
+1 
+Syllabus 
+CS2099 
+IoT Data analytics 
+0-0-2 
+1 
+Syllabus 
+CS2672 
+AI and ML Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS3097 
+Basic Quantum Computing Programming Laboratory 
+0-0-2 
+1 
+Syllabus 
+CS6658 
+Data Analytics Capstone Project 
+0-0-2 
+1 
+Syllabus 
+EA2110 
+Professional Culture and Lifestyle in Healthcare 
+0-0-1 
+1 
+Syllabus 
+EA2120 
+Personality Development 
+0-0-1 
+1 
+Syllabus 
+EA2130 
+Disaster and Risk Management 
+0-0-1 
+1 
+Syllabus 
+EA2170 
+Self-Defense 
+0-0-1 
+1 
+Syllabus 
+EA2260 
+Dance and Theatre 
+0-0-1 
+1 
+Syllabus 
+EA2270 
+Music 
+0-0-1 
+1 
+Syllabus 
+EA2310 
+Deutsch Sprache (German Language) 
+0-0-1 
+1 
+Syllabus 
+EA2410 
+Sustainable Living 
+0-0-1 
+1 
+Syllabus 
+EA2420 
+Indian Knowledge System 
+0-0-1 
+1 
+Syllabus 
+EA2430 
+Indian Language (Sanskrit) 
+0-0-1 
+1 
+Syllabus 
+EA2440 
+Entrepreneurship 
+0-0-1 
+1 
+Syllabus 
+EC2700 
+Basic Electronics Laboratory 
+0-0-2 
+1 
+Syllabus 
+EE2703 
+Electrical Measurement and Instrumentation Laboratory 
+0-0-2 
+1 
+Syllabus 
+EE2708 
+Electrical Engineering Laboratory 
+0-0-3 
+2 
+Syllabus 
+EE3703 
+Power Electronics Laboratory 
+0-0-3 
+2 
+Syllabus 
+EE3712 
+Control Systems Laboratory 
+0-0-2 
+1 
+Syllabus 
+EE3713 
+Power Electronics Laboratory 
+0-0-2 
+1 
+Syllabus 
+EE4701 
+Power Systems Laboratory 
+0-0-3 
+2 
+Syllabus 
+EE4711 
+Power Systems Laboratory 
+0-0-2 
+1 
+Syllabus 
+ER2271 
+Mining Geology Laboratory 
+0-0-3 
+2 
+Syllabus 
+HS1270 
+Language Laboratory 
+0-0-2 
+1 
+Syllabus 
+MM2161 
+Fundamentals of Metallurgical Engineering Laboratory 
+0-0-2 
+1 
+Syllabus 
+MM2162 
+Metallography Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM2362 
+Process Metallurgy Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM2363 
+Mineral Dressing Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM2460 
+Computational and Numerical Techniques for Materials Engineering Laboratory 
+0-0-2 
+1 
+Syllabus 
+MM2463 
+Thermodynamic Modelling of Metallic Systems 
+0-0-3 
+2 
+Syllabus 
+MM3264 
+Mechanical Testing Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM3460 
+Finite Element Modelling of Materials Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM3467 
+Molecular Modeling of Materials Deformation Behavior Laboratory 
+0-0-2 
+1 
+Syllabus 
+MM3563 
+Polymer and Composite Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM3564 
+Structural Characterization Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM4261 
+Joining of Metals Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM4560 
+Thermal Analysis Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM4563 
+Electrometallurgy and Corrosion Laboratory 
+0-0-3 
+2 
+Syllabus 
+MM4910 
+Industrial Internship/Start-up 
+0-0-9 
+6 
+Syllabus 
+SM5372 
+Personality Grooming Lab 
+0-0-3 
+2 
+Syllabus 
+SM5572 
+Business Analytics Laboratory 
+0-0-3 
+2 
+Syllabus 

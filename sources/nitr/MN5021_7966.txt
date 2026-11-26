@@ -1,0 +1,31 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7966 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5021 : Bulk Material Handling { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Total contact hours = 36
+Module 1: Mine hoist: Drum and koepe winders, constructional features, kinematics, torque and power calculation, speed control, safety contrivances, selection of mine winders, cages, skip, suspension gears, headgear structures, cage guides, pit top and pit bottom circuits and layouts 
+Module 2: Conveyors: Belt conveyor, chain conveyor, cable belt conveyor, shaker conveyor, vibratory conveyor, constructional features and power calculations, selection and application 
+Module 3: Aerial Ropeway: Mono-cable, bi-cable, twin-cable ropeway, constructional features and power calculations, selection and application 
+Module 4: Scraper Haulage: Constructional features, applicability, advantages and disadvantages 
+Module 5: Men and material transportation: Cutting and loading machines for coal/ore, special men and materials transport in mines, men riding systems in mines.
+ Course Objective
+ 1 .
+To understand the concept and design of bulk material handing in mines
+ Course Outcome
+ 1 .
+1: Design and application of hoisting system
+2: Application of men and material transport system
+3: To enhance the knowledge and design concept of scraper haulage, aerial ropeway and conveyor system in mines.
+ Essential Reading
+ 1 .
+ D. J. Deshmukh, Elements of mining technology, Vol. 3, Denett & Co., Nagpur 
+ 2 .
+ M. A. Ramlu, Mine hoisting, Oxford and IBH 
+ Supplementary Reading
+ 1 .
+ Peter Darling, SME Mining Engineering Handbook, Vol. 1, Society for Mining, Metallurgy, and Exploration Inc. 
+ 2 .
+ R. D. Singh, Principles and practices of modern coal mining, New age international

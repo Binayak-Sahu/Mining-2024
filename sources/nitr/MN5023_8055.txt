@@ -1,0 +1,64 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8055 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5023 : Computer Application in Mining Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1 MATLAB: Basic programming exercises, Flowcharts and Algo
+Module 2 : 
+2 LEM: Design a Slope with given dimensions. Put material properties. Find the FOS and depth of Critical failure circle
+Module 3 : 
+3 LEM: Support the slope and find optimum reinforcement by varying bolt properties. Do basic cost analysis sensitivity. 
+Module 4 : 
+4 FEM: Simple bar stretch simulation. Max deformation analysis against a given load.
+Module 5 : 
+5 FEM: See change in deformation. Sensitivity Analysis. See effect of change in load, change in length, change in EM, change in meshing
+Module 6 : 
+6 FEM: Compression of ground soil while dumping operation. Find maximum deformation on ground: Stages
+Module 7 : 
+7 FEM: Dump design based on ground soil condition. Find maximum height.
+Module 8 : 
+8 FEM: Slope design and calculating critical SRF. Supporting and checking difference.
+Module 9 : 
+9 FEM: 3D analysis of loaded bar on ANSYS
+Module 10 : 
+10 FVM: Fluid flow through varying cross section pipe : ANSYS
+Module 11 : 
+11 Ventilation Simulation Using VENTSIM Basic flow exercise
+Module 12 : 
+12 MATLAB: Curve fitting linear regression exercise. Custom equation, best fit, R2 and Adjusted R2
+Module 13 : 
+13 MATLAB: MVRA: polynomial fitting. Compare with Excel
+Module 14 : 
+14 MATLAB: Artificial Neural Networks(ANN) and application
+Module 15 : 
+15 MATLAB: Adaptive Neuro Fuzzy Inference System (ANFIS) exercise
+ Course Objective
+ 1 .
+To have a hands on experience in solving various mining Problems using computational techniques and software
+ 2 .
+Developing aptitude to transform various mining problem and other practical engineering problems and challenges into computationally viable workflow and solutions
+ Course Outcome
+ 1 .
+CO 1. Understand the fundamental concepts of computational programming, flowchart development, and algorithm design using MATLAB for solving mining-related problems. 
+ 2 .
+CO 2. Apply numerical methods such as Limit Equilibrium Method (LEM), Finite Element Method (FEM), and Finite Volume Method (FVM) to analyze slope stability, soil deformation, and fluid flow in mining applications. 
+ 3 .
+CO 3. Analyze the effects of different material properties, boundary conditions, and external forces on slope stability, ground deformation, and ventilation performance using computational tools like ANSYS and VENTSIM. 
+ 4 .
+CO 4. Evaluate the accuracy and efficiency of predictive modeling techniques such as regression analysis, artificial neural networks (ANN), and adaptive neuro-fuzzy inference systems (ANFIS) for mining applications. 
+ 5 .
+CO 5. Design optimized engineering solutions for slope reinforcement, dump design, and ventilation management by integrating numerical simulations and data-driven approaches.
+ Essential Reading
+ 1 .
+ Rao, Reddy and Mishra, Computer Applications in Mineral Industry, Allied Publishers 
+ 2 .
+ SJ Morrison, Statistics for Engineering: An Introduction, Wiley 
+ Supplementary Reading
+ 1 .
+ RocScience, Rocscience Web Resources, Online 
+ 2 .
+ MATLAB, MATLAB Web Resources, Online 
+ Journal and Conferences
+ 1 .

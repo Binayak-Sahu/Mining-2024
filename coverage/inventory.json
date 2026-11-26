@@ -1,0 +1,3882 @@
+[
+ {
+  "unit": "u0",
+  "unitTitle": "Field Orientation: How STRATA Trains You",
+  "lesson": "u0-l1",
+  "title": "The Weight Above Your Head",
+  "subtitle": "Vertical stress σv = ρgH through all 5 stages",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Every metre of rock is load",
+    "flow": 13,
+    "text": "Stand in a gallery 300 m down and every square metre of roof is holding up a stack of rock heavier than 500 cars. | Rock above a gallery is not empty space — it is mass pressing down under gravity. | The deeper the working, the higher the vertical (overburden) stress every pillar and support must carry. | Overburden strata | Load path | Working horizon | Why ρgH and not just weight? | Why 0.025 MPa/m?",
+    "flowScreens": [
+     {
+      "j": 0,
+      "kind": "predict",
+      "t": "You drive a gallery through solid coal 400 m down. The rock above the removed coal still has weight. Where doe"
+     },
+     {
+      "j": 1,
+      "kind": "explain",
+      "t": "Start with untouched rock. Each element carries the column of rock above it: unit weight × depth. With a typic"
+     },
+     {
+      "j": 2,
+      "kind": "explain",
+      "t": "Stress is load per unit area at a point. A wider column weighs more but spreads over a wider base, so only uni"
+     },
+     {
+      "j": 3,
+      "kind": "check",
+      "t": "At the same depth, compare the vertical stress on a 1 m² patch of virgin rock with a 100 m² patch."
+     },
+     {
+      "j": 4,
+      "kind": "explain",
+      "t": "Horizontal stress is harder to predict. Engineers express it as a ratio k to the vertical. Measured k runs lar"
+     },
+     {
+      "j": 5,
+      "kind": "misconception",
+      "t": ""
+     },
+     {
+      "j": 6,
+      "kind": "check",
+      "t": "Near the surface in a hard-rock mine, the measured horizontal stress is twice the vertical. What does that tel"
+     },
+     {
+      "j": 7,
+      "kind": "explain",
+      "t": "Cut an opening and the rock beside it has to take over the load the removed rock carried, so stresses there ch"
+     },
+     {
+      "j": 8,
+      "kind": "reveal",
+      "t": ""
+     },
+     {
+      "j": 9,
+      "kind": "check",
+      "t": "Pillar size stays the same, but the galleries are cut wider. What happens to the average pillar stress?"
+     },
+     {
+      "j": 10,
+      "kind": "nudge",
+      "t": ""
+     },
+     {
+      "j": 11,
+      "kind": "situation",
+      "t": "A new district is planned at the same depth as the old one. The pillars stay the same size, but the galleries "
+     },
+     {
+      "j": 12,
+      "kind": "check",
+      "t": "When is the simple tributary-area estimate least trustworthy?"
+     }
+    ]
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Drive the gallery deeper",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Double the depth",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the overburden equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Load on a 450 m seam",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Spalling pillars at depth",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "swipe",
+    "title": "Orientation drill",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u0",
+  "unitTitle": "Field Orientation: How STRATA Trains You",
+  "lesson": "u0-boss",
+  "title": "Orientation Check-ride",
+  "subtitle": "Prove you can run the controls",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "predict",
+    "title": "Density swap",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "numeric",
+    "title": "Depth for 15 MPa",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l1",
+  "title": "Coal Genesis, Rank & Macerals",
+  "subtitle": "Peat to anthracite: heat, pressure, time",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Coal is cooked plant matter",
+    "flow": 0,
+    "text": "A Jharia seam and a Neyveli lignite started as the same swamp. One was cooked far longer and hotter. | Plant debris accumulates as peat; burial converts it to coal in two steps — biochemical (bacteria, near surface) then geochemical (heat and pressure, at depth). | Rank measures how far that cooking went: volatiles and moisture fall, carbon and reflectance rise. | Seam at burial depth | Geothermal gradient | Anthracite end-member | Vitrinite reflectance Ro | Drift vs in-situ origin? | What are macerals? | Why does moisture fall with rank?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Cook a coking coal",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Dyke next door",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the coalification rate law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Proximate analysis to daf basis",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Coal petrology rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l2",
+  "title": "Ore Genesis & Supergene Enrichment",
+  "subtitle": "Magmatic, hydrothermal, sedimentary, supergene",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "How metal gets concentrated",
+    "flow": 0,
+    "text": "A copper mine is profitable at 0.5 % Cu, yet average crust holds about 0.005 %. Something concentrated it a hundredfold. | Ore is ordinary crustal metal concentrated hundreds of times by a geological process: magma crystallisation, hot fluids, sedimentation or weathering. | In supergene enrichment, rain leaches metal from the oxidised top and re-deposits it just below the water table. | Leached cap / gossan | Water table = redox boundary | Enriched blanket | Hypogene (primary) ore | The four genetic families with Indian examples? | Why does pyrite matter?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Grow a minable blanket",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Water table falls",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the enrichment balance",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Blanket grade estimate",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Ore genesis rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l3",
+  "title": "True vs Apparent Dip",
+  "subtitle": "Strike, dip and every section in between",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A seam dips most steeply in one direction only",
+    "flow": 0,
+    "text": "Drive a gallery one way along a dipping seam and it stays dead level; turn 90° and it climbs as steeply as the bed itself. | Strike is the horizontal line on a bed; true dip is the steepest slope, measured at right angles to strike. | Any other section through the bed shows a smaller, apparent dip — zero along strike. | Strike line | True dip direction | Section line at angle β | Apparent dip in section | Where does tan α = tan δ·sin β come from? | Why do Indian mines talk of '1 in 4'?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Halve the gradient",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "Three-point problem lab",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Along the strike",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge the apparent dip relation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Cross-measure drift gradient",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "crisis",
+    "title": "Runaway on a misjudged gradient",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l4",
+  "title": "Faults: Throw, Heave, Gap & Overlap",
+  "subtitle": "Finding the seam on the other side",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Faults move the seam — geometry tells you where",
+    "flow": 0,
+    "text": "The coal face suddenly hits stone. Is the seam above you or below? The fault's tilt already tells you. | In a normal fault the hanging wall moves down (extension); in a reverse or thrust fault it moves up (compression). | Throw is the vertical offset; heave is the horizontal one. Normal faults leave a barren gap in plan; reverse faults create an overlap with the seam repeated. | Fault plane | Footwall seam | Displaced seam | Heave in plan | Why do normal faults form? | Why are faults hazardous underground? | Strike-slip faults?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Build a 10 m overlap",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Lost the seam",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the throw relation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Boreholes either side of a fault",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Water through the fault",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l5",
+  "title": "Diamond Core Drilling & RQD",
+  "subtitle": "Reading rock quality from the core box",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "The core box is the rock's report card",
+    "flow": 0,
+    "text": "Two boreholes, same rock type: one core comes up in metre-long sticks, the other as gravel. Only one will stand as an open roof. | Diamond drilling recovers intact cylinders of rock; the logger records lithology, recovery and fracture spacing. | RQD — the percentage of a run made of sound pieces ≥ 10 cm — is the fastest index of rock-mass quality and feeds RMR and Q. | Sound piece ≥ 10 cm | Broken zone | Core recovery | Why exactly 10 cm? | Drilling-induced breaks? | No core? Palmström's estimate",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Find the 'poor rock' threshold",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Handled too roughly",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Deere's RQD",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Log a 1.5 m run",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Unplugged exploration borehole",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-l6",
+  "title": "UNFC Classification & Reserve Estimation",
+  "subtitle": "E-F-G codes, cross-sections and tonnage",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Three questions decide whether it's a reserve",
+    "flow": 0,
+    "text": "A rich, well-drilled deposit can still be 'only a resource' if nobody has shown it pays to mine. | India's UNFC system (MEMC Rules 2015) codes every deposit on three axes: Economic viability (E), Feasibility study level (F) and Geological assurance (G). | Only E1 material with a feasibility (F1) or prefeasibility (F2) study and good geology (G1/G2) is a Mineral Reserve; everything else is a Resource. | E axis | F axis | G axis | Code | Why separate reserve from resource? | Cross-section method?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Classify the bankable block",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Price crash",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the tonnage equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Cross-section reserve block",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "UNFC rapid classification",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u1",
+  "unitTitle": "Mining Geology, Exploration & Deposit Modelling",
+  "lesson": "u1-boss",
+  "title": "The Exploration Geologist's Gauntlet",
+  "subtitle": "Faults, dips, cores and codes under pressure",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "crisis",
+    "title": "Thrust doubles the reserve",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "numeric",
+    "title": "Diagonal incline",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Coal near the sill",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "numeric",
+    "title": "RQD from joint count",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "swipe",
+    "title": "Geology final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-l1",
+  "title": "Access Selection & Shaft Pillars",
+  "subtitle": "Adit vs incline vs vertical shaft",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Depth decides the door",
+    "flow": 0,
+    "text": "A seam 40 m below a hillside needs no hoist at all, while the same seam under a plain might need a 600 m shaft. | Where a seam outcrops above drainage, an adit gives gravity drainage and no hoisting. Shallow seams are opened by belt inclines; deep ones by vertical shafts. | Incline length grows as depth ÷ sin(gradient), so beyond a few hundred metres the shorter shaft wins despite its winder. | Belt incline | Vertical shaft | Seam horizon | Capital comparison | Why do inclines lose at depth? | What is a shaft pillar? | Angle of draw?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Find the crossover depth",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Seam in the hills",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the shaft pillar radius",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Size a shaft pillar",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Robbing the shaft pillar",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-l2",
+  "title": "Shaft Sinking Cycle & the Galloway Stage",
+  "subtitle": "Drill, blast, muck, line — repeat",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Sinking is a cycle — the slowest step sets the pace",
+    "flow": 0,
+    "text": "Speed up drilling all you like: if mucking takes half the cycle, the shaft still sinks no faster. | Conventional sinking repeats drilling, charging-blasting-ventilating, mucking by cactus grab into kibbles, and concrete lining. | A multi-deck Galloway stage, hung on winch ropes, lets lining proceed from upper decks while the bottom is drilled and mucked. | Galloway stage | Kibble | Mucking bottleneck | Advance rate | Why line concurrently? | Why a swell factor?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Hit 70 m a month",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Wider shaft",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the muck-per-round equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Mucking time per round",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Misfire at the shaft bottom",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-l3",
+  "title": "Special Sinking: Freezing & Cementation",
+  "subtitle": "Sinking through water-bearing ground",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Turn the aquifer into a temporary wall",
+    "flow": 0,
+    "text": "Dig into running sand and the hole fills as fast as you empty it, so sinkers freeze the ground solid first. | Running sand and fissured aquifers cannot be sunk conventionally — water and fines flow into the excavation. | Freezing circulates cold brine (or liquid nitrogen) through a ring of boreholes, creating a frozen cylinder that is both watertight and load-bearing; cementation instead injects grout ahead to seal fissures. | Shaft excavation | Frozen wall | Freeze holes | Ground + water pressure | Why Lamé? | Cementation vs freezing? | Liquid nitrogen?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Freeze to 200 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Deeper aquifer",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Lamé's frozen wall",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Freeze design at 150 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Special sinking rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-l4",
+  "title": "Drift Drill-and-Blast: the Burn Cut",
+  "subtitle": "Creating a free face where there is none",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "No free face? Make one",
+    "flow": 0,
+    "text": "Rock breaks easily toward open space, and a drift face has none. The first holes must make their own. | A drift face is confined on all sides, so the first holes must blast into an empty, large-diameter relief hole. | Each delay then breaks toward the opening the previous one created: cut → easers → perimeter → lifters. | Empty relief hole | Perimeter (contour) holes | Lifters | Pull | Why does relief-hole diameter limit depth? | Burn cut vs V-cut?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Pull 3.5 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Harder rock",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the hole-count rule",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Design a 12 m² round",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Cut froze — socket with explosive",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-l5",
+  "title": "Mechanical Excavation: Roadheaders, CMs & TBMs",
+  "subtitle": "Cutting mechanics and specific energy",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Cutting is an energy budget",
+    "flow": 0,
+    "text": "A roadheader that glides through shale can stall on sandstone twice as strong: every MPa costs cutting energy. | Picks and disc cutters break rock by indentation and chip formation; the energy spent per cubic metre is the specific energy (SE). | SE rises with rock strength, so cutting rate = useful power ÷ SE falls in hard rock — each machine has a strength envelope. | Rock strength | TBM envelope | Machine | Instantaneous cutting rate | Why is drag-pick cutting limited in hard rock? | Raise boring vs blind shaft boring?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Find the roadheader's limit",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Double the strength",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the cutting-rate equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Roadheader drivage rate",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Frictional ignition at the drum",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u2",
+  "unitTitle": "Mine Development: Access, Shaft Sinking & Drivage",
+  "lesson": "u2-boss",
+  "title": "Development Engineer's Board",
+  "subtitle": "Access, sinking and drivage under fire",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Incline vs shaft length",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Colder brine",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Water at the shaft bottom",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Development rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l1",
+  "title": "In-situ Stress & the Kirsch Solution",
+  "subtitle": "Why openings concentrate stress",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "An opening diverts the stress flow",
+    "flow": 0,
+    "text": "Cut a round hole in loaded rock and the walls carry up to three times the stress the rock carried before. | Rock carries vertical stress from overburden and horizontal stress from confinement and tectonics (ratio K = σh/σv). | Cutting a hole forces those stress 'flow lines' around it, concentrating them on the boundary — up to 3× in the sidewalls of a circular opening. | Roof (crown) | Sidewalls | Far-field stresses | Failure map | Elastic, plastic, viscoelastic — which applies? | Where does horizontal stress come from? | Why only up to 3?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Close the roof tension",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Tectonic squeeze",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the sidewall stress",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Roadway at 500 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Guttering across the stress field",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l2",
+  "title": "Failure Criteria: Griffith, Mohr–Coulomb, Hoek–Brown",
+  "subtitle": "When does rock break?",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Confinement makes rock stronger",
+    "flow": 0,
+    "text": "A rock that crumbles in your hand can carry enormous loads deep underground, because squeezing it from the sides makes it stronger. | Mohr–Coulomb treats strength as cohesion plus friction on a shear plane — a straight line in σ1–σ3 space. | Hoek–Brown, fitted to real rock-mass behaviour, curves: strength gains fast at low confinement and flattens as cracks close; GSI scales it from intact rock to a jointed mass. | Hoek–Brown envelope | Mohr–Coulomb line | Working confinement | What did Griffith add? | Brittle vs ductile? | Why is GSI so influential?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Fit Mohr–Coulomb to Hoek–Brown",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Jointing increases",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Mohr–Coulomb in principal stresses",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Triaxial strength",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Failure criteria rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l3",
+  "title": "Rock Mass Classification: RMR, Q, GSI",
+  "subtitle": "Turning a core box into a support design",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Five numbers rate a rock mass",
+    "flow": 0,
+    "text": "Strong rock full of wet, slickensided joints can be weaker roof than mediocre rock with tight, dry ones. | RMR adds ratings for intact strength, RQD, joint spacing, joint condition and groundwater, then adjusts for joint orientation. | Q multiplies block size, inter-block shear strength and active stress; GSI feeds Hoek–Brown. All three translate geology into support classes. | Rating stack | Classes I–V | Support guidance | What is Q? | RMR ↔ Q ↔ GSI?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Upgrade to Class II",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Water breaks in",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the RMR–Q bridge",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Score Q and convert",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Clay band under bolted roof",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l4",
+  "title": "Roof Bolting: Suspension & Beam Building",
+  "subtitle": "Beam theory of a stratified roof",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Thin layers sag; clamped layers span",
+    "flow": 0,
+    "text": "Five thin shale layers sag like loose pages; bolt them into one beam and the same roof spans the gallery. | A laminated roof behaves like a stack of thin beams: each carries its own weight, and bending stress grows with span² and falls with thickness. | Bolts either suspend the weak layer from strong strata above, or clamp the laminae so they act as one thick beam — beam building. | Laminated immediate roof | Anchorage horizon | Span | Pillar rib | Where does σ = γL²/(2t) come from? | Pressure arch theory? | Plate vs beam?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Widen the bolt pattern safely",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Clamp the laminae",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the bolt load",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Suspension design",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Tell-tale in the red",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l5",
+  "title": "Pillar Design: Tributary Area & Strength Formulae",
+  "subtitle": "Salamon–Munro and CMRI workbench",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A pillar carries its share of the roof",
+    "flow": 0,
+    "text": "Widen the galleries by a metre and every pillar in the panel quietly picks up extra load. | Tributary area theory: each pillar supports the overburden over its own area plus half the surrounding galleries. | Pillar strength falls as height rises and grows with width — so the width-to-height ratio is the heart of pillar design. | Tributary area | Gallery | Strength formula | Factor of safety | Why does height weaken pillars? | Why does CMRI's formula include depth? | Statutory pillar sizes?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Design pillars at 400 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Thick seam, same pillars",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge tributary-area stress",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Check a development panel",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Pillars talking",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l6",
+  "title": "Opencast Slope Stability",
+  "subtitle": "Plane, wedge, circular and toppling failure",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A slope fails along its weakest path",
+    "flow": 0,
+    "text": "A slope can stand for years and then slide in one monsoon night: water lifts the block off its friction. | Plane failure needs a discontinuity that daylights in the face (dips flatter than the face) and steeper than its friction angle. | The factor of safety compares resisting forces (cohesion + friction) with driving forces along that plane — and water attacks the friction term. | Sliding block | Failure plane | Crest | Pit floor | Wedge failure? | Circular failure? | Toppling? | How does water reduce FOS?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Stabilise a wet slope",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "Four failure modes lab",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Monsoon recharge",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge the plane-failure FOS",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Bench plane-failure check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "crisis",
+    "title": "Radar says it's accelerating",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-l7",
+  "title": "Subsidence, Rockbursts & Coal Bumps",
+  "subtitle": "When the ground answers back",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Extraction reaches the surface as a trough",
+    "flow": 0,
+    "text": "Houses a kilometre from the panel can crack, because extraction spreads upward and outward as it reaches the surface. | Caving above an extracted panel propagates upward and appears at surface as a subsidence trough bounded by the angle of draw. | Narrow (sub-critical) panels are bridged and subside less; at critical width the full subsidence a·m develops at the centre. | Extracted panel | Angle of draw | Trough | Smax | Why do strains matter more than subsidence? | Rockburst vs coal bump?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Protect the village",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Same panel, deeper",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the critical width",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Subsidence forecast",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Depillaring toward a village",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u3",
+  "unitTitle": "Rock Mechanics & Ground Control",
+  "lesson": "u3-boss",
+  "title": "Strata Control Review Board",
+  "subtitle": "Stress, support, pillars and slopes",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Pillar at 350 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Bolting a thin-bedded roof",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Floor heave in high-K ground",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Geomechanics final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-l1",
+  "title": "Rock Drilling Mechanics",
+  "subtitle": "Percussive, rotary, rotary-percussive, DTH",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Every drill is an energy delivery system",
+    "flow": 0,
+    "text": "The same hammer drill that flies through the first 6 m crawls at 30 m: energy leaks out at every rod coupling. | Percussive drills crush rock under the bit by impact and chip it as the bit indexes round; rotary drills crush or shear it under thrust and torque. | Penetration rate is simply the power that reaches the rock divided by the energy needed per cubic metre — so where the hammer sits matters. | Top-hammer | Rod couplings | Penetration comparison | Energy at the bit | How does a percussive bit break rock? | Why does rotary drilling struggle in hard rock? | Dust from drilling?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "When does DTH win?",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Rotary into hard rock",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the penetration-rate law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "DTH in granite",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Drilling rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-l2",
+  "title": "Explosive Thermochemistry & Detonation Physics",
+  "subtitle": "Oxygen balance, VOD, pressure, impedance",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "An explosive is a fast, self-supplied fire",
+    "flow": 0,
+    "text": "Blast with too much fuel oil and the cloud turns to CO; too little and you breathe orange NOx. | Explosives carry their own oxygen: in ANFO, ammonium nitrate supplies O and fuel oil supplies C and H. | Detonation is a supersonic shock front sustained by the reaction behind it; deflagration is subsonic burning — far weaker and fume-rich. | Oxygen balance | Detonation front | Post-blast fumes | Impedance matching | Deflagration vs detonation? | Why ρ·VOD²/4? | Permitted explosives?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Zero the oxygen balance",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Small holes",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge detonation pressure",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "ANFO pressures",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Orange fumes in the heading",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-l3",
+  "title": "Fragmentation: Kuz-Ram Blast Optimiser",
+  "subtitle": "Shock vs gas, burden, spacing and powder factor",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Shock cracks, gas heaves",
+    "flow": 0,
+    "text": "Most rock in a blast is not broken by the bang but by tension, the shock wave bouncing back off the free face. | The detonation shock crushes the borehole wall and drives radial cracks; reflected tensile waves from the free face spall the burden. | Gas pressure then wedges into the cracks and heaves the broken burden — fragment size depends on how much energy each tonne receives. | Explosive column | Stemming | Size distribution | Oversize | Why does powder factor dominate? | What controls uniformity n? | Rock factor A?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Kill the boulders",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Stretch the burden",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Kuznetsov's equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Design check: 115 mm round",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Blast design rules",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-l4",
+  "title": "Delay Timing, NONEL Sequencing & Misfires",
+  "subtitle": "The firing wave and the cut-off trap",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Timing turns many holes into a controlled sequence",
+    "flow": 0,
+    "text": "Fire 50 holes at once and you shake the village; fire them 25 ms apart and the same charge breaks rock gently. | Delays let each hole break toward the free face created by the one before it, and keep the charge per delay — and therefore vibration — low. | In NONEL systems the surface signal must reach every hole before ground movement from the first detonation can sever the tubes: long in-hole, short surface delays. | Initiation point | Surface connector | Cut-off risk | Detonation times | Why long in-hole delays? | Electronic detonators? | Common misfire causes?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Design a cut-off-free sequence",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Lengthen the in-hole delay",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the no-cut-off condition",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Pick the in-hole delay",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Three holes didn't fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-l5",
+  "title": "Ground Vibration, Airblast & Flyrock",
+  "subtitle": "Scaled distance and DGMS limits",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Vibration falls with scaled distance",
+    "flow": 0,
+    "text": "Move the blast twice as far from the village and you can fire roughly four times the charge per delay: vibration follows scaled distance. | Peak particle velocity depends on distance and the charge per delay: V = K(D/√Q)^−b. | DGMS limits PPV by structure type and dominant frequency — low frequencies resonate with buildings and get the tightest limits. | Attenuation curve | Structure | Permissible limit | Danger zone | Why √Q? | Flyrock causes? | Airblast?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Charge for a village at 300 m",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Double the distance",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the scaled-distance law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Permissible charge",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Flyrock beyond the danger zone",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u4",
+  "unitTitle": "Drilling, Blasting & Rock Fragmentation",
+  "lesson": "u4-boss",
+  "title": "Shotfirer's Certificate Board",
+  "subtitle": "Design it, time it, fire it safely",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Village blast design",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Fuel pump fault",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Thunderstorm during charging",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Blasting final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-l1",
+  "title": "Pit Geometry & Stripping Ratio",
+  "subtitle": "How deep can the pit economically go?",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Every tonne of coal carries its waste",
+    "flow": 0,
+    "text": "The first tonnes of coal in a pit cost little waste; the last tonnes at depth can carry ten times more. | The stripping ratio is waste moved per tonne of coal; it grows quickly with depth because the pit widens at the surface as the walls lean back. | The pit is economic while the stripping ratio stays below the break-even stripping ratio — the waste one tonne's margin can pay to remove. | Overburden wedge | Coal | Overall slope | SR vs BESR | Overall vs instantaneous stripping ratio? | Bench geometry?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Find the economic pit bottom",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Steeper walls",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the break-even stripping ratio",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Is this block worth stripping?",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Overhang above the shovel",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-l2",
+  "title": "Dragline Cut-and-Cast & Excavator Envelopes",
+  "subtitle": "Rope shovels, hydraulic excavators, draglines, BWEs, surface miners",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A dragline digs and dumps in one swing",
+    "flow": 0,
+    "text": "A dragline moves overburden without a single truck, but only if the spoil fits within its reach. | Standing on the highwall, a dragline digs the overburden cut and side-casts it into the previous void — no trucks needed. | Its reach must cover the spoil pile's centre; when the spoil geometry outgrows the reach, material must be rehandled (extended-bench methods). | Overburden cut | Spoil pile | Dragline | Exposed coal | Rope shovel vs hydraulic excavator? | Bucket-wheel excavators and surface miners? | Extended bench?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Zero rehandle",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Blockier overburden",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the spoil height",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Reach check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "HEMM rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-l3",
+  "title": "Truck–Shovel Match Factor",
+  "subtitle": "Balancing fleets and queues",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Shovel and trucks are one machine",
+    "flow": 0,
+    "text": "Buy one truck too many and it idles in the queue; one too few and a crore-rupee shovel waits. | The match factor compares the rate trucks arrive with the rate the shovel can load them: MF = 1 is a balanced fleet. | Below 1 the shovel waits (lost production); above 1 trucks queue (lost capital). Haul distance and passes per truck drive the balance. | Loading unit | Loaded haul | Dump | Match factor | Why not just add trucks? | Why 3–5 passes?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Balance the fleet",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "The dump moves further",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the match factor",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Size a fleet",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Light vehicle in the blind spot",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-l4",
+  "title": "Haul Road Physics & Design",
+  "subtitle": "Rolling resistance, grade, rimpull, retarders, curves",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Every percent of resistance is paid in speed",
+    "flow": 0,
+    "text": "A loaded truck on a 10 % ramp is fighting the equivalent of an extra 100 kg for every tonne it carries. | A truck must overcome rolling resistance (tyre and road deformation) plus grade resistance — each roughly 10 kg per tonne per percent. | Rimpull × speed = power, so on a ramp, total resistance fixes the speed; on downgrades the retarder must absorb the energy. | Truck on ramp | Ramp gradient | Curve | Total resistance | What sets rolling resistance? | Why retarders? | Road width and berms?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Design a 15 km/h ramp",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Rutted road",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the rimpull demand",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Ramp speed",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Dumper over the dump edge",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-l5",
+  "title": "Waste Dump Stability & Reclamation",
+  "subtitle": "Decks, berms, water and foundations",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A dump is a loose slope that never stops settling",
+    "flow": 0,
+    "text": "A dump looks stable because each bench does, but it is the overall slope from crest to toe that fails. | Each deck stands at the spoil's angle of repose; berms between decks flatten the overall slope that actually governs stability. | Water (pore pressure) and weak foundations (black cotton soil, paddy fields) are behind most Indian dump failures. | Deck face | Berm | Overall slope | Factor of safety | Why do dumps fail in the monsoon? | Foundation preparation? | Reclamation?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "A 90 m dump that stands",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Monsoon saturation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the dump FOS",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Overall slope of a 3-deck dump",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Toe bulge after rain",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u5",
+  "unitTitle": "Opencast Mining & HEMM Engineering",
+  "lesson": "u5-boss",
+  "title": "Opencast Project Manager's Board",
+  "subtitle": "Economics, fleets and slopes",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "BESR check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Fleet after a strike",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Brake fade on the ramp",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Opencast final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u6",
+  "unitTitle": "Underground Coal & Metalliferous Mining Methods",
+  "lesson": "u6-l1",
+  "title": "Bord & Pillar Depillaring & Goaf Behaviour",
+  "subtitle": "Caving, stowing, main falls and air blast",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Depillaring hands the load to the goaf edge",
+    "flow": 0,
+    "text": "Pull the last stook and the roof does not wait: kilometres of rock overhead must find somewhere new to rest. | In development, pillars share the overburden evenly; in depillaring, extracted areas transfer load to the goaf edge and the remaining stooks. | Weak immediate roof caves and bulks to fill the void; a strong main roof can hang over a large area and then fall at once — driving an air blast through the workings. | Solid / pillars | Immediate caving | Main roof | Goaf-edge supports | Caving vs hydraulic sand stowing? | Why do air blasts happen? | Thick-seam methods?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "When will the main roof break?",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "Thick-seam lab: BG vs LTCC",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Stronger roof",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge the main-fall span",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Weighting forecast",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "crisis",
+    "title": "Large hang-up in the goaf",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u6",
+  "unitTitle": "Underground Coal & Metalliferous Mining Methods",
+  "lesson": "u6-l2",
+  "title": "Longwall: Abutments & Powered Supports",
+  "subtitle": "Shearer, AFC and shield mechanics",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A longwall carries the roof on a moving wall of shields",
+    "flow": 0,
+    "text": "A longwall is a 250 m tunnel that walks forward every shift, holding up the roof with hydraulic legs. | The overburden that once rested on the extracted coal is redistributed: a front abutment builds ahead of the face and a rear abutment where the goaf recompacts. | Shields must hold the detached roof block between face and goaf, then yield and advance every web cut by the shearer. | Front abutment | Powered shield | Shearer & AFC | Goaf | What is the detached block model? | Why yield rather than rigid supports? | Tip-to-face distance?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Shields for a 5 m face",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "Face cycle lab",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Bulkier goaf",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge the caving height",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Shield & shear calculations",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "crisis",
+    "title": "Cavity ahead of the shields",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u6",
+  "unitTitle": "Underground Coal & Metalliferous Mining Methods",
+  "lesson": "u6-l3",
+  "title": "Metalliferous Stoping & Dilution",
+  "subtitle": "Unsupported, supported and caving methods",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Every metre of slough dilutes the ore",
+    "flow": 0,
+    "text": "Every tonne of wall rock that sloughs into a stope is mined, hauled and milled for nothing. | Stoping methods range from unsupported (sublevel open stoping, VCR, shrinkage) through supported (cut-and-fill, square-set) to caving. | Dilution — waste mixed with ore — is driven by hanging-wall overbreak (ELOS) relative to ore width, so narrow veins suffer most. | Orebody | Hanging-wall slough | Diluted grade | Unsupported methods? | Supported methods? | Why is dilution so costly?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Make the narrow vein pay",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Switch to cut-and-fill",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge planned dilution",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Stope reconciliation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Stoping methods rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u6",
+  "unitTitle": "Underground Coal & Metalliferous Mining Methods",
+  "lesson": "u6-l4",
+  "title": "Block Caving & Draw Control",
+  "subtitle": "The draw-ellipsoid theory",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Ore flows to a drawpoint in an ellipsoid",
+    "flow": 0,
+    "text": "In a block cave you never touch the ore with a drill; you just keep pulling broken rock from below and gravity does the rest. | Undercut a large block and it caves under gravity; broken ore is pulled from drawpoints at the extraction level. | Material reporting to one drawpoint comes from an elongated ellipsoid. If neighbouring ellipsoids overlap, the column lowers evenly; if not, waste races down early and ore is left behind. | Isolated draw zone | Drawpoint | Overlying waste | Why interactive draw? | Draw control?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Space the drawpoints",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Finer fragmentation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the ellipsoid volume",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Draw zone",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Wet muck at the drawpoint",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u6",
+  "unitTitle": "Underground Coal & Metalliferous Mining Methods",
+  "lesson": "u6-boss",
+  "title": "Underground Manager's Methods Board",
+  "subtitle": "Goafs, faces and stopes",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Main fall estimate",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Taller face",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Fire in the goaf, stowing proposed",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "UG methods final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l1",
+  "title": "Mine Gases & Coward's Triangle",
+  "subtitle": "Toxicology, layering and explosibility",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Know where each gas hides and what it does",
+    "flow": 14,
+    "text": "Methane hugs the roof, CO₂ pools in the sump and CO has no smell at all, so each one ambushes you in a different place. | Methane is lighter than air and layers at the roof; CO₂ is heavier and pools on the floor; CO kills invisibly by binding haemoglobin far more strongly than oxygen. | Methane only explodes inside a window of both fuel and oxygen — Coward's triangle maps it, including mixtures that become explosive when fresh air is added. | Explosive zone | Lower explosive limit | Nose | Air-dilution line | Why is CO so toxic? | How does methane layering form? | Other gases?",
+    "flowScreens": [
+     {
+      "j": 0,
+      "kind": "predict",
+      "t": "Pure methane from a roof crack is diluted to 1 % in the airstream. Does it pass through an explosive mix on th"
+     },
+     {
+      "j": 1,
+      "kind": "explain",
+      "t": "An explosion needs enough methane and enough oxygen at the same time. In air, that window runs from 5 % methan"
+     },
+     {
+      "j": 2,
+      "kind": "explain",
+      "t": "Below 5 % there is too little fuel for a flame to keep going. Above 15 % there is too much methane for the oxy"
+     },
+     {
+      "j": 3,
+      "kind": "check",
+      "t": "A roof test reads 3 % methane in otherwise clean air. What is the best reading of that?"
+     },
+     {
+      "j": 4,
+      "kind": "predict",
+      "t": "Which methane–air mixture detonates most easily?"
+     },
+     {
+      "j": 5,
+      "kind": "explain",
+      "t": "Each methane molecule needs two oxygen molecules to burn completely: CH₄ + 2O₂ → CO₂ + 2H₂O. Air carries about"
+     },
+     {
+      "j": 6,
+      "kind": "explain",
+      "t": "Detonation data reported by NIOSH show how sensitive that region is. The detonation cell is 19 cm at 9.5 % met"
+     },
+     {
+      "j": 7,
+      "kind": "check",
+      "t": "Why is the most sensitive mixture near 9.5 %, rather than right at 15 %?"
+     },
+     {
+      "j": 8,
+      "kind": "reveal",
+      "t": ""
+     },
+     {
+      "j": 9,
+      "kind": "nudge",
+      "t": ""
+     },
+     {
+      "j": 10,
+      "kind": "misconception",
+      "t": ""
+     },
+     {
+      "j": 11,
+      "kind": "check",
+      "t": "Nitrogen is pumped into a gassy space to hold oxygen below 12 %. Later, fresh air floods in. What can happen?"
+     },
+     {
+      "j": 12,
+      "kind": "check",
+      "t": "CMR 2017 allows inflammable gas up to 1.25 % at any place in the mine. Compared with the 5 % lower limit, what"
+     },
+     {
+      "j": 13,
+      "kind": "situation",
+      "t": "After a roof fall, your detector reads 3 % methane at a working place. The section is short of time and the Si"
+     }
+    ]
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "The hidden danger",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Opening a sealed fire area",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the air-dilution line",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Oxygen deficiency check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Roof layer at the face",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l2",
+  "title": "Airflow: Atkinson's Law & Networks",
+  "subtitle": "P = RQ², splits, regulators, Kirchhoff",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Airflow obeys a square law",
+    "flow": 0,
+    "text": "Ask a fan for twice the air and it must push four times the pressure: airways fight back with the square of the flow. | Friction in airways makes pressure loss grow with the square of airflow: P = RQ², where resistance R depends on roughness, perimeter, length and area³. | In a network, flow divides so every parallel path has the same pressure drop (Kirchhoff); regulators add resistance to steer air where it is needed. | Main fan | Junction (Kirchhoff I) | Regulator | District split | Why area cubed? | Equivalent orifice? | Statutory quantity?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Regulate the splits",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Double the fan pressure",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Atkinson's law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Airway pressure drop",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Door left open",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l3",
+  "title": "Fans, Stall & Natural Ventilation Pressure",
+  "subtitle": "Characteristic curves, fan laws, thermodynamics",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "The fan runs where its curve meets the mine's",
+    "flow": 0,
+    "text": "Add a door or a collapse to the mine and the fan quietly delivers less air; it always runs where two curves cross. | The fan characteristic (pressure vs flow) intersects the mine resistance curve P = RQ² at the operating point. | Axial fans have a stall zone left of their pressure peak — operate there and flow oscillates violently. Heat differences between shafts add a natural ventilation pressure. | Stall zone | Pressure peak | Mine curve | Operating point | Centrifugal vs axial? | Where does NVP come from? | Fan laws?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "100 m³/s without stall",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Resistance jumps",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge natural ventilation pressure",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Winter NVP and a speed change",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Main fan trips",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l4",
+  "title": "Psychrometry & Heat Stress",
+  "subtitle": "Wet bulb, humidity and statutory heat limits",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Heat kills through the wet bulb",
+    "flow": 0,
+    "text": "34 °C in dry air is hard work; 34 °C in saturated air can kill, because sweat stops cooling you. | The body sheds heat mainly by evaporating sweat; humid air (high wet-bulb temperature) stops evaporation no matter what the dry bulb says. | Indian coal mine regulations therefore set limits on wet-bulb temperature: above 30.5 °C the face needs at least 1 m/s air, and above 33.5 °C no one may work. | Dry bulb | Wet bulb | Statutory lines | Air velocity | Why does depth heat the air? | Psychrometer equation? | Heat stroke first aid?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Make the hot face legal",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Hotter but drier",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the psychrometer equation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Relative humidity at the face",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Collapse at a hot face",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l5",
+  "title": "Spontaneous Combustion & Fire Gas Ratios",
+  "subtitle": "Graham's, Young's and Jones–Trickett ratios",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Coal can set itself on fire",
+    "flow": 0,
+    "text": "A coal pile can catch fire with no spark at all; it just has to make heat faster than the air carries it away. | Coal oxidises at room temperature; when heat from oxidation exceeds heat lost to ventilation, temperature climbs and the reaction accelerates — self-heating. | Gas ratios built on oxygen deficiency detect heating early, independent of dilution by fresh air. | Graham's ratio | Sample composition | Jones–Trickett ratio | What makes coal prone? | Crossing point temperature? | Controls?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Read an active-fire signature",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Diluted sample",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Graham's ratio",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Analyse a bag sample",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Rising Graham's ratio behind a stopping",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l6",
+  "title": "Coal Dust Explosions & Stone Dusting",
+  "subtitle": "Propagation physics and the heat-sink defence",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A small firedamp ignition can raise a dust cloud",
+    "flow": 0,
+    "text": "A small firedamp flash can turn a roadway of settled coal dust into a cloud, and the cloud into a mine-wide explosion. | A methane ignition's pressure wave lifts settled coal dust; the flame then burns through that cloud, raising more dust ahead of it — a self-propagating explosion. | Stone dust is inert: mixed into roadway dust, it absorbs heat (heat sink) and dilutes fuel so the flame cannot sustain itself. | Settled dust | Raised cloud | Incombustible content | Why does stone dust work? | Barriers?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Dust a gassy return",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "More coal dust, same stone dust",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the stone-dust requirement",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Redusting a belt road",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Dust & explosion rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-l7",
+  "title": "Mine Drainage: Pumps, Head & NPSH",
+  "subtitle": "Keeping water out of the workings",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A pump must lift water — and must not boil it",
+    "flow": 0,
+    "text": "A pump set too high above the sump does not just struggle: the water boils at the impeller eye and chews the blades. | Multistage centrifugal pumps add head stage by stage to lift mine water to surface; power = ρgQH/η. | On the suction side, pressure must stay above the water's vapour pressure; if not, bubbles form and collapse (cavitation), eroding impellers and collapsing flow. | Sump | Multistage pump | Rising main | NPSH | Why does warm water cavitate sooner? | Flooded suction? | Inundation precautions?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Maximum suction lift at 35 °C",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Hot water",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge NPSH available",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Size a dewatering pump",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Pumps losing the battle",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u7",
+  "unitTitle": "Mine Ventilation, Thermodynamics & Subsurface Hazards",
+  "lesson": "u7-boss",
+  "title": "Ventilation Officer's Board",
+  "subtitle": "Gas, air, heat, fire and water",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Equivalent orifice",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Inert the sealed area",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "CO alarm and smoke on the belt road",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Ventilation final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l1",
+  "title": "Traverse Closure & Bowditch Adjustment",
+  "subtitle": "Plane surveying the mine",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A closed traverse audits itself",
+    "flow": 0,
+    "text": "Walk a survey loop and come back to the start, and the gap tells you exactly how much error you collected on the way. | Underground surveys are chains of angles and distances (traverses). If the chain returns to its start, the misclosure reveals the accumulated error. | Bowditch's rule distributes that misclosure along the legs in proportion to their lengths, so the plan closes without distorting any one station. | Opening/closing station | Traverse station | Precision | Adjusted traverse | Geodetic vs plane surveying? | Bowditch vs transit rule? | Drones and LiDAR? | Three-point problem?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Reach 1 in 10 000",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Adjustment vs truth",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the Bowditch correction",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Close a traverse",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Surveying rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l2",
+  "title": "Shaft Plumbing, Weisbach & Gyro-theodolites",
+  "subtitle": "Carrying orientation underground",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Two wires carry the surface bearing down the shaft",
+    "flow": 0,
+    "text": "Two thin wires hanging in a shaft are all that carry the surface bearing down to the workings below. | Two plumb wires hung down a shaft define a plane whose bearing is known at surface; underground, a theodolite set almost in line with them transfers that bearing. | The tiny angle at the instrument is magnified by b/c into the orientation, so geometry controls the error — or a gyro-theodolite finds north directly. | Instrument C | Near wire W₁ | Distance ratio b/c | Shaft | How does a gyro-theodolite find north? | Schuler mean? | Why so much care?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Limit orientation error to 1″",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Instrument further back",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the Weisbach relation",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Gyro turning points",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Approaching old waterlogged workings",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l3",
+  "title": "Comminution: Rittinger, Kick & Bond",
+  "subtitle": "The energy cost of liberation",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Liberation costs energy — mostly at the fine end",
+    "flow": 0,
+    "text": "Crushing rock from boulders to sand is cheap; grinding it from sand to flour is where the mill power bill goes. | Minerals must be broken small enough to free (liberate) valuable grains from gangue before they can be separated. | Energy per tonne rises steeply as product size falls: Bond's law scales it with 1/√size, between Kick (coarse) and Rittinger (fine). | Feed F80 | Product P80 | Ball mill | Bond equation | Rittinger vs Kick vs Bond? | Why not grind everything ultra-fine?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Finer grind within the power budget",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Halve the grind size",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge Bond's law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Mill sizing",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Processing rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l4",
+  "title": "Settling, Flotation & Coal Washability",
+  "subtitle": "Separating by density and surface chemistry",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Separation exploits a property difference",
+    "flow": 0,
+    "text": "Drop coal and shale into a liquid of the right density and the coal floats while the shale sinks. | Gravity and dense-medium separation use density; settling speed follows Stokes' law for fines and Newton's law for coarse particles. | Coal washability (float–sink) data tell you, for any cut-point, how much clean coal you get and at what ash — and how hard the coal is to wash. | Washability curve | Ash target | Operating point | Near-gravity material? | Flotation surface chemistry? | Hindered settling?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Wash to coking spec",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "Flotation circuit lab",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Worn cyclone",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge Stokes' law",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Settling of fine quartz",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "swipe",
+    "title": "Separation rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l5",
+  "title": "Mine Electricals: Earthing, FLP & IS",
+  "subtitle": "Restricted neutral, earth leakage, flameproof and intrinsic safety",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Limit the fault, then make sparks harmless",
+    "flow": 0,
+    "text": "A spark from a faulty cable can ignite methane; the trick is to keep the fault current too small to spark and cut it in milliseconds. | Underground coal systems earth the transformer neutral through a resistor so an earth fault draws only a small current (commonly limited to 750 mA) — and an earth-leakage relay trips it fast. | Where firedamp may be present, apparatus is flameproof (FLP: contains an internal explosion and cools escaping gases in narrow flame paths) or intrinsically safe (IS: circuit energy too low to ignite methane). | Transformer | Neutral earthing resistor | Earth fault | Ea",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Restrict the neutral",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "sim",
+    "title": "FLP vs IS zoning lab",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "predict",
+    "title": "Solid vs restricted earth",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "equation",
+    "title": "Forge the earth-fault current",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "numeric",
+    "title": "Size the NER for 1100 V",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 6,
+    "kind": "crisis",
+    "title": "Flameproof cover with a missing bolt",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-l6",
+  "title": "Koepe Winding & Haulage Safety Devices",
+  "subtitle": "Friction drives, overwinds and runaways",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A Koepe wheel lifts by friction alone",
+    "flow": 0,
+    "text": "A Koepe winder has no drum to wind rope on; the skips are lifted by friction alone, and friction has a limit. | The rope passes over the friction wheel; motion depends on the tension ratio staying within Euler's capstan limit, T₁/T₂ ≤ e^(μθ). | Acceleration, braking, payload and an unbalanced rope push the ratio up; slip is prevented by mass, friction lining and wrap — and every winder needs overwind, overspeed and arresting protection. | Friction wheel | Tight side T₁ | Loaded skip | Tail rope | Detaching hooks? | Winder protection? | Rope haulage devices?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Lift 30 t without slip",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Harder acceleration",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the capstan condition",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Slip check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Overwind on the drum winder",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u8",
+  "unitTitle": "Mine Surveying, Mineral Processing & Mine Electricals",
+  "lesson": "u8-boss",
+  "title": "Surveyor, Processor & Electrical Board",
+  "subtitle": "Plans, plants and power",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Bond energy",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Wrap angle",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "crisis",
+    "title": "Earth-leakage relay bypassed",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Unit 8 sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u9",
+  "unitTitle": "Mine Economics, Planning & Digital Mining",
+  "lesson": "u9-l1",
+  "title": "Discounted Cash Flow & Indian Mineral Levies",
+  "subtitle": "NPV, IRR, payback, royalty, DMF, NMET",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A rupee tomorrow is worth less than a rupee today",
+    "flow": 0,
+    "text": "A mine that returns ₹1000 crore over 30 years can still be a bad investment if most of the money arrives late. | Mining spends heavily up front and earns over decades, so cash flows are discounted: NPV adds them at today's value; IRR is the rate at which NPV is zero. | In India, sales value first pays royalty, plus District Mineral Foundation (DMF) and National Mineral Exploration Trust (NMET) contributions calculated on that royalty. | Year-0 capital | Nominal vs discounted | Cumulative discounted cash | NPV & IRR | Why do DMF and NMET depend on royalty? | NPV vs IRR conflicts? | Why discount",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Find the break-even sales value",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Auctioned lease",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge NPV",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Levies per tonne and a small NPV",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Economics rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u9",
+  "unitTitle": "Mine Economics, Planning & Digital Mining",
+  "lesson": "u9-l2",
+  "title": "Grade–Tonnage, Cut-off & Sampling Theory",
+  "subtitle": "Lane's cut-off and Gy's sampling error",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Cut-off grade turns rock into ore",
+    "flow": 0,
+    "text": "The same rock is ore at one gold price and waste at another; the cut-off grade draws that line. | The cut-off grade decides which material is ore: raising it shrinks tonnage but raises average grade — the grade–tonnage curve shows the trade. | The break-even cut-off just pays for its own mining and processing; Lane showed that when a capacity is the bottleneck, the optimum cut-off is higher. | Tonnage curve | Grade curve | Break-even cut-off | Chosen cut-off | Lane's three limiting cut-offs? | Gy's sampling theory?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Set the economic cut-off",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Metal price jumps",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the break-even cut-off",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Break-even and sample mass",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Cut-off rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u9",
+  "unitTitle": "Mine Economics, Planning & Digital Mining",
+  "lesson": "u9-l3",
+  "title": "Ultimate Pit Limits: Lerchs–Grossmann",
+  "subtitle": "Optimising the pit shell",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "The best pit is a closure, not a guess",
+    "flow": 0,
+    "text": "Digging one more rich block can be worth it, or not, depending on how much waste you must strip above it. | Every block gets an economic value: ore blocks earn revenue minus processing and mining; waste blocks only cost mining. | Lerchs–Grossmann finds the set of blocks with maximum total value that respects slope precedence — mining a block requires removing the blocks above it. | Shallow lens | Deep rich pod | Pit outline | Floating cone vs LG? | Nested pits and pushbacks? | Link to BESR?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "When does the deep pod pay?",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Mining cost doubles",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the ore block value",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Value two blocks",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Pit optimisation rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u9",
+  "unitTitle": "Mine Economics, Planning & Digital Mining",
+  "lesson": "u9-l4",
+  "title": "Digital Mining: Radar, Dispatch & Telemetry",
+  "subtitle": "Turning sensor streams into decisions",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Sensors only help if alarms drive action",
+    "flow": 0,
+    "text": "A wall usually warns days before it fails; the radar only saves lives if someone acts on the trend. | Slope stability radar measures wall movement to sub-millimetre precision; accelerating creep shows as inverse velocity falling toward zero at failure. | Fleet management (FMS) dispatch, proximity detection and real-time gas monitoring do the same for haulage and underground air — triage by consequence and time-to-harm. | 1/v readings | Actual failure | Now | Why does 1/v go linear? | FMS dispatch? | Real-time gas telemetry?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Forecast with noisy data",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Dustier air",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the failure-time forecast",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Two radar readings",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Three alarms at once",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u9",
+  "unitTitle": "Mine Economics, Planning & Digital Mining",
+  "lesson": "u9-boss",
+  "title": "Mine Planning Investment Committee",
+  "subtitle": "Value, cut-off and risk",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "numeric",
+    "title": "Cash flow after levies",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Discount rate shock",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "swipe",
+    "title": "Planning final sweep",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-l1",
+  "title": "Statutory Architecture & Duties",
+  "subtitle": "Who is responsible for what",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "The law is layered — and so is responsibility",
+    "flow": 0,
+    "text": "When something goes wrong underground, the first question is who was responsible, and the law has already answered it. | The Mines Act 1952 sets principles; the Mines Rules 1955 cover health, welfare and hours; CMR 2017 and MMR 1961 carry the technical safety regulations; DGMS circulars add guidance. The OSH&WC Code 2020 consolidates the Act with other labour laws, with regulations under it carrying this architecture forward. | Owner, agent and manager share responsibility for compliance; each official below them carries specific statutory duties. | Acts / Code | Regulations | DGMS circulars |",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Who keeps the plans?",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Agent vs manager",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the weekly hours limit",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Roster audit",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Fatal accident on the night shift",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-l2",
+  "title": "Degrees of Gassiness & Statutory Air Standards",
+  "subtitle": "Classification drives precautions",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "How gassy is the seam? The answer sets the rulebook",
+    "flow": 0,
+    "text": "Two seams, same coal: one gives off a little methane, the other a lot, and they are run under different rulebooks. | Coal seams are classified into Degree I, II or III by the rate of methane emission per tonne of coal and the inflammable gas in the general body of air. | Higher degrees bring stricter requirements: flameproof or intrinsically safe apparatus, permitted explosives, more frequent and continuous gas monitoring. | Degree I | Degree II | Degree III | General-body threshold | Statutory air quality? | Statutory air quantity?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "The low-emission trap",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Deeper seam",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the air-quantity rule",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "District air requirement",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "New seam, old classification",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-l3",
+  "title": "Risk Management: SMP, HIRA & WRAC",
+  "subtitle": "From hazard to residual risk",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Rate the risk, then climb the hierarchy",
+    "flow": 10,
+    "text": "A hazard you cannot remove you can still engineer out, guard against, or train for, and the order matters. | Risk = likelihood × consequence. HIRA identifies hazards and rates them; WRAC (workplace risk assessment and control) does it task by task with the workforce. | The Safety Management Plan (SMP) turns the ranked risks into controls, monitoring and audits — prioritising elimination and engineering over rules and PPE. | Inherent risk | Hierarchy of controls | Consequence axis | Why is PPE last? | What makes an SMP effective?",
+    "flowScreens": [
+     {
+      "j": 0,
+      "kind": "predict",
+      "t": "Workers keep getting hurt by the same hazard. Which kind of fix protects them best, in general?"
+     },
+     {
+      "j": 1,
+      "kind": "explain",
+      "t": "NIOSH ranks five kinds of control by general effectiveness: elimination, substitution, engineering controls, a"
+     },
+     {
+      "j": 2,
+      "kind": "explain",
+      "t": "Why the top three win: they control exposure without depending much on what people do. Administrative controls"
+     },
+     {
+      "j": 3,
+      "kind": "check",
+      "t": "A plant replaces a toxic solvent with a safer one. Which level of the hierarchy is that?"
+     },
+     {
+      "j": 4,
+      "kind": "misconception",
+      "t": ""
+     },
+     {
+      "j": 5,
+      "kind": "explain",
+      "t": "The best engineering controls are built into the original design. They block the hazard at its source, can't e"
+     },
+     {
+      "j": 6,
+      "kind": "check",
+      "t": "Which of these is an administrative control?"
+     },
+     {
+      "j": 7,
+      "kind": "nudge",
+      "t": ""
+     },
+     {
+      "j": 8,
+      "kind": "situation",
+      "t": "A transfer point keeps exposing the crew to the same hazard. The budget review for the next shift is under way"
+     },
+     {
+      "j": 9,
+      "kind": "check",
+      "t": "When is PPE the right answer?"
+     }
+    ]
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Bring a fatal-potential hazard down to Medium",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "PPE only",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the risk score",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "WRAC scoring",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Near-miss review",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-l4",
+  "title": "Fault Tree Analysis",
+  "subtitle": "Quantifying the path to disaster",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "Big disasters need several things to go wrong",
+    "flow": 0,
+    "text": "No single failure caused most mine explosions; gas, ignition and a missed check all had to line up. | A fault tree works backward from a top event through AND and OR gates to basic causes. | An explosion needs a flammable mixture AND an ignition source: attacking either branch cuts the top probability multiplicatively. | Top event | AND gate | OR gate | Basic events | FTA vs ETA vs HAZOP? | Minimal cut sets?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Cut the explosion risk",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Halve one OR input",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge the OR gate",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Evaluate a small tree",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "swipe",
+    "title": "Risk-analysis rapid-fire",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-l5",
+  "title": "Mine Rescue, Breathing Apparatus & First Aid",
+  "subtitle": "Respiratory physiology and oxygen regeneration",
+  "boss": false,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "theory",
+    "title": "A rescuer's mission is measured in litres of oxygen",
+    "flow": 0,
+    "text": "A rescue team's limit is not courage but litres of oxygen; the turn-back point is set before they go in. | Closed-circuit breathing apparatus recycles exhaled air: an alkali canister absorbs CO₂ and a cylinder adds the oxygen the body consumes — about 1 L/min at rest, 3 L/min or more in heavy work. | Duration therefore depends on workload; teams plan travel, work and a reserve, and turn back at a calculated gauge pressure. | Travel in | Reserve | Cylinder | Turn-around pressure | Self-rescuer chemistry? | CO poisoning first aid? | Rescue organisation?",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "sim",
+    "title": "Plan a heavy-work mission",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "predict",
+    "title": "Workload jumps",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "equation",
+    "title": "Forge apparatus duration",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 4,
+    "kind": "numeric",
+    "title": "Turn-around pressure",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 5,
+    "kind": "crisis",
+    "title": "Casualty with CO poisoning",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ },
+ {
+  "unit": "u10",
+  "unitTitle": "Indian Mining Legislation, Safety Management & Rescue",
+  "lesson": "u10-boss",
+  "title": "First Class Manager's Oral: Sealed Fire Recovery",
+  "subtitle": "The final shift crisis",
+  "boss": true,
+  "stages": [
+   {
+    "i": 0,
+    "kind": "crisis",
+    "title": "Re-opening a sealed fire area",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 1,
+    "kind": "predict",
+    "title": "Diluting the sealed atmosphere",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 2,
+    "kind": "numeric",
+    "title": "Team oxygen check",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   },
+   {
+    "i": 3,
+    "kind": "swipe",
+    "title": "Statutory threshold lightning round",
+    "flow": 0,
+    "text": "",
+    "flowScreens": []
+   }
+  ]
+ }
+]

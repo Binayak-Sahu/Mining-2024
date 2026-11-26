@@ -1,0 +1,30 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=6252 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6171 : Geotechnical Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1.Determination of the aggregate crushing value, 
+2. Determination of the aggregate impact value of coarse aggregates
+3. Determination of Los Angeles Abrasion Value, 
+4. Evaluation of in-situ stress by using Flat Jack Unit, 
+5. Determination of Brinell Hardness testing Value, 
+6. Determination of Permeability of soil, 
+7. Determination of OMC-MD by Proctor compaction test, 
+8. Determination of California Baring Ratio (C.B.R.) value, 
+9. Determination of Rebound hammer Number
+10. Evaluation of ground vibration using Seismographs
+ Course Objective
+ 1 .
+1. To determine different properties of rocks/soft rocks
+2. To predict the parameter needed for specific application
+ Course Outcome
+ 1 .
+1. To be able to select pertinent instruments, 
+2. To be able to use those with minimum supervision, 
+3. To obtain data and analyse the results for geotechnical design.
+4. To design excavation with the input data from tests
+ Essential Reading
+ 1 .
+ Sivakugan, Arutrajan and Bo, Laboratory testing of Soils, Rocks and Aggregates, J Ross Publication

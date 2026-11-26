@@ -1,0 +1,43 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8066 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6124 : Design of Underground Structures { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1:
+Natural support Design of rhombus and inclined coal pillar. Geological and geometric factors involved in design of natural supports. Design of fender/rib/snook. Roof-coal pillar interaction. Application of numerical modelling for design of the natural supports. [12 Hours]
+Module 2: 
+Applied support: Support systems for continuous miner based mechanised workings and longwall working. Active and passive support, Failure mechanism of roof/cable/flexi bolts. Short Encapsulation Pull-out Test (SEPT) for resin grouted rock bolts. Application of numerical modelling for design of the applied supports. [12 Hours]
+Module 3: 
+Roadways: Cut-out distances during continuous miner-based working, Factors affecting the design of roadways- Depth of cover, in-situ stress conditions, nature of over- and under-lying strata, gradient of coal seam, orientation of geological discontinuities, etc., Applicability of continuous miner and bolter miner. [6 Hours] 
+Module 4:
+Goaf behaviour: Caving characteristics of overlying strata, Caveability Index, Roof falls, Line of extraction, Induced stress driven fracturing/spalling in natural supports. Bulking factor of overlying strata and its significance, Caving angle, Angle of draw, Induced stress management, Estimation of active mining zone during depillaring operations. [6 Hours]
+ Course Objective
+ 1 .
+To understand the newly designed approaches for different structures of underground mines for safe and efficient extraction of coal.
+ 2 .
+To understand design of recent advancement in applied support system for underground coal mining.
+ 3 .
+To understand strata mechanics involved during continuous miner based mechanised working
+ Course Outcome
+ 1 .
+CO1: It will provide knowledge to students for suitable design of different underground structures during semi-mechanised and mechanised workings in underground coal mine.
+CO2: Students will be familiar with the recent developed technologies including applied support for underground coal mining
+CO3: Apply different support systems for stability of working places in underground coal mine.
+CO4: Strata management skill during depillaring with caving under different nature of roof strata
+ Essential Reading
+ 1 .
+ J.M. Galvin, Ground Engineering - Principles and Practices for Underground Coal Mining, Springer International Publishing AG Switzerland, 2016 
+ 2 .
+ 2. S.S. Peng, Longwall Mining, 3rd Edition, published by CRC Press, 2021 
+ Supplementary Reading
+ 1 .
+ 1.John A. Hudson and John P. Harrison, Engineering Rock Mechanics- An introduction to the principles, Elsevier, 2007 
+ 2 .
+ 2. R.D. Singh, Principles & Practices of Modern Coal Mining, New age international New Delhi, 1997 
+ Journal and Conferences
+ 2 .
+Rock Mechanics and Rock Engineering (RMRE)
+ 1 .
+International Journal of Rock Mechanics and Mining Sciences (IJRMMS)

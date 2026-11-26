@@ -1,0 +1,39 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8891 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2202 : Mine Ventilation { 3-1-0 / 4}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Composition of mine air, Mine gases: properties, origin, occurrence, physiological effects, detection, monitoring and control, Methane layering, Degasification of coal seams. Production, assessment, physiological effects and control of mine dusts. [10]
+Module 2: Thermal environment and psychrometry: Sources of heat load sources in mines, Effect of heat and humidity on miners. Psychrometry, Cooling power of mine air, Methods of Improving of Cooling Power of Mine Air, Air Conditioning - basic vapor cycle. [8]
+Module 3: Mechanics of Airflow through mine openings: Resistance of airways, Equivalent orifice, distribution of air current, control devices in ventilation systems, Natural ventilation: Calculation of NVP, Thermodynamic aspects, Artificial aids to natural ventilation. [10]
+Module 4: Mechanical ventilation: Principal types of mine fans, Installation, operation, characteristics and selection of mine fans, Fan testing and Output Control, Fan laws and fan drives, Evasees, Diffusers, Booster fans, Auxiliary ventilation. Reversal of air currents and controlled recirculation Ventilation Survey: Quantity and Pressure survey. [12]
+Module 5: Planning and Design of Ventilation Systems: Mine ventilation design criteria and ventilation design factors, ventilation standards, Ascensional, descensional, homotropal, antitropal, central and boundary ventilation systems, Ventilation layouts for coal and metal mining, Network analysis : Hardy-Cross method, Computer application in mine ventilation. [8]
+ Course Objective
+ 1 .
+To describe and apply the principles of fluid flow to ventilation systems.
+ 2 .
+To describe and apply fan behaviour laws to ventilation systems
+ 3 .
+To design and develop a ventilation system for a mine.
+ 4 .
+To describe environmental hazards found in mines and outline the ventilation control measures that detect, monitor, minimise and/or manage these hazards.
+ Course Outcome
+ 1 .
+After the end of the course the student will be able to 
+CO1: Understand the occurrence of mine gases, dusts and methane drainage and be able to develop and explain control strategies.
+CO2: Explain the principles and control of heat and humidity behavior in underground airways. 
+CO3: Outline natural ventilation and explain its application in underground mines. 
+CO4: Apply the principles of mine fan selection in order to evaluate the selection and produce improved solutions. 
+CO5: Plan, design, and solve problems related to basic underground mine ventilation systems.
+ Essential Reading
+ 1 .
+ M. J. McPherson, Subsurface Ventilation and Environmental Engineering, Chapman & Hall , 1993
+ 2 .
+ G. B. Mishra, Mine Environment and Ventilation, Oxford University Press , 1993
+ Supplementary Reading
+ 1 .
+ S.P. Banerjee, Mine Ventilation, Lovely Prakashan , 2003
+ 2 .
+ H. L. Hartman, J. M. Mutmansky, R. V. Ramani and Y. J. Wang, Mine Ventilation and Air Conditioning, Wiley-interscience , 1997

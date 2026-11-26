@@ -1,0 +1,50 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19687 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3004 : Data Analytics for Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Data foundation: Introduction to data analytics, Digitisation in mining, Mining data sources (IoT, Sensors, Logs), Data Types, Visualisation, Pre-processing and data cleaning, , Correlation Analysis.
+Module 2 : 
+Basic Statistics: Simple & Multivariate Regression, Curve Fitting, Fitness Parameters, ANOVA, Principal Component Analysis (PCA), Case studies
+Module 3 : 
+Advanced Statistics Soft Computing: ANN Perceptrons, Backpropagation, Architecture Design, Activation Functions, Overfitting (Regularization), Case Studies
+Module 4 : 
+Uncertainty Modelling: Fuzzy Sets, Membership Functions, FIS (Mamdani/Sugeno), ANFIS Architecture and Training, Case Studies
+Module 5 : 
+Advanced Trends and Capstone Project: Intro to Support Vector Machines (SVM), Deep Learning, Capstone Project Presentations.
+ Course Objective
+ 1 .
+Understand the lifecycle of data in the mining industry, from sensor acquisition to decision-making.
+ 2 .
+Master data pre-processing techniques to handle the inherent noise and uncertainty in mining datasets.
+ 3 .
+Apply classical statistical models and regression analysis to mining productivity problems
+ 4 .
+Develop soft computing skills using Artificial Neural Networks (ANN) and Fuzzy Logic, and others for advanced data analytics
+ 5 .
+Evaluate and validate predictive and prescriptive models for mining applications 
+ Course Outcome
+ 1 .
+CO1: Ability to clean, visualize, and interpret complex multivariate mining datasets.
+ 2 .
+CO2: Perform multivariate curve fitting and classical statistical analysis to validate research findings in mining
+ 3 .
+CO3: Build and train Artificial Neural Networks to predict non-linear phenomena in mining and allied fields
+ 4 .
+CO4: Design and implement Fuzzy Inference Systems (FIS) and ANFIS-based systems for advanced data analysis 
+ 5 .
+CO5: Comprehend large-scale mining data and perform advanced multi-stage analysis to derive useful results for operational decision-making and safety management.
+ Essential Reading
+ 1 .
+ Ali Soofastaei, Data Analytics Applied to the Mining Industry, CRC Press , Basics of the course are well covered. 
+ 2 .
+ Jacek M. Czaplicki, Statistics for Mining Engineering, CRC Press 
+ Supplementary Reading
+ 1 .
+ Ali Soofastaei, Advanced Analytics in Mining Engineering, CRC Press , Advanced mining statistical application
+ 2 .
+ Theodore T. Allen, Introduction to Engineering Statistics and Six Sigma, Springer 
+ Journal and Conferences
+ 1 .

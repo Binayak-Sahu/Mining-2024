@@ -1,0 +1,48 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8897 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3702 : Environmental Engineering Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+Measurement of Illuminance by Digital Light meter (Model: Metravi 1332)
+2. Measurement of Noise Level by Integrating Sound Level Meter and Model: I.CEL-283EX , II. Bruel & Kjaer 2236
+3. Determination of Ignition temperature of coal by using Flammability Temperature Apparatus
+4. Determination of Crossing Point Temperature of coal by C.P.T. Apparatus
+5. Determination of Gross Calorific value of coal by Bomb Calorimeter.
+6. Determination of Spontaneous Heating Susceptibility of coal using Differential Thermal Analyzer (DTA),Model: SHIMADZU,DTG-60/60H
+7. Measurement of Respirable dust concentration by PM10 & PM 2.5 Sampler: Model: I. Evirotech APM 460NL II. Evirotech APM 550.
+8. Determination of Ignition Temperature and Relative Inflammability Index of coal using Godbert-Greenwald apparatus.
+9. Determination of different parameters of Water using Water Testing kits
+10. Determination of different parameters of Soil using Soil Testing kits.
+11. Determination of hearing ability status of person using PC based Digital Audiometer.
+12. Measurement of lung efficiency using Spirometer (Model:RMS Helio 702)
+ Course Objective
+ 1 .
+To know the different methods of coal analysis for assessing liability to spontaneous heating and mine fires
+ 2 .
+To analyse particulate matter concentration in air.
+ 3 .
+Measure different parameters of water, soil, noise and illumination
+ Course Outcome
+ 1 .
+Measurement of Illuminance levels in work site
+ 2 .
+Demonstrate the working of different types of noise measuring instruments (Sound level meter, Audiometer)
+ 3 .
+Assess the spontaneous combustion liabilities of coal using different experimental techniques like CPT, DTA, Bomb calorimetry, Flammability temperature etc and understand their implications in coal mining industry.
+ 4 .
+Determine the particulate matter concentrations (PM10 & PM2.5) in air using high volume samplers and assess lung function test using spirometry.
+ 5 .
+Analyze water and soil quality parameters in mines and know its relevance for mining applications
+ Essential Reading
+ 1 .
+ S.C.Banerjee,, Prevention and combating mine fire, , Taylor And Francis Group,USA , 2000/2021 
+ 2 .
+ M A Ramlu,, Mine Disasters and Mine Rescue, , Universities Press (India), private Limited , 2006 
+ Supplementary Reading
+ 1 .
+ D.P.Tripathy, Noise Pollution, APH publishing house, New Delhi , 2009 
+ Journal and Conferences
+ 1 .
+nil

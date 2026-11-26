@@ -1,0 +1,37 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8894 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3103 : Mining Machinery { 3-1-0 / 4}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Total contact hours: 36
+Module1: General (8 classes): Mechanical transmission of power in mining machinery, shafts, pulleys, gears, and gear/trains, belt drives, chain drives, couplings and clutches, brakes. 
+Module 2: Wire ropes (6 classes): Constructions, examinations, listing and maintenance
+Module 3: Rope and locomotive haulages (10 classes): Direct, main and tail, balanced double drum and endless haulage, gravity haulage, constructional features, power calculation, selection of haulage ropes, haulage tracks and safety appliances, tubs and mine cars, diesel, battery and trolley wire locomotives, tractive effort, ideal gradient, power calculations, exhaust conditioners 
+Module 4: Compressors and pumps (8 classes): Generation, distribution and use of compressed air in mines, mine pumps, pumping ranges, and fittings 
+Module 5: Mining loading and transporting machines (4 classes) such as LHD, SDL, Shuttle car, Gathering arm loader, Rocker shovel, Surface coal/ore handling plant.
+ Course Objective
+ 1 .
+To familiarize students with underground mining machinery and its applications in mining industries.
+ 2 .
+To equip students with advanced knowledge of mechanical transmission of power, wire ropes, rope & locomotive haulage, compressor & pumps, underground loading & transportation machines and CHP.
+ 3 .
+To develop skills in designing, analyzing and optimizing the use of mining machines with haulage system.
+ Course Outcome
+ 1 .
+1. To understand the concept and applications of mining machinery deployed in mines.
+2. To estimate the performance of mechanical transmission of power, wire ropes, rope & locomotive haulage, compressor & pumps, underground loading & transportation machines and CHP.
+3. To design mechanical transmission of power, wire ropes, rope & locomotive haulage, compressor & pumps, underground loading & transportation machines and CHP for mines.
+4. To know the advanced underground, rope & locomotive haulage system for short and long-haul distance in mines.
+5. To identify the importance of loading and transportation machines used in underground mines.
+ Essential Reading
+ 1 .
+ D. J. Deshmukh., Elements of mining technology, Vol. 3, Denett & Co. Nagpur 
+ 2 .
+ N. T. Karlein, Mine transport, Orient Longman 
+ Supplementary Reading
+ 1 .
+ M. P. Alexandrov, Material handling equipment, MIR 
+ 2 .
+ Statham, SME Mining Engineering Handbook, SME

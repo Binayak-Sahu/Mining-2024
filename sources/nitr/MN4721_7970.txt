@@ -1,0 +1,46 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7970 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4721 : Mine Planning and Design Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1) Ultimate Pit Slope limit determination using Floating cone and 2D L&G algorithm (Economic Pit Shell)
+2) Preliminary Pit Slope design using Empirical rock mass classification system (MRMR) (Stable Geo technical Pit Shell) 
+3) Generation of Optimized pit shell using Whittle Software (Economic Pit Shell)
+4) Preparation of geological model from bore hole log data using Surpac (Geological Block Model)
+5) Design of pit slopes, ramps and waste dumps using Surpac
+6) Advanced Production Planning & Scheduling in open pit mines (using MineSched)
+7) Estimation of rock support (rock bolt, shotcrete, etc.) requirement using Empirical approach
+8) Preparation of B&P mining system (galleries, pillar size, excavation requirement etc.) for a given geo-mining condition
+9) Design of Stope size and Crown pillar dimension for a u/g metalliferous mines using Empirical approach
+10) Evaluation and reconciliation of as-design vs as-built structures (open pit mines, underground mines)
+11) Selection of Optimal Shovel-Dumper combination for a surface mining operation
+12) Use of Lidar and Photogrammetry data for mine modelling and evaluation (Prometheus Software)
+13) Selection of mining method using UBC Modified Nicholas methods with case studies
+14) Preparation of a mechanized mining system (CM/Longwall) (galleries, pillar size, excavation requirement etc.) for a given geo-mining condition
+ Course Objective
+ 1 .
+01. Understand the concept & principle of mine planning using industry accepted tools
+ 2 .
+02. Learn Designing of a pit, ramp & waste dumps
+ 3 .
+03. Ability to use Empirical approach in preliminary level mine designs
+ 4 .
+04: Understand use of new technologies tools and techniques for mine planning
+ Course Outcome
+ 1 .
+CO1: Understand basis of pit design from exploration data
+CO2: Able to design a open-pit mines from geological block model
+CO3: Understand the practice of production planning & scheduling in both surface & underground mines
+CO4: Evaluate stope design and pillar parameters in u/g metalliferous mines
+ Essential Reading
+ 1 .
+ Mark Kuchta and Willam Hustrulid, Open Pit Mine Planning and Design, CRC Press 
+ 2 .
+ Roussos Dimitrakopoulos, Advances in Applied Strategic Mine Planning, Springer 
+ Supplementary Reading
+ 1 .
+ Ernesto Villaescusa, Geotechnical Design for Sublevel Open Stoping, CRC Press 
+ 2 .
+ J. M. Galvin, Ground Engineering - Principles and Practices for Underground Coal Mining, Springer

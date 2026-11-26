@@ -1,0 +1,47 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19800 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4703 : Computerized Mine Planning and Design Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+L01: Selection of mining method using UBC Modified Nicholas methods with case studies
+L02: Ultimate Pit Slope limit determination using Floating cone and 2D L&G algorithm (Economic Pit Shell)
+L03: Preparation, Visualization and Interpretation of borehole log data using Surpac
+L04: Preparation and Visualization of geological model from bore hole log data using Surpac (Geological wireframe model)
+L05: Preparation of a geological block model and estimation of solid volume, grade-tonnage curves
+L06: Design of pit slopes, ramps and waste dumps using Surpac and estimation of stripping ratio
+L07: Advanced Production Planning & Scheduling in open pit mines (using MineSched)
+L08: Estimation of rock support (rock bolt, shotcrete, etc.) requirement using Empirical approach
+L09: Design of Stope size and Crown pillar dimension for a u/g metalliferous mines using Empirical approach
+L10: Use of Drone and Lidar data for preparation of DTM, contour and volumetric estimations
+ Course Objective
+ 1 .
+Understand basis of geological data preparation for Computer aided designs
+ 2 .
+Comprehend the workflow for geological model preparations in software tools
+ 3 .
+Understand the concept of block modelling and computerized pit and dump design
+ 4 .
+Plan, design and undertake stability assessment of a mining method, stope design, support requirements using Empirical Approaches
+ 5 .
+Use drone & lidar data for design of surface, contour and volumetric estimations
+ Course Outcome
+ 1 .
+Understand basis of pit design from exploration data
+ 2 .
+Able to design an open pit mine and waste dump using mine planning software
+ 3 .
+Understand the practice of production planning & scheduling in both surface & underground mines
+ Essential Reading
+ 1 .
+ Mark Kuchta and Willam Hustrulid, Open Pit Mine Planning and Design, , CRC Press 
+ 2 .
+ Roussos Dimitrakopoulos, Advances in Applied Strategic Mine Planning, Springer 
+ Supplementary Reading
+ 1 .
+ Ernesto Villaescusa, Geotechnical Design for Sublevel Open Stoping, CRC Press 
+ 2 .
+ J. M. Galvin, round Engineering - Principles and Practices for Underground Coal Mining,, Springer 
+ Journal and Conferences
+ 1 .

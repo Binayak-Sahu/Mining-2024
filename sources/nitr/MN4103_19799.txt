@@ -1,0 +1,55 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19799 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4103 : Computerized Mine Planning and Design { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Introduction: Mine planning and its importance; Components of mine planning, Technical and economic considerations for planning, Engineering studies (PFS, FS, DFS), Introduction to resource estimation approaches
+Preparation of feasibility report and detailed project report. Production planning and scheduling. Examples of Mine Planning Report in India and abroad
+Module 2 : 
+Planning and Design of Surface Mine: Geometrical considerations for design of surface mines: Pit geometry, Pit layouts – Mine access, pit expansion and push back operation. 
+Pit Planning and Design: Pit design, Cut-off grade and its estimation; Compositing, Ultimate pit design – hand method, floating cone technique, Lerchs-Grossmann (LG) algorithm. Optimum mine size and Taylor’s mine life rule, Lane’s Algrithm. Production Scheduling-Concepts
+Module 3 : 
+Underground Mine Planning: Mining method selection, Stope planning: Selection of stopping methods, Evaluate stope dimension. Design of remnant pillars (crown/sill pillar). Production planning: Stope reserve, development, manpower, ore/waste handling, essential services, production scheduling, Optimization of mine size (mine production capacity) based on techno-economic considerations; 
+Module 4 : 
+Equipment and Infrastructure planning: Equipment system selection –for surface mines and underground mines. Mine infrastructure planning- optimal location of mine entries, associated mine infrastructure (plant, workshop, statutory buildings, layout) and its significance 
+Module 5 : 
+Mine closure planning: Initial, Progressive and Final Mine Closure Planning and its components; Legal and Financial Aspects. Rehabilitation, mine closure and post-industrial land use planning.
+Module 6 : 
+Introduction, Uses, Examples of industry standard software and use cases. Digitalization and Automation in Mines, Use of drones and Lidar in mining. Ore loss and dilutions/Grade Control in Mines, Mine to Mill Reconciliation. Technical Auditing and Benchmarking
+Case studies on various aspects planning and designing of coal and metal mines through opencast and underground mining methods 
+ Course Objective
+ 1 .
+To create awareness on various features of mine planning as compared to other industries 
+ 2 .
+Provide information on preparation of feasibility report and detailed project report with reference to Indian mining requirements
+ 3 .
+To help students in planning mines for required production, productivity, etc. for underground and opencast mines 
+ 4 .
+To understand various tools and software used for planning, design and operation of mines
+ Course Outcome
+ 1 .
+Understand various concepts of Mining methods and required techno-economic studies
+ 2 .
+Impart knowledge of basic & advanced principles of surface mine planning for development and extraction of minerals
+ 3 .
+Ability to plan and design underground metalliferous mines considering the statutory and techno-economic requirements
+ 4 .
+Understand mine equipment selection and infrastructure planning
+ 5 .
+Comprehend the nature, type and necessity of mine closure planning
+ 6 .
+To understand various tools and software used for planning, design and operation of mines
+ Essential Reading
+ 1 .
+ W. Hustrulid and M. Kuchta, Open Pit Mine Planning and Design, A. A. Balkema Rotterdam, 1995 
+ 2 .
+ Roussos Dimitrakopoulos, Advances in Applied Strategic Mine Planning, , Springer 
+ Supplementary Reading
+ 1 .
+ Mark Bowater, Crimes Against Mine Planning: Solving The Top 10 Pitfalls, AusFC Pty Limited 
+ 2 .
+ Hard Rock Miner's Handbook Book , Jack de la Vergne, Stantec 
+ Journal and Conferences
+ 1 .

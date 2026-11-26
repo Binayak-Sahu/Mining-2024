@@ -1,0 +1,39 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7895 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3106 : Geomechanics { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Stress around mine openings, in-situ Stress- Determination of in-situ rock mass properties, in-situ testing methods and instrumentations.
+Module 2: Design of underground workings: Structural Design Approaches including applicability of Wilson’s approach, Safety factors. 
+Module 3: Slope Stability: Shear Strength, Slope failure types, mechanisms, and theories. 
+Module 4: Rock Reinforcement and Support: Mechanisms of failure in rock structures-intact and anisotropy, Rock Load and stability, Supporting and reinforcement members, Design of support and reinforcement systems 
+Module 5: Surface Subsidence: Subsidence mechanisms and control measures, 
+Module 6: Basics of numerical methods in geomechanics and applications, Case studies involving rock mechanics fundamentals.
+ Course Objective
+ 1 .
+To decide the rock parameters affecting its behaviour and their behaviour
+ 2 .
+To predict the excavation geometry
+ 3 .
+To determine the stress and its solutions
+ 4 .
+To determine optimum dimension of excavation and predict safety factor
+ Course Outcome
+ 1 .
+1: To explain the advanced trends in determination of in situ rock mass properties
+2: To study slope stability factors and predict the safety factors through different approaches
+3. To predict rock reinforcement techniques for underground and opencast applications
+4: To design underground excavation and its different elements
+5: To analyse rock excavation dimensions numerically and predict different situations and the resultant stress-strain
+ Essential Reading
+ 1 .
+ R E Goodman, Introduction to Rock Mechanics,, John Wiley and Sons, , 1980
+ 2 .
+ B. H. G. Brady and E. T. Brown, Rock Mechanics for Underground Mining,, George Allen and Unwin Ltd., , 1992
+ Supplementary Reading
+ 1 .
+ Franklin and Dusseault, Rock Engineering, Barnes and Noble 
+ 2 .
+ . E. Hoek and J. Bray, , Rock Slope Engineering, 3 rd Ed.,, Inst. Of Mining and Metallurgy, London, , 1980

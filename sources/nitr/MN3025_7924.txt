@@ -1,0 +1,39 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7924 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3025 : Blasting Technology { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 01: Commercial Explosive: Classification, Low and High Explosive, Permitted and non-permitted explosives, Important Characteristics, ANFO, Slurry, Emulsion explosives, Primers and boosters, cast booster, Bulk explosive system. [4 hours]
+Module 02: Initiation Systems: Storage and Transportation of explosives detonators, safety fuse, Detonation cord, Detonating relay, Non-electric initiation system, NONEL, Electronic detonators, Exploder and other blasting tools,[4 hours] 
+Module 03: Magazines, transportation of explosives.[ 2 hours]
+Module 04: Surface Blast Design: Theory of Breakage, Bench Blasting terminology, Estimation of Spacing, Burden, Stemming Length, Sub-grade drilling etc., Charge calculation, initiation sequence, delay timing, Decking decoupling, Secondary Blasting.[8 hours] 
+Module 05: Underground Blast Design: Terminology, cut holes, easers, trimmers, commonly used cut patterns, Wedge cut, drag cut, Pyramid cut, Burn cut, etc., blasting in sinking shaft, underground coal mine blasting, blasting in underground metal mines, Series and parallel connections of detonators.[8 hours]
+Module 06:Controlled blasting Techniques, Blasting of hot holes [4 hours] 
+Module 07: Environmental Impact of Blasting: Blast induced ground vibration, its measurement, prediction and control, Noise, its Measurements and control, Fly rock its causes and control [4 hours]
+Module 08: Risk assessment and risk control during blasting work[2 hours] ,
+ Course Objective
+ 1 .
+CO1: Identify and understand the factors influencing performance of blasting.
+ 2 .
+CO2: Analyze design requirement of blasting in opencast and underground mines.
+ 3 .
+CO3: Apply different instruments for evaluation of ground vibrations due to blasting.
+ 4 .
+CO4: Assess the risks associated with different types of blasting systems and design their control procedures.
+ Course Outcome
+ 1 .
+1.The student will gain knowledge on various types of the blasting systems which include utilization of specific type of explosive, initiation system and blast pattern etc.
+2.The students will gain knowledge of control blasting system.
+3.Students will able to design safe and environment friendly blasting system.
+ Essential Reading
+ 1 .
+ C.J. Konya, Surface Blast Design, Englewood Cliffs, New Jersey : Prentice Hall, ©1990 
+ 2 .
+ U. Langefors and B. Kihlstrom, . Modern Techniques of Rock Blasting, New York, Wiley [1967, ©1963] 
+ Supplementary Reading
+ 1 .
+ P. P Roy, Rock blasting effects and operation, Oxford& IBH publishing co. pvt. ltd 
+ 2 .
+ C. Lopez Jimeno, E. Lopez Jimeno, Francisco Javier Ayala Carcedo, Drilling and Blasting of Rocks, ISBN 9789054101994 Published January 1, 1995 by CRC Press

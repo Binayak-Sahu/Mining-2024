@@ -1,0 +1,40 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8031 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6162 : Advanced Coal Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Extraction of thick seams: Problems and issues, recent experimental trials Chirimiri caving Method, Blasting Gallery Method, Integral Caving method, Sublevel caving method, Hydraulic Mining, Shield Mining.
+Extraction underneath surface features: Non-Effective width (NEW), Back filling methods, Wide stall mining.
+Extraction of multiple seams: Problems and issues, recent experimental trials, Parting failures and control, design of workings.
+Extraction of locked up pillars: Status of Bord and Pillar mining in India, techniques of extraction and future requirements.
+Support systems: Strata behaviour at greater depths, problems of strata control in high horizontal stress fields, design of support system.
+ Course Objective
+ 1 .
+To understand problems and issues for extraction of thick and complex deposit of coal seams at different depth of covers.
+ 2 .
+To understand suitable mining methods for safe and efficient extraction of coal from underground mine under different geo-mining condistions
+ 3 .
+To understand latest/novel developed mining methods and technologies for extraction of coal from underground mines.
+ 4 .
+To understand design of support system including strata control approaches for shallow and deeper mining.
+ Course Outcome
+ 1 .
+1. To understand problems in extraction of seams and design of workings.
+2. Analyze design requirement of support system to deal with typical coal mining conditions.
+ Essential Reading
+ 1 .
+ R. D. Singh, Principles & Practices of Modern Coal Mining, New age international New Delhi , 1997
+ 2 .
+ T. N. Singh, Underground winning of Coal, Oxford and IBH New Delhi , 1992
+ Supplementary Reading
+ 1 .
+ D. J. Deshmukh, Elements of Mining Technology, Vol - I, EMDEE publishers Ranchi , 2000
+ 2 .
+ S. K. Das, Modern Coal Mining Technology, Lovely Prakashan, Dhanbad , 1992
+ Journal and Conferences
+ 1 .
+International Journal of Rock Mechanics and Mining Sciences
+ 2 .
+International Joournal of Mining Science and Technolgy

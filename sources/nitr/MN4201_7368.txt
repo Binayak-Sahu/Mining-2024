@@ -1,0 +1,38 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7368 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4201 : Surface Mine Environmental Engineering { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Overview: Basic concept of environmental engineering. Environmental issues in surface mining activities. 
+Module 2: Air Pollution - sources, characterization, ill effects of air pollution. Standards, measurement, monitoring, and control measures of various air pollutants. 
+Module 3: Water Pollution – sources, characterization, and ill effects of water pollution in mining industry. Water quality parameters- physical, chemical, and biological. Water quality criteria and standards. Monitoring and management. Acid mine drainage and ground water contamination.
+Module 4: Noise Pollution - Basics of acoustics, sound power, intensity and pressure levels. Sources, characteristics and ill effects of noise pollution in the mining industry. Noise measurement and control.
+Module 5: Waste Management: types of waste, sources, and management.
+Module 6: Land Reclamation: Issues of land degradation due to mining activities, environmental factors affecting revegetation in the mine site. Methods of vegetation establishment and vegetation survey.
+Module 7 : Environmental legislations in Mines: EP Act, 1986, Acts and rules related to air, water, noise, mineral conservation and development, MMDR act,2015 etc.
+ Course Objective
+ 1 .
+To provide knowledge about environmental issues in surface mines and the monitoring and control of pollutants
+ 2 .
+To provide knowledge on disposal and management of wastes in opencast mines and waste dump design.
+ 3 .
+To familiarize the students with various environmental legislations as applicable to mining.
+ Course Outcome
+ 1 .
+CO1: To familiarize the students with different environmental problems associated with opencast coal and non-coal mines.
+CO2: To familiarize the students with various environmental legislations as applicable to mining.
+CO3: To develop knowledge and skill in monitoring air pollution parameters, water quality parameters and noise and solve related numerical problems.
+CO4: To develop knowledge and competency in adopting strategies for prevention and control of air, water and noise pollution.
+CO5: To design waste dumps and update the students on land use-changes and best land reclamation practices in opencast mines.
+ Essential Reading
+ 1 .
+ G. M. Masters, Introduction to Environmental Science & Engineering,, Pearson Education India, 3rd edition, 2015. 
+ 2 .
+ H. S. Peavy, D. R. Rowe and G. Tchobanoglous,, Environmental Engineering, McGraw-Hill Publishing Co. 7th Rev edition, 2000 
+ Supplementary Reading
+ 1 .
+ C. J. Barrow, Routledge, 1st edition, 1999, Environmental Management: Principles and Practice, (Routledge Environmental Management Series),1st edition, 1999 
+ 2 .
+ Jerry A. Nathanson, ,, Basic Environmental Technology: Water Supply, Waste Management, and Pollution Control, PHI, 4th Edition 2003.

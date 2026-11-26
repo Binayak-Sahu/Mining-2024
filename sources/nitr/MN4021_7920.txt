@@ -1,0 +1,41 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7920 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4021 : Mine Planning and Design { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Principles of planning Features of mine planning Short range and long range planning
+Determination of optimal output, life and size of a mine field optimal location of mine entries 
+Theoretical considerations in opening up and development of mine field 
+Case studies on various aspects planning and designing of coal and metal mines through opencast and underground mining methods
+Preparation of feasibility report and detailed project report Production planning and scheduling 
+Mine equipment planning and estimation of their numbers Infrastructure planning, restructure planning Rehabilitation, mine closure and postindustrial land use planning.
+ Course Objective
+ 1 .
+To create awareness on various features of mine planning as compared to other industries
+ 2 .
+To Provide information on latest formalities of preparation of feasibility report and detailed project report with reference to latest amendments in Indian mining law with case studies
+ 3 .
+To help students in planning mines for required production , productivity etc for underground and opencast mines
+ 4 .
+To design the mining systems with due care to mine closure and Corporate social responsibility for sustainable mining of mineral deposits
+ Course Outcome
+ 1 .
+CO1: Students can understand basic principles of mine planning for development and extraction of minerals 
+CO2: Students will be able to plan and design underground and opencast mines fulfilling the requirements of concerned statutory requirements
+ Essential Reading
+ 1 .
+ J Bhattacharya,, Principles of Mine Planning,, Allied Publishers Pvt Limited, New Delhi, 2003 
+ 2 .
+ W.Hustrulid and M.Kuchta, Open Pit Mine Planning and Design, A.A.Balkema Rotterdam, 1995 
+ Supplementary Reading
+ 1 .
+ . K. S. Stout, Mining Methods and Equipment, McGraw hill New York, 1980 
+ 2 .
+ T. N. Singh,, Underground winning of Coal,, Oxford and IBH New Delhi, 1992 
+ Journal and Conferences
+ 2 .
+Singam Jayanthu, Singam Jayadarshana, and A sahoo (Editors) , Proceedings of All India Seminar On Slope Stability Issues In Opencast Mining And Civil Engineering (SSIOMCE15), July 25-26, 2015-NIT Rourkela
+ 1 .
+B. B. Dhar and D. N. Thakur, (Editors) Proceedings of the first World Mining Environment Congress, Taylor and Francis, 1996.

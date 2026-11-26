@@ -1,0 +1,52 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19309 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3109 : Coal and Mineral Processing Technology { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+10 classes
+Liberation and its significance, Comminution and sizing, Laws of Comminution, Crushing: primary crusher (Jaw & gyratory crusher) secondary crusher: Roll crusher, cone crusher, impact crusher, Grinding- types and equipment (tumbling, mill shell, rod mill, autogenous mill, washing, Sorting and hand-picking; Laboratory and industrial screening- equipment, screen efficiency.
+Module 2 : 
+9 classes
+Principles of classification, Free settling, hydraulic classifier, Spiral classifier, Hydro cyclone: Hindered settling, Zonation of hydro cyclone, classifier- mechanical and hydraulic, sizing and sorting classifiers, methods in identification of mineral phase (X-Ray diffraction, SEM, etc.).
+Module 3 : 
+9 Classes
+Gravity concentration methods, Tabling, Jigging, types of jigs, Heavy media separation, Separation in vertical and streaming currents, Sedimentation, Dewatering techniques, Thickener, Filtration and Drying, CHPs & its environmental issues.
+Module 4 : 
+8 Classes
+Requirements of flotation, conditions for direct & reverse flotation, Contact angle, its influence upon flotation, activators, frothers, depressants, PH regulators, cost effectiveness of flotation, Design of Mineral processing circuits with reference to case studies.
+ Course Objective
+ 1 .
+Review the nature of mineral occurrences and ore composition analytical techniques. 
+ 2 .
+Introduce students to the principles of ore comminution, liberation and particle size analysis, 
+ 3 .
+Teach students the various methods of mineral separation and the equipment required. 
+ 4 .
+Get familiarize with the various ancillary operations and equipment in the mineral processing plant
+ 5 .
+Provide students the opportunities to acquire practical skills in mineral separation through participatory laboratory experiments and field activities 
+ Course Outcome
+ 1 .
+To review physics and chemistry in the context of mineral engineering.
+ 2 .
+To learn basic principles of mineral separation processes and equipment related to them.
+ 3 .
+To explain the implications of mineralogical characteristics.
+ 4 .
+To analyse the relation between processing, structure, and physical properties.
+ 5 .
+To produce conceptual designs for simple extraction process.
+ Essential Reading
+ 1 .
+ Wills, B.A., Napier-Munn, T. , Mineral Processing Technology, Elsevier , , 7th Ed., 2006.
+ 2 .
+ Gupta A. Yan D., , Mineral Processing Design & Operation: An Introduction, , Elsevier , 1st Ed., 2006 
+ Supplementary Reading
+ 1 .
+ M. Gaudin. , Principles of Mineral Dressing, Tata McGraw-Hill , 1987
+ 2 .
+ Fuerstenau M., Han K, (eds.),, Principles of Mineral Processing, SME , 2003
+ Journal and Conferences
+ 1 .

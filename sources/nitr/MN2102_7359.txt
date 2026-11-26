@@ -1,0 +1,39 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7359 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2102 : Underground Coal Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Development of Stratified Deposits: Choice of mine size, methods of entry and primary development ( 5 Hours)
+Module 2: Underground Coal Mining Methods: Classification and choice, Bord and Pillar mining, development and extraction, Long-wall mining, ( 4 Hours)
+Module 3: Face mechanization: Production equipment and face machinery used, viz. coal cutting machines, drills, mechanical loaders, LHDS, shuttle car etc. – their performance and choice. Special coal mining methods Provision of CMR 1957 ( 6 Hours)
+Module 4: Supports: Roadway and face supports, supports for junctions and special conditions, setting and withdrawal of supports, roof bolting, roof stitching, systematic supporting, protective of pillars. ( 10 Hours)
+Module 5: Stowing and Filling Methods, gathering and transportation arrangements, stowing plants and layout. ( 8 Hours)
+ Course Objective
+ 1 .
+To introduce underground coal mining methods
+ 2 .
+To create awareness on recent UG technologies to the students
+ Course Outcome
+ 1 .
+CO1: Evaluate the geological characteristics of stratified deposits to determine the optimal mine size, methods of entry, and primary development strategies.
+CO2: Classify and select appropriate underground coal mining methods (Bord and Pillar, Long-wall, and special methods) based on geological conditions, safety regulations (CMR 1957), and economic considerations.
+CO3: Evaluation of face mechanization equipment such as coal cutting machines, drills, mechanical loaders, LHDS, shuttle cars.
+CO4: Design and implement suitable roadway and face support systems, including supports for junctions and special conditions, considering methods of setting, withdrawal, roof bolting, roof stitching, systematic supporting, and pillar protection.
+CO5: Compare and contrast different stowing and filling methods, and design appropriate gathering and transportation arrangements and stowing plant layouts for efficient underground operations
+ Essential Reading
+ 1 .
+ T. N. Singh, Underground winning of Coal, Oxford and IBH New Delhi , 1992
+ 2 .
+ S. P. Mathur,, Coal Mining in India, M. S. Enterprises Bilaspur , 1999
+ Supplementary Reading
+ 1 .
+ R. D. Singh, Principles & Practices of Modern Coal Mining, New age international New Delhi , 1997
+ 2 .
+ S. S. Peng and H S Chiang, Longwall mining,, Wiley, New York , 708p.
+ Journal and Conferences
+ 1 .
+Jayanthu, S., T. N. Singh and D. P. Singh, 2004, Stress distribution during extraction of pillars in a thick coal seam., Rock mechanics and rock engineering 37.3 171-192.
+ 2 .
+S.K. Singh, and S Jayanthu, 2011, Ground Control Technology for Mass Exploitation of Coal deposits with Continuous Miner: A Review of the Indian Scenario, 30thInternational Conference on Ground Control in Mining, July 26th-28th 2011, Morgantown, West Virginia, USA

@@ -1,0 +1,56 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8796 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2101 : Surface Mining Technology { 3-1-0 / 4}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Introduction - Distribution of mineral deposits in India and other countries, mining contributions to civilization, mining terminology. Introduction to surface mining: Applicability and limitations methods, Stripping Ratio, Preliminary evaluation of surface mining projects, pit limits, ultimate pit depth.
+Module 2 : 
+Surface Mining Methods: Development of Mineral deposits by opencast mining methods, design, and layout of opencast mines. Methods of stripping, Bench geometry, Bench height, Bench slope angle, Bench Width, and Design of benches. Slope stability study
+Module 3 : 
+Drilling: Types of drills, drilling methods, electric, pneumatic and hydraulic drills, drill steels and bits, drilling rigs, and jumbos; Loading, and transportation in opencast mines; Equipment used for different operations in surface mines - Choice and their application.
+Module 4 : 
+Explosives: Classification, composition, properties and tests, fuses, detonators, blasting devices and accessories, substitutes for explosives, handling and storage, transportation of explosives Rock blasting: Mechanism of rock blasting, blasting procedure, and pattern of shot holes used in open cast mines.
+Module 5 : 
+Placer Mining and Sea bed Mining: Ground sluicing, Hydraulicking, and Dredging. Exploitation systems of ocean mineral resources
+Module 6 : 
+Relevant provisions of coal mines and metalliferous mines regulations. 
+Module 7 : 
+Environmental problems due to surface mining and their remedial measures
+Module 8 : 
+Recent developments in the deployment of heavy earth moving machinery in the surface mines
+ Course Objective
+ 1 .
+To understand the economics of Surface Mining and safe means of mining mineral reserves and Mining deposits under various geo-mining conditions using various equipment combinations with layouts including in-pit-crushing technology.
+ 2 .
+To understand the viability of surface mining and Conversion of underground coal mines to surface mines.
+ 3 .
+To understand the Opening of deposits under various geo-mining conditions and haul road design, Construction of external and internal dumps.
+ 4 .
+To understand Blast design parameters under various geo-mining conditions and Reclamation and mine closure plan.
+ Course Outcome
+ 1 .
+To understand the various methods of surface mining techniques
+ 2 .
+To apply design principles for stable benches and overall pit slopes
+ 3 .
+To develop understanding of blasting techniques, including explosive selection and blast 
+ design.
+ 4 .
+To familiarize with different equipment for surface mining
+ 5 .
+To understand impact of surface mining on environment
+ Essential Reading
+ 1 .
+ G. B Mishra, Surface Mining, Lovely Prakashan, , Dhanbad, 2nd Edition , 2006 
+ 2 .
+ K Raj. Singhal, Mine Planning and Equipment Selection , A. A. Balkema Rotterdam, 1st Edition , 1995 
+ Supplementary Reading
+ 1 .
+ S. K. Das, Surface Mining Technology, Lovely Prakashan, Dhanbad, 1st Edition , 1994 
+ 2 .
+ V. V. Rzhevsky, Opencast Mining Unit Operations, Mir Publishers, Mascow , 1985 
+ Journal and Conferences
+ 1 .
+NA

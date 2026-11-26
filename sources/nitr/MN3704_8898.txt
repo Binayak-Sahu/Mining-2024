@@ -1,0 +1,52 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8898 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3704 : Coal Characterization Laboraory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1. Determination of Moisture Content of Coal
+2. Determination of volatile matter content of coal sample
+3. Determination of ash content of coal sample
+4. Determination of the true and bulk density of supplied coal sample
+5. Determination of caking index of coal
+6. Determination of free swelling index of coal
+7. Determination of washability characteristics of coal sample by float and sink analysis
+8. Determination of calorific value of coal using bomb calorimeter
+9. Determination of Hard groove Grindability index of coal
+10. Determination of Crossing point temperature of coal
+11. Determination of Critical Air Blast value coal
+12. assessment of spontaneous heating susceptibility of coal using DTA
+13. Assessment of spontaneous heating susceptibility of coal using wet oxidation potential analysis
+14. Determination of methane content of coal sample
+ Course Objective
+ 1 .
+To learn the determination of various physical, chemical, and special properties of coal
+ 2 .
+To determine the heating and coking properties of coal
+ 3 .
+ To learn the determination of washability of potential of coal
+ 4 .
+To learn the determination of gas content of coal.
+ Course Outcome
+ 1 .
+Ability to determine the chemical properties of coal properties and interpretation of results.
+ 2 .
+Ability to evaluate the physical properties of coal.
+ 3 .
+Ability of assess the heating an coking properties and coal and decide about their suitability for industrial application.
+ 4 .
+Assess the spontaneous heating susceptibility potential of coal samples by CPT, DTA and Wet oxidation potential difference experiments and recommend remedial measures
+ 5 .
+Ability to assess the washability potential of coal and recommend suitable beneficiation methods and their design
+ Essential Reading
+ 1 .
+ Bureau of Indian Standards, IS 436, 770, 1350, 1353, 4433, 13810, Bureau of Indian Standards 
+ 2 .
+ Samir Sarkar, Fuels and Combustion, University Press , 4th Edition, 2009
+ Supplementary Reading
+ 1 .
+ James P. Speight, Handbook of Coal Analysis, Wiley , 2nd Edition, 2015
+ Journal and Conferences
+ 1 .
+.

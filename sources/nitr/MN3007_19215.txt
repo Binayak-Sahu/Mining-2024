@@ -1,0 +1,60 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19215 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3007 : Introduction to Numerical Modelling { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Introduction to Mechanics, Stress-Strain, Behaviour of materials, Introduction to simulations and scientific computing tools.
+Module 2 : 
+Introduction and Basics: Basics of Numerical Methods, Simulations and scientific computing introduction, Matrix algebra and solution techniques, Interpolation and Approximation, Differentiation and Integration, Ordinary differential equation (ODE), Partial-differential equations (PDE).
+Module 3 : 
+Intro & concepts of FDM, Mathematical concepts, Initial value (IVP) & Boundary value problem (BVP), Boundary Conditions, Finite difference approximation. 
+Module 4 : 
+Intro & concepts of FEM, Mathematical concepts, Direct Method, Weighted Integral & Weak Formulation, 1-D BVP problems of 2nd order, Applications, Errors & convergence, Explicit and implicit method, Nodes and Elements.
+Module 5 : 
+Application of Methods: Mining, civil and mechanical application of Finite Difference Method (FDM), Finite Element Method (FEM), Finite Volume Method (FVM), Boundary Element Method (BEM), and Discrete Element Method (DEM).
+ Course Objective
+ 1 .
+To understand the basic concepts of engineering mechanics.
+ 2 .
+Clarity in principles and engineering application of numerical methods.
+ 3 .
+Learn to approximate a function using various interpolation techniques, numerical integration.
+ 4 .
+Clarity in principles and engineering application of numerical methods
+ 5 .
+Develop an understanding of the principles of FDM and FEM.
+ Course Outcome
+ 1 .
+Understand the concept and principles of stress-strain, constitutive behavior materials.
+ 2 .
+Remember the concept of matrices and apply for solving linear simultaneous equations.
+ 3 .
+To apply, analyze, and implement various methods for solving linear simultaneous equations.
+ 4 .
+Derive appropriate numerical methods to solve linear systems of equations.
+ 5 .
+To apply numerical methods to real-world engineering problems.
+ Essential Reading
+ 1 .
+ Mahinder K. Jain, S. R. K. Iyengar, R. K. Jain, Numerical Methods for Scientific And Engineering Computation. , New Age International (P) Limited, India, 2003 
+ 2 .
+ Saumyen Guha and Rajesh Srivastava, Numerical Methods for Engineering and Science, Oxford Higher Education, 2010. 
+ 3 .
+ C-S-Krishnamoorthy, Finite Element Analysis Theory and Programming, Tata McGraw-Hill, 1994 
+ 4 .
+ Canale, Raymond P., and Steven C. Chapra, Numerical methods for engineers, Mcgraw-hill Education-Europe 
+ 5 .
+ Joe D. Hoffman, Numerical Methods for Engineers and Scientists, Marcel Dekker, Inc 
+ Supplementary Reading
+ 1 .
+ J. N. Reddy , An Introduction to the Finite Element Method., Mc Graw Hill 
+ 2 .
+ Debasis Deb, Finite element methods: concepts and applications in Geomechanics, PHI Learning Pvt. Ltd 
+ 3 .
+ Chandrakant S Desai, and John Fredrick Abel, Introduction to the finite element method: a numerical method for engineering analysis, CBS 
+ 4 .
+ P. Seshu , Textbook of finite element analysis, PHI Learning Pvt. Ltd 
+ Journal and Conferences
+ 1 .

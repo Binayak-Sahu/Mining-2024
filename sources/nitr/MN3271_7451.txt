@@ -1,0 +1,35 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7451 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3271 : Mine Ventilation Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1. Determination of Relative Humidity of Mine air with fixed/stationary Hygrometer, and Whirling Hygrometer
+2. Determination of Relative Humidity of air using Assman Psychrometer
+3. Determination of cooling power of air using Kata Thermometer
+4. Determination of CO % by MSA CO detector
+5. Determination of percentage of CO and CO2 by Drager Multi Gas Detector (Model 21/31)
+6. Determination of Methane % by MSA D-6 Methanometer
+7. Study of the construction and working of Flame Safety Lamp (VELOX GL-50, GL-60 and MSA type)
+8. Gas Testing by Flame Safety Lamp in a Gas Testing Chamber
+9. Measurement of Air Velocity by (i) Vane Anemometer (ii) Electric Analog Velometer
+10. Study of Pitot Static Tube & measuring of Air Velocity in a ventilation duct in combination with an Inclined Manometer
+11. Measurement of dust concentration by (i) Gravimetric Dust Sampler, (II). Personal Dust Sampler
+12. Measurement of Pm2.5 and PM10 concentration
+13. Measurement of Noise Level by Integrating Sound Level Meter (CEL-283)
+ Course Objective
+ 1 .
+The students learn the determination of various ventilation parameters in underground mines viz. gases, psychometric properties
+ 2 .
+The students learn to carry out ventilation surveys
+ Course Outcome
+ 1 .
+Ability to determine hazardous gases and psychometric properties of air.
+Ability to carry out ventilation surveys and interpret the results.
+Ability to plan underground ventilation.
+ Essential Reading
+ 1 .
+ M. J. McPherson, Subsurface Ventilation and Environmental Engineering,, Chapman & Hall, 1993 
+ 2 .
+ G. B. Mishra,, Mine Environment and Ventilation,, Oxford University Press, Fifth Impression, 1993

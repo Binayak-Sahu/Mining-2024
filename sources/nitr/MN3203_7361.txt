@@ -1,0 +1,53 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7361 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3203 : Underground Hazards and Rescue { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Introduction: Various types of Mine hazards encountered during mining including Blasting, use of mining machinery, Roof fall, and Side fall. 
+Module 2 : 
+Coal Mine fire - Classification of mine fire, the genesis of mine fire, Spontaneous heating of coal, incubation period, detection of fire, prevention, and control of mine fire in underground coal mines
+Module 3 : 
+Mine Explosion – Methane explosion, Coal dust explosion, genesis, detection, prevention, and control in underground coal mines 
+Module 4 : 
+Water danger in mines, Surface and underground precautions to prevent flooding of the mines, Inundation of mines, and dewatering
+Module 5 : 
+Rock Bursts, Coal Mine Bumps, detection, prevention, and control technology used in mines 
+Module 6 : 
+Rescue and Recovery operations in mines, Rescue station, Rescue equipment, classification, recovery operations after mine fire, explosion, and inundation. 
+ Course Objective
+ 1 .
+To understand hazards associated with underground coal mining
+ 2 .
+To understand the mechanism of various types of hazards associated with underground coal mining
+ 3 .
+To understand the mitigation measures to be taken to face the various types of hazards in mines
+ 4 .
+To understand the monitoring and control of various types of hazards associated with underground coal mining
+ Course Outcome
+ 1 .
+CO 1. The students will learn the process of identifying and assessing different hazards present in underground mines like fire, explosion, roof fall, side fall, rock bursts, coal bumps, inundation etc.
+ 2 .
+CO 2. Acquire comprehensive knowledge on the causes of underground mine disaster and their mitigation procedure.
+ 3 .
+CO 3. The students will gain understanding on mine rescue and recovery procedures.
+ 4 .
+CO 4. Device and implement ‘Standard Operating Procedures’ and ‘Code of Practices’ 
+ 5 .
+CO 5. Development of Emergency Management Plan and its implementation procedure. 
+ Essential Reading
+ 1 .
+ D. J. Deshmukh, Elements of Mining Technology, EMDEE Publishers , Volume II
+ 2 .
+ M A Ramlu, Mine Disasters and Mine Rescue,, Universities Press (India), private Limited , 2nd edition
+ Supplementary Reading
+ 1 .
+ R. McADAM and D. davidson, Mine Rescue work, Oliver and Boyd, Edinburgh: Tweeddale Court, London , 39 a Welbeck Street W.I
+ 2 .
+ B.M. Vorobjev and R.T. Deshmukh, Advanced Coal Mining, Asia Publishing house , Volume I
+ Journal and Conferences
+ 1 .
+First International Symposium on Mine safety Science and Engineering, SciVerse ScienceDirect, Procedia Engineering
+ 2 .
+Underground coal mining Edited by M.Jawed and P.K.Behera, Published by Department of Mining Engineering, Indian School of Mines Dhanbad

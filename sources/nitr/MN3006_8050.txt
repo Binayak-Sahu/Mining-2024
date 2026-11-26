@@ -1,0 +1,43 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8050 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3006 : Mineral Resource Evaluation and Geostatistics { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Examination of Mineral properties, Mine sampling, estimation of reserves and grades, Impurities and quality control, commercial uses of minerals and ores 
+Module 2: Mine valuation. Depreciation methods decision trees, Mineral Industry of India National Mineral Policies, conservation, taxation, trading, mining entrepreneurship, Principles of company law, shares and debentures 
+Module 3: joint stock company and public company partnership business, capital formation, Cost Volume-Profit analysis and break-even analysis, budgetary control, wages and incentives, purchases, stores and inventory control, sales and dispatches. 
+Module 4: Expectation Spatial Description: Contour maps, Indicator maps, Moving window statistics, Proportional effect, Spatial continuity, h-scatter plots, correlation functions, covariance function and variograms, cross h-scatter plots Random function, 
+Module 5: From statistics to Geostatistics, Modeling sample variograms, Regionalized variables Global estimation: Polygonal declustering, cell declustering, comparison of declustering methods Point estimation: Polygon, triangulation, inverse distance methods, search neighborhoods Kriging: Ordinary kriging, simple kriging Block Kriging Search strategy cross validation Variance volume relationships, (
+Module-wise Course Plan
+Module 1: 6 Hrs.
+Module 2: 7 Hrs.
+Module 3: 7 Hrs.
+Module 4: 8 Hrs.
+Module 5: 8 Hrs.
+Total: 36 Hrs
+ Course Objective
+ 1 .
+To familiarize students with the sampling, reserve calculation and mine valuation.
+ 2 .
+To develop analytical skills for resource estimation.
+ 3 .
+To familairaize students with the basic concepts of goestatistics.
+ 4 .
+To understand the point and global methods for natural resource estimation.
+ Course Outcome
+ 1 .
+1. Student will be able to understand the sampling and reserve estimation technique.
+2. Students will be able to analyze the real mine data for better mine planning and design.
+3. Students will be able to comprehend different geostatistics techniques for resource estimation.
+ Essential Reading
+ 1 .
+ R. T. Deshmukh, Mineral and Mine Economics, Myra Publ., Nagpur , 1986
+ 2 .
+ R. K. Sinha and N. L. Sharma, Mineral Economics, Oxford & IBH Pub., 3rd Ed, , 1970
+ Supplementary Reading
+ 1 .
+ O. P. Khanna, Industrial Engineering and Management, Dhanpat Rai Delhi , 1993
+ 2 .
+ R. N. P. Arogyaswamy, Courses in Mining Geology, Oxford and IBH Pub., 2nd Edition

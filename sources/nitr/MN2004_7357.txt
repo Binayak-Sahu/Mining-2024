@@ -1,0 +1,49 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7357 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2004 : Mine Surveying { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Introduction to Mine Survey [2 Hours]
+Definition of survey, importance of survey in mine, types of survey. 
+Module 2: Chain Survey [4 Hours]
+Distance measurement using chain/tape, Ranging & chaining of survey lines, surveying in obstacles in chaining, Field work & Plotting of maps using chain survey. 
+Module 3: Compass survey [4 Hours]
+Types of compass, use of compass, bearing of a line, dial traverse and adjustments, local attractions and correction of bearings. 
+Module 4: Theodolite survey [4 Hours]
+Types of theodolite: seconds theodolites, micro-optic theodolites, electronic theodolites, measurement of horizontal angles and vertical angles using theodolite Traversing – surface and underground including boundary surveys and joint surveys, survey errors and their adjustments, co-ordinate calculations. 
+Module 5: Levelling [4 Hours]
+Types of levels, setting of level instruments and levelling staff, types of levelling methods- reciprocal levelling, profile levelling, differential levelling, reduction of levels by height of instrument method and rise and fall method, Concept of contour, Methods of contouring and uses of contours. 
+Module 6: Tacheometry surveying [3 Hours]
+Methods of tacheometry survey. Field work and computation
+Module 7: Correlation Survey [3 Hours]
+Correlation of surface and underground surveys: Verticality of shafts, shaft depth measurement, Direct traversing in inclined shaft, correlation in vertical shaft –single and two shafts .
+Module 8: Setting out curves – surface and underground. [3 Hours]
+Module 9: Computation of areas and volumes [3 Hours]
+Module 10: Special Mine Surveys [3 Hours]
+Triangulation: Classification of Triangulation systems, Triangulation figures, Base line measurements Surveys for connecting national grid, survey of installations of mine structures, EDM and its application, surveying by Modern instruments by using GPS & Total Station.
+GIS and Remote Sensing Applications in mine map preparation.
+ Course Objective
+ 1 .
+Make understanding the role of Mine survey course in mine operations
+ 2 .
+Enable to learn the method of conducting the mine survey
+ 3 .
+Enable to prepare and understand the mine maps
+ Course Outcome
+ 1 .
+CO1: Develop necessary analytical skills, methods and ways of conducting mine survey. 
+CO2: Students will able to learn the tools needed to conduct mine survey
+CO3: Solve the mine survey related problems.
+CO4: Preparing and understanding the mine survey plans
+ Essential Reading
+ 1 .
+ W. Schofield and M. Breach, Engineering Surveying, ELSEVIER, B & H , Sixth edition, 2007
+ 2 .
+ B. C. Punmia, Surveying, Vol - I, II, III, Laxmi Publication , 12th Edition, 1990
+ Supplementary Reading
+ 1 .
+ T. P. Kanetkar, Surveying and Levelling, Pune Vidyarthi Griha Prakashan , 1995
+ 2 .
+ S. K. Roy, Fundamentals of Surveying, Printice Hall of India Pvt., New Delhi , Third Printing, 2004

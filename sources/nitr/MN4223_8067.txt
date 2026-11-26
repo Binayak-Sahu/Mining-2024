@@ -1,0 +1,34 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8067 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN4223 : Eco-friendly Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Overview: Basic concept of eco-friendly mining. Selection of eco-friendly equipment and exploitation operations, Environmental Parameters: 
+Water quality – physical, chemical, biological, criteria and standards. Classification and chemistry of major air pollutants, Soil chemistry – nature and importance of soil, soil properties, soil amendments
+Waste Management: Wastewater management – sources characteristics, techniques of treatment. Acid mine drainage – occurrence, effects and treatment techniques Solid waste management for mine spoils, 
+Mine Reclamation & Mine Closure: Mine Reclamation strategies, Principles, planning, financial provisions, implementation, and standards for closure criteria, systems approach for mine closure and development of closure plan, Socio-economic Aspects of Mining
+ Course Objective
+ 1 .
+To make the students familiar with the concepts of eco friendly mining practices and their application
+ 2 .
+To understand the impact of mining on water and soil, and the remediation techniques.
+ 3 .
+Understand the process of rehabilitation and mine closure and its implementation.
+ Course Outcome
+ 1 .
+CO1: Understand the basic concepts of eco-friendly mining and its application.
+CO2: Select and adopt appropriate technologies for better environmental conditions in mines.
+CO3: Estimate the extent of environmental impact due to mining and decide the management options.
+CO4: Understand the process of rehabilitation and mine closure and its implementation.
+ Essential Reading
+ 1 .
+ H. S. Peavy, D. R. Rowe and G. Tchobanoglous, Environmental Engineering, McGraw-Hill Publishing Co. , 7th Rev Ed edition, 2000
+ 2 .
+ C. J. Barrow, Environmental Management: Principles and Practice (Routledge Environmental Management Series),, Routledge , 1st edition, 1999
+ Supplementary Reading
+ 1 .
+ P. G. Hutchison, and R. D. Ellison,, Mine Waste Management, CRC Press, , 1st edition, 1992.
+ 2 .
+ G. Burke, B. R. Singh and L. Theodore,, Handbook of Environmental Management and Technology,, Wiley-Interscience, , 2nd edition, 2000.

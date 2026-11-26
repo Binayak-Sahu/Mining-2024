@@ -1,0 +1,39 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7965 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6074 : Mine Planning and Design Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1) Selection of mining method using UBC Modified Nicholas methods with case studies
+2) Ultimate Pit Slope limit determination using Floating cone and 2D L&G algorithm (Economic Pit Shell) 
+3) Preliminary Pit Slope design using Empirical rock mass classification system (MRMR) (Stable Geo technical Pit Shell) 
+4) Preparation of geological model from bore hole log data using Surpac (Geological Block Model)
+5) Preparation of a geological block model and estimation of solid volume, grade-tonnage curves
+6) Design of pit slopes, ramps and waste dumps using Surpac
+7) Advanced Production Planning & Scheduling in open pit mines (using MineSched)
+8) Estimation of rock support (rock bolt, shotcrete, etc.) requirement using Empirical approach
+9) Design of Stope size and Crown pillar dimension for a u/g metalliferous mines using Empirical approach
+10) Use of Drone and Lidar data for preparation of DTM, contour and volumetric estimations
+ Course Objective
+ 1 .
+Understand the concept & principle of mine planning using industry accepted tools
+ 2 .
+Learn Design of a pit, ramp, waste dumps
+ 3 .
+Ability to use Empirical approach in preliminary level mine designs
+ Course Outcome
+ 1 .
+CO1: Understand basis of pit design from exploration data
+CO2: Able to design an open pit mine and waste dump using mine planning software
+CO3: Understand the practice of production planning & scheduling in both surface & underground mines
+ Essential Reading
+ 1 .
+ Mark Kuchta and Willam Hustrulid, Open Pit Mine Planning and Design, CRC Press 
+ 2 .
+ Roussos Dimitrakopoulos, Advances in Applied Strategic Mine Planning, Springer 
+ Supplementary Reading
+ 1 .
+ Ernesto Villaescusa, Geotechnical Design for Sublevel Open Stoping, CRC Press 
+ 2 .
+ J. M. Galvin, Ground Engineering - Principles and Practices for Underground Coal Mining, Springer

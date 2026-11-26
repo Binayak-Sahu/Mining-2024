@@ -10,8 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# testing (coverage/ holds the STRATA syllabus coverage map, so it is NOT ignored)
 
 # next.js
 /.next/

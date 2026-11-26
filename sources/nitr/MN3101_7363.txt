@@ -1,0 +1,34 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7363 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3101 : Underground Metal Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 01: Various types of ore body and their geological features,selection of mine access, development of drift, drive, decline, raise , ramp etc. selection of stoping methods [6 hours] 
+Module 02:Special underground facilities: Shaft pockets, ore pass , ore bins, ore transfer raises, sump, skip loading system, crusher house, grizzly etc.[6 Hours] 
+Module 03: Pillar supported stoping methods like room and pillar, cut and fill with post pillar, sublevel open stoping with barrier pillar etc.[6 hours]
+Module 04: Artificially and fill supported stoping methods like shrinkage, cut and fill, Square set, VCR, sublevel with filling etc.[6 hours]
+Module 05: Unsupported with caving methpods like sublevel caving, block caving etc.[6 hours]
+Module 06: Stope fills: preparation, transportation and filling operation,[3 hours]
+Module 07: Solution mining: in situ leaching, Mining of placer deposits, under-sea mining, [3 hours]
+ Course Objective
+ 1 .
+To make the students conversant with the different types of underground metal mining methods and their variants.
+ 2 .
+To make the students conversant regarding modern trackless underground metal mine planning and designing which are being operated by deploying different types of the heavy earth moving machineries like LHD, LPDT, Jumbo drill Machine etc.
+ Course Outcome
+ 1 .
+CO1: The student will understand the development procedures of various underground metal mine structures for continuous mine operation 
+CO2: The student will learn about different types of stope development and operation methods 
+CO3: The student will gain knowledge on underground metalliferous mine planning, designing and operation scheduling
+ Essential Reading
+ 1 .
+ Y. P. Chacharkar, A study of Metalliferous Mining Methods, Lovely Prakashan, Dhanbad , 1994
+ 2 .
+ B. C. Arthur, SME Mining Engineers Hand Book, American Institute of Mining, Metallurgical and Petroleum Engineers New York , 1973
+ Supplementary Reading
+ 1 .
+ K. S. Stout, Mining Methods and Equipment, McGraw hill New York , 1980
+ 2 .
+ DGMS, Metal Mines Regulations-1961, Lovely Prakashan , Dhanbad

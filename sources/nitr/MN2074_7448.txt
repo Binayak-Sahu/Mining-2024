@@ -1,0 +1,47 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7448 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2074 : Mine Surveying Laboratory { 0-0-2 / 1}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1 Chain Surveying
+(a) Offset measurement of objects and map preparation
+2 Compass Surveying 
+(a) Bearing of the lines (b) Traversing
+3 Level Survey 
+Differential Levelling/Profile Levelling
+4 Reciprocal Levelling
+5 Contour Survey 
+6 Theodolite Survey 
+Horizontal angle measurement/Vertical angle measurement
+7 Theodolite Traversing
+8 Correlation Survey
+9 Curve Settings
+10 Survey using GPS/EDM/Total Station
+11 Preparation of Mine Plans in GIS Software
+(a) Digitization
+(b) Geo-reference of maps
+ Course Objective
+ 1 .
+To impart knowledge of operating different survey instruments and its accessories
+ 2 .
+To impart knowledge of conducting various types of mine survey.
+ 3 .
+To impart knowledge of mine map preparation
+ 4 .
+To impart knowledge about advanced survey tools and techniques
+ Course Outcome
+ 1 .
+CO1: Students will be able to operate different survey equipment.
+CO2: Students will be able to carry out the survey work in mines for different purposes.
+CO3: Students will be able to prepare and manage the mine maps.
+CO4: Develop skills to understand the tools and techniques of advanced surveying.
+ Essential Reading
+ 1 .
+ B. C. Punmia, Surveying, Vol - I, II, III,, Laxmi Publication , 12th Edition, 1990 
+ 2 .
+ T. P. Kanetkar, Surveying and Levelling, Pune Vidyarthi Griha Prakashan , 1995 
+ Supplementary Reading
+ 1 .
+ S.GHATAK, MINE SURVEYING AND LEVELLING, Coal Field Publisher 2008

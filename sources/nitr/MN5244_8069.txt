@@ -1,0 +1,43 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8069 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5244 : Coal Bed Methane and CO2 Sequestration { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: 4 classes
+Introduction to various reservoirs, conventional and unconventional reservoirs, inherent properties, production and gas recovery, Coalbed methane (CBM) introduction, worldwide distribution,
+Module 2: 8 classes
+Coal structure and properties, Classifications of coal with rank, grade, composition and their importance, organic structures, maturity, pore distributions, adsorption, diffusion and fluid flow fundamentals, production and recovery, field patterns and results.
+Module 3: 9 classes
+Gas storage capacity and Fluid flow: Key factors, detailed discussions, associated tests, gas-in-place and gas content analysis, sorption time, permeability effects, shrinkage and swelling effects. Uncertainty analysis. Examples from various case studies.
+Module 4: 9 classes
+Carbon Capture and Storage (CCS): Fundamentals, CCS options, geological sequestration technologies, ECBM and CO2 Sequestration: Importance, associated problems. Field drillhole pattern/design, cyclic, non-cyclic and/or continuous injections and their results. Reservoir Simulation. 
+Module 5: 4 classes
+Different test procedures in CBM: Proximate and Petrographic analysis, Isotherm test, Desorption canister test. Gas Injection and Displacement.
+Class tests: 2
+Total Classes: 36
+ Course Objective
+ 1 .
+To understand the structures of unconventional reservoir like CBM, storage and transport properties, production cycles.
+ 2 .
+To know the planning and design aspects for the smooth production from the CBM reservoirs.
+ 3 .
+To learn the experimental methods for gas recovery in laboratory and design and simulation techniques for field studies.
+ Course Outcome
+ 1 .
+CO1: To identify various unconventional reservoirs and their importance for sustainable gas exploration.
+CO2: To understand the factors influencing the production performance of CBM reservoirs.
+CO3: To learn about the various gas characterization and gas sorption properties for laboratory and field experiments.
+CO4: To analyze planning and design requirements for fluid flow and gas transport.
+CO5: To know about the current and possible future challenges for the environment and mitigate them.
+ Essential Reading
+ 1 .
+ Gas research Institute, A guide to Coalbed Methane Reservoir Engineering, GRI, GRI Reference No. GRI-94/0397. , Chicago, Illinois, USA 1996.
+ 2 .
+ T. Ahmed, Reservoir Engineering Handbook, Gulf Professional Publishing (Elsevier) , USA, 2010
+ Supplementary Reading
+ 1 .
+ R.E.Rogers, Coalbed methane: Principles and Practice, Publisher PTR Prentice Hall , USA, 1994
+ 2 .
+ J.L. Saulsberry, P.S. Schafer, R.A. Schraufnagel, A guide to Coalbed Methane Reservoir Engineering, Gas Research Institute, Chicago , USA, 1996

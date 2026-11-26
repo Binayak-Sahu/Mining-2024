@@ -1,0 +1,38 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7450 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3073 : Mining Machinery Laboratory { 0-0-2 / 1}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1. To assemble and study the parts of jack hammer drill
+2. Study of construction of wire ropes and its applications
+3. Study of Reliance Rope Capel and its attachment to wire rope
+4. Study of Direct Rope Haulage and its application
+5. Study of Endless Rope Haulage and its application
+6. To study the different types of Rope Clips
+7. Study of Main and Tail Rope Haulage and its application
+8. To determine the peripheral velocity, speed, length and slip of belt drive
+9. To study the ratchet and pawl arrangement in Sylvester Prop Withdrawer
+10. Study of different types of Brakes & Clutches
+11. To determine the discharge of water against total head using Centrifugal Pump
+12. To study the human vibration using HVM-100
+ Course Objective
+ 1 .
+To familiarize students with the parts and function of jack hammer and electrical coal drill in mining industries
+ 2 .
+To equip students with the knowledge and concept of wire ropes, capel, mine haulage system
+ 3 .
+To develop and enhance the knowledge of slip of belt drive, ratchet and pawl arrangement, centrifugal pump and human vibration measurement in mining industries.
+ Course Outcome
+ 1 .
+1. To understand the concept and applications of capel and wire ropes in mines.
+2. To estimate the performance of belt drive and centrifugal pump.
+3. To develop the skill in understanding the components of jack hammer and electrical coal drill and its application in mines.
+4. To know the underground rope haulage system for short and long-haul distance in mines.
+5. To identify the importance of brakes and clutches in machines along with human vibration measurement.
+ Essential Reading
+ 1 .
+ D. J. Deshmukh, Elements of mining technology, Vol. 3, Denett & Co., Nagpur 
+ 2 .
+ D. J. Deshmukh, Elements of mining technology, Vol. 1, Denett & Co., Nagpur

@@ -1,0 +1,37 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7968 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5027 : Novel and innovative mining practices { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Innovative Mining Technology in Opencast (High wall mining, Boundary pillar mining) and Underground mines (Sub-level caving, Block caving, Top-coal caving). Mining of narrow vein deposits. 
+Digitization & Digital Transformation in Mining, Robotics, Tele-monitoring in Mines, Short Interval Control (SIC), Interoperability, Innovations in Instrumentation and Communication System, Internet of Things (IoTs), Use of Virtual Reality and Mixed Reality
+Application of Drones, Laser Scanner for surveying, mapping and monitoring in Mines. Tools for Digital Outcrop Mapping and Modelling, Digital rockmass characterization.
+Automation in Mining, Digital Twining, Battery & Electric vehicles, Measurement While Drilling (MWD), Emerging technologies in Remote Sensing & GIS, De-carbonization and Green-mining.
+Extra-Terrestrial Mining, Deep Sea Mining, Dredging, Mining in the Arctic. Bioleaching and Heap Leaching, Clean Coal Technology, Oil Sand mining, Tailings Re-mining
+Emerging rock excavation approaches: Road header, Tunnel Boring machine, Raise borer, Blast-free mining.
+ Course Objective
+ 1 .
+Understand unique mining methods and practices
+ 2 .
+To acquire the knowledge about mining in challenging environment
+ 3 .
+Understand application latest techniques and tools in mining
+ Course Outcome
+ 1 .
+CO1: To understand mining of unique and challenging ore bodies
+CO2: To study innovative mining practices in surface and underground mining operation
+CO3: Understand of mining of unconventional mining methods
+CO4: Comprehend use of digitalization and automations in mining industry
+CO5: Recognize the use of Industry 6.0 and beyond in mines
+ Essential Reading
+ 1 .
+ W. Hustrulid and M. Kuchta, Open Pit Mine Planning and Design, A.A. Balkema 
+ 2 .
+ Alan B. Craig and William R. Sherman, Understanding Virtual Reality: Interface, Application, and Design, Elsevier 
+ Supplementary Reading
+ 1 .
+ Alan Wexelblat, Virtual Reality: Applications and Explorations, Academic Press 
+ 2 .
+ Rahul Sharma, Deep-Sea Mining: Resource Potential, Technical and Environmental Considerations, Springer

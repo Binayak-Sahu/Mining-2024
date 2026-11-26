@@ -1,0 +1,44 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7977 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3724 : Ground Control Instrumentation Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+List of experiments to be conducted 
+1. Study of instruments for monitoring convergence in mines. ( 2 Hours)
+2. Study of instruments for monitoring stress in underground workings. ( 2 Hours)
+3. Study of instruments for monitoring load on supports. ( 2 Hours)
+4. Study of instrumentation for monitoring ground behavior around Longwall workings. ( 2 Hours) 
+5. Study of instruments for slope monitoring in opencast mines. ( 2 Hours)
+6. Study of instruments for roof fall monitoring in mines. ( 2 Hours)
+7. Study of instruments for monitoring bed separation in mines( 2 Hours)
+8. Study of instruments for monitoring ground vibrations due to blasting. ( 2 Hours)
+9. Study of instruments for strata behavior monitoring in thick seams. ( 2 Hours)
+10. Study of instrumentation for monitoring ground behavior in metal mines ( 2 Hours)
+ Course Objective
+ 1 .
+candidates gets exposure to ground control instrumentation
+ 2 .
+Objective 2 :
+students will learn installation procedures, details of instruments , analysis of data to implement in the mines.
+ 3 .
+Students will learn the application of Strata control technology with proper instrumentation
+ Course Outcome
+ 1 .
+CO1: Identify and describe various instruments used for monitoring ground deformation parameters in underground mines, including convergence and bed separation.
+CO2: Explain the principles of operation and application of instruments employed for measuring stress and load distribution in underground workings and on support systems.
+CO3: Analyze the instrumentation techniques specifically used for monitoring ground behavior and stability in Longwall mining operations and thick seam mining environments.
+CO4: Select and apply appropriate instrumentation for monitoring potential hazards in both underground and opencast mines, such as roof falls and slope instability.
+CO5: Evaluate the use of instruments for assessing the impact of mining activities on the surrounding ground, including the monitoring of ground vibrations caused by blasting.
+ Essential Reading
+ 1 .
+ M. L. Jeremic,, Strata Mechanics in coal mining,, A A Balkema, Rotterdam, Taylor and Francis, 1985, 
+ Supplementary Reading
+ 1 .
+ B. H. G. Brady and E. T. Brown,, Rock Mechanics for Underground Mining, , George Allen and Unwin Ltd., 1992 
+ Journal and Conferences
+ 2 .
+Singam Jayanthu, Singam Jayadarshana, and Singam Sai Sreeja, (2020), Instrumentation and recent practices for safe blasting in opencast mines – field experimental studies, Recent Practices and Advancement In Mineral Industry, Chapter. Production Technology-I, no.1, VINIT-Nagpur 2020, ISBN:978-93-5396-651-5, pp 147-155.
+ 1 .
+Jayanthu, S., T. N. Singh and D. P. Singh, 2004, Stress distribution during extraction of pillars in a thick coal seam., Rock mechanics and rock engineering 37.3 171-192.

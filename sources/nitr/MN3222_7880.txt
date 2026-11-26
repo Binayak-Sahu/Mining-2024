@@ -1,0 +1,44 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7880 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3222 : Solid Fuel and Clean Coal Technology { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Introduction: Processes of formation of coal, Theories of origin of coal, Eras of coal formation, Indian Coalfields and its subsidiaries: Occurrence and distribution, coal bearing formations, coal type and rank variation, Characteristics of major coalfields, Coal production from different sectors. 
+Module 2: Coal petrography: Macro and micro lithotypes, Composition of macerals, application of coal petrography, Mineral matter in coal: Origin and chemical composition, Impact of mineral matter in coal process industry 
+Module 3: Coal properties and their evaluation: proximate and ultimate analysis, calorific value, crossing and ignition point temperature, plastic properties (free swelling index, Caking index, Gray King Low Temperature Assay, Roga index, plastometry, dilatometry), Physical properties like specific gravity, hard groove grindability index, heat of wetting, Crossing point temperature of coal, Behavior of coal at elevated temperatures and products of thermal decomposition,
+Module 4: Classification of coal - International and Indian classification 
+Module 5: Coal Washing: Principles, objectives, coal preparation, washability characteristics Selection, testing, storage and utilization of coking and non-coking coal, Use of coal by different industries. 
+Module 6: Clean coal technology: definition and objectives, Technology Options: Pre-combustion, Combustion, Post Combustion and Conversion
+ Course Objective
+ 1 .
+1. To understand the process of coal formation, origin, characterization, classification and utilization of coal.
+ 2 .
+To understand the coal preparation and beneficiation processes and to evaluate the washability potentail
+ 3 .
+To be familiar with the objectives and processes of coal coal technologies
+ Course Outcome
+ 1 .
+Ability to comprehend the process of coal formation, associated theories and coal types.
+ 2 .
+Ability to develop the knowledge of coal properties and their utilization
+ 3 .
+Ability to assess the washability characteristics of coal and select appropriate beneficiation technology
+ 4 .
+Ability to apply the knowledge to characterize the coal and assess its suitable for different industrial applications 
+ 5 .
+Ability to apply the appropriate clean coal technology to solve industry issues.
+ Essential Reading
+ 1 .
+ S. Sarkar, Fuels and Combustion, University Press , 3rd Edition, 2009
+ 2 .
+ James G. Speight, The Chemistry and Technology of Coal, CRC Press , 2013
+ Supplementary Reading
+ 1 .
+ O. P. Gupta,, Elements of Fuels, Furnaces and Refractories, Khanna Publication , 1989
+ 2 .
+ D Chandra, R M Singh and M P Singh, Text Book of Coal, Tara Book Agency , 2000
+ Journal and Conferences
+ 1 .
+.

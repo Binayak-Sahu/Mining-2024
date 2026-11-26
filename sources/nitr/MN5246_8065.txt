@@ -1,0 +1,45 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8065 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5246 : Mine Waste Management { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Basic introduction to Terminologies, Sources, Nature and Characteristics of different types of waste generated during mining. 
+Types of waste dumps: Based on i) material types, ii) construction method iii) overall configuration and topographic constraints iv) Location (Internal/External) v) Geo-chemical properties. Method of design & construction. Introduction to Life of mine (LoM) mine waste management plans and handling strategy. [6]
+Module 2: Mine Waste Rock Dumps (WRDs): Nature and Type of coarse waste generated from surface mines. Methods and Practices of overburden waste handling, management and storage in open cast and open pit mines. Waste sources and management in underground mines
+Handling & Transportation of waste rocks: Methods, Techniques (dumper/draglines), Cost-benefit analysis, Dumping methods (top-down/bottom-up). [6]
+Module 3: Tailing Storage Facilities (TSFs): Key Terminologies, Sources of mine tailings, Physical & Chemical properties. Mode of tailings material handling (slurry transportation)
+Type of TSFs: Upstream/Downstream/Centreline/Modified centreline
+Washery rejects: Types, Nature and Characteristics of washery rejects, fly ash/bottom ash
+Basic design principle of Tailing dams and ash pond/dykes, Governing standards and Indian regulations [8]
+Module 4: Site selection & Material characterization for waste dumps and tailing dams: factor affecting site selection, site investigation and material testing (physical, geotechnical, geochemical) in WRDs & TSFs, sample collection, testing and analysis
+Stability assessment in mine waste & tailing dams: Different modes of failures in waste dumps and tailing dams, Risk assessment and hazard classification
+Stability analysis: Acceptance criteria, Stability requirement and risk involved. Numerical techniques and methods for stability assessment, Basics of Dam Run-out/Breach modelling
+Instrumentation and monitoring in WRDs & TSFs structures: Requirements, Types, Advantages and Limitations, Introduction to state-of-the-art monitoring practices. [12]
+Module 5: Re-use and utilization of mine waste: Possible re-use of mine waste for civil, domestic purpose, notable examples of waste to wealth (India & Abroad). Introduction to Tailings re-mining practices. 
+Closure of WRDs and TSFs: Closure requirements (technical/environmental), Reclamation at waste dumps, Short-to-long-term environmental challenges and mitigation. [4]
+ Course Objective
+ 1 .
+To learn about various types of waste and tailings from mines
+ 2 .
+To understand the design & stability aspects of dump slopes
+ 3 .
+To know about the various factors for characterization and monitoring of waste dumps & tailing dams
+ Course Outcome
+ 1 .
+CO1: Understand the nature and types of bulk waste generated during mining
+CO2: Comprehend and explain the influence of sound waste management strategy in mining operation
+CO3: To familiarize with different design & operational aspects on mine waste and tailing dams
+CO4: Comprehend and be able to plan, design, and assess risk involved in mine waste dumps and tailing dams.
+CO5: Understand the requirement of sustainable closure of WRDs & TSFs
+ Essential Reading
+ 1 .
+ P. Mark Hawley, John Cunning, Guidelines for Mine Waste Dump and Stockpile Design, CRC Press , ISBN 9781138197312
+ 2 .
+ Vick, Steven G, Planning, Design, and Analysis of Tailings Dams, BiTech Publisher , ISBN 0-921095-12-0
+ Supplementary Reading
+ 1 .
+ Lottermoser, Bernd, Mine Wastes-Characterization, Treatment and Environmental Impacts, Springer , ISBN 978-3-642-12418-1
+ 2 .
+ Geoffrey E. Blight, Geotechnical Engineering for Mine Waste Storage Facilities, CRC Press , ISBN 9780367577216

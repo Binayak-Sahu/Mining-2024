@@ -1,0 +1,41 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8064 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6120 : Mining of Deep Seated Deposits { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Modules:
+Exploration: Modern Exploration Techniques to Identify the Complex Coal Deposits Classification: Classification of Coal Deposits Lying under Typical Geo-mining Conditions
+Challenges: Challenges to improve Production and Productivity from Deep Seated Deposits, Challenges in Liquidation of Locked-up Pillars
+Experimental trials: Innovative Technologies for Stability Analysis, Design and Development of Deep Seated Deposits
+Modern techniques: Application of Numerical Modeling Techniques to Control Ground Problems of Complex Deposits, Use of Modern Instruments for Strata Control of deep seated deposits,
+In-situ Gasification and Mineral Biotechnology for Complex Coal Deposits.
+ Course Objective
+ 1 .
+To understand modern exploration techniques to identify coal deposit at higher depth of cover
+ 2 .
+To understand issues and challanges during extraction of coal at higher depth of cover including ground control techniques
+ 3 .
+To understand strata mechanics involved during mining activities at higher depth of cover through numerical modelling tools
+ 4 .
+To understand application of modern geo-technical instruments for strata movement study for safe and efficient extraction of coal from higher depth of cover
+ Course Outcome
+ 1 .
+CO1: Identify and understand the Complex Coal Deposits and challenges of exploitation
+CO2: Analyze design requirement of experimental trials and apply Innovative Technologies in the field
+ Essential Reading
+ 1 .
+ R.D. Singh, Principles & Practices of Modern Coal Mining, New age international New Delhi, 1997 
+ 2 .
+ T. N. Singh, Underground winning of Coal, Oxford and IBH New Delhi, 1992 
+ Supplementary Reading
+ 1 .
+ S. S. Peng and H S Chiang, Longwall mining, Wiley New York, 708p 
+ 2 .
+ S. P. Mathur, Coal Mining in India, M. S. Enterprises Bilaspur, 1999 
+ Journal and Conferences
+ 1 .
+International Journal of Rock Mechanics and Mining Sciences
+ 2 .
+Rock Mechanics and Rock Engineering

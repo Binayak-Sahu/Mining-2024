@@ -1,0 +1,48 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7919 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN6122 : Rock Slope Technology { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Introduction and Principles of Slope stability: Introduction, types of slope and failures, Factors affecting slope stability, Concepts of stability analysis, Factor Of Safety concept. (Contact Hours: 6 Hrs)
+Module 2 : 
+Module 2: Methods of Slope Stability analysis: Manual calculations and empirical relations, Numerical Methods, LEM, FEM, Stochastic Analysis. (Contact Hours: 12 Hrs)
+Module 3 : 
+Module 3: Slope analysis data and its acquisition: Geological Condition assessment and Interpolation, Geomechanically, Hydrological analysis and failure criteria, Major types of failures.(Contact Hours: 9 Hrs)
+Module 4 : 
+Module 4: Methods of Slope Stabilization: Load removal, Drainage, Retaining, Reinforcement, Physical , Chemical, Biological, Surface protection (Contact Hours: 5 Hrs)
+Module 5 : 
+Module 5: Slope Monitoring Methods and Prediction: On site monitoring Surface, Sub Surface, Remote Monitoring, IOT in Slope monitoring. (Contact Hours: 5 Hrs)
+ Course Objective
+ 1 .
+To understand the basics of slope stability of natural and man made slopes.
+ 2 .
+Ability to understand and identify conditions affecting slope stability, and evaluate the stability in qualitative, quantitative, and stochastic manners
+ 3 .
+To understand and plan stabilization measures for designing stable slopes to remediation of unstable slopes.
+ 4 .
+To identify appropriate monitoring methods for prediction and remediation of slope issues
+ Course Outcome
+ 1 .
+CO 1. Understand the fundamental principles of slope stability, including failure mechanisms, influencing factors, and the concept of the Factor of Safety. 
+ 2 .
+CO 2. Apply various slope stability analysis methods, including manual, empirical, numerical (LEM, FEM), and stochastic approaches, to assess slope stability under different conditions. 
+ 3 .
+CO 3. Analyze geological, geomechanical, and hydrological data to identify slope failure mechanisms and assess slope stability using field and laboratory data interpretation techniques. 
+ 4 .
+CO 4. Evaluate the effectiveness of various slope stabilization techniques, such as drainage, reinforcement, chemical treatments, and surface protection methods, in different geological settings. 
+ 5 .
+CO 5. Design an effective slope monitoring and prediction system using modern technologies, including on-site instrumentation, remote sensing, and IoT-based monitoring solutions.
+ Essential Reading
+ 1 .
+ Duncan C. Wyllie and Christopher W. Mah, Rock Slope Engineering, Spon Press , ISBN 0-203-57083-9
+ 2 .
+ Abramson, Lee, Sharma and Boyce, Slope Stability and Stabilization Methods, John Wiley and Sons 
+ Supplementary Reading
+ 1 .
+ Duncan, J. Michael, Soil strength and slope stability, Wiley , ISBN: 9781118651650
+ 2 .
+ RocScience, Rocscience Web Resources, Online 
+ Journal and Conferences
+ 1 .

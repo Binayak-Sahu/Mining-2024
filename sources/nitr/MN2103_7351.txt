@@ -1,0 +1,55 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7351 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2103 : Rock Mechanics { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Introduction: Introduction to Geotechnical Engineering, Soil and Rock characterization, Discontinuities 
+Module 2 : 
+Properties: Physical and mechanical properties including swelling potential, different strength parameters and their determination, Hydraulic properties of rocks and determination. 
+Module 3 : 
+Rock Stress: Stress-Strain relationships, Stress and strain in two- and three-dimension, Mohr’s circle and applications
+Module 4 : 
+Elastic and Time dependent properties of rock: Rock Deformability and its measurement. Elastic and non-elastic behavior, influence of time on rock properties 
+Module 5 : 
+Theories of rock failure: Rock Strength, Analysis of Stress-Strain Curve, Rock failure and different failure criteria. Effect of anisotropy on rock strength 
+Module 6 : 
+ Rock Mass Classification: Classification system and their applications, case studies
+ Course Objective
+ 1 .
+To understand, differentiate, and classify the origin of rock and soil, and their different characteristics that influence the behaviour
+ 2 .
+To Determine the physical, mechanical, rheological and other properties of rocks and quantify their influence on mining excavation
+ 3 .
+ To draw stress-strain relations and their utility in excavation activities as well as suggest the support requirement including types 
+ 4 .
+To identify the parameters affecting the rock failure and to develop and predict rock failure criteria for the excavation sites/locations
+ 5 .
+ To be able to measure the parameters for the determination of different classification approaches and recommend possible support measures
+ Course Outcome
+ 1 .
+ To introduce earth materials, their characteristics, and predict the influence on excavation
+ 2 .
+To determine and predict different properties of rocks/soils
+ 3 .
+To study behavior of rocks in various excavation systems and predict the failure criteria with environmental conditions
+ 4 .
+To determine and predict the stress-strain behaviour of rocks and their application in field operations
+ 5 .
+To determine the safety need and suggest the support types as well as quantity requirement
+ Essential Reading
+ 1 .
+ Introduction to Rock mechanics, Deb and Varma, PHP 
+ 2 .
+ Introduction to Rock mechanics, Goodman, Easrtern Wiley 
+ Supplementary Reading
+ 1 .
+ Fundamental of Rock Mechanics, Zegger, CRC 
+ 2 .
+ Introduction to Rock Engineering, Ramamurthy, PHP 
+ Journal and Conferences
+ 1 .
+International Journal of Rock Mechanics and Mining Sciences
+ 2 .
+International Journal of Rock Mechanics and Rock Engineering

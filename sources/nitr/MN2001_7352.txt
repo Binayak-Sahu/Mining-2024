@@ -1,0 +1,33 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7352 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2001 : Mine Development { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+a) Module1: Introduction - Distribution of mineral deposits in India and other countries, mining contributions to civilization, mining terminology. [4]
+b) Module 2: Stages in the life of the mine - prospecting, exploration, development, exploitation and reclamation. [4]
+c) Module 3: Access to mineral deposit- selection, location, size and shape (incline, shaft and adit), brief overview of underground and surface mining methods. [6]
+d) Module 4: Drilling: Types of drills, drilling methods, electric, pneumatic and hydraulic drills, drill steels and bits, drilling rigs, and jumbos. [6]
+e) Module 5: Explosives: Classification, composition, properties and tests, fuses, detonators, blasting devices and accessories, substitutes for explosives, handling and storage, transportation of explosives Rock blasting: Mechanism of rock blasting, blasting procedure, and pattern of shot holes. [8]
+f) Module 6: Shaft sinking: Ordinary and special methods, problems, and precautions, shaft supports and lining. [4]
+ Course Objective
+ 1 .
+To understand the basic terminology og mining
+ 2 .
+To acquire the knowledge of introduction to mining
+ Course Outcome
+ 1 .
+1: To understand the distribution of mineral deposits, and mining terminology.
+2: To introduce different types of mining methods available for exploitation of mineral deposits.
+3: Analyze design requirement of approach to mineral deposits.
+ Essential Reading
+ 1 .
+ D. J. Deshmukh, Elements of mining technology, Vol. 1, Denett & Co., Nagpur 
+ 2 .
+ R. P. Pal, Rock blasting effect and operation, A. A. Balkema 
+ Supplementary Reading
+ 1 .
+ S. K. Das, Explosive and blasting practices in mines,, Lovely Prakashan, 1st Ed, 
+ 2 .
+ C. P. Chugh, Drilling technology handbook, Oxford and IBH

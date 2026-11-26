@@ -1,0 +1,44 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7922 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5002 : Computer Application in Mining { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Introduction to Computer Applications in Mining, Basics of Flowcharts, Algorithms, Basic of programming components in MATLAB, Programming Slope stability. (Contact Hours: 5 Hrs)
+Module 2 : 
+Module 2: Basics of Slope Stability Analysis, Mathematical Modeling and Numerical Simulations: LEM, deterministic and probabilistic approaches, sensitivity analysis, Introduction to numerical methods, types and concepts. Introduction to FEM, structural FEM basics and application, (Contact Hours: 12 Hrs)
+Module 3 : 
+Module 3: Fluid flow introduction and application, FVM, Simulations Water seepage in Slope, Tunnels, Subsidence, Pillar stability, CFD. Underground Ventilation simulation, Introduction to other methods FDM, DEM, and BEM. (Contact Hours: 9 Hrs)
+Module 4 : 
+Module 4: Mining Data Statistics, Data representation and visualisation methods, Regression and curve fitting methods, MVRA, Residuals and Errors, Coefficient of Determination, Goodness of fit. Regression by Artificial Neural Networks basics and application. Basics of Fuzzy logic, Neuro Fuzzy Inference systems, Introduction to genetic algorithms. Soft computing using MATLAB. (Contact Hours: 10 Hrs)
+ Course Objective
+ 1 .
+Grasping the algorithm and methodologies for various design and simulation techniques applicable for various aspects of mining
+ 2 .
+Developing aptitude to transform various mining problem and other practical engineering problems and challenges into computationally viable workflow and solutions.
+ 3 .
+Understanding and application of the basic concepts of soft computing and numerical methods, for wide applications in engineering field
+ Course Outcome
+ 1 .
+CO 1. Understand the fundamentals of computer applications in mining, including flowcharts, algorithms, and basic programming concepts in MATLAB for solving mining-related problems. 
+ 2 .
+CO 2. Apply mathematical modeling and numerical simulation techniques such as Limit Equilibrium Method (LEM), Finite Element Method (FEM), and probabilistic approaches for slope stability and structural analysis in mining. 
+ 3 .
+CO 3. Analyze fluid flow behavior in mining environments using computational techniques such as Finite Volume Method (FVM), Computational Fluid Dynamics (CFD), and underground ventilation simulations. 
+ 4 .
+CO 4. Evaluate mining datasets using statistical and machine learning techniques, including regression analysis, artificial neural networks, fuzzy logic, and genetic algorithms for predictive modeling and decision-making. 
+ 5 .
+CO 5. Design and develop computational solutions for solving complex mining engineering problems related to slope stability, subsidence, pillar stability, and ventilation.
+ Essential Reading
+ 1 .
+ Rao, Reddy and Mishra, Computer Applications in Mineral Industry, Allied Publishers 
+ 2 .
+ SJ Morrison, Statistics for Engineering: An Introduction, Wiley 
+ Supplementary Reading
+ 1 .
+ RocScience, Rocscience Web Resources, Online 
+ 2 .
+ MATLAB, MATLAB Web Resources, Online 
+ Journal and Conferences
+ 1 .

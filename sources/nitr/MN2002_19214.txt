@@ -1,0 +1,38 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19214 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2002 : Sustainable Development of Mineral Resources { 2-0-0 / 2}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Introduction to Sustainable Development: Definition and history of sustainable development, The three pillars of sustainability: environmental, economic, and social, Sustainable development goals (SDGs) related to mining. [7]
+Module 2: Introduction to Environmental Impact of Mining: Land degradation, deforestation, and biodiversity loss, Water pollution and management, Air pollution and dust control. Environmental impact assessment (EIA), Environmental management plans (EMP), Monitoring and mitigation strategies. [7]
+Module 3: Economic and Social Aspects of Sustainable Mining: Economic benefits and costs of mining activities, Mineral resource governance and policy frameworks, Local and global economic implications. Community engagement and social license to operate, Health and safety in mining communities. [7]
+Module 4: Developing Strategies for Sustainable Mining: Frameworks for integrating sustainability into mining operations, National and international regulations and standards, Role of government and non-governmental organizations, Future trends and developments in mining policies. [7]
+ Course Objective
+ 1 .
+To provide an in-depth understanding of sustainable practices in the exploration, extraction, and processing of mineral resources.
+ 2 .
+To impart knowledge on the environmental impacts of mining and mitigation strategies.
+ 3 .
+To describe the economic, and social aspects of sustainable development in the mining industry.
+ 4 .
+To impart knowledge on the principles, strategies, and technologies that promote sustainability.
+ Course Outcome
+ 1 .
+After the end of the course the student will be able to 
+CO 1. Describe the concepts of sustainable development.
+CO 2. Illustrate the best practices of mining industry towards achieving sustainable development goals.
+CO 3. Analyze the environmental, economic, and social impacts of mining activities.
+CO 4. Identify and evaluate sustainable mining practices and technologies.
+CO 5. Develop strategies for integrating sustainability into mining operations.
+ Essential Reading
+ 1 .
+ Azapagic, A., Perdan, S., & Clift, R., Sustainable Development in Practice: Case Studies for Engineers and Scientists, Wiley , 2004
+ 2 .
+ Hilson, G., The Socio-Economic Impacts of Artisanal and Small-Scale Mining in Developing Countries, CRC Press , 2003
+ Supplementary Reading
+ 1 .
+ Raj, K.S & Kartik C.R., Sustainable Economic Development And Environment: India and Other Low Income Economies, Atlatic Publishers & Distributors Pvt Ltd , 2008
+ 2 .
+ Baleshwar, T., Rajiv, R.T, Srikumar, C., & Rajesh, K.A., Resource Management, Sustainable Development and Governance, Springer International Publishing , 2021

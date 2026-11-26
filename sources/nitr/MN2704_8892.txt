@@ -1,0 +1,59 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8892 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN2704 : Rock Mechanics Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+Preparation of rock specimen for determination of physio-mechanical properties of rock
+Module 2 : 
+Determination of Durability Index of Rock and coal sample by Slake Durability Apparatus
+Module 3 : 
+Determine the strength index of rock and coal aggregates by Protodykonov apparatus
+Module 4 : 
+Evaluation of Impact strength of Rock aggregates by Impact Strength apparatus
+Module 5 : 
+Determination of Uni-axial compressive strength of rock materials by Compression M/C
+Module 6 : 
+Determine the Uni-axial Tensile strength of rock specimen by Indirect method (Brazilian test)
+Module 7 : 
+Determination of Point load strength Index of rock specimen (Cylindrical & Irregular Specimen)
+Module 8 : 
+Evaluation of shear strength parameter of Soil by direct shear –test apparatus
+Module 9 : 
+Determination of modulus of elasticity and passions ratio of rock samples
+Module 10 : 
+Determination of cohesion and angle of Internal friction by tri-axial test
+Module 11 : 
+Determination of index parameter of rock mass using Schmidt hammer test
+ Course Objective
+ 1 .
+To select the right sample and prepare it according to the tests needed
+ 2 .
+To identify the type of machines needed for each test and operate those machine with minimum assistance/guidance
+ 3 .
+To decide the type of tests needed to obtain the right parameters of rocks
+ 4 .
+To carry out determination of different properties of rocks
+ 5 .
+To interpret the results and analyse those for engineering design purpose
+ Course Outcome
+ 1 .
+To be able to select the source of rock/soil samples for further investigation
+ 2 .
+To be able to prepare and perform tests for index properties of soil/rock as durability and surface properties
+ 3 .
+To able to prepare and perform tests for mechanical properties of soil/rock as compressive, tensile and shear parameters
+ 4 .
+To be able to prepare, perform and determine three-dimensional stress properties 
+ 5 .
+To perform and predict rock properties from simple field tests apparatus
+ Essential Reading
+ 1 .
+ Sivakugan, Arutrajan and Bo, Laboratory testing of Soils, Rocks and Aggregates, J Ross Publication 
+ Supplementary Reading
+ 1 .
+ Ramamurthy,, Introduction to Rock Engineering, PHP 
+ Journal and Conferences
+ 1 .
+International Journal of rock Mechanics and Mining Sciences

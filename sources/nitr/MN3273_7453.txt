@@ -1,0 +1,40 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7453 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3273 : Coal and Mineral Processing Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+List of Experiments:
+1. Particle size analysis of different rocks and minerals
+2. Study of Jaw Crusher and determination of its Actual Capacity
+3. Finding out Reduction Ratio using jaw crusher
+4. Verification of Rettinger’s Law using jaw crusher
+5. Study of Hammer Mill and determination of its Actual Capacity
+6. Finding out Reduction Ratio using Hammer Mill
+7. Verification of Kick’s’ Law using Hammer Mill
+8. Study of Rod Mill and determination of its Actual Capacity
+9. Study of the effect of Ball Load and time on Grinding using Ball Mill
+10. Study of Vibrating Screen and Determination of its Effectiveness
+11. Study of Magnetic Separator and Determination of its Efficiency
+12. Study of Baum Jig and Determination of its Efficiency
+ Course Objective
+ 1 .
+To know the grade and quality of minerals found in earth crust and how to improve them so that the metallurgists can use the same for extraction purpose.
+ 2 .
+To know up to what extent the improvement should be done so that it will be economic.
+ Course Outcome
+ 1 .
+CO1: To understand the Laboratory techniques of Mineral Beneficiation 
+CO2: To study various methods and equipment used for concentration 
+CO3: To give exposure to flow sheets for the beneficiation of various ore/minerals with special reference to Indian deposit.
+ Essential Reading
+ 1 .
+ A. M. Gaudin, Principles of Mineral Dressing, Tata McGraw & Hill 
+ 2 .
+ R. H. Richard and C. E. Locky, A text Book on Ore Dressing,, A A Balkema 
+ Supplementary Reading
+ 1 .
+ F. Taggart, Mineral Dressing Handbook, P & H 
+ 2 .
+ B. A. Wills, Mineral Processing Technology, Willy & Sons

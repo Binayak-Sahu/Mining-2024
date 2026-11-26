@@ -1,0 +1,30 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7969 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN5242 : Advanced Mine Ventilation { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module1: Basics of mine thermodynamics and computation of psychrometric properties of mine air using accurate equations Basic modes of heat transfer in mine airways. Heat and mass transfer in bord and pillar panels. Development of equations and calculations for designing climatic conditions in panels. Sources of heat in longwall panels. Computation of volume flow using equivalent resistance method and using direct analysis. 
+Module 2: Application of Kirchoff’s 2nd law to solve simple field problems Derivation of Hardy Cross Iteractive method. Concept of application of Hardy Cross iterative method to solve complex mine ventilation network problems 
+Module 3: Thermodynamic principles applied to mine ventilation network analysis Leakage, Recirculation and reversal of air flow Air conditioning – refrigerants, heat exchangers etc Environmental monitoring and automatic control 
+Module 4: Computer application in network analysis Health and safety aspects of the mine environment, application of ventilation survey instruments and computer simulations Study of the design of coal dust control plan methane and noise control.
+ Course Objective
+ 1 .
+To create awareness on computation of psychrometric properties of mine air in various workings such as bord and pillar panels, longwall panels etc.
+ 2 .
+Learn the fundamentals of application of ventilation survey instruments and computer simulations
+ Course Outcome
+ 1 .
+CO1: Ability to determine the psychometric properties of mine air accurately using fundamental relationships.
+CO2: Ability to solve and plan complex ventilation networks
+ Essential Reading
+ 1 .
+ M. J. McPherson, Subsurface Ventilation and Environmental Engineering,, Chapman & Hall 
+ 2 .
+ H. L. Hartman, J. M. Mutmansky, R. V. Ramani and Y. J. Wang, Mine Ventilation And Air Conditioning,, Wiley-interscience, 3rd Edition, 1997 
+ Supplementary Reading
+ 1 .
+ S.P.Banerjee, Mine Ventilation, Lovely Prakashan, 1st Edition, 2003. 
+ 2 .
+ P Thakur, Advanced Mine Ventilation, Woodland Publishing, 1st Edition, 2018

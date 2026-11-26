@@ -1,0 +1,37 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7455 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3172 : Geomechanics Laboratory { 0-0-2 / 1}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1. Determination of the aggregate crushing value of coarse aggregate value
+2. Determination of the aggregate impact value of coarse aggregate value
+3. Determination of Los Angeles Abrasion Test values
+4. Evaluation of in-situ stress by using Flat Jack Unit
+5. To study the Brinell Hardness testing machine and determine the Brinell hardness test value
+6. Determine the permeability of soil by constant head method
+7. Determine the OMC-MDD by Proctor compaction test
+8. Determine California Baring Ratio (C.B.R.) value of a given soil sample.
+9. Determine the Rebound hammer test number of rock 
+10. Study of working principle and field application of load cell
+11. Evaluation of ground vibration
+ Course Objective
+ 1 .
+To know the different properties of geomaterial and how to determine those by instrumentation
+ 2 .
+To be able to decide the right instrument for the specific rock parameter
+ 3 .
+To independently operate with safety and determine the rock parameters
+ 4 .
+To develop documentation for any test type
+ Course Outcome
+ 1 .
+1. To be able to select the source of rock/soil samples for further investigation
+2. To be able to place block/irregular sample in the coring and cutting machines and extract cores
+3. To prepare samples/sites with right dimension as per ASTM/ISRM/IS standards
+4. To be able to determine independently different properties of rocks 
+5. To prepare a professional document with all the detail information and analysis
+ Essential Reading
+ 1 .
+ Sivakugan, Arutrajan and Bo, Laboratory testing of Soils, Rocks and Aggregates, J Ross

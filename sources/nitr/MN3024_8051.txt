@@ -1,0 +1,41 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8051 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3024 : Ground Control Instrumentation { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+Module 1: Deformation Measuring Instruments: Convergence meters and recorders, Tape extensometers, Borehole deformation gauge (6 Hours)
+Module 2: Advanced Deformation Monitoring Multipoint borehole extensometers, Borehole camera, Interpretation of deformation data (6 Hours)
+Module 3: Load and Pressure Measuring Instruments: Load cells, Pressure measuring instruments – stress capsules, stress meters, borehole pressure cells, and flat jacks, Readout units, sensors, transmitters, and data acquisition systems (8 Hours)
+Module 4: Stress and Strain Measurement Techniques: Strain gauges and transducers, UTM and MTS testing equipment, Acoustic emission equipment (5 Hours)
+Module 5: Applications of Instrumentation: Mining Engineering applications Instrumentation in underground and opencast mines, Civil Engineering applications Instrumentation in Hydroelectric projects and Tunnels, Rock bolt pull tester, Monitoring and interpretation of data, Case studies (10 Hours)
+ Course Objective
+ 1 .
+candidates get exposure to ground control instrumentation
+ 2 .
+students will learn details of instruments to implement in the mines.
+ 3 .
+Students will learn Application of Strata control technology and establishment of strata control cell
+ Course Outcome
+ 1 .
+• CO1: Describe the principles of operation and application of various instruments for measuring deformation in and around mining excavations, including convergence meters, tape extensometers, and borehole deformation gauges.
+• CO2: Analyze and apply advanced techniques for monitoring ground movement using multipoint borehole extensometers and borehole cameras, and interpret the resulting deformation data for stability assessment.
+• CO3: Explain the functionality and selection criteria of load and pressure measuring instruments such as load cells, stress capsules, borehole pressure cells, and flat jacks, along with the associated data acquisition systems.
+• CO4: Evaluate the principles and applications of strain measurement using strain gauges and transducers, and utilize testing equipment like UTM, MTS, and acoustic emission for rock mass characterization.
+• CO5: Apply the knowledge of various instrumentation techniques to real-world scenarios in Mining and Civil Engineering projects, including underground and opencast mines, hydroelectric projects, and tunnels, and interpret the monitored data for informed decision-making, including rock bolt testing.
+ Essential Reading
+ 1 .
+ J. A. Hudson,, Comprehensive Rock Engineering,, Pergamon Press, UK, 2000 
+ 2 .
+ M. L. Jeremic,, Strata Mechanics in coal mining,, A A Balkema, Rotterdam, Taylor and Francis, 1985, 
+ Supplementary Reading
+ 1 .
+ Z. T. Bieniawski,, Strata Control in Mineral Engineering,, New York: John Wiley & Sons, 1987. 
+ 2 .
+ B. H. G. Brady and E. T. Brown,, Rock Mechanics for Underground Mining,, George Allen and Unwin Ltd., 1992 
+ Journal and Conferences
+ 2 .
+Singam Jayanthu, Singam Jayadarshana, and Singam Sai Sreeja, (2020), Instrumentation and recent practices for safe blasting in opencast mines – field experimental studies, Recent Practices and Advancement In Mineral Industry, Chapter. Production Technology-I, no.1, VINIT-Nagpur 2020, ISBN:978-93-5396-651-5, pp 147-155.
+ 1 .
+Jayanthu, S., T. N. Singh and D. P. Singh, 2004, Stress distribution during extraction of pillars in a thick coal seam., Rock mechanics and rock engineering 37.3 171-192.

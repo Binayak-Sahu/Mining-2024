@@ -1,0 +1,44 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=19688 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3708 : Mine Modelling , Automation and Digitization Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+L01: Application of AI/ML based mineral exploration using remote sensing and geospatial analytics
+L02: Geological modelling practices: Preparation and process of for 3D models using Implicit Modeling tools
+L03: Geological modelling practices: Preparation and process of for 3D mine models
+L04: 3D reconstruction of objects/model based on Structure from Motion Photogrammetry
+L05: Use of Lidar data for change detection and deformation monitoring in u/g mines/tunnels
+L06: Application of digital tools for mine scale 3D modelling, simulation & optimization
+L07: Demonstration of AR/VR Use cases in mining operation and planning
+L08: Use of Wireless sensor networks & IIoTs for real-time monitoring of mine unit operation
+L09: Digital Twins: Virtual mine replicas for planning, optimization, and training
+L10: Interpretation of mine instrumentation data and application of AI/ML techniques
+L11: Handling, extraction, interpretation and visualization of Big Data in mining
+ Course Objective
+ 1 .
+Understand the benefit of Industry 4.0 on mining application 
+ 2 .
+Demonstrate principles and components of major automated unit operations in mining
+ 3 .
+Understand data collection, interpretation and visualization of various types of data in mining industry 
+ Course Outcome
+ 1 .
+Understand the fundamentals of communications in digital mining, IIoTs and Industry 4.0
+ 2 .
+Get an overview of emerging practices in mine automation & digitalization
+ 3 .
+Gain understating of how mining industry can be digitized mining 
+ Essential Reading
+ 1 .
+ Ali Soofastaei, Data Analytics Applied to the Mining Industry, CRC Press, 2020 
+ 2 .
+ Robin Burgess-Limerick, Tim Horberry, Danellie Lynas, Andrew Hill, Joel M Haight, Human Systems Integration for Mining Automation, CRC Press, 2025 
+ Supplementary Reading
+ 1 .
+ Alan B. Craig and William R. Sherman, Understanding Virtual Reality: Interface, Application, and Design, Elsevier 
+ 2 .
+ Ali Soofastaei (Editor), Advanced Analytics in Mining Engineering, Springer Cham (2022) 
+ Journal and Conferences
+ 1 .

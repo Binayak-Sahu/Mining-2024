@@ -278,22 +278,15 @@ Source prerequisites:
 
 Also carried over: sim label font floor (11 units) with an audit:svg re-run; two-line readouts on phones; O₂ coupled to CH₄ in the Coward nudge; elimination → zero residual in `u10-risk`; hide the u0 predict "rule of thumb" annotation until reveal.
 
-**Coverage-gap map (to complete next checkpoint).** The two syllabi could **not** be fetched this session (`nitrkl.ac.in` is not in the environment's allowed hosts; `dgms.gov.in` timed out). Per the content rule, the syllabus columns are left blank rather than filled from memory.
-
-| STRATA unit | lessons (= theory stages) | sourced flows | NIT Rourkela B.Tech Mining course(s) | DGMS First Class paper | gap |
-|---|---|---|---|---|---|
-| U0 Orientation (σv) | 1 | 1 | _fetch_ | _fetch_ | _fetch_ |
-| U1 Geology & exploration | 6 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U2 Mine development | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U3 Rock mechanics & ground control | 7 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U4 Drilling & blasting | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U5 Opencast & HEMM | 5 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U6 UG coal & metal methods | 4 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U7 Ventilation & hazards | 7 | 1 | _fetch_ | _fetch_ | _fetch_ |
-| U8 Survey, processing, electrical | 6 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U9 Economics & planning | 4 | 0 | _fetch_ | _fetch_ | _fetch_ |
-| U10 Legislation, safety, rescue | 5 | 1 | _fetch_ | _fetch_ | _fetch_ |
-
-Syllabus sources to fetch: NIT Rourkela curricula (https://www.nitrkl.ac.in/MN/CuricullaSyllabi, "Mining Engineering (B.Tech. – 4yrs)"); DGMS First Class Manager syllabus/notifications (e.g. https://dgms.gov.in/writereaddata/UploadFile/FinalNotificationCBT_02022025.pdf). Before fetching, add `www.nitrkl.ac.in` to the `Mining-2024` environment.
+**Coverage-gap map: done in Phase 15** (see `coverage/MAP.md` and the Phase 15 entry below). The syllabus table that stood here is replaced by that map.
 
 Run `npm run audit:svg` after any diagram change.
+
+## Phase 15 — Sources & coverage map (2026-11-26)
+- **Text extraction.** Tesseract 5.3 was installed with apt (tooling only, no project dependency). `pdftotext -layout` handles native pages and OCR (200 dpi, `--psm 6`) handles any page that returns under 40 characters. Only `DGMScircularsfrom20182024_06122024.pdf` was scanned (135 of 155 pages). `.txt` files sit next to the PDFs; `sources/README.md` lists scanned files and the OCR caveat.
+- **NITR.** `www.nitrkl.ac.in` was added to the environment allowlist. `sources/nitr/` holds `curriculum-id18.txt` and 64 MN syllabus pages. 29 MN subject links return "Course Syllabus Not Found" on the site (listed in `sources/README.md`).
+- **DGMS syllabus: missing.** G.S.R. 910(E) (14-09-2018) was not obtainable. The map uses CMR 2017 regulation headings as proxy lines. Only the 2021 amendments are in `sources/`.
+- **Map.** `coverage/build_map.py` reads `coverage/inventory.json` (lesson and stage ids dumped from `src/content`; 66 lessons, 379 stages), `coverage/_cmr_regs.json` and `sources/nitr/`, then writes `coverage/MAP.md` and `coverage/map.json`. Rules are regex topics; the script asserts that every `lesson#stage` id exists. 252 CMR regulations and 198 unique NITR theory lines are mapped, with 25 ranked gaps.
+- **`.gitignore`.** The `/coverage` line was removed, because `coverage/` is now a tracked deliverable.
+- **Docs.** `ROADMAP.md` records the Phase 16 order (U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9), the Phase 18 exam facts (only what the documents state) and the syllabus-source-missing flag.
+- **No app code changed.** Gates are recorded in the ROADMAP run log.

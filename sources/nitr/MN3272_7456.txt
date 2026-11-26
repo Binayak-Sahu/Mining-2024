@@ -1,0 +1,46 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7456 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3272 : Hazard and Rescue Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+List of Experiments to be conducted in the Laboratory:
+1. Study of MSA type Gas mask (Model: “SW”, Air purifying filter)
+2. Study of MSA type Self Rescuer (Model: IW-65)
+3. Study of Oxygen Self Contained Breathing Apparatus-Dragger BG-174 
+4. Study of Oxygen Self Contained Breathing Apparatus-Travox-120
+5. Study of Drager Pulmotor (Model: PT-60)
+6. Study of smoke detector and Wireless Alarm control system.
+7. Study of different type of portable fire extinguishers
+8. Study of the construction and working of explosion proof fire stoppings
+09. Study of different type of personal protective equipment
+10 .Determination of Ignition temperature of coal by using Flammability Temperature Apparatus.
+11. Determination of Relative Inflammability Index (RI Index) using Inflammability Index apparatus
+ Course Objective
+ 1 .
+To understand hazards and assess the risks associated in mining operation.
+ 2 .
+Student will able to learn learn the procedures to operate different types of rescue apparatus, firefighting equipment and personal protective equipment.
+ 3 .
+To make conversant with Emergency management System and Rescue procedures.
+ Course Outcome
+ 1 .
+CO1: The students will know about the types of hazards present in underground mine like fire, explosion and inundation etc.
+CO2: Student will acquire the Knowledge regarding the development and implementation of proactive Safety Management Plan. 
+CO3: The students will gain knowledge on the rescue and recovery operations to be conducted in emergency situations in underground mines.
+ Essential Reading
+ 1 .
+ B. K. Kejriwal, Safety in Mines, Lovely Prakashan, 2002 , Dhanbad
+ 2 .
+ M.A. Ramulu, Mine Disasters and Mine Rescue,, Rotterdam: A.A. Balkema , 1991
+ Supplementary Reading
+ 1 .
+ 1. B.K. Kejriwal, Safety in Mines - A Survey of Accidents, their Causes and Prevention 1901-2000, Lovely Prakashan, Dhanbad, 1st Edition , 2002
+ 2 .
+ L.C.Kaku, A study of Mine Management, Legislation and general safety, Lovely Prakashan, 2020 , Dhanbad
+ Journal and Conferences
+ 2 .
+11th National Conference on safety in mines, held on 4th and 5th of July 2013 at New Delhi
+ 1 .
+A. K. Ghosh, S. K. Ray and A. K. Patra, Proceeding of the National Seminar on Policies, Statutes & Legislation in Mines , CIMFR, Dhanbad, India, 2008

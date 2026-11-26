@@ -1,0 +1,45 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=7362 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3005 : Mine Economics { 3-0-0 / 3}
+Subject Nature :
+ Theory
+ Syllabus
+Module 1 : 
+MODULE 1: 7 classes
+Minerals and Economy: Mine and Mineral Economics - scope and definitions, Economics of Depleting Resources - Major Issues, availability, secondary supply, conservation and substitution. 
+Mine Sampling: Theory of Sampling Common Methods, Size and Spacing, Sample Preparation Errors in Sampling, Interpretation of Sampling Results. 
+MODULE 2: 11 classes
+Resource-Reserve Dynamics: Mineral Resource Classification - JORC and UNFC system, Estimation of Mineral Inventory, Marginal resources and reserves, cost and revenue concepts. 
+Mine Investment Analysis: Present and future values, NPV and IRR, Discounted Cash Flow Analysis, discount factors, Cost and inflation adjustments, Feasibility study. 
+MODULE 3: 9 classes
+Mine Finance and Accounting: Cost of Capital Sources of Finance Cost Accounting Cost-Volume-Profit Analysis, - break-even analysis Depreciation and Amortization. 
+Mine Taxation: Objectives and Principles, components, Mineral Taxation in India & Abroad. 
+MODULE 4: 7 classes
+Mineral Markets and Trade: Market Structure and Analysis Market Regulatory Organisations International Mineral Study Group Mineral Pricing (4 classes)
+National Mineral Policy: Objectives and Elements National Mineral Policy of India Mineral Policies of Some Important Countries Implementation Strategies (3 classes)
+CLass Tests: 2
+Total Classes 36
+ Course Objective
+ 1 .
+To familiarize the student with the fundamental concepts of the mineral industry and mineral resources.
+ 2 .
+To show the various resource and operational parameters and the techniques to do the financial analysis..
+ 3 .
+To perform statistical tools for trend and forecast analysis in mineral markets.
+ Course Outcome
+ 1 .
+CO1: To understand the fundamental concepts and processes of reserve estimation.
+CO2: To know the various norms and protocols for reporting the sampling results.
+CO3: To learn about the cost-volume-profit analysis based on the local and global market conditions.
+CO4: To see the government's role and social influences over the mineral industry in taxation and policy of a mine.
+CO5: To check the changes in the market characteristics of any minerals based on possible attributes.
+ Essential Reading
+ 1 .
+ R.T.Deshmukh, Mineral and Mine Economics, Myra Publisher , Nagpur, 1986.
+ 2 .
+ R.K. Sinha and N.L. Sharma, Mineral Economics, Oxford & IBH Publishers , UK, 1970.
+ Supplementary Reading
+ 1 .
+ O.P. Khanna, Industrial Engineering and Management, Dhanpat Rai , Delhi, 1993.
+ 2 .
+ R.N.P. Arogyaswamy, Courses in Mining Geology, Oxford & IBH Publisher , UK, 1973

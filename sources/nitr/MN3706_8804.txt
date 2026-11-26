@@ -1,0 +1,52 @@
+Source: https://www.nitrkl.ac.in/Academic/Syllabus/?id=18&sid=8804 (fetched 2026-11-26)
+Subject {L-T-P / C} :
+ MN3706 : Geomechanics Laboratory { 0-0-3 / 2}
+Subject Nature :
+ Practical
+ Syllabus
+Module 1 : 
+1 Determination of the aggregate crushing value of coarse aggregate.
+Module 2 : 
+2 Determination of the aggregate impact value of coarse aggregate.
+Module 3 : 
+3 Los Angeles Abrasion Test
+Module 4 : 
+4 To study the Brinell Hardness testing machine and the Brinell hardness test.
+Module 5 : 
+5 Determination of OMC and MDD by Proctor compaction test
+Module 6 : 
+6 Permeability of soil by the constant head method
+Module 7 : 
+7 To determine the California Bearing Ratio (C.B.R.) value of a given soil sample.
+Module 8 : 
+8 Rebound hammer test(NDT)
+Module 9 : 
+9 Atterberg Limits
+ Course Objective
+ 1 .
+To be aware and understand the different physical and mechanical properties of rocks, soils and aggregate materials
+ 2 .
+To identify correctly the methods and standards of testing for different geo-mechanical properties based on requirement of the problem.
+ 3 .
+To be able to independently perform laboratory testing for determining various geo-mechanical properties of materials.
+ Course Outcome
+ 1 .
+CO 1. Understand the principles and procedures of mechanical property testing of aggregates and construction materials, 
+ 2 .
+CO 2. Apply laboratory techniques to determine soil compaction and permeability characteristics for geotechnical engineering applications. 
+ 3 .
+CO 3. Analyze the strength and bearing capacity of soil to assess their suitability for construction. 
+ 4 .
+CO 4. Evaluate the quality and structural integrity of construction materials through non-destructive testing methods 
+ 5 .
+CO 5. Design effective material testing strategies and interpret experimental results to make informed decisions for infrastructure development and geotechnical applica-tions.
+ Essential Reading
+ 1 .
+ Nagaratnam Sivakugan, A. Arulrajah, Myint Win Bo, Laboratory Testing of Soils, Rocks and Aggregates, J. Ross Publishing 
+ 2 .
+ ISRM, ISRM Standard Methods for testing, ISRM Turkish National Group 
+ Supplementary Reading
+ 1 .
+ PDH PRO, Lab Testing for Soils and Rock, U.S. Department of Transportation , https://www.pdh-pro.com/wp-content/uploads/2018/11/GE-02-105.pdf
+ Journal and Conferences
+ 1 .
