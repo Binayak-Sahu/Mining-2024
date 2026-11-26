@@ -153,3 +153,17 @@ Slice key: **a** tokens + sandbox · **b** global palette/buttons/tiles/cards/ta
 9. **Always-dark instrument panels.** Calculators in Tools, the sim telemetry strip and the Exam hero are deliberately always dark (PROJECT_CONTEXT §10). DESIGN.md §5.9 turns sim readouts into plain rows. Should the Tools calculators also follow the theme? DESIGN.md wins on conflict, so I would assume yes unless you say no.
 
 No DESIGN.md rule requires touching a CLAUDE.md "Do not touch" item. The Inspector restyle (§5.6) moves only the button into ⋯; the stage-jumper and sandbox logic stay as they are. Removing the plate's chips (§5.9) is SimView UI, not sim geometry, but audit:svg will be re-run in 15.5e anyway.
+
+## Answers from Bink (2026-11-26)
+
+All nine questions are answered in DESIGN.md (commit after `600c3ea`):
+
+1. Contrast: Option A. Dark `success` and `action` faces now match the light ones (`#15803D`, `#3B5BF6`); `--text-3` is `#6B6B6B` light / `#949494` dark. Every text pair is ≥ 4.8:1.
+2. Wrong answer: keep retry. The sheet button is `ink` "Try again" with today's behaviour (§5.1, §5.7).
+3. Progress bar: one bar with 2 px stage notches; tapping a finished section still opens its recap (§5.6).
+4. Stage kinds: neutral eyebrow + lucide icon, no per-kind colour (§5.12).
+5. Special nodes and tap: boss, perfect, master nodes and the Start popover are in §5.5b. Tap shows the popover first.
+6. Readouts: first 2 in current order, unless the sim gets an optional `primary` list (§5.9).
+7. Unit icons: one lucide icon per unit in a tile; mapping proposed in ROADMAP for approval (§5.11).
+8. Counts: "N questions" = answerable screens, computed by one helper (§5.10).
+9. Instrument panels follow the theme; only the sim plate stays light (§5.13).

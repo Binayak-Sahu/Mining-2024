@@ -35,26 +35,26 @@ Implement as CSS variables in `src/app/globals.css`. Existing Tailwind names (`s
 | `--line-strong` | tile border, inputs | `#D4D4D4` | `#3A3A3A` |
 | `--text` (`--n-900`) | primary text | `#141414` | `#F5F5F5` |
 | `--text-2` (`--n-500`) | secondary text | `#5C5C5C` | `#A3A3A3` |
-| `--text-3` (`--n-400`) | eyebrows, captions, locked labels | `#737373` | `#8A8A8A` |
+| `--text-3` (`--n-400`) | eyebrows, captions, locked labels | `#6B6B6B` | `#949494` |
 
 Neutral ramp remap (`--n-50 … --n-950`):
 
 | | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Light | `#FAFAFA` | `#F5F5F5` | `#E5E5E5` | `#D4D4D4` | `#737373` | `#5C5C5C` | `#525252` | `#404040` | `#262626` | `#141414` | `#0A0A0A` |
-| Dark | `#1C1C1C` | `#242424` | `#2E2E2E` | `#3A3A3A` | `#8A8A8A` | `#A3A3A3` | `#BDBDBD` | `#D4D4D4` | `#E5E5E5` | `#F5F5F5` | `#FFFFFF` |
+| Light | `#FAFAFA` | `#F5F5F5` | `#E5E5E5` | `#D4D4D4` | `#6B6B6B` | `#5C5C5C` | `#525252` | `#404040` | `#262626` | `#141414` | `#0A0A0A` |
+| Dark | `#1C1C1C` | `#242424` | `#2E2E2E` | `#3A3A3A` | `#949494` | `#A3A3A3` | `#BDBDBD` | `#D4D4D4` | `#E5E5E5` | `#F5F5F5` | `#FFFFFF` |
 
-Contrast check: `--text-3` on `--bg` is ≥ 4.5:1 in both themes, so it may carry small text. `--line`/`--line-strong` are for borders only, never text.
+Contrast check (WCAG, verified 2026-11-26): `--text-3` is ≥ 4.8:1 on `--bg`, `--surface` and `--surface-2` in both themes, so it may carry small text. Every accent face carries its text-on colour at ≥ 4.8:1. `--line`/`--line-strong` are for borders only, never text.
 
 ### 2.2 Accents (face / ledge / text-on / tint)
 
 | Tone | Light face · ledge | Dark face · ledge | Text on face | Tint bg (light / dark) | Tint text (light / dark) |
 |---|---|---|---|---|---|
-| `action` (blue) | `#3B5BF6` · `#2A43C2` | `#4B6BFB` · `#2F4AC9` | `#FFFFFF` | `#EEF1FF` / `#1A2040` | `#2A43C2` / `#9DAEFF` |
-| `success` (green) | `#15803D` · `#0F5E2C` | `#16A34A` · `#0F6E33` | `#FFFFFF` | `#DCFCE7` / `#0F2E1A` | `#15803D` / `#4ADE80` |
+| `action` (blue) | `#3B5BF6` · `#2A43C2` | `#3B5BF6` · `#2A43C2` | `#FFFFFF` | `#EEF1FF` / `#1A2040` | `#2A43C2` / `#9DAEFF` |
+| `success` (green) | `#15803D` · `#0F5E2C` | `#15803D` · `#0F5E2C` | `#FFFFFF` | `#DCFCE7` / `#0F2E1A` | `#15803D` / `#4ADE80` |
 | `danger` (red) | `#DC2626` · `#991B1B` | `#DC2626` · `#8F1D1D` | `#FFFFFF` | `#FEE2E2` / `#3A1215` | `#B91C1C` / `#F87171` |
 | `energy` (amber) | `#F5B417` · `#B47F06` | `#F5B417` · `#9C6E05` | `#2A1E00` | `#FEF6DC` / `#2E2508` | `#92600A` / `#F5C84A` |
-| `ink` (neutral CTA) | `#141414` · `#000000` | `#D4D4D4` · `#8A8A8A` | light `#FFFFFF` / dark `#141414` | — | — |
+| `ink` (neutral CTA) | `#141414` · `#000000` | `#D4D4D4` · `#949494` | light `#FFFFFF` / dark `#141414` | — | — |
 
 Progress fill (bars, done nodes): `success` face. Selected ring/border: `action` face. Focus ring: 3 px `action` face at 60 % opacity, 3 px offset.
 
@@ -119,7 +119,7 @@ Touch targets ≥ 44×44 px on coarse pointers; primary buttons 56 px tall.
 - Height 56, pill, full width in the footer. Face `--c`, ledge `box-shadow: 0 4px 0 var(--e)`. Press: `translateY(4px)` + ledge 0 (existing behaviour, keep).
 - Tones map: `tone-tech` → `action`, `tone-safe` → `success`, `tone-crit` → `danger`, `tone-hazard` → `energy`, `tone-ink` → `ink`, `tone-ghost` → face `--surface`, 2 px `--line-strong` border, ledge `--line-strong`, text `--text`. `tone-violet` → map to `action` (violet retired).
 - Disabled: face `--surface-2`, ledge none, text `--text-3`. (Brilliant's dark "Check".)
-- Which tone when: read-only screen → `ink` "Continue"; answer pending → disabled "Check"; answer ready → `action` "Check"; after correct → `success` "Continue"; after wrong → `danger`-tint sheet with `ink` "Got it"; start a lesson/level → `action` "Start".
+- Which tone when: read-only screen → `ink` "Continue"; answer pending → disabled "Check"; answer ready → `action` "Check"; after correct → `success` "Continue"; after wrong → `danger`-tint sheet with `ink` "Try again" (clears the pick so the learner re-answers the same screen; the miss still goes to Warmup review, as today); start a lesson/level → `action` "Start".
 - One filled button per screen. Secondary actions are `ghost` pills ("Why?", "Hint").
 
 ### 5.2 Answer tiles and word-bank chips (`.tile-3d`)
@@ -131,7 +131,7 @@ Touch targets ≥ 44×44 px on coarse pointers; primary buttons 56 px tall.
 
 ### 5.3 Cards (`.card`)
 - Face `--surface`, card border (§4), radius 20, no shadow.
-- Course/unit card: 88×88 icon slot left (existing unit icon, 56 px, centred), 16 px gap, eyebrow, `heading` title, optional 6 px progress bar (track `--surface-2`, fill `success`) 12 px under the title. Badge top-right 12 px inset: "Next" (`action` face) or "New" (`success` face), pill, `label` 700, white.
+- Course/unit card: 88×88 unit icon tile left (§5.11), 16 px gap, eyebrow, `heading` title, optional 6 px progress bar (track `--surface-2`, fill `success`) 12 px under the title. Badge top-right 12 px inset: "Next" (`action` face) or "New" (`success` face), pill, `label` 700, white.
 - Level header card: 2 px `action` border, 5 px `action` ledge, eyebrow in `action` tint text, `heading` title, centred.
 
 ### 5.4 Course spine
@@ -143,15 +143,21 @@ Vertical 4 px line in `--line`, centred horizontally, drawn behind the 32 px gap
 - Label 20 px from node: `heading` weight 600; locked label `--text-3`.
 - Tap a node → popover card (§5.7) with lesson title + `action` "Start" (or "Review" for done).
 
+### 5.5b Special nodes and tapping
+- Boss node: face `energy`, rim `energy` ledge, lucide `Crown` 26 px in `energy` text-on. Locked boss: locked style with a small `Crown` in `--text-3`.
+- Perfect lesson: done node plus a 22 px `energy` circle badge with a white `Star` at the top-right of the face.
+- Inspector-sandbox (master) node: locked-style face, label followed by an `action`-tint "Master" pill (`label` 700).
+- Tap any unlocked node → popover card above/below it (`feedbackSheet` spring): lesson title (`heading`), stage count (`secondary`), button `action` "Start" (current), `ghost` "Review" (done) or `energy` "Fight boss" (boss). Tapping a locked node shows the popover with "Finish the previous lesson first" and no button. The old "START" callout is removed.
+
 ### 5.6 Lesson top bar
 - Height 56, bg `--bg`, no border, no blur.
-- Left: `X` (lucide, 24 px, 44 px target, `--text-2`). Centre: one progress bar, 10 px tall, pill, track `--surface-2`, fill `success`, animated width with `stageSlide`. Right: hearts as one pill — lucide `Heart` filled `danger` face 20 px + count `label` 700.
+- Left: `X` (lucide, 24 px, 44 px target, `--text-2`). Centre: one progress bar, 10 px tall, pill, track `--surface-2`, fill `success`, animated width with `stageSlide`. It reads as one bar, with 2 px notches (gaps in `--bg`) at stage boundaries. Tapping a finished section re-opens that stage's recap (today's re-read feature, unchanged); give each finished section a ≥ 44 px tall invisible hit area. Right: hearts as one pill — lucide `Heart` filled `danger` face 20 px + count `label` 700.
 - Notes, Inspector and Sources move into a `MoreHorizontal` (⋯) button left of the hearts pill, opening the existing sheets. The Notes badge becomes a 8 px `action` dot on the ⋯ icon.
 - Inspector mode keeps its banner, restyled as an `energy`-tint strip under the top bar, `label` text.
 
 ### 5.7 Sheets, popovers, feedback
 - Sheets/popovers: face `--surface-2`, radius 24 top (sheets) or 20 (popovers), 2 px `--line` border, the only element allowed a shadow: `0 -8px 24px rgba(0,0,0,0.25)` dark / `0 -8px 24px rgba(0,0,0,0.08)` light.
-- **Feedback sheet** (replaces the verdict strip): rises from the bottom over the footer area, full width, radius 24 top, bg `success` tint or `danger` tint, padding 20/24. Row 1: verdict `title` 800 in tint text ("Correct!" / "Not quite") left; ghost pill "Why?" right (opens the existing explanation). Row 2: full-width button (`success` "Continue" / `ink` "Got it").
+- **Feedback sheet** (replaces the verdict strip): rises from the bottom over the footer area, full width, radius 24 top, bg `success` tint or `danger` tint, padding 20/24. Row 1: verdict `title` 800 in tint text ("Correct!" / "Not quite") left; ghost pill "Why?" right (opens the existing explanation). Row 2: full-width button (`success` "Continue" / `ink` "Try again", which keeps today's retry behaviour).
 - No layout shift: the scroll area always reserves bottom padding equal to the tallest footer state (footer + sheet), measured once.
 
 ### 5.8 Bottom tab bar
@@ -162,11 +168,21 @@ Vertical 4 px line in `--line`, centred horizontally, drawn behind the 32 px gap
 ### 5.9 Sim stage
 - Objective: one line above the plate — lucide `Target` 18 px + objective text `label`; turns `success` tint text when met.
 - Plate: full content width, rules in §2.3.
-- Readouts: plain rows, no tile backgrounds. Label `label` `--text-2` left, value `readout` right, 12 px row gap, 1 px `--line` divider. Show the first 2 readouts (the lesson's objective variables); the rest sit under a ghost "All readouts (n)" disclosure. Colour dot (8 px) only where the diagram uses the same colour.
+- Readouts: plain rows, no tile backgrounds. Label `label` `--text-2` left, value `readout` right, 12 px row gap, 1 px `--line` divider. Show 2 readouts; the rest sit under a ghost "All readouts (n)" disclosure. Which 2: the sim's optional `primary` list if it has one, otherwise the first 2 in the sim's current order. `primary` is added only to sims whose first 2 are not the stage's objective variables (content data, not geometry). Colour dot (8 px) only where the diagram uses the same colour.
 - Remove duplicate value chips under the plate when the same value is already in readouts.
 
 ### 5.10 Course / unit header
-Centred: unit icon 112 px, 24 px gap, `display` title, 12 px gap, `secondary` description (max 3 lines, centred allowed here only), 24 px gap, stats row: lucide `BookOpen` + "N lessons", lucide `Dumbbell` + "N exercises" (`secondary`, 24 px apart; counts computed from content, never typed).
+Centred: unit icon tile (§5.11) at 112 px, 24 px gap, `display` title, 12 px gap, `secondary` description (max 3 lines, centred allowed here only), 24 px gap, stats row: lucide `BookOpen` + "N lessons", lucide `CircleHelp` + "N questions" (`secondary`, 24 px apart). Both are computed from content, never typed: lessons = lessons in the unit; questions = every answerable screen in it (flow check and situation screens, predict/choice/equation/hotspot answers, boss items). One helper in `src/lib` does the count so every screen agrees.
+
+### 5.11 Unit icons
+Each unit has one lucide icon, shown in a rounded-square tile: `--surface-2` face, card border, radius 20, icon in `--text` at 45 % of the tile size (88 px tile on cards, 112 px on the unit header). The unit → icon mapping lives in one content file and is proposed in ROADMAP for Bink's approval before use. Original unit artwork may replace the icons in a later phase (Bink designs it); it must keep the same tile size.
+
+
+### 5.12 Stage-kind label
+Stage types are not colour-coded. Each shows an `eyebrow` in `--text-3` with a 16 px lucide icon before it: Field theory `BookOpen`, Intuition lab `FlaskConical`, Equation forge `Sigma`, Workbench `Wrench`, Crisis `Siren`, Boss `Crown`. Colour stays reserved for meaning (§1.4).
+
+### 5.13 Instrument panels follow the theme
+Tools calculators, the sim telemetry strip and the Exam hero are no longer always-dark: they use `--surface`, card border and `readout` type like everything else. The sim plate (§2.3) is the only fixed-light surface.
 
 ---
 
