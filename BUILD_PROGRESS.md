@@ -213,6 +213,49 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
     - Inspector acceptance: progress byte-identical.
   - **Owner to-do:** verify 5 claims per sourced lesson and mark them "Verified by Bink" in `research/*.md` (owner decision 2). Put the Phase 15 source files in `sources/`.
 
+- [x] **Phase 14.5 hotfix — real-phone bugs (owner, Android Chrome PWA)**. Each bug was reproduced first with real CDP touch input at 390×844 (`Input.dispatchTouchEvent`, so the browser's own touch-action and scroll arbitration apply) and now has a regression test in `scripts/touch-tests.cjs` + `scripts/touch-tests-more.cjs` (`npm run test:touch -- <url>`).
+  1. **Slider / grip scroll-steal.**
+     - Repro: a ~52° thumb drag dropped every slider and scrolled the page by 80 px. Vertical-axis grips scrolled the page by 36–47 px, because Chrome ignores `touch-action` on SVG children.
+     - Fix: sliders get a 48 px thumb grab zone (`touch-action: none`, pointer capture, value from the pointer x), and the track keeps `pan-y`, so vertical swipes over a slider still scroll.
+     - Grips claim the gesture with a non-passive `touchstart`, and their hit circle grows to r 28.
+     - Tests: diagonal drags on every slider and grip in 4 sims, plus page scroll over a track.
+  2. **Sim Lab picker stuck.**
+     - Repro: with the service worker on, after a deploy every drawer pick fell back to the default sim (0/5). Picks went through `router.replace`, which fetched an RSC payload that the SW serves cache-first from the old build; the sim state also ignored URL changes.
+     - Fix: picks update local state plus a shallow `history.replaceState` (no navigation, no RSC fetch), and the lab follows `?sim` when the URL changes. Re-run of the same repro: 5/5.
+     - Added **Repair app** (Profile → Troubleshooting, and the new route error boundary). It unregisters the SW and deletes only `strata-*` caches, never localStorage.
+     - Home shows **Restore from backup** while progress is empty.
+     - The matching `sw.js` change (RSC network-first) was blocked by the do-not-touch rule and awaits owner approval in ROADMAP.
+     - Tests: 5 drawer switches by touch, `?sim` deep links via Codex thumbnails, Repair keeps progress byte-identical, restore-link visibility.
+  3. **Sim stage declutter** (owner screenshot: u7-l1 Coward intuition lab).
+     - On phones the diagram is sticky under the header, carrying key status chips, while the controls scroll beneath.
+     - Grips are the primary control. At most 2 sliders are open; the rest, plus grip fine-tuning, sit in one collapsed row.
+     - The grip hint shows once, above the objective bar, and fades after the first drag.
+     - Readouts sit in a wrapping 2-column grid: no truncation, long verdicts span both columns, and `fmt` never prints -0.0.
+     - `Plot` moves axis text off grip tracks. Coward's O₂ axis is cropped to 10–22 % (lower readings pin to the edge with their value), with its hotspots re-mapped. audit:svg: 0 findings.
+     - The sim success strip is a one-line verdict with "Why?" plus Continue (130 px).
+     - Inspector: Report is a header flag (nothing floats over content), and the stage jumper + refill moved into a header Inspector menu with 44 px pills. The pills were Inspector-only already.
+     - Design review on every sim stage type: the top 7 fixes applied (hint z-order, slim progress segments, max-2-open sliders, status chips in the sticky block, long-readout spanning, a sticky surface with soft shadow, 13 px Sim Lab text).
+     - Deferred: SVG label size (geometry, Phase 19), predict-with-sim first-viewport layout.
+  4. **Back navigation.**
+     - ConceptFlow has a Back button and swipe-right. Answered screens reopen in a review state: answer shown, no re-scoring, no hearts.
+     - Completed progress segments open that stage read-only (`StageRecap`, every stage kind).
+     - A lesson-header **Notes** sheet lists every explanation, reveal, trap and briefing seen this run (session-only).
+     - Tests: back, review state, hearts unchanged, swipe back, Notes, recap.
+  5. **Verification.**
+     - `scripts/verify-quotes.ts` runs in `npm run validate`: 46/46 research excerpts FOUND in their source text.
+       - Public-domain texts: `research/cache/`.
+       - Copyrighted texts: gitignored `research/cache/private/`, filled by `npm run fetch:sources`.
+     - Source sheets show each reference's verified excerpt + location (one quote per copyrighted source per lesson).
+     - Owner decision 2 is now automated verification; owner checks are optional.
+  6. **Sources policy.**
+     - The OSH (Central) Rules 2026 supersede the Mines Rules 1955, Mines Rescue Rules 1985 and MVTR 1966 (historical only).
+     - The owner's private library is Tier 2, kept outside this repo (`sources/private/` gitignored).
+     - Recorded in CLAUDE.md, the sourced-flow skill and ROADMAP.
+  - **Housekeeping.**
+    - The owner's `sources/` upload commit is on main.
+    - `sources/650059fbb8f1a9.98699174.pdf` was renamed to `sources/OSH Code 2020.pdf`.
+    - The Code Underground app is stored at `sources/code-underground/` as Phase 17 input (not processed).
+
 ## Totals
 55 lessons + 11 boss exams · 379 stages (3 theory stages now run sourced ConceptFlows)  · 61 textured simulations (29 with on-canvas drag grips, 33 grips in all) · 55 Field Codex cheat sheets · 19 cited statutes (0 unconfirmed) · 379-question exam bank · 7 field calculators · light + dark themes · synthesised sound & haptics.
 

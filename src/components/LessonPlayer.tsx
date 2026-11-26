@@ -388,7 +388,9 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
                 <Seg
                   key={i}
                   {...(i < index ? { type: "button" as const, onClick: () => setRecap(i), "aria-label": `Re-read stage ${i + 1}: ${s.title}` } : {})}
-                  className={`relative h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)] ${i < index ? "cursor-pointer before:absolute before:-inset-y-3 before:inset-x-0 before:content-['']" : ""}`}
+                  // The coarse-pointer 44 px button rule is unlayered CSS; keep the bar slim (hit area via ::before).
+                  style={{ minHeight: 0 }}
+                  className={`relative min-h-0 h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)] ${i < index ? "cursor-pointer before:absolute before:-inset-y-3 before:inset-x-0 before:content-['']" : ""}`}
                 >
                   <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? `${Math.round(12 + 88 * sub)}%` : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
                     <span className="absolute left-1.5 right-1.5 top-[3px] h-[4px] rounded-full bg-white/35" />

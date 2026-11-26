@@ -139,6 +139,19 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
       )}
       <div className="relative">
       {corner && <div className="absolute right-1.5 top-1.5 z-[2]">{corner}</div>}
+      <AnimatePresence>
+        {handles.length > 0 && !used && !hintSeen && (
+          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="pointer-events-none absolute z-[3] left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[11px] font-bold text-white">
+            <Hand size={12} /> Drag the grips on the diagram
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {def.animated && !still && (
+        <span className="pointer-events-none absolute z-[3] right-14 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
+          <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+        </span>
+      )}
+
       <svg
         ref={svg}
         viewBox="-24 -24 448 288"
@@ -221,18 +234,40 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
           })()}
       </svg>
       </div>
-      <AnimatePresence>
-        {handles.length > 0 && !used && !hintSeen && (
-          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[11px] font-bold text-white">
-            <Hand size={12} /> Drag the grips on the diagram
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {def.animated && !still && (
-        <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
-          <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
-        </span>
-      )}
+    </div>
+  );
+}
+
+/** Longest text a formatted output can show (probed at its own value range is overkill: label + sample). */
+function maxLen(def: SimDef, o: SimDef["outputs"][number]): number {
+  try {
+    const v = def.compute(Object.fromEntries(def.params.map((p) => [p.key, p.default])));
+    return String(o.format?.(v[o.key], v, {}) ?? "").length;
+  } catch {
+    return 0;
+  }
+}
+
+/** Compact status chips (outputs that carry a tone) shown under the pinned diagram on phones. */
+function KeyReadouts({ def, values }: { def: SimDef; values: Vals }) {
+  const out = useMemo(() => def.compute(values), [def, values]);
+  const keyed = def.outputs.filter((o) => o.tone).slice(0, 2);
+  if (!keyed.length) return null;
+  return (
+    <div className="sm:hidden mt-1.5 flex flex-wrap gap-1.5" aria-hidden>
+      {keyed.map((o, i) => {
+        const v = out[o.key];
+        const tone = o.tone!(v, out, values);
+        const txt = tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : tone === "ok" ? "#34D399" : "#F1F5F9";
+        const text = o.format ? o.format(v, out, values) : `${fmt(v, o.digits ?? 2)}${o.unit ? ` ${o.unit}` : ""}`;
+        return (
+          <span key={`${o.key}-${i}`} className="inline-flex items-center gap-1.5 rounded-full bg-[#0E1424] px-2.5 py-1 text-[12px] font-bold readout max-w-full">
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: txt }} />
+            <span className="text-[#8B97AE] font-semibold truncate">{o.label.replace(/\s*\(.*\)$/, "")}</span>
+            <span style={{ color: txt }} className="shrink-0">{text}</span>
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -250,7 +285,7 @@ export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
         // Text on the dark strip uses lighter tints so warning/critical words stay ≥ AA.
         const txt = tone === "info" ? "#F1F5F9" : tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : col;
         return (
-          <div key={`${o.key}-${i}`} className={`rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0 ${def.outputs.length % 2 === 1 && i === def.outputs.length - 1 ? "max-sm:col-span-2" : ""}`}>
+          <div key={`${o.key}-${i}`} className={`rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0 ${(def.outputs.length % 2 === 1 && i === def.outputs.length - 1) || (o.format && maxLen(def, o) > 16) ? "max-sm:col-span-2" : ""}`}>
             <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight break-words" title={o.label}>
               {o.label}
             </div>
@@ -320,30 +355,37 @@ export function Controls({ def, values, onChange, disabled, only }: { def: SimDe
  */
 export function SimView({ def, values, onChange, overlay, disabled, objective, corner }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; overlay?: ReactNode; disabled?: boolean; objective?: Objective; corner?: ReactNode }) {
   const gripKeys = disabled ? [] : [...new Set((def.handles ?? []).map((h) => h.key))];
-  const rest = def.params.map((p) => p.key).filter((k) => !gripKeys.includes(k));
+  const nonGrip = def.params.map((p) => p.key).filter((k) => !gripKeys.includes(k));
+  // One visual, one control: at most two sliders open; the rest (and grip fine-tuning) sit in one row.
+  const open = nonGrip.slice(0, 2);
+  const more = [...nonGrip.slice(2), ...gripKeys];
+  const moreLabel = nonGrip.length > 2 ? `More controls (${more.length})` : `Fine-tune ${gripKeys.length === 1 ? "the grip" : `the ${gripKeys.length} grips`} with sliders`;
   return (
     <div className="space-y-3">
-      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 max-sm:bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:pb-1">
+      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 max-sm:bg-surface max-sm:rounded-b-2xl max-sm:-mx-1 max-sm:px-1 max-sm:pb-1.5 max-sm:shadow-[0_8px_12px_-10px_rgba(15,23,42,0.35)]">
         <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} />
+        {/* Status-bearing readouts ride along with the pinned diagram so the answer never scrolls away. */}
+        <KeyReadouts def={def} values={values} />
       </div>
       <Readouts def={def} values={values} />
-      {rest.length > 0 && (
+      {open.length > 0 && (
         <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
-          <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={rest} />
+          <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={open} />
         </div>
       )}
-      {gripKeys.length > 0 && (
+      {more.length > 0 && (
         <details className="group rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
           <summary className="list-none cursor-pointer select-none min-h-[48px] px-3 sm:px-4 flex items-center justify-between text-[14px] font-semibold text-slate-700">
-            <span>Fine-tune {gripKeys.length === 1 ? "the grip" : `the ${gripKeys.length} grips`} with sliders</span>
+            <span>{moreLabel}</span>
             <ChevronDown size={18} className="text-slate-500 transition-transform group-open:rotate-180" />
           </summary>
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-            <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={gripKeys} />
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
+            <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={more} />
+            {def.caption && <p className="sm:hidden text-[13px] text-slate-500 leading-relaxed">{def.caption}</p>}
           </div>
         </details>
       )}
-      {def.caption && <p className="text-[12px] text-slate-500 leading-relaxed">{def.caption}</p>}
+      {def.caption && <p className={`text-[12px] text-slate-500 leading-relaxed ${more.length > 0 ? "max-sm:hidden" : ""}`}>{def.caption}</p>}
     </div>
   );
 }

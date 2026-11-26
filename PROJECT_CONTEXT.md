@@ -132,6 +132,7 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
   - `lesson#stage@screen` for flow predict, check and situation screens.
 
   Within each unit the correct option goes to the least-used slot. The validator prints the per-unit balance and fails if any slot holds more than 40 %, or if the correct option is the longest in more than 40 % of a unit's situation and check screens.
+- **Quote verification** (`scripts/verify-quotes.ts`, part of `npm run validate`): every quoted excerpt in `research/*.md` must be found in `research/cache/*.txt` (public domain), `research/cache/private/*.txt` (copyrighted, gitignored; `npm run fetch:sources`) or `sources/*.txt`. It also generates `src/content/excerpts.gen.ts` for the Source sheet.
 - **Validator flow rules** now also require ≥ 1 situation per flow, matching `why`/options counts on situations, and a scene of ≤ 40 words.
 
 ### 6.2 State and persistence
@@ -164,7 +165,9 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 - The exam pool is unchanged.
 - Reopening a lesson mid-way offers to resume.
 
-**Inspector phone kit:** a floating Report button (saves route, lesson/stage/screen, viewport, user agent and build) and an FPS meter. Profile can export reports as JSON, open the Sound test (now available in production) and shows the build stamp (`NEXT_PUBLIC_BUILD`, git short hash + date, injected in `next.config.ts`). Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
+**Back navigation and recap (14.5):** ConceptFlow has Back and swipe-right, and answered screens reopen in a review state. Tapping a completed progress segment opens it read-only (`StageRecap`). The header Notes sheet (`src/lib/notes.ts`, session-only) lists the explanations seen so far.
+
+**Inspector phone kit:** a header Report flag (it used to float), an Inspector menu with the stage jumper and refill, a (saves route, lesson/stage/screen, viewport, user agent and build) and an FPS meter. Profile can export reports as JSON, open the Sound test (now available in production) and shows the build stamp (`NEXT_PUBLIC_BUILD`, git short hash + date, injected in `next.config.ts`). Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
 
 ### 6.5 Design system ("Tactile Engineering Studio")
 - Light **Crisp Daylight** (canvas `#F7F7F5`) and dark **Underground Shift Mode** (`#0B0F19`). UI is authored in light-mode semantics; `.dark` on `<html>` remaps the `slate-*` ramp and accent tints through CSS variables. A no-flash theme boot script runs at the start of `<body>`.
@@ -176,6 +179,14 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
   - Body text (`.flow-body`) is 17/1.55 and questions (`.flow-q`) are 19 px. Cards use p-5 (sm:p-8) with space-y-5/6.
 - Verdicts render as `.verdict-ok` / `.verdict-no` strips inside the ActionBar. `Feedback` portals into the bar's slot, so they never scroll out of view.
 - `SimCanvas` also takes `focus` (a feathered, fading dim around chosen pins) and `corner` (an overlay control, such as Sim lab's Reset icon).
+- **Sim stages on phones (14.5):**
+  - The diagram is sticky under the header, carrying status chips.
+  - Grips are the primary control; at most 2 sliders are open and the rest sit in "More controls" / "Fine-tune".
+  - The grip hint shows once (`strata-grip-hint`).
+  - Readouts sit in a 2-column wrapping grid, and `fmt` normalises -0.
+  - `Plot` takes `grips` to move axis text off grip tracks.
+  - Sliders have a 48 px `touch-action: none` thumb zone over a `pan-y` track; SVG grips claim touches via a non-passive `touchstart`.
+- Troubleshooting: Profile → **Repair app** (`src/lib/repair.ts`) unregisters the SW and deletes `strata-*` caches only. The same action is in `src/app/error.tsx`.
 - Mobile: bottom tab bar (Path, Warmup, Exam, Lab, Tools, Codex); compact lesson header with a progress segment that fills as you move through a stage; story copy shown in full (no clamp); Sim Lab simulation browser in a vaul bottom sheet.
 
 ### 6.6 Simulations

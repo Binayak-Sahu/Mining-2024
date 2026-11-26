@@ -84,7 +84,7 @@ export function SimLab() {
               }}
               className={`w-full flex items-start gap-2.5 text-left rounded-xl px-2.5 py-2 text-[13px] font-semibold leading-snug transition-colors ${s.id === id ? "bg-[#7C3AED] text-white shadow-[0_2px_0_#5B21B6]" : "text-slate-700 hover:bg-slate-100"}`}
             >
-              <span className={`readout shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-extrabold ${s.id === id ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>U{UNIT_OF(s.id)}</span>
+              <span className={`readout shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-extrabold ${s.id === id ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>U{UNIT_OF(s.id)}</span>
               <span className="min-w-0">{s.title}</span>
             </button>
           ))}
@@ -109,7 +109,7 @@ export function SimLab() {
             <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-violet-600">Sim Lab · Unit {UNIT_OF(def.id)}</div>
             <h2 className="text-[20px] sm:text-[24px] font-extrabold leading-tight tracking-tight text-slate-900 mt-0.5 text-balance">{def.title}</h2>
           </div>
-          <button type="button" onClick={() => setVals(defaults(def))} className="btn-3d tone-ghost shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-[11px]">
+          <button type="button" onClick={() => setVals(defaults(def))} className="btn-3d tone-ghost shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-[13px]">
             <RotateCcw size={12} /> Reset
           </button>
         </div>
