@@ -54,7 +54,7 @@ export function applyTheme(theme: ThemePref) {
   const dark = resolveDark(theme);
   document.documentElement.classList.toggle("dark", dark);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", dark ? "#0B0F19" : "#F7F7F5");
+  if (meta) meta.setAttribute("content", dark ? "#121212" : "#FFFFFF");
 }
 
 /** Inline, render-blocking script that sets the theme class before first paint (no flash). */

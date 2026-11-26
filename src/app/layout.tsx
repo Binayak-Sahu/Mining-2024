@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
+  themeColor: "#121212",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen studio-bg" suppressHydrationWarning>
+      <body className="min-h-screen" suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <Providers>
         <SvgDefs />

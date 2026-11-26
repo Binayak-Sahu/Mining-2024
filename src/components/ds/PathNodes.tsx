@@ -3,7 +3,7 @@
 import * as Popover from "@radix-ui/react-popover";
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, Crown, Lock, Star } from "lucide-react";
+import { Check, Crown, Lock, Play, Star } from "lucide-react";
 import { fadeQuick, feedbackSheet, tactilePress } from "@/lib/motion";
 
 type Kind = "done" | "current" | "locked" | "boss" | "boss-locked" | "perfect" | "master";
@@ -20,7 +20,7 @@ const NODES: { kind: Kind; title: string; stages: number; caption: string }[] = 
 
 function face(kind: Kind) {
   if (kind === "done" || kind === "perfect") return { state: "done", glyph: <Check size={28} strokeWidth={3} /> };
-  if (kind === "current") return { state: "current", glyph: null };
+  if (kind === "current") return { state: "current", glyph: <Play size={26} fill="currentColor" strokeWidth={0} /> };
   if (kind === "boss") return { state: "boss", glyph: <Crown size={26} strokeWidth={2.5} /> };
   if (kind === "boss-locked") return { state: "locked", glyph: <Crown size={18} strokeWidth={2.5} /> };
   return { state: "locked", glyph: <Lock size={22} strokeWidth={2.5} /> };

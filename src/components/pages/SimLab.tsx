@@ -121,7 +121,7 @@ export function SimLab() {
           </Drawer.Trigger>
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-            <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 rounded-t-[24px] bg-surface p-3 pb-[calc(12px+env(safe-area-inset-bottom))] shadow-[var(--shadow-pop)] focus:outline-none" aria-describedby={undefined}>
+            <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 sheet-face p-3 pb-[calc(12px+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
               <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-300" aria-hidden />
               <Drawer.Title className="px-1 pb-2 text-[16px] font-extrabold text-slate-900">Simulations</Drawer.Title>
               {browser(true)}

@@ -22,7 +22,7 @@ Stack facts this file assumes: Next.js 15 static export, Tailwind v4 (`@theme in
 
 ## 2. Colour tokens
 
-Implement as CSS variables in `src/app/globals.css`. Existing Tailwind names (`slate-*`, `emerald-*`, …) keep working because they resolve to these variables. (Rollout note: during Phase 15.5 these values live under a `.ds2` class until the switch-over; after that they are the app's only palette.)
+Implement as CSS variables in `src/app/globals.css`. Existing Tailwind names (`slate-*`, `emerald-*`, …) keep working because they resolve to these variables. (Since Phase 15.5b these values are on `:root` / `:root.dark` and are the app's only palette; `.ds2` remains as an alias for the sandbox.)
 
 ### 2.1 Neutrals
 
@@ -78,7 +78,7 @@ Font: Plus Jakarta Sans Variable (UI), JetBrains Mono Variable (numbers in reado
 | `body` | 18 / 29 (1.6) | 400 | 0 | lesson prose, questions (replaces `.flow-body` 17 and `.flow-q` 19) |
 | `body-lg` | 20 / 32 | 500 | 0 | sentence-completion text, tile text |
 | `secondary` | 16 / 24 | 400 | 0 | descriptions, under-titles (`--text-2`) |
-| `eyebrow` | 13 / 16 | 700 | 0.08em, uppercase | "UNIT 7 · VENTILATION", "LEVEL 1" (`--text-3`, or `action` tint text for LEVEL) |
+| `eyebrow` | 14 / 18 (was 13/16; raised in 15.5b to meet the 14 px floor below) | 700 | 0.08em, uppercase | "UNIT 7 · VENTILATION", "LEVEL 1" (`--text-3`, or `action` tint text for LEVEL) |
 | `button` | 18 / 24 | 700 | 0 | all primary/secondary buttons |
 | `label` | 14 / 20 | 600 | 0 | chips, pills, readout labels |
 | `tab` | 12 / 16 | 600 (active 700) | 0 | bottom tab labels |

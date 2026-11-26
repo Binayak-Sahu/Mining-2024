@@ -9,7 +9,7 @@ import { STAGE_META } from "./ui";
 export function StageRecap({ stage }: { stage: Stage }) {
   const m = STAGE_META[stage.kind];
   const P = ({ children }: { children: ReactNode }) => <p className="flow-body text-slate-800">{children}</p>;
-  const H = ({ children }: { children: ReactNode }) => <div className="text-[13px] font-bold text-slate-600 mt-3">{children}</div>;
+  const H = ({ children }: { children: ReactNode }) => <div className="text-[14px] font-bold text-slate-600 mt-3">{children}</div>;
   let body: ReactNode = null;
   switch (stage.kind) {
     case "theory":
@@ -33,7 +33,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
               return (
                 <P key={k}>
                   <b>{f.kind === "situation" ? `As ${f.role}: ` : ""}</b>
-                  {f.kind === "situation" ? f.scene : f.q} <span className="text-emerald-800 dark:text-emerald-300 font-semibold">→ {f.options[f.answer]}</span>
+                  {f.kind === "situation" ? f.scene : f.q} <span className="text-emerald-800 font-semibold">→ {f.options[f.answer]}</span>
                 </P>
               );
             return null;
@@ -77,7 +77,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
         <>
           <P>{stage.scenario}</P>
           <P>
-            <b>{stage.question}</b> <span className="text-emerald-800 dark:text-emerald-300 font-semibold">→ {stage.options[stage.answer]}</span>
+            <b>{stage.question}</b> <span className="text-emerald-800 font-semibold">→ {stage.options[stage.answer]}</span>
           </P>
           <P>{stage.explain}</P>
         </>
@@ -115,7 +115,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
             const c = ph.options.find((o) => o.correct);
             return (
               <P key={k}>
-                <b>{ph.prompt}</b> <span className="text-emerald-800 dark:text-emerald-300 font-semibold">→ {c?.text}</span>
+                <b>{ph.prompt}</b> <span className="text-emerald-800 font-semibold">→ {c?.text}</span>
               </P>
             );
           })}
@@ -134,7 +134,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
   }
   return (
     <div className="space-y-3">
-      <div className={`text-[13px] font-bold ${m.text}`}>
+      <div className="t-eyebrow">
         {m.label} · read-only
       </div>
       <h3 className="text-[20px] font-bold text-slate-900">{stage.title}</h3>

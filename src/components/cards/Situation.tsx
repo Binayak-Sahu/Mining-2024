@@ -8,13 +8,13 @@ import { nb } from "./ui";
 
 /** Icon + accent per role. `fill` (icon disc) keeps white glyphs ≥ 3:1; `text` pairs are AA on the tinted badge in both themes. */
 export const ROLE_META: Record<SituationRole, { Icon: LucideIcon; tint: string; fill: string; text: string }> = {
-  Manager: { Icon: Briefcase, tint: "#3B82F6", fill: "#2563EB", text: "text-blue-700 dark:text-blue-300" },
-  Overman: { Icon: HardHat, tint: "#F59E0B", fill: "#B45309", text: "text-amber-800 dark:text-amber-300" },
+  Manager: { Icon: Briefcase, tint: "#3B82F6", fill: "#2563EB", text: "text-blue-700" },
+  Overman: { Icon: HardHat, tint: "#F59E0B", fill: "#B45309", text: "text-amber-800" },
   Sirdar: { Icon: Users, tint: "#F97316", fill: "#C2410C", text: "text-orange-700 dark:text-orange-300" },
-  Shotfirer: { Icon: Bomb, tint: "#EF4444", fill: "#DC2626", text: "text-red-700 dark:text-red-300" },
+  Shotfirer: { Icon: Bomb, tint: "#EF4444", fill: "#DC2626", text: "text-red-700" },
   "Ventilation Officer": { Icon: Wind, tint: "#0EA5E9", fill: "#0369A1", text: "text-sky-700 dark:text-sky-300" },
-  Surveyor: { Icon: Compass, tint: "#8B5CF6", fill: "#7C3AED", text: "text-violet-700 dark:text-violet-300" },
-  "Safety Officer": { Icon: ShieldCheck, tint: "#10B981", fill: "#047857", text: "text-emerald-700 dark:text-emerald-300" },
+  Surveyor: { Icon: Compass, tint: "#8B5CF6", fill: "#7C3AED", text: "text-violet-700" },
+  "Safety Officer": { Icon: ShieldCheck, tint: "#10B981", fill: "#047857", text: "text-emerald-700" },
   "DGMS Inspector": { Icon: ClipboardCheck, tint: "#475569", fill: "#475569", text: "text-slate-700" },
   "Exam candidate": { Icon: GraduationCap, tint: "#6366F1", fill: "#4F46E5", text: "text-indigo-700 dark:text-indigo-300" },
 };

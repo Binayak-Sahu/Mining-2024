@@ -20,7 +20,7 @@ export function RepairButton({ className = "" }: { className?: string }) {
       <Wrench size={20} className="text-slate-600" />
       <span className="flex-1">
         <span className="block font-bold text-[14px] text-slate-900">{busy ? "Repairing…" : "Repair app"}</span>
-        <span className="block text-[12.5px] text-slate-500">Refreshes the offline app files if something looks stuck. Your progress is not touched.</span>
+        <span className="block text-[14px] text-slate-500">Refreshes the offline app files if something looks stuck. Your progress is not touched.</span>
       </span>
     </button>
   );

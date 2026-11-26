@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, Lock, Crown, Star, Play, ChevronRight } from "lucide-react";
 import type { Unit } from "@/lib/types";
 import type { LessonRecord } from "@/lib/store";
@@ -54,6 +54,7 @@ export function ExpeditionPath({
   /** Inspector Mode: locked nodes become playable sandboxes, badged MASTER. */
   master?: boolean;
 }) {
+  const reduce = useReducedMotion();
   const st = stratumFor(unit.n);
   const nodes = [...unit.lessons.map((l, i) => ({ lesson: l, i, boss: false })), { lesson: unit.boss, i: unit.lessons.length, boss: true }];
   const phase = unit.n * 0.8;
@@ -165,7 +166,7 @@ export function ExpeditionPath({
                     START
                     <span className="absolute left-1/2 -bottom-1.5 -ml-1.5 w-3 h-3 rotate-45 bg-surface" />
                   </span>
-                  <motion.span className="absolute rounded-full pointer-events-none" style={{ top: -10, left: "50%", marginLeft: -(size + 20) / 2, width: size + 20, height: size + 14, border: "4px solid rgba(59,130,246,0.45)" }} animate={{ scale: [1, 1.12, 1], opacity: [0.9, 0.25, 0.9] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} aria-hidden />
+                  <motion.span className="absolute rounded-full pointer-events-none" style={{ top: -10, left: "50%", marginLeft: -(size + 20) / 2, width: size + 20, height: size + 14, border: "4px solid rgba(59,130,246,0.45)" }} animate={reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.9, 0.25, 0.9] }} transition={reduce ? undefined : { duration: 2, repeat: Infinity, ease: "easeInOut" }} aria-hidden />
                 </>
               )}
               {s === "locked" ? (

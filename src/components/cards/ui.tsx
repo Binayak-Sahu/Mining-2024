@@ -6,15 +6,18 @@ import { createPortal } from "react-dom";
 import type { StageKind } from "@/lib/types";
 import { BookOpen, FlaskConical, Eye, Sigma, Calculator, Siren, Scale, CheckCircle2, XCircle } from "lucide-react";
 import { sfx } from "@/lib/sfx";
+import { feedbackSheet, tactilePress } from "@/lib/motion";
 
 export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; text: string; Icon: typeof BookOpen }> = {
-  theory: { label: "Field theory", short: "Field Theory", color: "#3B82F6", text: "text-blue-700", Icon: BookOpen },
-  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#10B981", text: "text-emerald-700", Icon: FlaskConical },
-  predict: { label: "Predict the outcome", short: "Predict", color: "#10B981", text: "text-emerald-700", Icon: Eye },
-  equation: { label: "Equation forge", short: "Equation Forge", color: "#8B5CF6", text: "text-violet-600", Icon: Sigma },
-  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F59E0B", text: "text-amber-700", Icon: Calculator },
-  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#EF4444", text: "text-red-700", Icon: Siren },
-  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#EF4444", text: "text-red-700", Icon: Scale },
+  // Colours are the DESIGN.md §2.2 faces (action / success / energy / danger; violet is retired). They still tint the
+  // lesson progress segments until 15.5c; the stage-kind label itself is neutral (§5.12).
+  theory: { label: "Field theory", short: "Field Theory", color: "#3B5BF6", text: "text-blue-700", Icon: BookOpen },
+  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#15803D", text: "text-emerald-700", Icon: FlaskConical },
+  predict: { label: "Predict the outcome", short: "Predict", color: "#15803D", text: "text-emerald-700", Icon: Eye },
+  equation: { label: "Equation forge", short: "Equation Forge", color: "#3B5BF6", text: "text-blue-700", Icon: Sigma },
+  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F5B417", text: "text-amber-700", Icon: Calculator },
+  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#DC2626", text: "text-red-700", Icon: Siren },
+  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#DC2626", text: "text-red-700", Icon: Scale },
 };
 
 /**
@@ -30,12 +33,9 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
   return (
     <FeedbackSlot.Provider value={ctx}>
       <div className="card p-5 sm:p-8 overflow-clip relative">
-        <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(90deg, ${m.color}, ${m.color}55)` }} aria-hidden />
         <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-          <span className={`inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 sm:py-1 text-[12.5px] font-bold ${m.text}`} style={{ background: `${m.color}18` }}>
-            <span className="inline-flex w-5 h-5 rounded-full items-center justify-center text-white" style={{ background: m.color }}>
-              <m.Icon size={11} strokeWidth={2.6} />
-            </span>
+          <span className="t-eyebrow inline-flex items-center gap-1.5 py-0.5 sm:py-1">
+            <m.Icon size={16} strokeWidth={2.4} aria-hidden />
             {m.label}
           </span>
         </div>
@@ -84,7 +84,7 @@ export function ActionBar({ children, slotRef, force }: { children?: ReactNode; 
             initial={{ y: 120, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 120, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 32 }}
+            transition={feedbackSheet}
             className="action-bar fixed inset-x-0 bottom-0 z-30 hairline-t surface-sticky pb-[env(safe-area-inset-bottom)]"
           >
             <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3">
@@ -162,14 +162,14 @@ export function Feedback({ show, ok, title, children, compact = false }: { show:
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      transition={feedbackSheet}
       role="status"
       aria-live="polite"
       className={`-mx-3 sm:-mx-4 -mt-3 mb-3 px-4 sm:px-5 pt-3.5 pb-3 ${ok ? "verdict-ok" : "verdict-no"}`}
     >
-      <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-emerald-800" : "text-amber-800"}`}>
-        <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 14, delay: 0.05 }}>
-          {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-amber-500 text-white" />}
+      <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}>
+        <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...tactilePress, delay: 0.05 }}>
+          {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-red-500 text-white" />}
         </motion.span>
         <span className="flex-1 min-w-0">{title}</span>
         {children && (compact || !short) && (
@@ -189,16 +189,16 @@ export type OptionState = "idle" | "selected" | "right" | "wrong" | "dim";
 
 export function optionClass(state: OptionState): string {
   const base = "tile-3d w-full text-left px-4 py-3 text-[14.5px] font-semibold leading-snug";
-  if (state === "right") return `${base} !border-emerald-500 !bg-emerald-50 !shadow-[0_3px_0_#10B981] text-emerald-900`;
-  if (state === "wrong") return `${base} !border-red-500 !bg-red-50 !shadow-[0_3px_0_#EF4444] text-red-900`;
-  if (state === "dim") return `${base} !shadow-none !border-slate-100 text-slate-500`;
-  if (state === "selected") return `${base} !border-blue-500 !bg-blue-50 !shadow-[0_3px_0_#3B82F6] text-slate-900`;
-  return `${base} text-slate-800 hover:!border-blue-400`;
+  if (state === "right") return `${base} !border-success !bg-success-tint text-fg`;
+  if (state === "wrong") return `${base} !border-danger !bg-danger-tint text-fg`;
+  if (state === "dim") return `${base} !border-line text-fg-2`;
+  if (state === "selected") return `${base} !border-action !bg-action-tint text-fg`;
+  return `${base} text-fg`;
 }
 
 export function OptionKey({ i, state }: { i: number; state: OptionState }) {
-  const c = state === "right" ? "bg-[#047857] text-white border-[#047857]" : state === "wrong" ? "bg-[#B91C1C] text-white border-[#B91C1C]" : state === "selected" ? "bg-[#1D4ED8] text-white border-[#1D4ED8]" : "text-slate-500 border-slate-200";
-  return <span className={`readout mr-3 inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg border-2 text-[12px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
+  const c = state === "right" ? "bg-success text-white border-success" : state === "wrong" ? "bg-danger text-white border-danger" : state === "selected" ? "bg-action text-white border-action" : "text-fg-2 border-line-strong";
+  return <span className={`readout mr-3 inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg border-2 text-[14px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
 }
 
 /** Story copy: calm, full-width paragraphs (no clamping). */
@@ -248,11 +248,11 @@ export function VerdictBar({ ok, title, why, children }: { ok: boolean; title: s
     else sfx.wrong();
   }, [ok, title]);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 420, damping: 32 }} className="space-y-3" role="status" aria-live="polite">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={feedbackSheet} className="space-y-3" role="status" aria-live="polite">
       <div className={`-mx-3 sm:-mx-4 -mt-3 px-4 sm:px-5 pt-3.5 pb-1 ${ok ? "verdict-ok" : "verdict-no"}`}>
-        <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-emerald-800" : "text-amber-800"}`}>
-          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 14, delay: 0.05 }}>
-            {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-amber-500 text-white" />}
+        <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}>
+          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...tactilePress, delay: 0.05 }}>
+            {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-red-500 text-white" />}
           </motion.span>
           {title}
         </div>

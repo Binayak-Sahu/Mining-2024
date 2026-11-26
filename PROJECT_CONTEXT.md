@@ -174,16 +174,16 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 ### 6.5 Design system ("Tactile Engineering Studio")
 DESIGN.md is the app-wide design system; existing screens move to it in Phase 15.5. DESIGN.md wins on any conflict.
 
-- **v2 (Phase 15.5a):** DESIGN.md §2 tokens (`--line`, `--text-2`, `--action`, `--success-tint`, …) and v2 `.card`/`.btn-3d`/`.tile-3d`/`.t-*` type styles apply only inside a `.ds2` wrapper (light `.ds2`, dark `:root.dark .ds2`; `.ds2-light`/`.ds2-dark` force a theme on a sub-tree). Motion presets: `src/lib/motion.ts`. Reference components: `src/components/ds/`, shown at `/design-system` (QA flag link in Profile). Screenshot/pixel-diff harness: `scripts/shots.mjs`.
-
-- Light **Crisp Daylight** (canvas `#F7F7F5`) and dark **Underground Shift Mode** (`#0B0F19`). UI is authored in light-mode semantics; `.dark` on `<html>` remaps the `slate-*` ramp and accent tints through CSS variables. A no-flash theme boot script runs at the start of `<body>`.
-- Tokens/utilities: `bg-canvas`, `bg-surface`, `--hairline`, `--hairline-strong`, `--sticky-bg`, `hairline`, `hairline-b`, `hairline-t`, `surface-sticky`, `.card` (layered shadow; dark cards get `inset 0 1px 0 rgba(255,255,255,0.08)`), `.btn-3d` with tones (ink, safe, crit, tech, hazard, violet, ghost), `.tile-3d` answer tiles, `.plate`, custom `Slider` with floating value pill.
+- **v2 is the app palette (Phase 15.5b).** DESIGN.md §2 tokens live on `:root` (light) and `:root.dark`: neutrals `--bg`, `--surface`, `--surface-2`, `--line`, `--line-strong`, `--text`/`--text-2`/`--text-3`, the `--n-*` ramp, and accents `--action|success|danger|energy` with `-ledge`, `-on`, `-tint`, `-tint-text`, plus `--ink*` and `--sheet-shadow`. Tailwind names resolve to them: `slate-*` → `--n-*`; `emerald/red/amber/blue-*` ramps → success/danger/energy/action (each `-500` is the face); `violet-*` → action (retired). Token utilities: `bg-canvas`, `bg-surface(-2)`, `border-line(-strong)`, `text-fg(-2|-3)`, `bg-action`, `bg-success-tint`, `text-danger-tint-text`, …
+- `.ds2` is kept as an alias for the /design-system sandbox (`src/components/ds/`); `.ds2-light` / `.ds2-dark` force a theme on a sub-tree. Motion presets: `src/lib/motion.ts`. Screenshot/pixel-diff harness: `scripts/shots.mjs`; text-contrast sweep of every route: `scripts/contrast-sweep.mjs`.
+- Global base styles: `.card` (2 px `--line`, 5 px bottom ledge, radius 20, no shadow), `.btn-3d` (56 px pill, 18/700; tones ink, safe → success, crit → danger, tech/violet → action, hazard → energy, ghost; `.btn-sm` 44 px/14 px), `.tile-3d` (2 px `--line-strong`, 4 px ledge, radius 12; `data-on` / `data-state` selected·correct·wrong·dim), `.t-display … .t-readout` type styles, `.sheet-face` for bottom sheets, `.ds-tabbar`/`.ds-tab` (the phone tab bar). `surface-sticky` is now a solid `--bg` (no blur); `hairline` is a 2 px `--line` border. `.studio-bg` and card shadows are gone (`--shadow-card` is `none`).
+- `.plate` stays a light lightbox in both themes; its frame is a 2 px `--line` inner ring drawn by `::after` (`success` when the objective is met), so sim geometry is unchanged.
 - Accessibility: WCAG AA text contrast in both themes (verified by sweep), ≥ 44 px touch targets on coarse pointers, `prefers-reduced-motion` honoured (CSS and framer `MotionConfig reducedMotion="user"`; confetti disabled), visible focus rings, sentence-case labels.
 - Type and spacing (Phase 13):
-  - `.btn-3d` is sentence case, weight 700, 15 px, letter-spacing 0, at least 52 px tall.
+  - `.btn-3d` is sentence case, weight 700, 18 px, at least 56 px tall (15.5b).
   - Card titles are 24 px (30 px on sm+) at weight 700, and collapse after the first flow screen.
-  - Body text (`.flow-body`) is 17/1.55 and questions (`.flow-q`) are 19 px. Cards use p-5 (sm:p-8) with space-y-5/6.
-- Verdicts render as `.verdict-ok` / `.verdict-no` strips inside the ActionBar. `Feedback` portals into the bar's slot, so they never scroll out of view.
+  - Body text (`.flow-body`) and questions (`.flow-q`) are §3 `body`, 18/29 400 (15.5b). Cards use p-5 (sm:p-8) with space-y-5/6.
+- Verdicts render as `.verdict-ok` / `.verdict-no` strips (success / danger tint since 15.5b) inside the ActionBar. `Feedback` portals into the bar's slot, so they never scroll out of view.
 - `SimCanvas` also takes `focus` (a feathered, fading dim around chosen pins) and `corner` (an overlay control, such as Sim lab's Reset icon).
 - **Sim stages on phones (14.5):**
   - The diagram is sticky under the header, carrying status chips.

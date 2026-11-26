@@ -30,7 +30,7 @@ function FpsMeter() {
   }, []);
   const tone = fps >= 55 ? "#34D399" : fps >= 40 ? "#FBBF24" : "#F87171";
   return (
-    <div className="fixed left-2 top-[calc(env(safe-area-inset-top)+64px)] z-50 rounded-lg bg-[#0E1424]/90 px-2 py-1 readout text-[12px] font-bold pointer-events-none" style={{ color: tone }} aria-hidden>
+    <div className="fixed left-2 top-[calc(env(safe-area-inset-top)+64px)] z-50 rounded-lg bg-black/80 px-2 py-1 readout text-[14px] font-bold pointer-events-none" style={{ color: tone }} aria-hidden>
       {fps} fps
     </div>
   );
@@ -70,14 +70,14 @@ export function InspectorKit() {
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
-          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-xl rounded-t-3xl bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl focus:outline-none" aria-describedby={undefined}>
+          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-xl sheet-face p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
             <div className="flex items-center justify-between mb-3">
               <Dialog.Title className="text-[19px] font-bold text-slate-900">Report this screen</Dialog.Title>
               <Dialog.Close className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Close">
                 <X size={20} />
               </Dialog.Close>
             </div>
-            <p className="text-[13px] text-slate-600 mb-2">Saved with the route, lesson/stage/screen, viewport, device and build ({BUILD}).</p>
+            <p className="text-[14px] text-slate-600 mb-2">Saved with the route, lesson/stage/screen, viewport, device and build ({BUILD}).</p>
             <textarea ref={note} rows={4} placeholder="What looks or feels wrong?" className="w-full rounded-xl border border-slate-400 bg-surface p-3 text-[16px] text-slate-900" />
             <button type="button" onClick={save} className="btn-3d tone-ink w-full px-4 py-3.5 min-h-[52px] mt-3">
               Save report

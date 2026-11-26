@@ -3,11 +3,12 @@
 @import "@fontsource-variable/jetbrains-mono/wght.css";
 
 /*
- * STRATA "Tactile Engineering Studio" design system.
+ * STRATA design system v2 (DESIGN.md §2–§5). Since Phase 15.5b these are the app's only palette and base styles.
  *
- * Every neutral (slate-*) and accent tint used by the app resolves to a CSS variable, so the whole UI
- * — authored once in light-mode semantics — flips to "Underground Shift Mode" by toggling `.dark` on <html>.
- * bg-surface / bg-canvas are the semantic elevated-card and page backgrounds.
+ * Every neutral (slate-*) and accent ramp used by the app resolves to a CSS variable, so the whole UI — authored once
+ * in light-mode semantics — flips to dark by toggling `.dark` on <html>. bg-canvas / bg-surface / bg-surface-2 are the
+ * semantic page, card and sheet backgrounds. `.ds2` is kept as an alias (the /design-system sandbox wraps itself in it),
+ * and `.ds2-light` / `.ds2-dark` force one theme on a sub-tree there.
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -19,6 +20,24 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-ink: var(--n-900);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--text);
+  --color-fg-2: var(--text-2);
+  --color-fg-3: var(--text-3);
+  --color-action: var(--action);
+  --color-action-tint: var(--action-tint);
+  --color-action-tint-text: var(--action-tint-text);
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-success-tint-text: var(--success-tint-text);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+  --color-danger-tint-text: var(--danger-tint-text);
+  --color-energy: var(--energy);
+  --color-energy-on: var(--energy-on);
+  --color-energy-tint: var(--energy-tint);
+  --color-energy-tint-text: var(--energy-tint-text);
 
   --color-slate-50: var(--n-50);
   --color-slate-100: var(--n-100);
@@ -32,10 +51,13 @@
   --color-slate-900: var(--n-900);
   --color-slate-950: var(--n-950);
 
+  /* Accent ramps resolve to the §2.2 tones: emerald → success, red → danger, amber → energy, blue → action.
+   * Violet is retired (§5.1) and resolves to action. The 500 step is each tone's face. */
   --color-emerald-50: var(--em-50);
   --color-emerald-100: var(--em-100);
   --color-emerald-200: var(--em-200);
   --color-emerald-300: var(--em-300);
+  --color-emerald-500: var(--success);
   --color-emerald-600: var(--em-600);
   --color-emerald-700: var(--em-700);
   --color-emerald-800: var(--em-800);
@@ -45,6 +67,7 @@
   --color-red-100: var(--rd-100);
   --color-red-200: var(--rd-200);
   --color-red-300: var(--rd-300);
+  --color-red-500: var(--danger);
   --color-red-600: var(--rd-600);
   --color-red-700: var(--rd-700);
   --color-red-800: var(--rd-800);
@@ -53,6 +76,7 @@
   --color-amber-50: var(--am-50);
   --color-amber-100: var(--am-100);
   --color-amber-300: var(--am-300);
+  --color-amber-500: var(--energy);
   --color-amber-600: var(--am-600);
   --color-amber-700: var(--am-700);
   --color-amber-800: var(--am-800);
@@ -60,155 +84,208 @@
   --color-blue-50: var(--bl-50);
   --color-blue-100: var(--bl-100);
   --color-blue-300: var(--bl-300);
+  --color-blue-500: var(--action);
   --color-blue-600: var(--bl-600);
   --color-blue-700: var(--bl-700);
   --color-blue-800: var(--bl-800);
   --color-blue-900: var(--bl-900);
 
-  --color-violet-50: var(--vi-50);
-  --color-violet-600: var(--vi-600);
+  --color-violet-50: var(--bl-50);
+  --color-violet-300: var(--bl-300);
+  --color-violet-400: var(--bl-300);
+  --color-violet-500: var(--action);
+  --color-violet-600: var(--bl-600);
+  --color-violet-700: var(--bl-700);
 }
 
-/* ---------- Crisp Daylight ---------- */
-:root {
+/* ---------- Light (DESIGN.md §2, light column) ---------- */
+:root,
+.ds2-light {
   color-scheme: light;
-  --bg: #f7f7f5;
-  --bg-deep: #efeee9;
+  /* §2.1 neutrals */
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #fbfbf9;
-  --hair: rgba(15, 23, 42, 0.07);
-  --plate: #fdfcf9;
-  --plate-line: rgba(15, 23, 42, 0.05);
-  --shadow-card:
-    0 0 0 1px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px -6px rgba(15, 23, 42, 0.08),
-    0 22px 44px -22px rgba(15, 23, 42, 0.14);
-  --shadow-pop: 0 0 0 1px rgba(15, 23, 42, 0.06), 0 12px 32px -8px rgba(15, 23, 42, 0.2), 0 32px 64px -32px rgba(15, 23, 42, 0.25);
-  --edge-neutral: #d9dde3;
-  --hairline: rgba(15, 23, 42, 0.09);
-  --hairline-strong: rgba(15, 23, 42, 0.16);
-  --sticky-bg: rgba(247, 247, 245, 0.78);
+  --surface-2: #f5f5f5;
+  --line: #e5e5e5;
+  --line-strong: #d4d4d4;
+  --text: #141414;
+  --text-2: #5c5c5c;
+  --text-3: #6b6b6b;
+  --n-50: #fafafa;
+  --n-100: #f5f5f5;
+  --n-200: #e5e5e5;
+  --n-300: #d4d4d4;
+  --n-400: #6b6b6b;
+  --n-500: #5c5c5c;
+  --n-600: #525252;
+  --n-700: #404040;
+  --n-800: #262626;
+  --n-900: #141414;
+  --n-950: #0a0a0a;
+  /* §2.2 accents: face / ledge / text-on / tint bg / tint text */
+  --action: #3b5bf6;
+  --action-ledge: #2a43c2;
+  --action-on: #ffffff;
+  --action-tint: #eef1ff;
+  --action-tint-text: #2a43c2;
+  --success: #15803d;
+  --success-ledge: #0f5e2c;
+  --success-on: #ffffff;
+  --success-tint: #dcfce7;
+  --success-tint-text: #15803d;
+  --danger: #dc2626;
+  --danger-ledge: #991b1b;
+  --danger-on: #ffffff;
+  --danger-tint: #fee2e2;
+  --danger-tint-text: #b91c1c;
+  --energy: #f5b417;
+  --energy-ledge: #b47f06;
+  --energy-on: #2a1e00;
+  --energy-tint: #fef6dc;
+  --energy-tint-text: #92600a;
+  --ink: #141414;
+  --ink-ledge: #000000;
+  --ink-on: #ffffff;
+  /* §5.7: the only shadow allowed (sheets, popovers) */
+  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
 
-  --n-50: #f8fafc;
-  --n-100: #f1f5f9;
-  --n-200: #e2e8f0;
-  --n-300: #cbd5e1;
-  --n-400: #657083;
-  --n-500: #536074;
-  --n-600: #475569;
-  --n-700: #334155;
-  --n-800: #1e293b;
-  --n-900: #0f172a;
-  --n-950: #020617;
-
-  --em-50: #ecfdf5;
-  --em-100: #d1fae5;
-  --em-200: #a7f3d0;
-  --em-300: #6ee7b7;
-  --em-600: #059669;
-  --em-700: #047857;
-  --em-800: #065f46;
-  --em-900: #064e3b;
-
+  /* Accent ramps for the Tailwind names (tints at 50/100, borders at 200/300, text at 600+) */
+  --em-50: #f0fdf4;
+  --em-100: #dcfce7;
+  --em-200: #bbf7d0;
+  --em-300: #86efac;
+  --em-600: #15803d;
+  --em-700: #15803d;
+  --em-800: #0f5e2c;
+  --em-900: #0b4a23;
   --rd-50: #fef2f2;
   --rd-100: #fee2e2;
   --rd-200: #fecaca;
   --rd-300: #fca5a5;
-  --rd-600: #dc2626;
+  --rd-600: #b91c1c;
   --rd-700: #b91c1c;
   --rd-800: #991b1b;
   --rd-900: #7f1d1d;
+  --am-50: #fef6dc;
+  --am-100: #fdecb8;
+  --am-300: #f5c84a;
+  --am-600: #b47f06;
+  --am-700: #92600a;
+  --am-800: #7a5008;
+  --bl-50: #eef1ff;
+  --bl-100: #dde3ff;
+  --bl-300: #9daeff;
+  --bl-600: #3b5bf6;
+  --bl-700: #2a43c2;
+  --bl-800: #22369c;
+  --bl-900: #1a2a78;
 
-  --am-50: #fffbeb;
-  --am-100: #fef3c7;
-  --am-300: #fcd34d;
-  --am-600: #d97706;
-  --am-700: #b45309;
-  --am-800: #92400e;
-
-  --bl-50: #eff6ff;
-  --bl-100: #dbeafe;
-  --bl-300: #93c5fd;
-  --bl-600: #2563eb;
-  --bl-700: #1d4ed8;
-  --bl-800: #1e40af;
-  --bl-900: #1e3a8a;
-
-  --vi-50: #f5f3ff;
-  --vi-600: #7c3aed;
+  /* Older names still read by some components; they now point at v2 tokens. */
+  --bg-deep: var(--surface-2);
+  --hairline: var(--line);
+  --hairline-strong: var(--line-strong);
+  --edge-neutral: var(--line-strong);
+  --sticky-bg: var(--bg);
+  --shadow-card: none;
+  --shadow-pop: var(--sheet-shadow);
+  /* §2.3 the sim plate stays a light "daylight lightbox" in both themes */
+  --plate: #fdfcf9;
+  --plate-line: rgba(20, 20, 20, 0.05);
 }
 
-/* ---------- Underground Shift Mode ---------- */
-:root.dark {
+/* ---------- Dark (DESIGN.md §2, dark column) ---------- */
+:root.dark,
+.ds2-dark {
   color-scheme: dark;
-  --bg: #0b0f19;
-  --bg-deep: #070a12;
-  --surface: #121826;
-  --surface-2: #161d2d;
-  --hair: rgba(148, 163, 184, 0.1);
-  --plate: #eef0ea;
-  --plate-line: rgba(15, 23, 42, 0.06);
-  --shadow-card:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(148, 163, 184, 0.1), 0 2px 4px rgba(0, 0, 0, 0.3),
-    0 16px 40px -16px rgba(0, 0, 0, 0.7);
-  --shadow-pop: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(148, 163, 184, 0.14), 0 24px 64px -16px rgba(0, 0, 0, 0.8);
-  --edge-neutral: #070a12;
-  --hairline: rgba(148, 163, 184, 0.14);
-  --hairline-strong: rgba(148, 163, 184, 0.26);
-  --sticky-bg: rgba(11, 15, 25, 0.74);
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --surface-2: #242424;
+  --line: #2e2e2e;
+  --line-strong: #3a3a3a;
+  --text: #f5f5f5;
+  --text-2: #a3a3a3;
+  --text-3: #949494;
+  --n-50: #1c1c1c;
+  --n-100: #242424;
+  --n-200: #2e2e2e;
+  --n-300: #3a3a3a;
+  --n-400: #949494;
+  --n-500: #a3a3a3;
+  --n-600: #bdbdbd;
+  --n-700: #d4d4d4;
+  --n-800: #e5e5e5;
+  --n-900: #f5f5f5;
+  --n-950: #ffffff;
+  --action: #3b5bf6;
+  --action-ledge: #2a43c2;
+  --action-on: #ffffff;
+  --action-tint: #1a2040;
+  --action-tint-text: #9daeff;
+  --success: #15803d;
+  --success-ledge: #0f5e2c;
+  --success-on: #ffffff;
+  --success-tint: #0f2e1a;
+  --success-tint-text: #4ade80;
+  --danger: #dc2626;
+  --danger-ledge: #8f1d1d;
+  --danger-on: #ffffff;
+  --danger-tint: #3a1215;
+  --danger-tint-text: #f87171;
+  --energy: #f5b417;
+  --energy-ledge: #9c6e05;
+  --energy-on: #2a1e00;
+  --energy-tint: #2e2508;
+  --energy-tint-text: #f5c84a;
+  --ink: #d4d4d4;
+  --ink-ledge: #949494;
+  --ink-on: #141414;
+  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
 
-  --n-50: #161d2d;
-  --n-100: #1b2336;
-  --n-200: #263049;
-  --n-300: #344262;
-  --n-400: #94a3b8;
-  --n-500: #a7b2c5;
-  --n-600: #bcc5d4;
-  --n-700: #d2d9e4;
-  --n-800: #e3e8ef;
-  --n-900: #f1f5f9;
-  --n-950: #f8fafc;
-
-  --em-50: #0e2a22;
-  --em-100: #113629;
-  --em-200: #145a43;
-  --em-300: #1d7a59;
-  --em-600: #34d399;
-  --em-700: #6ee7b7;
-  --em-800: #a7f3d0;
-  --em-900: #d1fae5;
-
-  --rd-50: #2b1418;
-  --rd-100: #3b191e;
+  --em-50: #0f2e1a;
+  --em-100: #133a21;
+  --em-200: #1a5230;
+  --em-300: #22703f;
+  --em-600: #4ade80;
+  --em-700: #86efac;
+  --em-800: #bbf7d0;
+  --em-900: #dcfce7;
+  --rd-50: #3a1215;
+  --rd-100: #45161a;
   --rd-200: #5c2329;
   --rd-300: #b4404a;
   --rd-600: #f87171;
   --rd-700: #fca5a5;
   --rd-800: #fecaca;
   --rd-900: #fee2e2;
+  --am-50: #2e2508;
+  --am-100: #3a2f0c;
+  --am-300: #9c6e05;
+  --am-600: #f5c84a;
+  --am-700: #f7d26b;
+  --am-800: #fae19a;
+  --bl-50: #1a2040;
+  --bl-100: #212a52;
+  --bl-300: #3b4fa8;
+  --bl-600: #9daeff;
+  --bl-700: #bcc8ff;
+  --bl-800: #d6ddff;
+  --bl-900: #eef1ff;
 
-  --am-50: #2a2111;
-  --am-100: #3a2c12;
-  --am-300: #b45309;
-  --am-600: #fbbf24;
-  --am-700: #fcd34d;
-  --am-800: #fde68a;
-
-  --bl-50: #111e3a;
-  --bl-100: #16284d;
-  --bl-300: #2f5fc4;
-  --bl-600: #60a5fa;
-  --bl-700: #93c5fd;
-  --bl-800: #bfdbfe;
-  --bl-900: #dbeafe;
-
-  --vi-50: #1f1836;
-  --vi-600: #a78bfa;
+  --bg-deep: var(--bg);
+  --hairline: var(--line);
+  --hairline-strong: var(--line-strong);
+  --edge-neutral: var(--line-strong);
+  --sticky-bg: var(--bg);
+  --shadow-card: none;
+  --shadow-pop: var(--sheet-shadow);
+  --plate: #eef0ea;
+  --plate-line: rgba(20, 20, 20, 0.06);
 }
 
 html,
 body {
   background: var(--bg);
-  color: var(--n-900);
+  color: var(--text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -221,46 +298,110 @@ body {
   transition: background-color 240ms ease;
 }
 ::selection {
-  background: rgba(59, 130, 246, 0.25);
+  background: color-mix(in srgb, var(--action) 25%, transparent);
+}
+.ds2,
+.ds2-light,
+.ds2-dark {
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* ---------- Surface system utilities (Linear / Brilliant-style hairlines and glass bars) ---------- */
+/* ---------- Borders and bars (§4, §5.8: solid --bg, no blur) ---------- */
 @utility hairline {
-  border: 1px solid var(--hairline);
+  border: 2px solid var(--line);
 }
 @utility hairline-b {
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--line);
 }
 @utility hairline-t {
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--line);
 }
-/* Translucent, blurred sticky bar (headers, tab bar, action drawer) */
+/* Sticky bars (headers, tab bar, action drawer): solid canvas. The blur is gone (§2.3, §8). */
 @utility surface-sticky {
-  background: var(--sticky-bg);
-  -webkit-backdrop-filter: saturate(1.6) blur(18px);
-  backdrop-filter: saturate(1.6) blur(18px);
+  background: var(--bg);
 }
 
-/* Soft studio backdrop: a faint dot lattice with a warm top glow */
-.studio-bg {
-  background-image:
-    radial-gradient(1200px 500px at 50% -200px, rgba(59, 130, 246, 0.07), transparent 70%),
-    radial-gradient(circle at 1px 1px, var(--hair) 1px, transparent 0);
-  background-size:
-    100% 100%,
-    22px 22px;
-  background-attachment: fixed, scroll;
+/* ---------- §3 type scale ---------- */
+.t-display {
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.t-title {
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.t-heading {
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.t-body,
+.flow-body,
+.flow-q {
+  font-size: 18px;
+  line-height: 29px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.t-body-lg {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.t-secondary {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+.t-eyebrow {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.t-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.t-tab {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.t-readout {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Elevated surface */
+/* ---------- §5.3 card: 2 px border, 5 px bottom ledge, radius 20, no shadow ---------- */
 .card {
   background: var(--surface);
-  color: var(--n-900);
-  border-radius: 1.25rem;
-  box-shadow: var(--shadow-card);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-bottom-width: 5px;
+  border-radius: 20px;
+  box-shadow: none;
 }
 .card-pop {
-  box-shadow: var(--shadow-pop);
+  box-shadow: none;
 }
 
 .readout,
@@ -270,110 +411,125 @@ body {
   font-feature-settings: "zero" 0;
 }
 
-/* ---------- Tactile 3D buttons ----------
- * --c is the face colour, --e the lip/edge colour. Pressing sinks the face into its lip. */
+/* ---------- §5.1 buttons ----------
+ * 56 px pill. --c is the face colour, --e the ledge, --t the text; pressing sinks the face 4 px into its ledge. */
 .btn-3d {
-  --c: var(--n-900);
-  --e: #000;
-  --t: #fff;
+  --c: var(--ink);
+  --e: var(--ink-ledge);
+  --t: var(--ink-on);
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 9999px;
   background: var(--c);
   color: var(--t);
-  border-radius: 0.95rem;
   box-shadow: 0 4px 0 var(--e);
   transform: translateY(0);
   transition:
     transform 70ms ease,
-    box-shadow 70ms ease,
-    filter 120ms ease;
+    box-shadow 70ms ease;
+  font-size: 18px;
+  line-height: 24px;
   font-weight: 700;
-  font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
 }
-.btn-3d:hover:not(:disabled) {
-  filter: brightness(1.06);
-}
-.btn-3d:active:not(:disabled) {
+.btn-3d:active:not(:disabled),
+.btn-3d[data-pressed="true"] {
   transform: translateY(4px);
   box-shadow: 0 0 0 var(--e);
 }
 .btn-3d:disabled {
-  --c: var(--n-200) !important;
-  --e: var(--n-300) !important;
-  --t: var(--n-500) !important;
+  --c: var(--surface-2) !important;
+  --e: transparent !important;
+  --t: var(--text-3) !important;
+  box-shadow: none;
   cursor: not-allowed;
 }
 .btn-3d:focus-visible,
-.tile-3d:focus-visible {
-  outline: 3px solid rgba(59, 130, 246, 0.55);
+.tile-3d:focus-visible,
+.ds-focus:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
   outline-offset: 3px;
 }
 .tone-ink {
-  --c: var(--n-900);
-  --e: var(--n-950);
-  --t: var(--n-50);
+  --c: var(--ink);
+  --e: var(--ink-ledge);
+  --t: var(--ink-on);
 }
-:root.dark .tone-ink {
-  --e: #8a94a8;
+.tone-tech,
+.tone-violet {
+  --c: var(--action);
+  --e: var(--action-ledge);
+  --t: var(--action-on);
 }
 .tone-safe {
-  --c: #047857;
-  --e: #064e3b;
-  --t: #fff;
+  --c: var(--success);
+  --e: var(--success-ledge);
+  --t: var(--success-on);
 }
 .tone-crit {
-  --c: #dc2626;
-  --e: #991b1b;
-  --t: #fff;
-}
-.tone-tech {
-  --c: #2563eb;
-  --e: #1e40af;
-  --t: #fff;
+  --c: var(--danger);
+  --e: var(--danger-ledge);
+  --t: var(--danger-on);
 }
 .tone-hazard {
-  --c: #f59e0b;
-  --e: #b45309;
-  --t: #422006;
-}
-.tone-violet {
-  --c: #7c3aed;
-  --e: #5b21b6;
-  --t: #fff;
+  --c: var(--energy);
+  --e: var(--energy-ledge);
+  --t: var(--energy-on);
 }
 .tone-ghost {
   --c: var(--surface);
-  --e: var(--edge-neutral);
-  --t: var(--n-700);
-  border: 1px solid var(--hairline-strong);
+  --e: var(--line-strong);
+  --t: var(--text);
+  border: 2px solid var(--line-strong);
+}
+/* Small secondary pill ("Why?", "Hint", "All readouts (n)", compact page actions) */
+.btn-3d.btn-sm {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 20px;
 }
 
-/* Chunky selectable tile (answer options, segmented picks) */
+/* ---------- §5.2 answer tiles, chips and selectable tiles ----------
+ * Global: border, ledge, radius and states. Size and padding stay with each component (answer-tile type is 15.5c). */
 .tile-3d {
   background: var(--surface);
-  border: 1px solid var(--hairline-strong);
-  border-radius: 1rem;
-  box-shadow: 0 3px 0 var(--hairline-strong);
+  color: var(--text);
+  border: 2px solid var(--line-strong);
+  border-bottom-width: 4px;
+  border-radius: 12px;
+  box-shadow: none;
   transition:
     transform 70ms ease,
-    box-shadow 70ms ease,
     border-color 120ms ease,
     background-color 120ms ease;
 }
-.tile-3d:hover:not(:disabled) {
-  border-color: var(--n-300);
-}
 .tile-3d:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 0 0 var(--hairline-strong);
+  transform: translateY(2px);
 }
-.tile-3d[data-on="true"] {
-  border-color: #3b82f6;
-  background: var(--bl-50);
-  box-shadow:
-    inset 0 0 0 1px #3b82f6,
-    0 3px 0 #3b82f6;
+.tile-3d[data-on="true"],
+.tile-3d[data-state="selected"] {
+  border-color: var(--action);
+  background: var(--action-tint);
+}
+.tile-3d[data-state="correct"] {
+  border-color: var(--success);
+  background: var(--success-tint);
+}
+.tile-3d[data-state="wrong"] {
+  border-color: var(--danger);
+  background: var(--danger-tint);
+}
+.tile-3d[data-state="dim"] {
+  border-color: var(--line);
+  color: var(--text-2);
 }
 
 /* Legacy press helper (still used by small inline buttons) */
@@ -386,34 +542,32 @@ body {
   transform: translateY(2px);
 }
 
-/* ---------- Simulation plate (a daylight lightbox in both themes) ---------- */
+/* ---------- Simulation plate (§2.3: a daylight lightbox in both themes) ----------
+ * The frame is drawn by ::after as a 2 px inner ring so the plate's inner size (and every sim's geometry) is unchanged. */
 .plate {
   position: relative;
-  border-radius: 1rem;
+  border-radius: 16px;
   overflow: hidden;
   background:
     linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 20px 20px,
     linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 20px 20px,
     var(--plate);
-  box-shadow:
-    inset 0 0 0 1px rgba(15, 23, 42, 0.08),
-    inset 0 2px 6px rgba(15, 23, 42, 0.05);
+  box-shadow: none;
 }
-:root.dark .plate {
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 18px 40px -18px rgba(0, 0, 0, 0.9);
+.plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px var(--line);
+  pointer-events: none;
 }
 .plate svg {
   display: block;
 }
-/* Objective met: the whole diagram frame lights up */
-.plate.plate-met {
-  box-shadow:
-    inset 0 0 0 2px #10b981,
-    0 0 0 4px rgba(16, 185, 129, 0.22),
-    0 10px 30px -10px rgba(16, 185, 129, 0.45);
+/* Objective met: 2 px success inner ring, no glow */
+.plate.plate-met::after {
+  box-shadow: inset 0 0 0 2px var(--success);
 }
 
 /* ---------- Custom range slider ----------
@@ -495,7 +649,7 @@ body {
   cursor: grabbing;
 }
 .slider input:focus-visible ~ .slider-thumb {
-  outline: 3px solid rgba(59, 130, 246, 0.5);
+  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
   outline-offset: 2px;
 }
 
@@ -536,6 +690,8 @@ body {
   }
 }
 .alarm-flash {
+  /* Base colour so the text stays readable when the flash is off (reduced motion ends every animation at once). */
+  background-color: #7f1d1d;
   animation: alarm-flash 1s steps(2) infinite;
 }
 
@@ -655,7 +811,7 @@ svg[role="img"] {
 /* Lift the lesson action drawer above the phone tab bar on pages that show it (e.g. Warmup) */
 @media (max-width: 767px) {
   body:has(nav[aria-label="Primary"]) .action-bar {
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    bottom: calc(64px + env(safe-area-inset-bottom));
     padding-bottom: 0;
   }
 }
@@ -669,381 +825,34 @@ svg[role="img"] {
   }
 }
 
-/* Phase 13: verdict strip inside the bottom action bar */
+/* Verdict strip inside the bottom action bar: success / danger tints (§2.2). The sheet itself is 15.5c. */
 .verdict-ok {
-  background: color-mix(in oklab, #10b981 12%, var(--surface));
+  background: var(--success-tint);
 }
 .verdict-no {
-  background: color-mix(in oklab, #f59e0b 13%, var(--surface));
-}
-.flow-body {
-  font-size: 17px;
-  line-height: 1.55;
-}
-.flow-q {
-  font-size: 19px;
-  line-height: 1.4;
-  font-weight: 650;
-}
-.dark .verdict-ok {
-  background: color-mix(in oklab, #10b981 22%, var(--surface));
-}
-.dark .verdict-no {
-  background: color-mix(in oklab, #f59e0b 22%, var(--surface));
+  background: var(--danger-tint);
 }
 
-/* =====================================================================================================
- * Design system v2 (DESIGN.md §2–§5), Phase 15.5a.
- * Everything below applies only inside a `.ds2` wrapper (today: the /design-system sandbox). The old
- * :root / :root.dark palette above is untouched, so production screens render exactly as before.
- * Light: `.ds2`. Dark: `:root.dark .ds2`. The sandbox can also force one theme on a sub-tree
- * (`.ds2-light` / `.ds2-dark` inside `.ds2`) to show light and dark swatches side by side.
- * ===================================================================================================== */
-.ds2,
-.ds2 .ds2-light {
-  color-scheme: light;
-  /* §2.1 neutrals */
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f5f5f5;
-  --line: #e5e5e5;
-  --line-strong: #d4d4d4;
-  --text: #141414;
-  --text-2: #5c5c5c;
-  --text-3: #6b6b6b;
-  --n-50: #fafafa;
-  --n-100: #f5f5f5;
-  --n-200: #e5e5e5;
-  --n-300: #d4d4d4;
-  --n-400: #6b6b6b;
-  --n-500: #5c5c5c;
-  --n-600: #525252;
-  --n-700: #404040;
-  --n-800: #262626;
-  --n-900: #141414;
-  --n-950: #0a0a0a;
-  /* §2.2 accents: face / ledge / text-on / tint bg / tint text */
-  --action: #3b5bf6;
-  --action-ledge: #2a43c2;
-  --action-on: #ffffff;
-  --action-tint: #eef1ff;
-  --action-tint-text: #2a43c2;
-  --success: #15803d;
-  --success-ledge: #0f5e2c;
-  --success-on: #ffffff;
-  --success-tint: #dcfce7;
-  --success-tint-text: #15803d;
-  --danger: #dc2626;
-  --danger-ledge: #991b1b;
-  --danger-on: #ffffff;
-  --danger-tint: #fee2e2;
-  --danger-tint-text: #b91c1c;
-  --energy: #f5b417;
-  --energy-ledge: #b47f06;
-  --energy-on: #2a1e00;
-  --energy-tint: #fef6dc;
-  --energy-tint-text: #92600a;
-  --ink: #141414;
-  --ink-ledge: #000000;
-  --ink-on: #ffffff;
-  /* §5.7: the only shadow allowed (sheets, popovers) */
-  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+/* ---------- Design system v2 components (DESIGN.md §5) ----------
+ * The ds-* classes below were built for the /design-system sandbox in 15.5a. The tab bar and the sheet/popover face
+ * are used app-wide since 15.5b; the rest wait for 15.5c–e. */
+.tile-3d.tile-chip {
+  color: var(--action-tint-text);
+  text-align: center;
 }
-:root.dark .ds2,
-.ds2 .ds2-dark {
-  color-scheme: dark;
-  --bg: #121212;
-  --surface: #1c1c1c;
-  --surface-2: #242424;
-  --line: #2e2e2e;
-  --line-strong: #3a3a3a;
-  --text: #f5f5f5;
-  --text-2: #a3a3a3;
-  --text-3: #949494;
-  --n-50: #1c1c1c;
-  --n-100: #242424;
-  --n-200: #2e2e2e;
-  --n-300: #3a3a3a;
-  --n-400: #949494;
-  --n-500: #a3a3a3;
-  --n-600: #bdbdbd;
-  --n-700: #d4d4d4;
-  --n-800: #e5e5e5;
-  --n-900: #f5f5f5;
-  --n-950: #ffffff;
-  --action: #3b5bf6;
-  --action-ledge: #2a43c2;
-  --action-on: #ffffff;
-  --action-tint: #1a2040;
-  --action-tint-text: #9daeff;
-  --success: #15803d;
-  --success-ledge: #0f5e2c;
-  --success-on: #ffffff;
-  --success-tint: #0f2e1a;
-  --success-tint-text: #4ade80;
-  --danger: #dc2626;
-  --danger-ledge: #8f1d1d;
-  --danger-on: #ffffff;
-  --danger-tint: #3a1215;
-  --danger-tint-text: #f87171;
-  --energy: #f5b417;
-  --energy-ledge: #9c6e05;
-  --energy-on: #2a1e00;
-  --energy-tint: #2e2508;
-  --energy-tint-text: #f5c84a;
-  --ink: #d4d4d4;
-  --ink-ledge: #949494;
-  --ink-on: #141414;
-  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
-}
-/* Forced-light sub-tree inside a dark page: re-declare it after the dark block so it wins on equal footing. */
-:root.dark .ds2 .ds2-light {
-  color-scheme: light;
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f5f5f5;
-  --line: #e5e5e5;
-  --line-strong: #d4d4d4;
-  --text: #141414;
-  --text-2: #5c5c5c;
-  --text-3: #6b6b6b;
-  --n-50: #fafafa;
-  --n-100: #f5f5f5;
-  --n-200: #e5e5e5;
-  --n-300: #d4d4d4;
-  --n-400: #6b6b6b;
-  --n-500: #5c5c5c;
-  --n-600: #525252;
-  --n-700: #404040;
-  --n-800: #262626;
-  --n-900: #141414;
-  --n-950: #0a0a0a;
-  --action-tint: #eef1ff;
-  --action-tint-text: #2a43c2;
-  --success-tint: #dcfce7;
-  --success-tint-text: #15803d;
-  --danger-ledge: #991b1b;
-  --danger-tint: #fee2e2;
-  --danger-tint-text: #b91c1c;
-  --energy-ledge: #b47f06;
-  --energy-tint: #fef6dc;
-  --energy-tint-text: #92600a;
-  --ink: #141414;
-  --ink-ledge: #000000;
-  --ink-on: #ffffff;
-  --sheet-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
-}
-.ds2 {
-  background: var(--bg);
-  color: var(--text);
-}
-.ds2 .ds2-light,
-.ds2 .ds2-dark {
-  background: var(--bg);
-  color: var(--text);
-}
-
-/* §3 type scale */
-.ds2 .t-display {
-  font-size: 32px;
-  line-height: 38px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-.ds2 .t-title {
-  font-size: 26px;
-  line-height: 32px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-.ds2 .t-heading {
-  font-size: 21px;
-  line-height: 28px;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-.ds2 .t-body {
-  font-size: 18px;
-  line-height: 29px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.ds2 .t-body-lg {
-  font-size: 20px;
-  line-height: 32px;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-.ds2 .t-secondary {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--text-2);
-}
-.ds2 .t-eyebrow {
-  font-size: 13px;
-  line-height: 16px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-.ds2 .t-label {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-.ds2 .t-tab {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-.ds2 .t-readout {
-  font-family: var(--font-mono);
-  font-size: 17px;
-  line-height: 24px;
-  font-weight: 600;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-/* §5.3 card: 2 px border, 5 px bottom ledge, radius 20, no shadow */
-.ds2 .card {
-  background: var(--surface);
-  color: var(--text);
-  border: 2px solid var(--line);
-  border-bottom-width: 5px;
-  border-radius: 20px;
-  box-shadow: none;
-}
-
-/* §5.1 buttons: 56 px pill, face --c, ledge --e, text --t; press sinks 4 px */
-.ds2 .btn-3d {
-  --c: var(--ink);
-  --e: var(--ink-ledge);
-  --t: var(--ink-on);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 56px;
-  padding: 0 24px;
-  border: 0;
-  border-radius: 9999px;
-  background: var(--c);
-  color: var(--t);
-  box-shadow: 0 4px 0 var(--e);
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 700;
-  filter: none;
-}
-.ds2 .btn-3d:hover:not(:disabled) {
-  filter: none;
-}
-.ds2 .btn-3d:active:not(:disabled),
-.ds2 .btn-3d[data-pressed="true"] {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 var(--e);
-}
-.ds2 .btn-3d:disabled {
-  --c: var(--surface-2) !important;
-  --e: transparent !important;
-  --t: var(--text-3) !important;
-  box-shadow: none;
-  cursor: not-allowed;
-}
-.ds2 .btn-3d:focus-visible,
-.ds2 .tile-3d:focus-visible,
-.ds2 .ds-focus:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
-  outline-offset: 3px;
-}
-.ds2 .tone-tech,
-.ds2 .tone-violet {
-  --c: var(--action);
-  --e: var(--action-ledge);
-  --t: var(--action-on);
-}
-.ds2 .tone-safe {
-  --c: var(--success);
-  --e: var(--success-ledge);
-  --t: var(--success-on);
-}
-.ds2 .tone-crit {
-  --c: var(--danger);
-  --e: var(--danger-ledge);
-  --t: var(--danger-on);
-}
-.ds2 .tone-hazard {
-  --c: var(--energy);
-  --e: var(--energy-ledge);
-  --t: var(--energy-on);
-}
-:root .ds2 .tone-ink {
-  /* :root prefix so it beats the old `:root.dark .tone-ink` ledge */
-  --c: var(--ink);
-  --e: var(--ink-ledge);
-  --t: var(--ink-on);
-}
-.ds2 .tone-ghost {
-  --c: var(--surface);
-  --e: var(--line-strong);
-  --t: var(--text);
-  border: 2px solid var(--line-strong);
-}
-/* Small secondary pill ("Why?", "Hint", "All readouts (n)") */
-.ds2 .btn-3d.btn-sm {
-  height: 44px;
-  padding: 0 16px;
-  font-size: 14px;
-  line-height: 20px;
-}
-
-/* §5.2 answer tiles and word-bank chips */
+/* Sandbox reference size for answer tiles and word chips (§5.2 body-lg 600, 12×20); the lesson player adopts it in 15.5c. */
 .ds2 .tile-3d {
-  background: var(--surface);
-  color: var(--text);
-  border: 2px solid var(--line-strong);
-  border-bottom-width: 4px;
-  border-radius: 12px;
   padding: 12px 20px;
-  box-shadow: none;
   font-size: 20px;
   line-height: 32px;
   font-weight: 600;
   text-align: left;
 }
-.ds2 .tile-3d:hover:not(:disabled) {
-  border-color: var(--line-strong);
-}
-.ds2 .tile-3d:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: none;
-}
 .ds2 .tile-3d.tile-chip {
-  color: var(--action-tint-text);
   text-align: center;
 }
-.ds2 .tile-3d[data-on="true"],
-.ds2 .tile-3d[data-state="selected"] {
-  border-color: var(--action);
-  background: var(--action-tint);
-  box-shadow: none;
-}
-.ds2 .tile-3d[data-state="correct"] {
-  border-color: var(--success);
-  background: var(--success-tint);
-}
-.ds2 .tile-3d[data-state="wrong"] {
-  border-color: var(--danger);
-  background: var(--danger-tint);
-}
 /* Word-bank well and the blank slot inside a sentence */
-.ds2 .ds-well {
+.ds-well {
   background: var(--surface-2);
   border-radius: 20px;
   padding: 24px;
@@ -1052,7 +861,7 @@ svg[role="img"] {
   justify-content: center;
   gap: 16px;
 }
-.ds2 .ds-blank {
+.ds-blank {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1062,12 +871,12 @@ svg[role="img"] {
   border-radius: 8px;
   vertical-align: middle;
 }
-.ds2 .ds-blank[data-filled="true"] {
+.ds-blank[data-filled="true"] {
   border-color: transparent;
 }
 
 /* §5.5 / §5.5b path nodes ("pedestals"): 72 px face over a 10 px rim */
-.ds2 .ds-node {
+.ds-node {
   position: relative;
   width: 72px;
   height: 82px;
@@ -1075,19 +884,19 @@ svg[role="img"] {
   padding: 0;
   background: transparent;
 }
-.ds2 .ds-node-rim,
-.ds2 .ds-node-face {
+.ds-node-rim,
+.ds-node-face {
   position: absolute;
   left: 0;
   width: 72px;
   height: 72px;
   border-radius: 9999px;
 }
-.ds2 .ds-node-rim {
+.ds-node-rim {
   top: 10px;
   background: var(--rim);
 }
-.ds2 .ds-node-face {
+.ds-node-face {
   top: 0;
   background: var(--face);
   color: var(--glyph);
@@ -1095,28 +904,28 @@ svg[role="img"] {
   align-items: center;
   justify-content: center;
 }
-.ds2 .ds-node[data-state="done"] {
+.ds-node[data-state="done"] {
   --face: var(--success);
   --rim: var(--success-ledge);
   --glyph: var(--success-on);
 }
-.ds2 .ds-node[data-state="current"] {
+.ds-node[data-state="current"] {
   --face: var(--action);
   --rim: var(--action-ledge);
   --glyph: var(--action-on);
 }
-.ds2 .ds-node[data-state="locked"] {
+.ds-node[data-state="locked"] {
   --face: var(--surface-2);
   --rim: var(--line-strong);
   --glyph: var(--text-3);
 }
-.ds2 .ds-node[data-state="boss"] {
+.ds-node[data-state="boss"] {
   --face: var(--energy);
   --rim: var(--energy-ledge);
   --glyph: var(--energy-on);
 }
 /* Current node: 3 px action ring 8 px outside the face, pulsing 1 → 1.08 (2 s); stops under reduced motion */
-.ds2 .ds-node-ring {
+.ds-node-ring {
   position: absolute;
   left: -11px;
   top: -11px;
@@ -1137,11 +946,11 @@ svg[role="img"] {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ds2 .ds-node-ring {
+  .ds-node-ring {
     animation: none;
   }
 }
-.ds2 .ds-node-badge {
+.ds-node-badge {
   position: absolute;
   right: -2px;
   top: -2px;
@@ -1149,18 +958,18 @@ svg[role="img"] {
   height: 22px;
   border-radius: 9999px;
   background: var(--energy);
-  color: #ffffff;
+  color: var(--energy-on);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 /* §5.4 course spine: 4 px --line, centred, drawn only in the 32 px gaps between cards */
-.ds2 .ds-spine {
+.ds-spine {
   display: flex;
   flex-direction: column;
 }
-.ds2 .ds-spine-gap {
+.ds-spine-gap {
   align-self: center;
   width: 4px;
   height: 32px;
@@ -1168,40 +977,39 @@ svg[role="img"] {
 }
 
 /* §5.7 sheets and popovers: --surface-2 face, 2 px --line border, the one allowed shadow */
-.ds2 .ds-pop,
-.ds-pop.ds2 {
+.ds-pop {
   background: var(--surface-2);
   color: var(--text);
   border: 2px solid var(--line);
   border-radius: 20px;
   box-shadow: var(--sheet-shadow);
 }
-.ds2 .ds-sheet {
+.ds-sheet {
   border-radius: 24px 24px 0 0;
   padding: 20px 24px calc(16px + env(safe-area-inset-bottom));
 }
-.ds2 .ds-sheet[data-ok="true"] {
+.ds-sheet[data-ok="true"] {
   background: var(--success-tint);
 }
-.ds2 .ds-sheet[data-ok="false"] {
+.ds-sheet[data-ok="false"] {
   background: var(--danger-tint);
 }
 
 /* §5.6 lesson progress bar: one 10 px pill with 2 px --bg notches at stage boundaries */
-.ds2 .ds-progress {
+.ds-progress {
   position: relative;
   height: 10px;
   border-radius: 9999px;
   background: var(--surface-2);
   overflow: hidden;
 }
-.ds2 .ds-progress-fill {
+.ds-progress-fill {
   position: absolute;
   inset: 0 auto 0 0;
   background: var(--success);
   border-radius: 9999px;
 }
-.ds2 .ds-progress-notch {
+.ds-progress-notch {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -1211,7 +1019,7 @@ svg[role="img"] {
 }
 
 /* §5.8 bottom tab bar */
-.ds2 .ds-tabbar {
+.ds-tabbar {
   background: var(--bg);
   border-top: 1px solid var(--line);
   height: calc(64px + env(safe-area-inset-bottom));
@@ -1219,7 +1027,7 @@ svg[role="img"] {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
-.ds2 .ds-tab {
+.ds-tab {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1228,7 +1036,7 @@ svg[role="img"] {
   color: var(--text-3);
   min-height: 44px;
 }
-.ds2 .ds-tab-icon {
+.ds-tab-icon {
   width: 56px;
   height: 32px;
   border-radius: 9999px;
@@ -1236,22 +1044,32 @@ svg[role="img"] {
   align-items: center;
   justify-content: center;
 }
-.ds2 .ds-tab[aria-current="page"] {
+.ds-tab[aria-current="page"] {
   color: var(--text);
 }
-.ds2 .ds-tab[aria-current="page"] .ds-tab-icon {
+.ds-tab[aria-current="page"] .ds-tab-icon {
   background: var(--surface-2);
 }
-.ds2 .ds-tab[aria-current="page"] .t-tab {
+.ds-tab[aria-current="page"] .t-tab {
   font-weight: 700;
 }
 
 /* §5.9 sim readout rows */
-.ds2 .ds-readout-row {
+.ds-readout-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
+}
+
+/* §5.7 bottom sheets (Radix dialogs, vaul drawers): --surface-2 face, 2 px --line border, radius 24 top, the one allowed shadow */
+.sheet-face {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  box-shadow: var(--sheet-shadow);
 }

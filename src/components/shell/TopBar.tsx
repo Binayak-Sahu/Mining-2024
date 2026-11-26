@@ -14,14 +14,15 @@ import { setInspector } from "@/lib/inspector";
 import { ReportFlag } from "./InspectorKit";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import type { ReactNode } from "react";
+import { tactilePress } from "@/lib/motion";
 
 const NAV = [
-  { href: "/", label: "Path", Icon: Map, tint: "#3B82F6" },
-  { href: "/warmup", label: "Warmup", Icon: Dumbbell, tint: "#10B981" },
-  { href: "/exam", label: "Exam", Icon: GraduationCap, tint: "#EF4444" },
-  { href: "/lab", label: "Lab", Icon: FlaskConical, tint: "#8B5CF6" },
-  { href: "/tools", label: "Tools", Icon: Calculator, tint: "#F59E0B" },
-  { href: "/codex", label: "Codex", Icon: BookMarked, tint: "#0EA5E9" },
+  { href: "/", label: "Path", Icon: Map },
+  { href: "/warmup", label: "Warmup", Icon: Dumbbell },
+  { href: "/exam", label: "Exam", Icon: GraduationCap },
+  { href: "/lab", label: "Lab", Icon: FlaskConical },
+  { href: "/tools", label: "Tools", Icon: Calculator },
+  { href: "/codex", label: "Codex", Icon: BookMarked },
 ];
 
 function isOn(href: string, path: string) {
@@ -32,22 +33,12 @@ export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
       <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden>
-        <defs>
-          <linearGradient id="lg-a" x1="0" x2="1">
-            <stop offset="0" stopColor="#60A5FA" />
-            <stop offset="1" stopColor="#3B82F6" />
-          </linearGradient>
-          <linearGradient id="lg-c" x1="0" x2="1">
-            <stop offset="0" stopColor="#34D399" />
-            <stop offset="1" stopColor="#10B981" />
-          </linearGradient>
-        </defs>
         <rect x="1" y="2" width="28" height="26" rx="8" className="fill-slate-900" />
-        <path d="M5 10 C 11 7, 19 12, 25 9 L25 13 C 19 16, 11 11, 5 14 Z" fill="url(#lg-a)" />
+        <path d="M5 10 C 11 7, 19 12, 25 9 L25 13 C 19 16, 11 11, 5 14 Z" fill="var(--action)" />
         <path d="M5 16 C 11 13, 19 18, 25 15 L25 18 C 19 21, 11 16, 5 19 Z" className="fill-slate-50" opacity="0.9" />
-        <path d="M5 21 C 11 18, 19 23, 25 20 L25 24 C 19 26, 11 22, 5 24 Z" fill="url(#lg-c)" />
+        <path d="M5 21 C 11 18, 19 23, 25 20 L25 24 C 19 26, 11 22, 5 24 Z" fill="var(--success)" />
       </svg>
-      {!compact && <span className="font-extrabold tracking-[0.22em] text-[13px] text-slate-900 max-[400px]:hidden">STRATA</span>}
+      {!compact && <span className="font-extrabold tracking-[0.16em] text-[14px] text-slate-900 max-[400px]:hidden">STRATA</span>}
     </span>
   );
 }
@@ -58,9 +49,9 @@ function Tip({ label, children }: { label: string; children: ReactNode }) {
     <Tooltip.Root>
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-[#0E1424] px-2.5 py-1.5 text-[12px] font-semibold text-[#F1F5F9] shadow-lg">
+        <Tooltip.Content sideOffset={6} className="z-50 rounded-lg bg-slate-900 px-2.5 py-1.5 text-[14px] font-semibold text-slate-50">
           {label}
-          <Tooltip.Arrow className="fill-[#0E1424]" />
+          <Tooltip.Arrow className="fill-slate-900" />
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
@@ -79,7 +70,7 @@ export function ThemeToggle() {
   return (
     <Tip label={`Theme: ${label}`}>
       <button type="button" onClick={() => setTheme(THEME_NEXT[t])} aria-label={`Theme: ${label}. Tap to change.`} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
-      <motion.span key={t} initial={{ rotate: -90, scale: 0.6, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 400, damping: 18 }}>
+      <motion.span key={t} initial={{ rotate: -90, scale: 0.6, opacity: 0 }} animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={tactilePress}>
         <Icon size={18} />
       </motion.span>
     </button>
@@ -102,7 +93,7 @@ export function InspectorBadge() {
     );
   return (
     <Tip label={"Inspector Mode is on — turn off (Shift+M)"}>
-      <button type="button" onClick={() => setInspector(false)} aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-amber-700 bg-amber-50">
+      <button type="button" onClick={() => setInspector(false)} aria-label="Inspector Mode on. Turn off" className="w-10 h-10 rounded-xl flex items-center justify-center text-energy-tint-text bg-energy-tint">
       <KeyRound size={18} />
     </button>
     </Tip>
@@ -133,7 +124,7 @@ function StreakFlame({ n }: { n: number }) {
   }, [n, controls]);
   return (
     <motion.span animate={controls} className="inline-flex">
-      <Flame size={18} className={n > 0 ? "fill-orange-400" : ""} />
+      <Flame size={18} className={n > 0 ? "fill-energy" : ""} />
     </motion.span>
   );
 }
@@ -149,29 +140,29 @@ export function TopBar() {
   const st = hydrated ? liveStreak(streak, last) : 0;
 
   return (
-    <header className="sticky top-0 z-30 hairline-b surface-sticky pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-30 border-b border-line bg-canvas pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-2 sm:gap-4">
         <Link href="/" className="flex items-center shrink-0 min-h-[44px]" aria-label="STRATA home">
           <Logo />
         </Link>
-        <nav className="hidden md:flex items-center gap-0.5 ml-3 rounded-2xl bg-slate-100 p-1">
-          {NAV.map(({ href, label, Icon, tint }) => {
+        <nav className="hidden md:flex items-center gap-0.5 ml-3 rounded-2xl bg-surface-2 p-1">
+          {NAV.map(({ href, label, Icon }) => {
             const on = isOn(href, path);
             return (
-              <Link key={href} href={href} className={`relative flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-bold ${on ? "text-slate-900" : "text-slate-500 hover:text-slate-900"}`}>
-                {on && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-xl bg-surface shadow-[0_1px_2px_rgba(15,23,42,0.08),0_2px_0_var(--n-200)]" transition={{ type: "spring", stiffness: 500, damping: 36 }} />}
-                <Icon size={15} className="relative" color={on ? tint : undefined} />
+              <Link key={href} href={href} aria-current={on ? "page" : undefined} className={`relative flex items-center gap-1.5 rounded-xl px-3 py-2 text-[14px] font-bold ${on ? "text-fg" : "text-fg-3 hover:text-fg"}`}>
+                {on && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-xl bg-surface border-2 border-line" transition={tactilePress} />}
+                <Icon size={16} className="relative" />
                 <span className="relative hidden lg:inline">{label}</span>
               </Link>
             );
           })}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-orange-700 dark:text-orange-400 font-extrabold readout text-sm" title="Daily streak">
+          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-energy-tint-text font-extrabold readout text-sm" title="Daily streak">
             <StreakFlame n={st} /> {st}
           </span>
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-blue-600 font-extrabold readout text-sm" title="Experience points">
-            <Zap size={18} className="fill-blue-400/40" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
+          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-action-tint-text font-extrabold readout text-sm" title="Experience points">
+            <Zap size={18} className="fill-action-tint" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
           <InspectorBadge />
           <ReportFlag />
@@ -184,7 +175,7 @@ export function TopBar() {
             <ArrowLeftRight size={17} />
           </Link>
     </Tip>
-          <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-white text-[11px] font-black readout shadow-[0_2px_0_rgba(15,23,42,0.25)] ring-2 ring-surface">
+          <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-10 h-10 rounded-full bg-action text-white text-[14px] font-extrabold readout">
             {["T", "OM", "AM", "2C", "1C"][index]}
           </Link>
         </div>
@@ -193,28 +184,25 @@ export function TopBar() {
   );
 }
 
-/** Thumb-zone tab bar for phones. */
+/** Thumb-zone tab bar for phones (DESIGN.md §5.8): solid --bg, one active style, 12 px labels. */
 export function BottomNav() {
   const path = usePathname();
   if (path.startsWith("/lesson")) return null;
   return (
     <>
-      <div className="md:hidden h-[calc(76px+env(safe-area-inset-bottom))]" aria-hidden />
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 hairline-t surface-sticky pb-[env(safe-area-inset-bottom)]" aria-label="Primary">
-        <div className="grid grid-cols-6 px-1.5 pt-1.5 pb-1">
-          {NAV.map(({ href, label, Icon, tint }) => {
-            const on = isOn(href, path);
-            return (
-              <Link key={href} href={href} className="relative flex flex-col items-center gap-0.5 py-1 min-h-[56px]" aria-current={on ? "page" : undefined}>
-                <span className="relative flex items-center justify-center w-12 h-8 rounded-xl">
-                  {on && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-xl" style={{ background: `${tint}22`, boxShadow: `inset 0 0 0 1.5px ${tint}55` }} transition={{ type: "spring", stiffness: 500, damping: 34 }} />}
-                  <Icon size={20} className="relative" color={on ? tint : "currentColor"} strokeWidth={on ? 2.4 : 2} />
-                </span>
-                <span className={`text-[10.5px] font-bold ${on ? "text-slate-900" : "text-slate-500"}`}>{label}</span>
-              </Link>
-            );
-          })}
-        </div>
+      <div className="md:hidden h-[calc(64px+env(safe-area-inset-bottom))]" aria-hidden />
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 ds-tabbar" aria-label="Primary">
+        {NAV.map(({ href, label, Icon }) => {
+          const on = isOn(href, path);
+          return (
+            <Link key={href} href={href} className="ds-tab" aria-current={on ? "page" : undefined}>
+              <span className="ds-tab-icon">
+                <Icon size={24} strokeWidth={2} aria-hidden />
+              </span>
+              <span className="t-tab">{label}</span>
+            </Link>
+          );
+        })}
       </nav>
     </>
   );

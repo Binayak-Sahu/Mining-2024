@@ -21,14 +21,14 @@ export function InspectorMenu({ stages, index, onJump, onRefill }: { stages: str
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
-        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-2xl rounded-t-3xl bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl focus:outline-none" aria-describedby={undefined}>
+        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-2xl sheet-face p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
           <div className="flex items-center justify-between mb-3">
             <Dialog.Title className="text-[19px] font-bold text-slate-900">Inspector</Dialog.Title>
             <Dialog.Close className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Close">
               <X size={20} />
             </Dialog.Close>
           </div>
-          <div className="text-[13px] font-semibold text-slate-600 mb-2">Jump to a stage (the run becomes a sandbox)</div>
+          <div className="text-[14px] font-semibold text-slate-600 mb-2">Jump to a stage (the run becomes a sandbox)</div>
           <div className="grid grid-cols-6 gap-2" role="group" aria-label="Stage jumper">
             {stages.map((label, i) => (
               <button

@@ -15,7 +15,7 @@ export function AppToaster() {
       position="top-center"
       offset={72}
       mobileOffset={{ top: 64 }}
-      toastOptions={{ style: { borderRadius: 16, fontFamily: "var(--font-sans)" } }}
+      toastOptions={{ style: { borderRadius: 16, fontFamily: "var(--font-sans)", fontSize: 15, background: "var(--surface-2)", color: "var(--text)", border: "2px solid var(--line)", boxShadow: "var(--sheet-shadow)" } }}
     />
   );
 }

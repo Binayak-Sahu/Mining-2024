@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Trash2, Unlock, Zap, BookOpen, BookMarked, Sigma, Flame, Trophy, HeartCrack, Repeat, Sun, Moon, MonitorSmartphone, Volume2, VolumeX, Palette } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
@@ -177,7 +177,7 @@ export function Profile() {
             </button>
           </Dialog.Trigger>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px] data-[state=open]:animate-[fadein_160ms_ease-out]" />
+            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 data-[state=open]:animate-[fadein_160ms_ease-out]" />
             <Dialog.Content className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,420px)] card card-pop p-6 space-y-4 focus:outline-none">
               <Dialog.Title className="text-[19px] font-extrabold text-slate-900">Erase all progress?</Dialog.Title>
               <Dialog.Description className="text-[14px] text-slate-600 leading-relaxed">
@@ -221,17 +221,8 @@ export function Profile() {
   );
 }
 
-/** QA-only link to the /design-system sandbox (Phase 15.5a): rendered only when localStorage "strata-qa" is "1". */
+/** Link to the /design-system sandbox, shown to everyone while Phase 15.5 runs. Remove in 15.5e (see ROADMAP). */
 function QaDesignLink() {
-  const [qa, setQa] = useState(false);
-  useEffect(() => {
-    try {
-      setQa(localStorage.getItem("strata-qa") === "1");
-    } catch {
-      /* storage blocked */
-    }
-  }, []);
-  if (!qa) return null;
   return (
     <Link href="/design-system" className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
       <Palette size={18} className="text-slate-600" />

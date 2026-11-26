@@ -15,11 +15,8 @@ export function BonusCard({ stage, onOpen, onSkip }: { stage: Stage; onOpen: () 
   return (
     <>
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="card p-5 sm:p-8 relative overflow-hidden">
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-violet-500 to-amber-400" aria-hidden />
-        <span className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 text-[12.5px] font-bold text-violet-700 dark:text-violet-300 bg-violet-500/10">
-          <span className="inline-flex w-5 h-5 rounded-full items-center justify-center text-white bg-violet-500">
-            <Icon size={11} strokeWidth={2.6} />
-          </span>
+        <span className="t-eyebrow inline-flex items-center gap-1.5 py-0.5">
+          <Icon size={16} strokeWidth={2.4} aria-hidden />
           Bonus maths · optional
         </span>
         <h2 className="text-[24px] sm:text-[30px] leading-[1.2] font-bold tracking-[-0.015em] text-slate-900 mt-4 text-balance">{stage.title}</h2>
