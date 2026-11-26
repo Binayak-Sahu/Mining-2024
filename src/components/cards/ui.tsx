@@ -53,7 +53,7 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
         {compact ? <h2 className="sr-only">{title}</h2> : <h2 className="t-display text-fg mt-3 text-balance">{title}</h2>}
         <div className="mt-8 space-y-8">{children}</div>
       </section>
-      <ActionBar slotRef={setSlot} force={tone !== null} verdict={tone}>
+      <ActionBar slotRef={setSlot} force={tone !== null} verdict={tone} reserve={SHEET_RESERVE}>
         {footer && footerKey ? (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={footerKey} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={fadeQuick}>
@@ -68,17 +68,20 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
   );
 }
 
+/** Bottom space reserved up front in stage frames: a two-line verdict sheet with its button (§5.7: reserve the tallest footer state). */
+const SHEET_RESERVE = 232;
+
 /**
  * Fixed bottom footer (§4, §5.1): solid --bg, 16 px sides, 12 px top, 16 px + safe area bottom. While a verdict is
  * showing it becomes the §5.7 feedback sheet: a success / danger tint that rises over the footer (`feedbackSheet`),
  * radius 24 at the top. The spacer below the content only ever grows (the tallest state seen), so nothing above
  * moves when the sheet opens.
  */
-export function ActionBar({ children, slotRef, force, verdict = null }: { children?: ReactNode; slotRef?: (el: HTMLElement | null) => void; force?: boolean; verdict?: boolean | null }) {
+export function ActionBar({ children, slotRef, force, verdict = null, reserve = 112 }: { children?: ReactNode; slotRef?: (el: HTMLElement | null) => void; force?: boolean; verdict?: boolean | null; /** minimum bottom space (px) */ reserve?: number }) {
   const reduce = useReducedMotion();
   const has = !!children || !!force;
   const bar = useRef<HTMLDivElement>(null);
-  const [h, setH] = useState(112);
+  const [h, setH] = useState(reserve);
   useEffect(() => {
     const el = bar.current;
     if (!el || typeof ResizeObserver === "undefined") return;
@@ -185,7 +188,7 @@ function VerdictRow({ ok, title, why }: { ok: boolean; title: string; why?: Reac
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   return (
-    <div role="status" aria-live="polite" className="mb-4">
+    <div role="status" aria-live="polite" className="mb-3">
       <div className="flex items-center justify-between gap-3">
         <motion.div
           className={`t-title !font-extrabold min-w-0 ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}

@@ -680,20 +680,6 @@ body {
   animation: pulse-ring 1.6s ease-out infinite;
 }
 
-@keyframes alarm-flash {
-  0%,
-  100% {
-    background-color: #7f1d1d;
-  }
-  50% {
-    background-color: #ef4444;
-  }
-}
-.alarm-flash {
-  /* Base colour so the text stays readable when the flash is off (reduced motion ends every animation at once). */
-  background-color: #7f1d1d;
-  animation: alarm-flash 1s steps(2) infinite;
-}
 
 @keyframes bob {
   0%,

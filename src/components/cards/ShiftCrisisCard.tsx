@@ -55,7 +55,7 @@ export function ShiftCrisisCard({ stage: authored, onMistake, onDone, seed }: Ca
   if (!started) {
     return (
       <CardFrame kind="crisis" title={stage.title} footer={<PrimaryButton tone="tech" onClick={() => setStarted(true)}>Take charge: start the clock ({stage.seconds}s)</PrimaryButton>}>
-        <div className="alarm-flash rounded-[12px] text-white px-4 py-3 flex items-center gap-2 t-label !font-extrabold">
+        <div className="rounded-[12px] bg-danger-tint text-danger-tint-text px-4 py-3 flex items-center gap-2 t-label !font-bold" role="status">
           <Siren size={18} aria-hidden /> {stage.alarm}
         </div>
         <p className="flow-body text-fg">{stage.scenario}</p>
@@ -97,13 +97,13 @@ export function ShiftCrisisCard({ stage: authored, onMistake, onDone, seed }: Ca
                 setPick(null);
               }}
             >
-              {pick === null ? "Choose an action above" : phase + 1 < stage.phases.length ? "Next decision" : "Stand down & debrief"}
+              {pick === null ? "Choose an action" : phase + 1 < stage.phases.length ? "Next decision" : "Stand down & debrief"}
             </PrimaryButton>
           </div>
         )
       }
     >
-      <div className={`${finished ? "bg-surface-2 text-fg" : "alarm-flash text-white"} rounded-[12px] px-4 py-3 flex items-center justify-between t-label !font-extrabold`}>
+      <div className={`${finished ? "bg-surface-2 text-fg" : "bg-danger-tint text-danger-tint-text"} rounded-[12px] px-4 py-3 flex items-center justify-between t-label !font-bold`} role="status">
         <span className="flex items-center gap-2">
           <Siren size={18} aria-hidden /> {stage.alarm}
         </span>
@@ -148,14 +148,28 @@ export function ShiftCrisisCard({ stage: authored, onMistake, onDone, seed }: Ca
                   className={optionClass(st)}
                 >
                   {o.text}
-                  {pick !== null && (st === "right" || st === "wrong") && <span className="block t-secondary !text-fg mt-1.5">{o.why}</span>}
                 </button>
               );
             })}
           </div>
 
         </div>
-      ) : (
+      ) : null}
+      {!finished && pick !== null && (
+        // The reasons live in the feedback sheet behind "Why?" (§5.7), so the tiles never grow when a pick is made.
+        <Feedback key={phase} show ok={!!cur.options[pick].correct} title={cur.options[pick].correct ? "Correct!" : "Not the right call"}>
+          <span className="block">{cur.options[pick].why}</span>
+          {!cur.options[pick].correct &&
+            cur.options
+              .filter((o) => o.correct)
+              .map((o) => (
+                <span key={o.text} className="block mt-2">
+                  <b>Right call: {o.text}.</b> {o.why}
+                </span>
+              ))}
+        </Feedback>
+      )}
+      {finished && (
         <Feedback show ok title="Shift debrief">
           {stage.debrief}
         </Feedback>

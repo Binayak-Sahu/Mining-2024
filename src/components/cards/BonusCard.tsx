@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Calculator, Sigma, ChevronRight } from "lucide-react";
 import type { Stage } from "@/lib/types";
-import { PrimaryButton, ActionBar } from "./ui";
+import { PrimaryButton, ActionBar, STAGE_META } from "./ui";
 import { fadeQuick } from "@/lib/motion";
 
 /**
@@ -13,12 +13,13 @@ import { fadeQuick } from "@/lib/motion";
 export function BonusCard({ stage, onOpen, onSkip }: { stage: Stage; onOpen: () => void; onSkip: () => void }) {
   const eq = stage.kind === "equation";
   const Icon = eq ? Sigma : Calculator;
+  const m = STAGE_META[stage.kind];
   return (
     <>
       <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={fadeQuick} className="lesson-screen">
         <span className="t-eyebrow inline-flex items-center gap-1.5 py-0.5">
-          <Icon size={16} strokeWidth={2.4} aria-hidden />
-          Bonus maths · optional
+          <m.Icon size={16} strokeWidth={2.4} aria-hidden />
+          {m.label} · bonus maths, optional
         </span>
         <h2 className="t-display text-fg mt-3 text-balance">{stage.title}</h2>
         <p className="flow-body text-fg mt-8">

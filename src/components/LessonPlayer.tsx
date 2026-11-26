@@ -289,8 +289,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
           <div className="mt-8 grid grid-cols-3 gap-3 w-full">
             {[
-              { k: "Total XP", v: `+${xp}`, c: "text-energy-tint-text", Icon: Zap },
-              { k: "Accuracy", v: `${acc}%`, c: "text-success-tint-text", Icon: Trophy },
+              { k: "Total XP", v: `+${xp}`, c: "text-fg", Icon: Zap },
+              { k: "Accuracy", v: `${acc}%`, c: "text-fg", Icon: Trophy },
               { k: "Hearts", v: `${hearts}/${HEARTS_PER_LESSON}`, c: "text-danger-tint-text", Icon: Heart },
             ].map((t, i) => (
               <motion.div key={t.k} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={reduce ? fadeQuick : { ...tactilePress, delay: 0.5 + i * 0.08 }} className="card px-2 py-3">

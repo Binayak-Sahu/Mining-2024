@@ -139,7 +139,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
                 setPlaced((p) => p.filter((x) => x !== t.id));
                 setStatus("idle");
               }}
-              className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold"
+              className="tile-3d tile-chip readout min-w-[44px] min-h-[44px] px-3 py-1 text-[20px] font-semibold"
             >
               {t.text}
             </motion.button>
@@ -153,7 +153,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
         <div className="ds-well">
           {bank.map((t) =>
             placed.includes(t.id) ? (
-              <span key={t.id} aria-hidden className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold invisible">
+              <span key={t.id} aria-hidden className="tile-3d tile-chip readout min-w-[44px] min-h-[44px] px-3 py-1 text-[20px] font-semibold invisible">
                 {t.text}
               </span>
             ) : (
@@ -167,7 +167,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
                   setPlaced((p) => [...p, t.id]);
                   setStatus("idle");
                 }}
-                className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold"
+                className="tile-3d tile-chip readout min-w-[44px] min-h-[44px] px-3 py-1 text-[20px] font-semibold"
               >
                 {t.text}
               </motion.button>

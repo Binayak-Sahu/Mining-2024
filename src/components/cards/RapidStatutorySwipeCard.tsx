@@ -21,7 +21,7 @@ function SwipeItem({ text, exitDir, onDragEnd }: { text: string; exitDir: number
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ x: exitDir * 360, opacity: 0, rotate: exitDir * 18, transition: { duration: 0.28 } }}
       style={{ x, rotate, touchAction: "pan-y" }}
-      className="absolute inset-0 card p-6 flex items-center justify-center text-center cursor-grab active:cursor-grabbing"
+      className="absolute inset-0 card p-6 flex items-center text-left cursor-grab active:cursor-grabbing"
     >
       <motion.span style={{ opacity: yes }} className="absolute left-5 top-5 rotate-[-12deg] rounded-xl border-[3px] border-success px-3 py-1 text-success-tint-text font-black tracking-[0.12em] text-lg">
         TRUE
@@ -118,11 +118,11 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
             </AnimatePresence>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <button type="button" onClick={() => answer(false)} className="btn-3d tone-crit">
-              <X size={18} /> FALSE
+            <button type="button" onClick={() => answer(false)} className="btn-3d tone-ghost">
+              <X size={20} className="text-danger-tint-text" aria-hidden /> FALSE
             </button>
-            <button type="button" onClick={() => answer(true)} className="btn-3d tone-safe">
-              <Check size={18} /> TRUE
+            <button type="button" onClick={() => answer(true)} className="btn-3d tone-ghost">
+              <Check size={20} className="text-success-tint-text" aria-hidden /> TRUE
             </button>
           </div>
           {flash && (
