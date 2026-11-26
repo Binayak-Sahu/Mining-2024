@@ -175,7 +175,7 @@ Vertical 4 px line in `--line`, centred horizontally, drawn behind the 32 px gap
 Centred: unit icon tile (§5.11) at 112 px, 24 px gap, `display` title, 12 px gap, `secondary` description (max 3 lines, centred allowed here only), 24 px gap, stats row: lucide `BookOpen` + "N lessons", lucide `CircleHelp` + "N questions" (`secondary`, 24 px apart). Both are computed from content, never typed: lessons = lessons in the unit; questions = every answerable screen in it (flow check and situation screens, predict/choice/equation/hotspot answers, boss items). One helper in `src/lib` does the count so every screen agrees.
 
 ### 5.11 Unit icons
-Each unit has one lucide icon, shown in a rounded-square tile: `--surface-2` face, card border, radius 20, icon in `--text` at 45 % of the tile size (88 px tile on cards, 112 px on the unit header). The unit → icon mapping lives in one content file and is proposed in ROADMAP for Bink's approval before use. Original unit artwork may replace the icons in a later phase (Bink designs it); it must keep the same tile size.
+Each unit has one lucide icon, shown in a rounded-square tile: `--surface-2` face, card border, radius 20, icon in `--text` at 45 % of the tile size (88 px tile on cards, 112 px on the unit header). The unit → icon mapping lives in one content file. The run that adds it lists the mapping in ROADMAP as "pending Bink's review"; Bink approves or swaps icons after seeing them on his phone (a one-line change each). Original unit artwork may replace the icons in a later phase (Bink designs it); it must keep the same tile size.
 
 
 ### 5.12 Stage-kind label
