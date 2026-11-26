@@ -224,7 +224,9 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
      - Fix: picks update local state plus a shallow `history.replaceState` (no navigation, no RSC fetch), and the lab follows `?sim` when the URL changes. Re-run of the same repro: 5/5.
      - Added **Repair app** (Profile → Troubleshooting, and the new route error boundary). It unregisters the SW and deletes only `strata-*` caches, never localStorage.
      - Home shows **Restore from backup** while progress is empty.
-     - The matching `sw.js` change (RSC network-first) was blocked by the do-not-touch rule and awaits owner approval in ROADMAP.
+     - **Service worker (owner-approved 2026-11-26):** RSC `*.txt` payloads are now network-first, with the cache as the offline fallback.
+       - Verified with two builds that both carry the new worker: client navigation after a "deploy" shows the new build; picker 3/3.
+       - Offline: client navigation to a visited page and an offline reload both render from cache. 0 errors.
      - Tests: 5 drawer switches by touch, `?sim` deep links via Codex thumbnails, Repair keeps progress byte-identical, restore-link visibility.
   3. **Sim stage declutter** (owner screenshot: u7-l1 Coward intuition lab).
      - On phones the diagram is sticky under the header, carrying key status chips, while the controls scroll beneath.

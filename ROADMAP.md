@@ -113,4 +113,5 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 | date (UTC) | run | outcome |
 |---|---|---|
 | 2026-11-25 | Phase 13: ConceptFlow + 3 sourced flows | shipped to main (`d1c3d51`) |
+| 2026-11-26 | Phase 14.5 hotfix: real-phone bugs (slider scroll-steal, stuck Sim Lab picker, sim-stage declutter, back navigation + Notes, quote verification, sources policy) | see BUILD_PROGRESS; SW change approved and applied; touch regression suite added; deferred: SVG label size (19), predict-with-sim layout |
 | 2026-11-25 | Phase 14: trust, pacing, situations | shipped. All gates passed (validate, tsc, lint, base-path build, audit:svg 0 findings, 390×844 light/dark walk, Inspector byte-identical). Skipped: 11-unit label floor (→ 19), stricter situation word caps, compact wrong-answer strip, switch-track toggles, 44 px jumper pills (→ 19). Note: `sources/` is absent, so Phase 15 is waiting on the owner. |
