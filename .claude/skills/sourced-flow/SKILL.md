@@ -38,5 +38,5 @@ Follow CLAUDE.md's CONTENT RULE, STATUTE GATE and COPYRIGHT sections throughout.
      - public domain → `research/cache/<id>.txt`, committed;
      - copyrighted → `research/cache/private/<id>.txt`, gitignored; add the URL to `scripts/fetch-sources.mjs`.
    - Run `npm run validate`. It includes `verify-quotes`: every excerpt must be FOUND, and the run needs 0 errors. Then run the `fact-checker` agent on the lesson. Fix every PARTLY/UNSUPPORTED claim with sourced wording, or drop it. Append a fact-check summary to the research file.
-6. **Every 2 lessons, run the `design-reviewer` agent** and apply its top fixes.
+6. **Once per run (not per lesson), run the `design-reviewer` agent** over all of that run's changes, and apply its top fixes.
 7. **Commit** "sourced flow <lessonId>" with the session attribution lines. Add a row to the ROADMAP run log.

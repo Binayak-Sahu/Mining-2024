@@ -1,8 +1,8 @@
 ---
 name: fact-checker
 description: Independent fact-check of a sourced ConceptFlow lesson (research/<id>.md + src/content/flows/<id>.ts) against its cited sources. Use after writing or changing any sourced flow.
-model: opus
-effort: high
+model: sonnet
+effort: medium
 tools: Read, Grep, Glob, WebFetch, WebSearch
 ---
 

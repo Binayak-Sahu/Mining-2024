@@ -1,8 +1,8 @@
 ---
 name: design-reviewer
-description: Brilliant-grade product design review of changed STRATA UI, run headless at 390×844 in light and dark. Use every 2 sourced lessons and after UI changes.
+description: Brilliant-grade product design review of changed STRATA UI, run headless at 390×844 in light and dark. Run once per run (at the end, over that run's changes).
 model: sonnet
-effort: high
+effort: medium
 tools: Read, Grep, Glob, Bash
 ---
 
