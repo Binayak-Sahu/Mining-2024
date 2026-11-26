@@ -17,12 +17,12 @@ The owner's decisions, the phase plan and a run log. `BUILD_PROGRESS.md` holds t
 ## Statute gate: pending
 _(none. Proposed statutory changes are listed here as old → new, source, location, and are applied only after owner approval.)_
 
-## Owner approval needed: service-worker change (do-not-touch exception)
+## Service-worker change (do-not-touch exception): APPROVED by the owner 2026-11-26, applied in the 14.5 hotfix
 - **Found (Phase 14.5 hotfix, real repro):** `public/sw.js` serves RSC payloads (`*.txt`) cache-first with `ignoreSearch`. After a deploy, the new app can be fed payloads from the old build.
   - The Sim Lab symptom is fixed without touching the SW: the picker no longer navigates.
   - Other client navigations stay exposed until the SW changes.
 - **Proposed one-line change:** treat `url.pathname.endsWith(".txt")` like navigations (network-first, cache as offline fallback).
-- **Status:** an automated safety check blocked the edit because `sw.js` is on the do-not-touch list. Approve it explicitly and it ships in the next run. Meanwhile, Profile → Troubleshooting → **Repair app** clears stale caches without touching progress.
+- **Status:** approved and applied: `.txt` RSC payloads are now network-first, with the cache as the offline fallback. Verified with the stale-deploy repro and the offline check. Profile → Troubleshooting → **Repair app** remains for devices that are already stuck.
 
 ## Sources policy (2026-11-26)
 - The OSH (Central) Rules 2026 (G.S.R. 345(E), 08-05-2026) supersede the Mines Rules 1955, the Mines Rescue Rules 1985 and the MVTR 1966. Those three are historical only.

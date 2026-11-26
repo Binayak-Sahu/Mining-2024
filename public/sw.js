@@ -57,7 +57,10 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin || !url.href.startsWith(SCOPE)) return;
   if (url.pathname.endsWith("/sw.js") || url.pathname.endsWith("/precache.json")) return;
 
-  if (req.mode === "navigate") {
+  // Pages AND RSC payloads (*.txt) are network-first: a payload from a previous deploy must never be fed to
+  // the new app (it left the Sim Lab picker stuck until site data was cleared). Cache is the offline fallback.
+  // Owner-approved exception to the sw.js do-not-touch rule (Phase 14.5 hotfix, 2026-11-26).
+  if (req.mode === "navigate" || url.pathname.endsWith(".txt")) {
     // Network first for pages (fresh content when online), cache when offline.
     event.respondWith(
       (async () => {
@@ -67,7 +70,7 @@ self.addEventListener("fetch", (event) => {
           if (res.ok) cache.put(req, res.clone());
           return res;
         } catch {
-          const hit = (await cache.match(req, { ignoreSearch: true })) || (await cache.match(new URL("./", SCOPE).toString()));
+          const hit = (await cache.match(req, { ignoreSearch: true })) || (req.mode === "navigate" ? await cache.match(new URL("./", SCOPE).toString()) : undefined);
           return hit || new Response("Offline", { status: 503, headers: { "Content-Type": "text/plain" } });
         }
       })(),

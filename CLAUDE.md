@@ -44,7 +44,7 @@ Never apply a change to a statutory value or citation directly. That covers `src
 - `statutes.ts` values (use the statute gate).
 - Progress store version and persist names (`strata-progress-v1` v2, `strata-prefs` v1). New, separate stores are allowed.
 - Sync/export schema 2.
-- `public/sw.js` caching logic and `scripts/build-sw.mjs` (Phase 14.5 note: a proposed network-first rule for RSC `.txt` payloads awaits the owner's approval in `ROADMAP.md`).
+- `public/sw.js` caching logic and `scripts/build-sw.mjs`. One owner-approved exception exists (2026-11-26): RSC `.txt` payloads are network-first.
 - `basePath` / `NEXT_PUBLIC_BASE_PATH` handling.
 - Sim geometry and hotspot x/y, unless a roadmap step explicitly allows it (then re-run audit:svg).
 - Progress writes outside `LessonPlayer` (plus Warmup/Exam store actions), and the Inspector sandbox logic.
