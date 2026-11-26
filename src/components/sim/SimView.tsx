@@ -71,6 +71,17 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
   const [drag, setDrag] = useState<number | null>(null);
   const [used, setUsed] = useState(false);
   const handles = onChange ? (def.handles ?? []) : [];
+  // Chrome ignores touch-action on SVG children, so a touch that starts on a grip claims the gesture with
+  // a non-passive touchstart (no page scroll mid-drag). Elsewhere on the diagram the page scrolls normally.
+  useEffect(() => {
+    const el = svg.current;
+    if (!el || !handles.length) return;
+    const claim = (e: TouchEvent) => {
+      if ((e.target as Element | null)?.closest?.("[data-grip]")) e.preventDefault();
+    };
+    el.addEventListener("touchstart", claim, { passive: false });
+    return () => el.removeEventListener("touchstart", claim);
+  }, [handles.length]);
 
   const toView = (e: RPointerEvent) => {
     const el = svg.current;
@@ -148,6 +159,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
               role="slider"
               aria-label={`Drag to change ${def.params.find((q) => q.key === h.key)?.label ?? h.key}`}
               aria-valuenow={values[h.key]}
+              data-grip=""
               style={{ cursor: on ? "grabbing" : "grab", touchAction: "none" }}
               onPointerDown={(e) => {
                 (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
@@ -156,7 +168,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
                 setUsed(true);
               }}
             >
-              <circle cx={x} cy={y} r={22} fill="transparent" />
+              <circle cx={x} cy={y} r={28} fill="transparent" />
               {!used && <circle cx={x} cy={y} r={9} fill="none" stroke={c} strokeWidth={2} className="hotspot-ring" />}
               <circle cx={x} cy={y} r={on ? 10 : 8.5} fill="white" stroke={c} strokeWidth={3} filter="url(#f-shadow)" />
               {h.axis === "x" ? (

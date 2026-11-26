@@ -480,6 +480,20 @@ body {
     0 6px 14px -4px rgba(15, 23, 42, 0.3);
   pointer-events: none;
 }
+.slider-grab {
+  /* ≥ 44 px grab zone centred on the thumb; owns the whole gesture (no page scroll mid-drag). */
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 999px;
+  touch-action: none;
+  cursor: grab;
+}
+.slider-grab:active {
+  cursor: grabbing;
+}
 .slider input:focus-visible ~ .slider-thumb {
   outline: 3px solid rgba(59, 130, 246, 0.5);
   outline-offset: 2px;
