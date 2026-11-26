@@ -139,13 +139,13 @@ Vertical 4 px line in `--line`, centred horizontally, drawn behind the 32 px gap
 
 ### 5.5 Path nodes ("pedestals") — restyle only, keep STRATA's map layout
 - Node = circle 72 px top face + 10 px rim below it (ledge), drawn in SVG/CSS.
-- States: done → face `success`, rim `success` ledge, lucide `Check` 28 px white. Current → face `action`, rim `action` ledge, plus a 3 px `action` ring 8 px outside, pulsing scale 1 → 1.08 (2 s, ease-in-out, off under reduced motion). Locked → face `--surface-2`, rim `--line-strong`, lucide `Lock` 22 px `--text-3`.
+- States: done → face `success`, rim `success` ledge, lucide `Check` 28 px white. Current → face `action`, rim `action` ledge, lucide `Play` 26 px white (filled), plus a 3 px `action` ring 8 px outside, pulsing scale 1 → 1.08 (2 s, ease-in-out, off under reduced motion). Locked → face `--surface-2`, rim `--line-strong`, lucide `Lock` 22 px `--text-3`.
 - Label 20 px from node: `heading` weight 600; locked label `--text-3`.
 - Tap a node → popover card (§5.7) with lesson title + `action` "Start" (or "Review" for done).
 
 ### 5.5b Special nodes and tapping
 - Boss node: face `energy`, rim `energy` ledge, lucide `Crown` 26 px in `energy` text-on. Locked boss: locked style with a small `Crown` in `--text-3`.
-- Perfect lesson: done node plus a 22 px `energy` circle badge with a white `Star` at the top-right of the face.
+- Perfect lesson: done node plus a 22 px `energy` circle badge with a `Star` in `energy` text-on (`#2A1E00`, 8.9:1) at the top-right of the face.
 - Inspector-sandbox (master) node: locked-style face, label followed by an `action`-tint "Master" pill (`label` 700).
 - Tap any unlocked node → popover card above/below it (`feedbackSheet` spring): lesson title (`heading`), stage count (`secondary`), button `action` "Start" (current), `ghost` "Review" (done) or `energy` "Fight boss" (boss). Tapping a locked node shows the popover with "Finish the previous lesson first" and no button. The old "START" callout is removed.
 
