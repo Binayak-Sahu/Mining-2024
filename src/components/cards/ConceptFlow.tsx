@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import * as Dialog from "@radix-ui/react-dialog";
-import { BookMarked, BookOpenCheck, ExternalLink, Lightbulb, X } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { BookMarked, Lightbulb } from "lucide-react";
 import type { FlowScreen, FlowVisual, TheoryStage, Vals } from "@/lib/types";
 import { getSim } from "@/content";
-import { REFS } from "@/content/references";
-import { EXCERPTS } from "@/content/excerpts.gen";
+import { useLessonSources } from "@/lib/lessonSources";
+import { fadeQuick, stageSlide } from "@/lib/motion";
 import { SimCanvas, SimView, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { shuffleItem } from "@/lib/shuffle";
@@ -17,55 +16,6 @@ import { ChevronLeft } from "lucide-react";
 import { SituationHeader } from "./Situation";
 import { nb } from "./ui";
 import { CardFrame, OptionKey, PrimaryButton, VerdictBar, optionClass, type CardProps } from "./ui";
-
-/** Source chip: opens a sheet with the reference title, author, publisher and link. */
-function SourceChip({ ids, lessonId }: { ids: string[]; lessonId?: string }) {
-  return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <button type="button" className="inline-flex items-center gap-1.5 min-h-[44px] -my-2 px-1 text-[13px] font-semibold text-slate-500 hover:text-slate-900">
-          <BookOpenCheck size={15} /> Source{ids.length > 1 ? `s (${ids.length})` : ""}
-        </button>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40" />
-        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-2xl sheet-face p-5 sm:p-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
-          <div className="flex items-center justify-between mb-3">
-            <Dialog.Title className="text-[19px] font-bold text-slate-900">Where this comes from</Dialog.Title>
-            <Dialog.Close className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100" aria-label="Close">
-              <X size={20} />
-            </Dialog.Close>
-          </div>
-          <ul className="space-y-3">
-            {ids.map((id) => {
-              const r = REFS[id];
-              if (!r) return null;
-              return (
-                <li key={id} className="rounded-2xl hairline p-4">
-                  <div className="text-[16px] font-semibold text-slate-900 leading-snug">{r.title}</div>
-                  <div className="text-[14px] text-slate-600 mt-1">
-                    {r.author} · {r.publisher}
-                  </div>
-                  {/* Copyright: copyrighted sources show one quote per lesson; public-domain / Gazette up to three. */}
-                  {(lessonId ? EXCERPTS[lessonId]?.[id] ?? [] : []).slice(0, r.licence === "public-domain" || r.licence === "govt-India" ? 3 : 1).map((e, k) => (
-                    <blockquote key={k} className="mt-2 border-l-[3px] border-slate-300 pl-3">
-                      <p className="text-[15px] text-slate-800 leading-snug">“{e.excerpt}”</p>
-                      {e.location && <p className="text-[12.5px] text-slate-500 mt-0.5">{e.location}</p>}
-                    </blockquote>
-                  ))}
-                  {r.where && <div className="text-[12.5px] text-slate-500 mt-2">Section: {r.where}</div>}
-                  <a href={r.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 min-h-[44px] text-[14px] font-semibold text-blue-700 break-all">
-                    <ExternalLink size={14} className="shrink-0" /> Open source
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
-}
 
 function Visual({ stage, v }: { stage: TheoryStage; v?: FlowVisual }) {
   const def = getSim(v?.sim ?? stage.sim);
@@ -162,6 +112,14 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
     return { ...raw, options: sh.options, why: sh.why as string[], answer: sh.answer };
   }, [raw, stage.title, seed, i]);
 
+  // The top bar's ⋯ menu shows the sources behind the screen on show (§5.6); cleared when the flow unmounts.
+  const srcKey = s ? s.src.join("|") : "";
+  useEffect(() => {
+    useLessonSources.getState().set(srcKey ? srcKey.split("|") : [], seed?.split("#")[0] ?? null);
+  }, [srcKey, seed]);
+  useEffect(() => () => useLessonSources.getState().set([], null), []);
+  const reduce = useReducedMotion();
+
   const nudgeDef = s?.kind === "nudge" ? getSim(s.sim) : null;
   const nudgeStart = useMemo(() => (s?.kind === "nudge" && nudgeDef ? defaults(nudgeDef, s.start) : null), [s, nudgeDef]);
 
@@ -194,12 +152,12 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   if (!s) {
     label = "Summary";
     body = (
-      <div className="space-y-5">
-        <p className="flow-body text-slate-700">What you now know:</p>
-        <ul className="space-y-3">
+      <div className="space-y-4">
+        <p className="flow-body text-fg">What you now know:</p>
+        <ul className="space-y-4">
           {(stage.flowSummary ?? stage.codex.bullets.slice(0, 3)).map((b, k) => (
-            <motion.li key={k} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 * k }} className="flex gap-3 flow-body text-slate-800">
-              <span className="mt-[9px] w-2 h-2 shrink-0 rounded-full bg-emerald-500" />
+            <motion.li key={k} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: 0.06 * k }} className="flex gap-3 flow-body text-fg">
+              <span className="mt-[11px] w-2 h-2 shrink-0 rounded-full bg-success" />
               <span>{b}</span>
             </motion.li>
           ))}
@@ -207,26 +165,28 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
       </div>
     );
     footer = (
-      <PrimaryButton tone="safe" onClick={onDone}>
-        <BookMarked size={17} /> File to Codex
+      <PrimaryButton onClick={onDone}>
+        <BookMarked size={18} /> File to Codex
       </PrimaryButton>
     );
   } else if (s.kind === "predict" || s.kind === "check" || s.kind === "situation") {
     label = s.kind === "predict" ? "Predict first" : s.kind === "situation" ? "On the job" : "Check yourself";
     const done = ph.verdict === "right";
     body = (
-      <div className="space-y-5">
+      <div className="space-y-8">
         {s.kind === "predict" && s.visual && <Visual stage={stage} v={s.visual} />}
         {s.kind === "situation" ? (
           <SituationHeader role={s.role} scene={s.scene} claim={s.claim} claimBy={s.claimBy} visual={s.visual ? <Visual stage={stage} v={s.visual} /> : undefined} />
         ) : (
-          <p className="flow-q text-slate-900">{nb(s.q)}</p>
+          <p className="flow-q text-fg">{nb(s.q)}</p>
         )}
-        <div className="grid gap-2.5" role="radiogroup">
+        <div className="grid gap-3" role="radiogroup">
           {s.options.map((o, k) => {
             const tried = ph.tried.includes(k);
             const sel = !done && ph.pick === k && ph.verdict !== "wrong";
-            const state = done ? (k === s.answer ? "right" : "dim") : tried ? "dim" : sel ? "selected" : "idle";
+            // While the "Not quite" sheet is up, the pick shows as wrong (§5.2); after Try again it is struck through.
+            const wrongNow = ph.verdict === "wrong" && ph.pick === k;
+            const state = done ? (k === s.answer ? "right" : "dim") : wrongNow ? "wrong" : tried ? "dim" : sel ? "selected" : "idle";
             return (
               <button
                 key={k}
@@ -235,10 +195,10 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
                 aria-checked={ph.pick === k}
                 disabled={done || tried}
                 onClick={() => setPh((p) => ({ ...p, pick: k, verdict: "none" }))}
-                className={`${optionClass(state)} flex items-center !text-[16px] min-h-[56px]`}
+                className={optionClass(state)}
               >
                 <OptionKey i={k} state={state} />
-                <span className={tried && !done ? "line-through decoration-slate-400" : ""}>{nb(o)}</span>
+                <span className={tried && !done && !wrongNow ? "line-through decoration-[var(--text-3)]" : ""}>{nb(o)}</span>
               </button>
             );
           })}
@@ -253,17 +213,17 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
       );
     else if (ph.verdict === "wrong" && ph.pick !== null)
       footer = (
-        <VerdictBar ok={false} title="Not quite" why={s.kind === "check" && s.hint && ph.tried.length > 1 ? <span className="font-semibold text-slate-800"><Lightbulb size={14} className="inline -mt-0.5 mr-1" />{s.hint}</span> : s.why[ph.pick]}>
+        <VerdictBar ok={false} title="Not quite" why={s.kind === "check" && s.hint && ph.tried.length > 1 ? <span className="font-semibold text-fg"><Lightbulb size={16} className="inline -mt-0.5 mr-1" />{s.hint}</span> : s.why[ph.pick]}>
           <PrimaryButton onClick={() => setPh((p) => ({ ...p, pick: null, verdict: "none" }))}>Try again</PrimaryButton>
         </VerdictBar>
       );
-    else footer = <PrimaryButton onClick={check} disabled={ph.pick === null}>Check</PrimaryButton>;
+    else footer = <PrimaryButton tone="tech" onClick={check} disabled={ph.pick === null}>Check</PrimaryButton>;
   } else if (s.kind === "explain") {
     label = "How it works";
     body = (
-      <div className="space-y-5">
+      <div className="space-y-8">
         {s.visual && <Visual stage={stage} v={s.visual} />}
-        <p className="flow-body text-slate-800">{nb(s.text)}</p>
+        <p className="flow-body text-fg">{nb(s.text)}</p>
       </div>
     );
     footer = <PrimaryButton onClick={next}>Continue</PrimaryButton>;
@@ -289,14 +249,14 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
       </g>
     );
     body = (
-      <div className="space-y-5">
-        <p className="flow-body text-slate-800">{s.prompt}</p>
+      <div className="space-y-8">
+        <p className="flow-body text-fg">{s.prompt}</p>
         <SimCanvas def={def} values={values} still overlay={overlay} focus={ph.revealed ? [[h.x, h.y]] : undefined} />
         <AnimatePresence>
           {ph.revealed && (
-            <motion.div ref={revealBox} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="scroll-mb-40 rounded-2xl bg-slate-50 hairline p-4">
-              <div className="text-[15px] font-bold text-slate-900">{h.title}</div>
-              <p className="flow-body text-slate-700 mt-1">{h.body}</p>
+            <motion.div ref={revealBox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={fadeQuick} className="scroll-mb-40">
+              <div className="t-heading text-fg">{h.title}</div>
+              <p className="flow-body text-fg mt-2">{h.body}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -306,14 +266,14 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   } else if (s.kind === "misconception") {
     label = "Common trap";
     body = (
-      <div className="space-y-5">
-        <div className="rounded-2xl bg-amber-50 p-4 sm:p-5">
-          <div className="text-[13px] font-bold text-amber-800 mb-1">Many people think</div>
-          <p className="flow-body text-slate-800">“{s.claim}”</p>
+      <div className="space-y-8">
+        <div className="rounded-[20px] bg-danger-tint p-5">
+          <div className="t-label !font-bold text-danger-tint-text mb-1">Many people think</div>
+          <p className="flow-body text-fg">“{s.claim}”</p>
         </div>
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl bg-emerald-50 p-4 sm:p-5">
-          <div className="text-[13px] font-bold text-emerald-800 mb-1">What actually happens</div>
-          <p className="flow-body text-slate-800">{s.truth}</p>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: 0.25 }} className="rounded-[20px] bg-success-tint p-5">
+          <div className="t-label !font-bold text-success-tint-text mb-1">What actually happens</div>
+          <p className="flow-body text-fg">{s.truth}</p>
         </motion.div>
         {s.visual && <Visual stage={stage} v={s.visual} />}
       </div>
@@ -323,7 +283,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
     label = "Try it";
     const vals = nudgeVals ?? nudgeStart;
     body = (
-      <div className="space-y-5">
+      <div className="space-y-8">
         <SimView
           def={nudgeDef}
           values={vals}
@@ -348,15 +308,23 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
   return (
     <CardFrame kind="theory" title={stage.title} compact={i > 0 && !single} footer={footer} footerKey={`${i}-${ph.verdict}-${ph.revealed}-${ph.met}`}>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={i} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18, ease: "easeOut" }} className="space-y-5" {...swipe}>
-          <div className="flex items-center justify-between gap-3 -mt-1">
-            <span className="flex items-center gap-1 text-[13px] font-semibold text-slate-600">
+        <motion.div
+          key={i}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, x: 24 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, x: 0 }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, x: -24 }}
+          transition={reduce ? fadeQuick : stageSlide}
+          className="flow-screen space-y-8"
+          {...swipe}
+        >
+          <div className="flex items-center justify-between gap-3 -mt-4">
+            <span className="flex items-center gap-1 t-label text-fg-2">
               {!single && i > 0 && (
-                <button type="button" onClick={back} aria-label="Previous screen" className="-ml-2 w-11 h-11 -my-2 rounded-full flex items-center justify-center text-slate-600 hover:bg-slate-100">
-                  <ChevronLeft size={20} />
+                <button type="button" onClick={back} aria-label="Previous screen" className="-ml-3 w-11 h-11 -my-2 rounded-full flex items-center justify-center text-fg-2">
+                  <ChevronLeft size={22} />
                 </button>
               )}
-              {review && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[12px] font-bold text-slate-600 mr-1">Review</span>}
+              {review && <span className="rounded-full bg-surface-2 px-2.5 py-0.5 t-label !font-bold text-fg mr-1">Review</span>}
               {single ? "Review" : label}
               {!single && (
                 <>
@@ -365,7 +333,6 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
                 </>
               )}
             </span>
-            {s && <SourceChip ids={s.src} lessonId={seed?.split("#")[0]} />}
           </div>
           {body}
         </motion.div>

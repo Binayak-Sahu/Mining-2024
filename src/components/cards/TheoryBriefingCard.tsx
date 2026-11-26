@@ -8,6 +8,7 @@ import { getSim } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { C } from "@/components/sim/svg";
 import { CardFrame, Lines, PrimaryButton, type CardProps } from "./ui";
+import { fadeQuick, tactilePress } from "@/lib/motion";
 import { ConceptFlow } from "./ConceptFlow";
 import { useNotes, stageOf } from "@/lib/notes";
 
@@ -109,63 +110,62 @@ function Briefing({ stage, onDone, seed }: CardProps<TheoryStage>) {
         {active !== null && (
           <motion.div
             key={active}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-2xl bg-[#0E1424] text-[#F1F5F9] p-4 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]"
+            transition={fadeQuick}
           >
-            <div className="text-[13px] font-bold text-[#93C5FD]">
-              {active + 1} · {stage.hotspots[active].title}
+            <div className="t-heading text-fg">
+              <span className="readout text-action-tint-text">{active + 1}</span> · {stage.hotspots[active].title}
             </div>
-            <p className="text-[14.5px] mt-1.5 leading-relaxed text-[#CBD5E1]">{stage.hotspots[active].body}</p>
+            <p className="flow-body text-fg mt-2">{stage.hotspots[active].body}</p>
           </motion.div>
         )}
       </AnimatePresence>
 
       {stage.chain && (
-        <div ref={chainBox} className="rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] p-4">
-          <div className="mb-2">
-            <span className="text-[13px] font-bold text-slate-600">Causal chain</span>
-          </div>
-          <div className="flex flex-col gap-1">
+        <div ref={chainBox} className="card p-5">
+          <div className="mb-3 t-eyebrow">Causal chain</div>
+          <div className="flex flex-col gap-2">
             {stage.chain.map((c, i) => (
               <motion.div
                 key={i}
                 animate={{ x: chainStep >= i ? 0 : -3 }}
-                transition={{ type: "spring", stiffness: 400, damping: 26 }}
-                className="flex items-start gap-2 text-sm"
+                transition={tactilePress}
+                className="flex items-start gap-3"
               >
                 <span
-                  className="readout mt-0.5 shrink-0 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center"
-                  style={chainStep >= i ? { background: i === stage.chain!.length - 1 ? "#DC2626" : "#2563EB", color: "#fff" } : { background: "var(--n-200)", color: "var(--n-700)" }}
+                  className="readout mt-0.5 shrink-0 w-6 h-6 rounded-full text-[14px] font-bold flex items-center justify-center"
+                  style={chainStep >= i ? { background: i === stage.chain!.length - 1 ? "var(--danger)" : "var(--action)", color: "#fff" } : { background: "var(--surface-2)", color: "var(--text-2)" }}
                 >
                   {i + 1}
                 </span>
-                <span className={`leading-snug text-[14.5px] transition-colors ${chainStep >= i ? "text-slate-900 font-semibold" : "text-slate-500"}`}>{c}</span>
+                <span className={`text-[16px] leading-[24px] transition-colors ${chainStep >= i ? "text-fg font-semibold" : "text-fg-2"}`}>{c}</span>
               </motion.div>
             ))}
           </div>
         </div>
       )}
 
-      <div className="space-y-2">
-        <div className="text-[13px] font-bold text-slate-600 flex items-center gap-1.5">
-          <Lightbulb size={12} /> Tap to unpack first principles
+      <div className="space-y-3">
+        <div className="t-eyebrow flex items-center gap-1.5">
+          <Lightbulb size={16} aria-hidden /> Tap to unpack first principles
         </div>
         {stage.drawers.map((d, i) => (
-          <div key={i} className={`rounded-2xl overflow-hidden transition-shadow ${open === i ? "bg-surface shadow-[inset_0_0_0_2px_#3B82F655]" : "bg-surface shadow-[inset_0_0_0_1.5px_var(--n-200)]"}`}>
+          <div key={i} className="tile-3d overflow-hidden" data-on={open === i ? "true" : undefined}>
             <button
               type="button"
               onClick={() => setOpen(open === i ? null : i)}
-              className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left text-[14.5px] font-bold text-slate-900 hover:bg-slate-50"
+              aria-expanded={open === i}
+              className="w-full min-h-[56px] flex items-center justify-between gap-3 px-5 py-3 text-left text-[16px] leading-[24px] font-semibold text-fg"
             >
               <span>{d.q}</span>
-              <ChevronDown size={16} className={`transition-transform ${open === i ? "rotate-180" : ""}`} />
+              <ChevronDown size={18} className={`shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
             </button>
             <AnimatePresence initial={false}>
               {open === i && (
                 <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
-                  <p className="px-4 pb-4 text-[14.5px] text-slate-600 leading-relaxed">{d.a}</p>
+                  <p className="px-5 pb-4 text-[16px] leading-[26px] text-fg">{d.a}</p>
                 </motion.div>
               )}
             </AnimatePresence>

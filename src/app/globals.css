@@ -1073,3 +1073,14 @@ svg[role="img"] {
   border-radius: 24px 24px 0 0;
   box-shadow: var(--sheet-shadow);
 }
+
+/* §5.2 multiple-choice answer tile in the lesson player: body-lg 600, 12×20 padding, ≥ 56 px, option letter left */
+.answer-tile {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 20px 12px 12px;
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 600;
+}

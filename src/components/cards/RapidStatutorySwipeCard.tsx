@@ -21,16 +21,15 @@ function SwipeItem({ text, exitDir, onDragEnd }: { text: string; exitDir: number
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ x: exitDir * 360, opacity: 0, rotate: exitDir * 18, transition: { duration: 0.28 } }}
       style={{ x, rotate, touchAction: "pan-y" }}
-      className="absolute inset-0 rounded-3xl p-6 flex items-center justify-center text-center cursor-grab active:cursor-grabbing text-[#F1F5F9]"
+      className="absolute inset-0 card p-6 flex items-center justify-center text-center cursor-grab active:cursor-grabbing"
     >
-      <div className="absolute inset-0 rounded-3xl" style={{ background: "radial-gradient(120% 120% at 0% 0%, #1E293B, #0E1424 70%)", boxShadow: "0 6px 0 #020617, 0 24px 40px -16px rgba(2,6,23,0.6)" }} />
-      <motion.span style={{ opacity: yes }} className="absolute left-5 top-5 rotate-[-12deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1 text-emerald-400 font-black tracking-[0.12em] text-lg">
+      <motion.span style={{ opacity: yes }} className="absolute left-5 top-5 rotate-[-12deg] rounded-xl border-[3px] border-success px-3 py-1 text-success-tint-text font-black tracking-[0.12em] text-lg">
         TRUE
       </motion.span>
-      <motion.span style={{ opacity: no }} className="absolute right-5 top-5 rotate-[12deg] rounded-xl border-[3px] border-red-400 px-3 py-1 text-red-400 font-black tracking-[0.12em] text-lg">
+      <motion.span style={{ opacity: no }} className="absolute right-5 top-5 rotate-[12deg] rounded-xl border-[3px] border-danger px-3 py-1 text-danger-tint-text font-black tracking-[0.12em] text-lg">
         FALSE
       </motion.span>
-      <p className="relative text-[17px] sm:text-[19px] font-bold leading-snug">{text}</p>
+      <p className="relative t-body-lg !font-bold text-fg">{text}</p>
     </motion.div>
   );
 }
@@ -87,11 +86,11 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
 
   if (!started) {
     return (
-      <CardFrame kind="swipe" title={stage.title} footer={<PrimaryButton tone="crit" onClick={() => setStarted(true)}>Start drill · {stage.cards.length} cards · {stage.seconds}s</PrimaryButton>}>
-        <p className="text-[16px] text-slate-700 leading-relaxed">
-          Rapid statutory recall. Swipe <b className="text-emerald-600">right = TRUE / compliant</b>, swipe <b className="text-red-600">left = FALSE / violation</b>. Each wrong call costs a safety heart.
+      <CardFrame kind="swipe" title={stage.title} footer={<PrimaryButton tone="tech" onClick={() => setStarted(true)}>Start drill · {stage.cards.length} cards · {stage.seconds}s</PrimaryButton>}>
+        <p className="flow-body text-fg">
+          Rapid statutory recall. Swipe <b className="text-success-tint-text">right = TRUE / compliant</b>, swipe <b className="text-danger-tint-text">left = FALSE / violation</b>. Each wrong call costs a safety heart.
         </p>
-        <p className="text-[11px] text-slate-500">
+        <p className="t-secondary">
           Values reflect commonly examined provisions of the Mines Act 1952, CMR 2017, MMR 1961 and allied rules. Always verify against the current gazette text and DGMS circulars.
         </p>
       </CardFrame>
@@ -102,12 +101,12 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
 
   return (
     <CardFrame kind="swipe" title={stage.title} footer={finished && <PrimaryButton onClick={onDone}>Continue</PrimaryButton>}>
-      <div className="flex items-center justify-between text-sm">
-        <span className="readout font-semibold text-slate-600">
+      <div className="flex items-center justify-between t-label">
+        <span className="readout text-fg-2">
           {Math.min(i + 1, stage.cards.length)}/{stage.cards.length}
         </span>
-        <span className={`readout font-bold flex items-center gap-1 ${left <= 5 ? "text-red-600" : "text-slate-900"}`}>
-          <Timer size={14} /> {left}s
+        <span className={`readout font-bold flex items-center gap-1 ${left <= 5 ? "text-danger-tint-text" : "text-fg"}`}>
+          <Timer size={16} aria-hidden /> {left}s
         </span>
       </div>
 
@@ -119,10 +118,10 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
             </AnimatePresence>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <button type="button" onClick={() => answer(false)} className="btn-3d tone-crit py-3.5 min-h-[52px] flex items-center justify-center gap-1.5">
+            <button type="button" onClick={() => answer(false)} className="btn-3d tone-crit">
               <X size={18} /> FALSE
             </button>
-            <button type="button" onClick={() => answer(true)} className="btn-3d tone-safe py-3.5 min-h-[52px] flex items-center justify-center gap-1.5">
+            <button type="button" onClick={() => answer(true)} className="btn-3d tone-safe">
               <Check size={18} /> TRUE
             </button>
           </div>
@@ -134,17 +133,17 @@ export function RapidStatutorySwipeCard({ stage, onMistake, onDone }: CardProps<
         </>
       ) : (
         <div className="space-y-2">
-          <div className="readout text-2xl font-extrabold text-slate-900">
-            {correct}/{stage.cards.length} <span className="text-sm font-semibold text-slate-500">correct</span>
+          <div className="t-title readout text-fg">
+            {correct}/{stage.cards.length} <span className="t-label text-fg-2">correct</span>
           </div>
           {verdicts.map((v) => {
             const c = stage.cards[v.index];
             return (
-              <div key={v.index} className={`rounded-2xl px-3.5 py-2.5 text-sm ${v.ok ? "bg-emerald-50 shadow-[inset_0_0_0_1.5px_#10B98155]" : "bg-red-50 shadow-[inset_0_0_0_1.5px_#EF444455]"}`}>
-                <div className="font-semibold text-slate-900">
-                  {c.truth ? "TRUE" : "FALSE"} — {c.text}
+              <div key={v.index} className={`rounded-[12px] px-4 py-3 text-[16px] leading-[24px] ${v.ok ? "bg-success-tint" : "bg-danger-tint"}`}>
+                <div className="font-semibold text-fg">
+                  {c.truth ? "TRUE" : "FALSE"}: {c.text}
                 </div>
-                <div className="text-slate-600 text-xs mt-0.5">{v.said === null ? "Unanswered. " : ""}{c.why}</div>
+                <div className="text-fg-2 text-[14px] mt-0.5">{v.said === null ? "Unanswered. " : ""}{c.why}</div>
               </div>
             );
           })}

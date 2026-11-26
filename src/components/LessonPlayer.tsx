@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
-import { X, Heart, BookMarked, RotateCcw, ArrowRight, ShieldAlert, Crown, Trophy, Zap, Map as MapIcon, KeyRound } from "lucide-react";
+import { Heart, BookMarked, RotateCcw, ArrowRight, ShieldAlert, Crown, Trophy, Zap, Map as MapIcon, Check } from "lucide-react";
 import { getLesson, getUnit, UNITS } from "@/content";
 import { usePrefs } from "@/lib/prefs";
 import { genuinelyOpen } from "@/lib/progress";
@@ -19,45 +19,19 @@ import { BonusCard } from "./cards/BonusCard";
 import { ActionBar, PrimaryButton } from "./cards/ui";
 import { useResume } from "@/lib/resume";
 import { InspectorMenu } from "./shell/InspectorMenu";
-import { NotesButton, RecapSheet } from "./shell/LessonSheets";
+import { RecapSheet } from "./shell/LessonSheets";
+import { ExitLesson, HeartsPill, InspectorStrip, LessonProgress, MoreMenu } from "./shell/LessonTopBar";
+import { fadeQuick, feedbackSheet, stageSlide, tactilePress } from "@/lib/motion";
 import { useNotes } from "@/lib/notes";
 import { useWhere } from "@/lib/reports";
 import { STAGE_META } from "./cards/ui";
 
-export function Hearts({ n, big = false }: { n: number; big?: boolean }) {
-  const controls = useAnimationControls();
-  const prev = useRef(n);
-  useEffect(() => {
-    if (n < prev.current) void controls.start({ x: [0, -6, 6, -4, 4, 0], transition: { duration: 0.4 } });
-    prev.current = n;
-  }, [n, controls]);
-  const sz = big ? 26 : 22;
-  return (
-    <motion.div animate={controls} className="flex items-center gap-1" aria-label={`${n} safety hearts`}>
-      {Array.from({ length: HEARTS_PER_LESSON }).map((_, i) => {
-        const on = i < n;
-        return (
-          <motion.span key={i} className="relative" animate={on ? { scale: [1, 1.08, 1] } : { scale: 0.85 }} transition={on ? { duration: 1.6, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" } : { type: "spring" }}>
-            <Heart size={sz} className={on ? "fill-[#FF4B6E] text-[#E11D48] drop-shadow-[0_2px_0_#BE123C]" : "fill-slate-200 text-slate-300"} strokeWidth={2.2} />
-            <AnimatePresence>
-              {!on && (
-                <motion.span key="burst" initial={{ opacity: 1, y: 0, scale: 1 }} animate={{ opacity: 0, y: -18, scale: 1.6 }} transition={{ duration: 0.7 }} className="absolute inset-0 pointer-events-none">
-                  <Heart size={sz} className="fill-[#FF4B6E] text-[#E11D48]" />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.span>
-        );
-      })}
-    </motion.div>
-  );
-}
-
-const CONFETTI = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0EA5E9", "#F472B6"];
+/** XP-burst dots: the §2.2 faces. */
+const CONFETTI = ["#3B5BF6", "#15803D", "#F5B417", "#DC2626"];
 
 /** canvas-confetti celebration: a full emerald + amber burst for Boss Exams (unit cleared), a small one for lessons. */
 function celebrate(big: boolean) {
-  const colors = ["#10B981", "#34D399", "#047857", "#F59E0B", "#FBBF24"];
+  const colors = ["#15803D", "#4ADE80", "#0F5E2C", "#F5B417", "#F5C84A"];
   const base = { colors, disableForReducedMotion: true, ticks: 140, scalar: 0.95 };
   if (!big) {
     void confetti({ ...base, particleCount: 70, spread: 70, startVelocity: 38, origin: { y: 0.35 } });
@@ -99,6 +73,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const resumeChecked = useRef(false);
   const [celebrated, setCelebrated] = useState(false);
   const [recap, setRecap] = useState<number | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const reduce = useReducedMotion();
   const started = useRef(-1);
 
   // Inspector Mode: a lesson opened only because Inspector unlocked it — or any run where the Stage
@@ -289,60 +265,53 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     window.scrollTo({ top: 0 });
   };
 
-  const inspectorChip = sandbox && (
-    <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 text-[11px] font-extrabold tracking-wide" role="status">
-      <KeyRound size={12} /> INSPECTOR · progress not saved
-    </span>
-  );
-
   if (finished) {
     const nxt = nextLesson(unit, lesson);
     const stagesN = lesson.stages.length;
     const acc = Math.max(0, Math.round(((stagesN - Math.min(stagesN, mistakesTotal)) / stagesN) * 100));
+    const boss = !!lesson.boss;
     return (
       <div className="min-h-[100dvh] flex flex-col">
-        <div className="flex-1 max-w-xl w-full mx-auto px-4 pt-10 sm:pt-16 pb-8 flex flex-col items-center text-center">
-          <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 260, damping: 14, delay: 0.1 }} className="relative">
-            <div className="absolute inset-0 rounded-full blur-2xl opacity-60" style={{ background: lesson.boss ? "#F59E0B" : "#10B981" }} />
-            <div className="relative w-32 h-32 rounded-full flex items-center justify-center text-white" style={{ background: lesson.boss ? "linear-gradient(135deg,#FBBF24,#F97316)" : "linear-gradient(135deg,#34D399,#059669)", boxShadow: `0 8px 0 ${lesson.boss ? "#B45309" : "#047857"}, 0 24px 40px -12px rgba(0,0,0,0.4)` }}>
-              {lesson.boss ? <Crown size={60} className="fill-white/30" strokeWidth={2.2} /> : <Trophy size={58} className="fill-white/30" strokeWidth={2.2} />}
-            </div>
+        {sandbox && <InspectorStrip />}
+        <div className="flex-1 max-w-[640px] w-full mx-auto px-5 sm:px-6 pt-12 pb-8 flex flex-col items-center text-center">
+          <motion.div initial={reduce ? { opacity: 0 } : { scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={reduce ? fadeQuick : { ...feedbackSheet, delay: 0.1 }} className="relative w-[120px] h-[130px]" aria-hidden>
+            <span className={`absolute left-0 top-[10px] w-[120px] h-[120px] rounded-full ${boss ? "bg-[var(--energy-ledge)]" : "bg-[var(--success-ledge)]"}`} />
+            <span className={`absolute left-0 top-0 w-[120px] h-[120px] rounded-full flex items-center justify-center ${boss ? "bg-energy text-energy-on" : "bg-success text-white"}`}>
+              {boss ? <Crown size={56} strokeWidth={2.2} /> : <Trophy size={54} strokeWidth={2.2} />}
+            </span>
           </motion.div>
-          {inspectorChip && <div className="mt-6">{inspectorChip}</div>}
-          <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-8 text-[30px] sm:text-[38px] leading-tight font-extrabold tracking-[-0.02em] text-slate-900">
-            {lesson.boss ? "Boss Exam cleared!" : "Lesson mastered!"}
+          <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: 0.3 }} className="mt-8 t-display text-fg">
+            {boss ? "Boss Exam cleared!" : "Lesson mastered!"}
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="text-slate-500 mt-1 text-[15px]">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: 0.4 }} className="t-secondary mt-3">
             {lesson.title}
           </motion.p>
 
           <div className="mt-8 grid grid-cols-3 gap-3 w-full">
             {[
-              { k: "Total XP", v: `+${xp}`, c: "#F59E0B", e: "#B45309", Icon: Zap },
-              { k: "Accuracy", v: `${acc}%`, c: "#10B981", e: "#047857", Icon: Trophy },
-              { k: "Hearts", v: `${hearts}/${HEARTS_PER_LESSON}`, c: "#F43F5E", e: "#BE123C", Icon: Heart },
+              { k: "Total XP", v: `+${xp}`, c: "text-energy-tint-text", Icon: Zap },
+              { k: "Accuracy", v: `${acc}%`, c: "text-success-tint-text", Icon: Trophy },
+              { k: "Hearts", v: `${hearts}/${HEARTS_PER_LESSON}`, c: "text-danger-tint-text", Icon: Heart },
             ].map((t, i) => (
-              <motion.div key={t.k} initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: "spring", stiffness: 360, damping: 22, delay: 0.55 + i * 0.1 }} className="rounded-2xl p-[2px]" style={{ background: t.c, boxShadow: `0 4px 0 ${t.e}` }}>
-                <div className="text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-white py-1">{t.k}</div>
-                <div className="rounded-[14px] bg-surface py-3 flex items-center justify-center gap-1.5">
-                  <t.Icon size={18} color={t.c} className="shrink-0" />
-                  <span className="readout text-xl font-extrabold" style={{ color: t.c }}>
-                    {t.v}
-                  </span>
+              <motion.div key={t.k} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={reduce ? fadeQuick : { ...tactilePress, delay: 0.5 + i * 0.08 }} className="card px-2 py-3">
+                <div className="t-label text-fg-2">{t.k}</div>
+                <div className="mt-1 flex items-center justify-center gap-1.5">
+                  <t.Icon size={18} className={`shrink-0 ${t.c}`} aria-hidden />
+                  <span className={`t-readout !text-[20px] !font-extrabold ${t.c}`}>{t.v}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
           {unlocked.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }} className="mt-5 w-full text-left card p-4">
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-blue-600 flex items-center gap-1.5 mb-2">
-                <BookMarked size={13} /> Filed to your Field Codex
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: 0.8 }} className="mt-8 w-full text-left">
+              <div className="t-eyebrow flex items-center gap-1.5 mb-3">
+                <BookMarked size={16} aria-hidden /> Filed to your Field Codex
               </div>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {unlocked.map((u) => (
-                  <li key={u} className="readout text-[13px] text-slate-800 flex gap-2">
-                    <span className="text-emerald-500">✓</span>
+                  <li key={u} className="readout text-[15px] text-fg flex gap-2 items-start">
+                    <Check size={18} className="text-success-tint-text shrink-0 mt-0.5" aria-hidden />
                     {u}
                   </li>
                 ))}
@@ -350,18 +319,18 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             </motion.div>
           )}
         </div>
-        <div className="sticky bottom-0 border-t border-slate-200/80 bg-canvas/85 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
-          <div className="max-w-xl mx-auto px-4 py-3 flex gap-3">
-            <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 py-3.5 text-[15px] inline-flex items-center justify-center gap-2">
-              <MapIcon size={16} /> Unit map
+        <div className="sticky bottom-0 bg-canvas">
+          <div className="max-w-[640px] mx-auto px-4 pt-3 pb-[calc(16px+env(safe-area-inset-bottom))] flex gap-3">
+            <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 !px-4">
+              <MapIcon size={18} aria-hidden /> Unit map
             </Link>
             {nxt ? (
-              <Link href={`/lesson/${nxt.id}`} className="btn-3d tone-safe flex-[1.4] py-3.5 text-[15px] inline-flex items-center justify-center gap-2 min-w-0">
-                <span className="truncate">{nxt.boss ? "Boss Exam" : "Next lesson"}</span> <ArrowRight size={16} className="shrink-0" />
+              <Link href={`/lesson/${nxt.id}`} className="btn-3d tone-safe flex-[1.4] min-w-0 !px-4">
+                <span className="truncate">{nxt.boss ? "Boss Exam" : "Next lesson"}</span> <ArrowRight size={18} className="shrink-0" aria-hidden />
               </Link>
             ) : (
-              <Link href="/" className="btn-3d tone-safe flex-[1.4] py-3.5 text-[15px] inline-flex items-center justify-center gap-2">
-                Expedition <ArrowRight size={16} />
+              <Link href="/" className="btn-3d tone-safe flex-[1.4] !px-4">
+                Expedition <ArrowRight size={18} aria-hidden />
               </Link>
             )}
           </div>
@@ -374,63 +343,50 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
   return (
     <div className="min-h-[100dvh]">
-      <div className="sticky top-0 z-20 hairline-b surface-sticky pt-[env(safe-area-inset-top)]">
-        <div className="max-w-2xl mx-auto px-2 sm:px-4 h-14 sm:h-16 flex items-center gap-2.5 sm:gap-3">
-          <Link href={`/unit/${unit.id}`} aria-label="Exit lesson" className="-ml-1 flex items-center justify-center w-11 h-11 shrink-0 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100">
-            <X size={24} strokeWidth={2.6} />
-          </Link>
-          <div className="flex-1 flex gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={lesson.stages.length} aria-valuenow={index} aria-label="Lesson progress">
-            {lesson.stages.map((s, i) => {
-              const c = STAGE_META[s.kind].color;
-              // Completed segments open that stage read-only (re-read the facts; nothing is scored).
-              const Seg = i < index ? "button" : "div";
-              return (
-                <Seg
-                  key={i}
-                  {...(i < index ? { type: "button" as const, onClick: () => setRecap(i), "aria-label": `Re-read stage ${i + 1}: ${s.title}` } : {})}
-                  // The coarse-pointer 44 px button rule is unlayered CSS; keep the bar slim (hit area via ::before).
-                  style={{ minHeight: 0 }}
-                  className={`relative min-h-0 h-3.5 sm:h-4 flex-1 rounded-full overflow-hidden bg-slate-200 shadow-[inset_0_1px_2px_rgba(15,23,42,0.12)] ${i < index ? "cursor-pointer before:absolute before:-inset-y-3 before:inset-x-0 before:content-['']" : ""}`}
-                >
-                  <motion.div className="h-full rounded-full relative" style={{ background: c }} initial={false} animate={{ width: i < index ? "100%" : i === index ? `${Math.round(12 + 88 * sub)}%` : "0%" }} transition={{ type: "spring", stiffness: 160, damping: 22 }}>
-                    <span className="absolute left-1.5 right-1.5 top-[3px] h-[4px] rounded-full bg-white/35" />
-                  </motion.div>
-                </Seg>
-              );
-            })}
-          </div>
-          <NotesButton />
-          {hydrated && master && (
-            <InspectorMenu
-              stages={lesson.stages.map((st) => STAGE_META[st.kind].label)}
-              index={index}
-              onJump={jumpTo}
-              onRefill={sandbox ? () => setHearts(HEARTS_PER_LESSON) : undefined}
-            />
-          )}
-          <Hearts n={hearts} />
+      <div className="sticky top-0 z-20 bg-canvas pt-[env(safe-area-inset-top)]">
+        <div className="max-w-[640px] mx-auto px-5 sm:px-6 h-14 flex items-center gap-2">
+          <ExitLesson href={`/unit/${unit.id}`} />
+          <LessonProgress titles={lesson.stages.map((s) => s.title)} index={index} sub={sub} onRecap={setRecap} />
+          <MoreMenu inspector={hydrated && master} onInspector={() => setInspectorOpen(true)} />
+          <HeartsPill n={hearts} />
         </div>
+        {sandbox && <InspectorStrip />}
       </div>
+      {hydrated && master && (
+        <InspectorMenu
+          stages={lesson.stages.map((st) => STAGE_META[st.kind].label)}
+          index={index}
+          onJump={jumpTo}
+          onRefill={sandbox ? () => setHearts(HEARTS_PER_LESSON) : undefined}
+          open={inspectorOpen}
+          setOpen={setInspectorOpen}
+        />
+      )}
 
-      <div className="max-w-2xl mx-auto px-2 sm:px-4 pt-3 sm:pt-6">
-        {inspectorChip && <div className="px-1.5 mb-1.5">{inspectorChip}</div>}
+      <div className="max-w-[640px] mx-auto px-5 sm:px-6 pt-8">
         <AnimatePresence mode="wait" initial={false}>
-          <motion.div key={`${attempt}-${index}-${jumpSeq}-${resumeAsk ?? "go"}`} initial={{ opacity: 0, x: 48, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: -48, scale: 0.98 }} transition={{ type: "spring", stiffness: 420, damping: 32 }}>
+          <motion.div
+            key={`${attempt}-${index}-${jumpSeq}-${resumeAsk ?? "go"}`}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, x: 24 }}
+            animate={reduce ? { opacity: 1 } : { opacity: 1, x: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, x: -24 }}
+            transition={reduce ? fadeQuick : stageSlide}
+          >
             {resumeAsk !== null && index === 0 ? (
-              <div className="card p-5 sm:p-8 space-y-5">
-                <h2 className="text-[24px] sm:text-[30px] leading-[1.2] font-bold tracking-[-0.015em] text-slate-900">Welcome back</h2>
-                <p className="flow-body text-slate-700">
+              <section className="lesson-screen">
+                <h2 className="t-display text-fg">Welcome back</h2>
+                <p className="flow-body text-fg mt-8">
                   You left this lesson at stage {resumeAsk + 1} of {lesson.stages.length}.
                 </p>
-                <button type="button" className="min-h-[44px] px-1 text-[15px] font-semibold text-slate-600 underline underline-offset-4 hover:text-slate-900" onClick={() => { useResume.getState().clear(lesson.id); setResumeAsk(null); }}>
+                <button type="button" className="mt-4 min-h-[44px] px-0 t-label text-fg-2 underline underline-offset-4" onClick={() => { useResume.getState().clear(lesson.id); setResumeAsk(null); }}>
                   Start over instead
                 </button>
                 <ActionBar>
-                  <PrimaryButton tone="safe" onClick={() => { setIndex(resumeAsk); setResumeAsk(null); }}>
+                  <PrimaryButton tone="tech" onClick={() => { setIndex(resumeAsk); setResumeAsk(null); }}>
                     Continue from stage {resumeAsk + 1}
                   </PrimaryButton>
                 </ActionBar>
-              </div>
+              </section>
             ) : theoryFirst && (stage.kind === "equation" || stage.kind === "numeric") && !openBonus.includes(index) ? (
               <BonusCard stage={stage} onOpen={() => setOpenBonus((b) => [...b, index])} onSkip={skipBonus} />
             ) : (
@@ -444,8 +400,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       <AnimatePresence>
         {burst && (
           <motion.div key={burst.id} className="pointer-events-none fixed left-1/2 top-24 z-40 -translate-x-1/2" initial={{ opacity: 0, y: 20, scale: 0.6 }} animate={{ opacity: [0, 1, 1, 0], y: [20, 0, -10, -40], scale: [0.6, 1.15, 1, 0.9] }} transition={{ duration: 1.1, times: [0, 0.2, 0.7, 1] }}>
-            <div className="relative rounded-full px-4 py-2 text-white font-extrabold readout text-lg flex items-center gap-1.5" style={{ background: "linear-gradient(135deg,#FBBF24,#F59E0B)", boxShadow: "0 4px 0 #B45309, 0 12px 24px -8px rgba(180,83,9,0.6)" }}>
-              <Zap size={18} className="fill-white" /> +{burst.xp} XP
+            <div className="relative rounded-full px-4 py-2 bg-energy text-energy-on font-extrabold readout text-lg flex items-center gap-1.5" style={{ boxShadow: "0 4px 0 var(--energy-ledge)" }}>
+              <Zap size={18} className="fill-current" /> +{burst.xp} XP
               {Array.from({ length: 10 }).map((_, i) => {
                 const a = (i / 10) * Math.PI * 2;
                 return <motion.span key={i} className="absolute left-1/2 top-1/2 w-1.5 h-1.5 rounded-full" style={{ background: CONFETTI[i % CONFETTI.length] }} initial={{ x: 0, y: 0, opacity: 1 }} animate={{ x: Math.cos(a) * 70, y: Math.sin(a) * 40, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} />;
@@ -461,23 +417,21 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
       <AnimatePresence>
         {failed && (
-          <motion.div initial={{ y: 260 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="fixed bottom-0 inset-x-0 z-40 bg-red-50 border-t-2 border-red-200 pb-[env(safe-area-inset-bottom)] shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.4)]">
-            <div className="max-w-2xl mx-auto p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex-1 flex items-start gap-3">
-                <span className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center shrink-0 shadow-[0_3px_0_#991B1B]">
-                  <ShieldAlert size={24} />
-                </span>
+          <motion.div initial={reduce ? { opacity: 0 } : { y: "100%" }} animate={reduce ? { opacity: 1 } : { y: 0 }} transition={reduce ? fadeQuick : feedbackSheet} className="fixed bottom-0 inset-x-0 z-40 bg-danger-tint rounded-t-[24px] pb-[calc(16px+env(safe-area-inset-bottom))]" role="alertdialog" aria-label="Out of safety hearts">
+            <div className="max-w-[640px] mx-auto px-5 sm:px-6 pt-5 space-y-4">
+              <div className="flex items-start gap-3">
+                <ShieldAlert size={28} className="text-danger-tint-text shrink-0 mt-0.5" aria-hidden />
                 <div>
-                  <div className="font-extrabold text-[17px] text-red-700">Out of safety hearts — shift stood down</div>
-                  <p className="text-[13.5px] text-red-800/80 leading-snug mt-0.5">Missed concepts are queued for your spaced-repetition warmup. Review the feedback, then re-attempt.</p>
+                  <div className="t-heading text-danger-tint-text">Out of safety hearts: shift stood down</div>
+                  <p className="t-secondary !text-fg mt-1">Missed concepts are queued for your spaced-repetition warmup. Review the feedback, then re-attempt.</p>
                 </div>
               </div>
-              <div className="flex gap-2.5">
-                <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1 sm:flex-none px-5 py-3 text-[15px] inline-flex items-center justify-center">
+              <div className="flex gap-3">
+                <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost flex-1">
                   Exit
                 </Link>
-                <button type="button" onClick={retry} className="btn-3d tone-crit flex-1 sm:flex-none px-5 py-3 text-[15px] inline-flex items-center justify-center gap-2">
-                  <RotateCcw size={15} /> Retry
+                <button type="button" onClick={retry} className="btn-3d tone-ink flex-1">
+                  <RotateCcw size={18} aria-hidden /> Retry
                 </button>
               </div>
             </div>

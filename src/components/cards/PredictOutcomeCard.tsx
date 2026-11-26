@@ -55,28 +55,29 @@ export function PredictOutcomeCard({ stage: authored, onMistake, onDone, seed }:
       title={stage.title}
       footer={
         revealed ? (
-          <PrimaryButton onClick={onDone}>Continue</PrimaryButton>
+          <PrimaryButton tone={ok ? "safe" : "ink"} onClick={onDone}>Continue</PrimaryButton>
         ) : hint ? (
           <PrimaryButton onClick={() => setHint(false)}>Try again</PrimaryButton>
         ) : (
-          <PrimaryButton onClick={() => choose(sel)} disabled={sel === null}>
+          <PrimaryButton tone="tech" onClick={() => choose(sel)} disabled={sel === null}>
             Check
           </PrimaryButton>
         )
       }
     >
-      <p className="flow-body text-slate-700">{stage.scenario}</p>
+      <p className="flow-body text-fg">{stage.scenario}</p>
       {def && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <SimCanvas def={def} values={values} />
           {revealed && <Readouts def={def} values={values} />}
-          {!revealed && <p className="text-[13px] text-slate-500 font-semibold">Before state — commit to a prediction to run the simulation</p>}
+          {!revealed && <p className="t-label text-fg-2">Before state: commit to a prediction to run the simulation</p>}
         </div>
       )}
-      <p className="flow-q text-slate-900">{stage.question}</p>
-      <div className="grid gap-2.5">
+      <p className="flow-q text-fg">{stage.question}</p>
+      <div className="grid gap-3">
         {stage.options.map((o, i) => {
-          const state = revealed ? (i === stage.answer ? "right" : i === pick ? "wrong" : "dim") : tried.includes(i) ? "dim" : sel === i && !hint ? "selected" : "idle";
+          // While the first-miss sheet is up, that pick shows as wrong (§5.2); after Try again it is struck through.
+          const state = revealed ? (i === stage.answer ? "right" : i === pick ? "wrong" : "dim") : hint && i === first ? "wrong" : tried.includes(i) ? "dim" : sel === i && !hint ? "selected" : "idle";
           return (
             <button
               key={i}
@@ -87,10 +88,10 @@ export function PredictOutcomeCard({ stage: authored, onMistake, onDone, seed }:
               }}
               aria-pressed={sel === i}
               disabled={revealed || tried.includes(i)}
-              className={`${optionClass(state)} flex items-center !text-[16px] min-h-[56px]`}
+              className={optionClass(state)}
             >
               <OptionKey i={i} state={state} />
-              <span className={!revealed && tried.includes(i) ? "line-through decoration-slate-400" : ""}>{o}</span>
+              <span className={!revealed && tried.includes(i) && state === "dim" ? "line-through decoration-[var(--text-3)]" : ""}>{o}</span>
             </button>
           );
         })}
@@ -101,11 +102,11 @@ export function PredictOutcomeCard({ stage: authored, onMistake, onDone, seed }:
       <Feedback show={revealed} ok={ok} title={ok ? (tried.length ? "That's it" : "Prediction confirmed") : "The simulation disagrees"}>
         {!ok && pick !== null && stage.optionWhy?.[pick] && (
           <span className="block mb-1.5">
-            <b className="text-slate-900">Why “{stage.options[pick]}” fails: </b>
+            <b className="text-fg">Why “{stage.options[pick]}” fails: </b>
             {stage.optionWhy[pick]}
           </span>
         )}
-        <span className="block">{!ok && <b className="text-slate-900">What actually happens: </b>}{stage.explain}</span>
+        <span className="block">{!ok && <b className="text-fg">What actually happens: </b>}{stage.explain}</span>
       </Feedback>
     </CardFrame>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
+import { fadeQuick, tactilePress } from "@/lib/motion";
 import { Delete } from "lucide-react";
 import type { EquationStage } from "@/lib/types";
 import { CardFrame, Feedback, PrimaryButton, type CardProps } from "./ui";
@@ -48,6 +49,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
   const [penalised, setPenalised] = useState(false);
   const [shake, setShake] = useState(0);
   const [diag, setDiag] = useState<{ title: string; lines: string[] } | null>(null);
+  const reduce = useReducedMotion();
 
   const placedTiles = placed.map((id) => bank.find((t) => t.id === id)!);
 
@@ -78,25 +80,20 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
 
   if (phase === "intuition") {
     return (
-      <CardFrame kind="equation" title={stage.title} footer={<PrimaryButton tone="violet" onClick={() => setPhase("forge")}>I feel the proportionality → Forge it</PrimaryButton>}>
-        <p className="text-[13px] font-extrabold text-violet-600">Physical proportionality first</p>
-        <div className="space-y-2">
+      <CardFrame kind="equation" title={stage.title} footer={<PrimaryButton onClick={() => setPhase("forge")}>I feel the proportionality: forge it</PrimaryButton>}>
+        <p className="t-eyebrow">Physical proportionality first</p>
+        <div className="space-y-4">
           {stage.intuition.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.25 }}
-              className="rounded-2xl border-l-4 border-violet-500 bg-violet-50 px-4 py-3 text-[15px] text-slate-800 leading-relaxed"
-            >
+            <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ ...fadeQuick, delay: i * 0.2 }} className="flow-body text-fg border-l-4 border-line-strong pl-4">
               {s}
-            </motion.div>
+            </motion.p>
           ))}
         </div>
       </CardFrame>
     );
   }
 
+  const tray = status === "right" ? "!border-solid !border-success bg-success-tint" : status === "wrong" ? "!border-solid !border-danger bg-danger-tint" : "";
   return (
     <CardFrame
       kind="equation"
@@ -104,15 +101,15 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
       footer={
         status === "right" ? (
           <PrimaryButton onClick={onDone} tone="safe">
-            Verified — add to Codex & Continue
+            Verified: add to Codex and continue
           </PrimaryButton>
         ) : (
-          <div className="flex gap-2">
-            <PrimaryButton onClick={check} disabled={placed.length === 0}>
+          <div className="flex gap-3">
+            <PrimaryButton tone="tech" onClick={check} disabled={placed.length === 0}>
               Check equation
             </PrimaryButton>
             {status === "wrong" && (
-              <button type="button" onClick={reveal} className="btn-3d tone-ghost shrink-0 px-4 text-[12px]">
+              <button type="button" onClick={reveal} className="btn-3d btn-sm tone-ghost shrink-0 self-center">
                 Show me
               </button>
             )}
@@ -120,55 +117,64 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
         )
       }
     >
-      <p className="text-[14px] text-slate-600">Tap blocks to assemble the governing equation. Tap a placed block to return it.</p>
-      <motion.div
-        key={shake}
-        animate={status === "wrong" ? { x: [0, -8, 8, -6, 6, 0] } : {}}
-        transition={{ duration: 0.35 }}
-        className={`min-h-[76px] rounded-2xl border-2 border-dashed p-2.5 flex flex-wrap gap-2 items-center ${
-          status === "right" ? "border-emerald-500 bg-emerald-50" : status === "wrong" ? "border-red-400 bg-red-50" : "border-slate-300 bg-slate-50"
-        }`}
-      >
-        {placedTiles.length === 0 && <span className="text-xs text-slate-400 px-1">Equation tray</span>}
-        {placedTiles.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            disabled={status === "right"}
-            onClick={() => {
-              setPlaced((p) => p.filter((x) => x !== t.id));
-              setStatus("idle");
-            }}
-            className="btn-press readout rounded-xl bg-violet-500 text-white px-3 py-2 text-[17px] font-bold shadow-[0_3px_0_#6D28D9]"
-          >
-            {t.text}
-          </button>
-        ))}
-        {placed.length > 0 && status !== "right" && (
-          <button type="button" onClick={() => setPlaced([])} className="ml-auto text-slate-400 hover:text-slate-700" aria-label="Clear">
-            <Delete size={18} />
-          </button>
-        )}
-      </motion.div>
-      <div className="flex flex-wrap gap-1.5">
-        {bank.map((t) => {
-          const used = placed.includes(t.id);
-          return (
-            <button
+      <p className="t-secondary">Tap blocks to build the governing equation. Tap a placed block to send it back.</p>
+      <LayoutGroup>
+        {/* §5.2 blank slot: dashed --text-3 tray; blocks fly in and out with a shared layoutId (tactilePress). */}
+        <motion.div
+          key={shake}
+          animate={status === "wrong" && !reduce ? { x: [0, -8, 8, -6, 6, 0] } : {}}
+          transition={{ duration: 0.35 }}
+          aria-label="Equation tray"
+          className={`ds-blank !flex w-full min-h-[76px] !rounded-[12px] p-3 flex-wrap gap-3 !justify-start items-center ${tray}`}
+        >
+          {placedTiles.length === 0 && <span className="t-label text-fg-2 px-1">Equation tray</span>}
+          {placedTiles.map((t) => (
+            <motion.button
               key={t.id}
+              layoutId={`eq-${t.id}`}
+              transition={reduce ? fadeQuick : tactilePress}
               type="button"
-              disabled={used || status === "right"}
+              disabled={status === "right"}
               onClick={() => {
-                setPlaced((p) => [...p, t.id]);
+                setPlaced((p) => p.filter((x) => x !== t.id));
                 setStatus("idle");
               }}
-              className={`readout tile-3d px-3 py-2 text-[17px] font-bold ${used ? "opacity-30 !shadow-none" : "text-slate-900 hover:!border-violet-400"}`}
+              className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold"
             >
               {t.text}
+            </motion.button>
+          ))}
+          {placed.length > 0 && status !== "right" && (
+            <button type="button" onClick={() => setPlaced([])} className="ml-auto w-11 h-11 flex items-center justify-center rounded-full text-fg-2" aria-label="Clear">
+              <Delete size={20} />
             </button>
-          );
-        })}
-      </div>
+          )}
+        </motion.div>
+        <div className="ds-well">
+          {bank.map((t) =>
+            placed.includes(t.id) ? (
+              <span key={t.id} aria-hidden className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold invisible">
+                {t.text}
+              </span>
+            ) : (
+              <motion.button
+                key={t.id}
+                layoutId={`eq-${t.id}`}
+                transition={reduce ? fadeQuick : tactilePress}
+                type="button"
+                disabled={status === "right"}
+                onClick={() => {
+                  setPlaced((p) => [...p, t.id]);
+                  setStatus("idle");
+                }}
+                className="tile-3d tile-chip readout px-3 py-1.5 text-[18px] font-bold"
+              >
+                {t.text}
+              </motion.button>
+            ),
+          )}
+        </div>
+      </LayoutGroup>
       <Feedback show={status === "wrong"} ok={false} title={diag?.title ?? "Not quite"}>
         {diag?.lines.map((l, i) => (
           <span key={i} className="block">
@@ -178,7 +184,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
       </Feedback>
       <Feedback show={status === "right"} ok title={stage.formula.expr}>
         {stage.formula.meaning}
-        {stage.formula.vars && <span className="block mt-1 text-xs text-slate-500 readout">{stage.formula.vars}</span>}
+        {stage.formula.vars && <span className="block mt-1 t-label text-fg-2 readout">{stage.formula.vars}</span>}
       </Feedback>
     </CardFrame>
   );

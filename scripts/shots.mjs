@@ -49,6 +49,8 @@ const STATES = [
       await page.getByRole("button", { name: "Try again" }).click();
       await page.getByRole("radio", { name: /Yes, on its way down/ }).click();
       await page.getByRole("button", { name: "Check", exact: true }).click();
+      await settle(page);
+      await shoot("lesson-question-right");
       await page.getByRole("button", { name: "Continue" }).click();
       await settle(page);
       await shoot("lesson-read");
@@ -58,6 +60,9 @@ const STATES = [
     // u3-l1 stage 2 (sim) via the Inspector stage jumper.
     path: "/lesson/u3-l1/",
     async run(page, shoot) {
+      await page.getByRole("button", { name: /^More/ }).click();
+      await settle(page, 400);
+      await shoot("lesson-more-menu");
       await page.getByRole("button", { name: "Inspector menu" }).click();
       await page.getByRole("group", { name: "Stage jumper" }).getByRole("button", { name: "2", exact: true }).click();
       await settle(page, 900);

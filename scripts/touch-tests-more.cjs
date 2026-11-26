@@ -128,14 +128,17 @@ module.exports = async function more(t) {
     // Forward again, then swipe right on the explanation to go back.
     await tapEl(page.getByRole("button", { name: /^Continue$/ }).first());
     await page.waitForTimeout(600);
-    const txt = page.locator(".card p.flow-body").first();
+    const txt = page.locator(".lesson-screen p.flow-body").first();
     const tb = await txt.boundingBox();
-    const before = await page.locator(".card").first().innerText();
+    const before = await page.locator(".lesson-screen").first().innerText();
     await t.touchDrag(cdp, tb.x + 30, tb.y + tb.height / 2, tb.x + 230, tb.y + tb.height / 2 + 6, 10);
     await page.waitForTimeout(700);
-    const after = await page.locator(".card").first().innerText();
+    const after = await page.locator(".lesson-screen").first().innerText();
     ok(`${L}: swipe right goes back a screen`, before !== after && /Review/.test(after), "");
     // Notes sheet lists the explanation seen.
+    // Notes live in the top bar's ⋯ menu (15.5c).
+    await tapEl(page.getByRole("button", { name: /^More/ }));
+    await page.waitForTimeout(400);
     await tapEl(page.getByRole("button", { name: /Lesson notes/ }));
     await page.waitForTimeout(500);
     const notes = await page.locator('[role="dialog"] li').count();
@@ -154,6 +157,8 @@ module.exports = async function more(t) {
     await page.evaluate(() => { localStorage.clear(); localStorage.setItem("strata-qa", "1"); localStorage.setItem("strata-prefs", JSON.stringify({ state: { theme: "system", muted: true, masterUnlock: true, theoryFirst: true }, version: 1 })); });
     await page.goto(`${base}/lesson/u7-l1/`, { waitUntil: "networkidle" });
     await page.waitForTimeout(600);
+    await page.getByRole("button", { name: /^More/ }).click();
+    await page.waitForTimeout(300);
     await page.getByRole("button", { name: "Inspector menu" }).click();
     await page.waitForTimeout(400);
     await page.locator('[aria-label="Stage jumper"] button').nth(1).click();
@@ -181,8 +186,8 @@ module.exports = async function more(t) {
     });
     await page.waitForTimeout(800);
     const bar = await page.locator(".action-bar").boundingBox();
-    ok(`${L}: success strip is compact (≤ 150 px incl. Continue)`, bar && bar.height <= 150, bar ? `${Math.round(bar.height)} px` : "no bar");
-    ok(`${L}: success strip offers Why? and Continue`, (await page.getByRole("button", { name: "Why?" }).count()) === 1 && (await page.getByRole("button", { name: /^Continue$/ }).count()) >= 1);
+    ok(`${L}: success sheet is compact (≤ 150 px incl. Continue)`, bar && bar.height <= 150, bar ? `${Math.round(bar.height)} px` : "no bar");
+    ok(`${L}: success sheet offers Why? and Continue`, (await page.getByRole("button", { name: "Why?" }).count()) === 1 && (await page.getByRole("button", { name: /^Continue$/ }).count()) >= 1);
     if (phone.errors.length) ok(`${L}: console errors`, false, phone.errors.slice(0, 2).join(" | "));
     await phone.ctx.close();
   }

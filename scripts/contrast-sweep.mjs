@@ -4,7 +4,9 @@
  * Large text (≥ 24 px, or ≥ 18.66 px and bold) is tagged "large" because 3:1 is its AA threshold.
  *
  *   NEXT_PUBLIC_BASE_PATH=/Mining-2024 npm run build && NEXT_PUBLIC_BASE_PATH=/Mining-2024 PORT=4310 node scripts/serve-out.mjs &
- *   NODE_PATH=$(npm root -g) node scripts/contrast-sweep.mjs http://localhost:4310/Mining-2024 [out.json] [route-filter]
+ *   NODE_PATH=$(npm root -g) node scripts/contrast-sweep.mjs http://localhost:4310/Mining-2024 [out.json] [route-filter | states]
+ *
+ * "states" instead of a route filter measures the interaction states in STATES (sheets, menus, later screens).
  *
  * Background: the nearest ancestor with a non-transparent background colour, alpha-composited over the ones below it.
  * A gradient background is resolved to its worst stop (tagged "gradient"). Ancestor opacity is applied to the text
@@ -17,7 +19,7 @@ import { join } from "node:path";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 
-const PREFS = JSON.stringify({ state: { theme: "system", muted: false, masterUnlock: false, theoryFirst: true }, version: 1 });
+const PREFS = JSON.stringify({ state: { theme: "system", muted: false, masterUnlock: process.argv[4] === "states", theoryFirst: true }, version: 1 });
 
 async function routes(dir = "out", prefix = "") {
   const found = [];
@@ -158,14 +160,74 @@ function scan() {
   return out;
 }
 
+/**
+ * Interaction states (15.5c): measured after scripted taps, because first-load scans miss sheets and later screens.
+ * Each entry is [route, name, async (page) => void]; run them with the filter argument "states".
+ */
+const STATES = [
+  ["/lesson/u7-l1/", "wrong sheet + Why?", async (page) => {
+    await page.getByRole("radio", { name: /No, dilution makes it safe/ }).click();
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await page.waitForTimeout(400);
+    await page.getByRole("button", { name: "Why?" }).click();
+  }],
+  ["/lesson/u7-l1/", "correct sheet + Why?", async (page) => {
+    await page.getByRole("radio", { name: /Yes, on its way down/ }).click();
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await page.waitForTimeout(400);
+    await page.getByRole("button", { name: "Why?" }).click();
+  }],
+  ["/lesson/u7-l1/", "later screens (2, 3)", async (page) => {
+    await page.getByRole("radio", { name: /Yes, on its way down/ }).click();
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.waitForTimeout(500);
+    await page.getByRole("button", { name: "Continue" }).click();
+  }],
+  ["/lesson/u7-l1/", "⋯ menu open", async (page) => {
+    await page.getByRole("button", { name: /^More/ }).click();
+  }],
+  ["/lesson/u7-l1/", "Sources sheet", async (page) => {
+    await page.getByRole("button", { name: /^More/ }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole("button", { name: /^Sources/ }).click();
+  }],
+  ["/lesson/u3-l1/", "Inspector sheet + strip", async (page) => {
+    await page.getByRole("button", { name: /^More/ }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole("button", { name: "Inspector menu" }).click();
+  }],
+  ["/lesson/u3-l1/", "predict stage, wrong first miss", async (page) => {
+    await page.getByRole("button", { name: /^More/ }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole("button", { name: "Inspector menu" }).click();
+    await page.getByRole("group", { name: "Stage jumper" }).getByRole("button", { name: "3", exact: true }).click();
+    await page.waitForTimeout(600);
+    const o = page.locator("button[aria-pressed].answer-tile");
+    await o.nth((await o.count()) - 1).click();
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+  }],
+  ["/lesson/u3-l1/", "crisis stage, after a pick", async (page) => {
+    await page.getByRole("button", { name: /^More/ }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole("button", { name: "Inspector menu" }).click();
+    await page.getByRole("group", { name: "Stage jumper" }).getByRole("button", { name: "6", exact: true }).click();
+    await page.waitForTimeout(600);
+    await page.getByRole("button", { name: /^Take charge/ }).click();
+    await page.waitForTimeout(300);
+    await page.locator(".lesson-screen button.answer-tile").first().click();
+  }],
+];
+
 const base = (process.argv[2] || "http://localhost:4310").replace(/\/$/, "");
 const outFile = process.argv[3];
-const filter = process.argv[4] ? new RegExp(process.argv[4]) : null;
-const list = (await routes()).filter((r) => !filter || filter.test(r));
+const statesMode = process.argv[4] === "states";
+const filter = process.argv[4] && !statesMode ? new RegExp(process.argv[4]) : null;
+const list = statesMode ? STATES : (await routes()).filter((r) => !filter || filter.test(r)).map((r) => [r, "", null]);
 const browser = await chromium.launch();
 const results = [];
 for (const scheme of ["light", "dark"]) {
-  for (const r of list) {
+  for (const [r, stateName, drive] of list) {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true, colorScheme: scheme, reducedMotion: "reduce", serviceWorkers: "block" });
     await ctx.addInitScript((prefs) => {
       try {
@@ -181,10 +243,18 @@ for (const scheme of ["light", "dark"]) {
     page.on("console", (m) => m.type() === "error" && errors.push(m.text().slice(0, 160)));
     await page.goto(base + r, { waitUntil: "networkidle" });
     await page.waitForTimeout(500);
+    if (drive) {
+      try {
+        await drive(page);
+      } catch (e) {
+        errors.push(`state "${stateName}" failed: ${e.message.split("\n")[0]}`);
+      }
+      await page.waitForTimeout(600);
+    }
     const res = await page.evaluate(scan);
     const ov = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    results.push({ scheme, route: r, ...res, errors, overflow: ov });
-    const tag = `${scheme.padEnd(5)} ${r}`;
+    results.push({ scheme, route: r, state: stateName, ...res, errors, overflow: ov });
+    const tag = `${scheme.padEnd(5)} ${r}${stateName ? ` [${stateName}]` : ""}`;
     console.log(`${res.low.length ? "LOW " : "ok  "} ${tag}  low=${res.low.length} small=${res.small.length}${errors.length ? ` errors=${errors.length}` : ""}${ov > 0 ? ` overflow=${ov}` : ""}`);
     for (const l of res.low) console.log(`       ${l.ratio.toFixed(2)}${l.large ? " large" : ""}${l.grad ? " gradient" : ""}  ${l.size}px/${l.weight}  <${l.tag} ${l.cls}> "${l.text}"`);
     await ctx.close();

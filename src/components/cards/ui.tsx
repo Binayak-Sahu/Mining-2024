@@ -1,55 +1,62 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { StageKind } from "@/lib/types";
-import { BookOpen, FlaskConical, Eye, Sigma, Calculator, Siren, Scale, CheckCircle2, XCircle } from "lucide-react";
+import { BookOpen, FlaskConical, Eye, Sigma, Wrench, Siren, Scale } from "lucide-react";
 import { sfx } from "@/lib/sfx";
-import { feedbackSheet, tactilePress } from "@/lib/motion";
+import { fadeQuick, feedbackSheet } from "@/lib/motion";
 
 export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; text: string; Icon: typeof BookOpen }> = {
-  // Colours are the DESIGN.md §2.2 faces (action / success / energy / danger; violet is retired). They still tint the
-  // lesson progress segments until 15.5c; the stage-kind label itself is neutral (§5.12).
+  // Stage kinds are not colour-coded in the lesson (§5.12: neutral eyebrow + icon). `color` / `text` are only read by
+  // the unit page's stage dots until 15.5d.
   theory: { label: "Field theory", short: "Field Theory", color: "#3B5BF6", text: "text-blue-700", Icon: BookOpen },
   sim: { label: "Intuition lab", short: "Intuition Lab", color: "#15803D", text: "text-emerald-700", Icon: FlaskConical },
   predict: { label: "Predict the outcome", short: "Predict", color: "#15803D", text: "text-emerald-700", Icon: Eye },
   equation: { label: "Equation forge", short: "Equation Forge", color: "#3B5BF6", text: "text-blue-700", Icon: Sigma },
-  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F5B417", text: "text-amber-700", Icon: Calculator },
+  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F5B417", text: "text-amber-700", Icon: Wrench },
   crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#DC2626", text: "text-red-700", Icon: Siren },
   swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#DC2626", text: "text-red-700", Icon: Scale },
 };
 
 /**
- * Stage card shell. The optional footer is lifted into a thumb-zone action bar pinned to the bottom of
- * the viewport (Duolingo-style check/continue drawer); a spacer keeps content scrollable above it.
+ * Stage shell (DESIGN.md §1.1, §5.12): the stage sits directly on the canvas — a neutral stage-kind eyebrow with
+ * its icon, the stage title (§3 `display`) and the content. The optional footer is lifted into the bottom action
+ * bar (§5.1), which turns into the feedback sheet (§5.7) while a verdict is showing.
  */
 export function CardFrame({ kind, title, children, footer, compact = false, footerKey }: { kind: StageKind; title: string; children: ReactNode; footer?: ReactNode; compact?: boolean; footerKey?: string }) {
   const m = STAGE_META[kind];
   const [slot, setSlot] = useState<HTMLElement | null>(null);
-  const [fb, setFb] = useState(0);
-  const bump = useCallback((d: number) => setFb((n) => n + d), []);
-  const ctx = useMemo(() => ({ el: slot, bump }), [slot, bump]);
+  const [verdicts, setVerdicts] = useState<Record<string, boolean>>({});
+  const report = useCallback((id: string, ok: boolean | null) => {
+    setVerdicts((v) => {
+      if (ok === null) {
+        if (!(id in v)) return v;
+        const n = { ...v };
+        delete n[id];
+        return n;
+      }
+      return v[id] === ok ? v : { ...v, [id]: ok };
+    });
+  }, []);
+  const ctx = useMemo(() => ({ el: slot, report }), [slot, report]);
+  const shown = Object.values(verdicts);
+  const tone = shown.length ? shown[shown.length - 1] : null;
   return (
     <FeedbackSlot.Provider value={ctx}>
-      <div className="card p-5 sm:p-8 overflow-clip relative">
-        <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-          <span className="t-eyebrow inline-flex items-center gap-1.5 py-0.5 sm:py-1">
-            <m.Icon size={16} strokeWidth={2.4} aria-hidden />
-            {m.label}
-          </span>
+      <section className="lesson-screen">
+        <div className="t-eyebrow flex items-center gap-1.5">
+          <m.Icon size={16} strokeWidth={2.4} aria-hidden />
+          {m.label}
         </div>
-        {compact ? (
-          <h2 className="sr-only">{title}</h2>
-        ) : (
-          <h2 className="text-[24px] sm:text-[30px] leading-[1.2] font-bold tracking-[-0.015em] text-slate-900 mb-5 sm:mb-6 text-balance">{title}</h2>
-        )}
-        <div className="space-y-5 sm:space-y-6">{children}</div>
-      </div>
-      <ActionBar slotRef={setSlot} force={fb > 0}>
+        {compact ? <h2 className="sr-only">{title}</h2> : <h2 className="t-display text-fg mt-3 text-balance">{title}</h2>}
+        <div className="mt-8 space-y-8">{children}</div>
+      </section>
+      <ActionBar slotRef={setSlot} force={tone !== null} verdict={tone}>
         {footer && footerKey ? (
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={footerKey} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.15 }}>
+            <motion.div key={footerKey} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={fadeQuick}>
               {footer}
             </motion.div>
           </AnimatePresence>
@@ -61,18 +68,25 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
   );
 }
 
-/** Fixed bottom action drawer; animates in whenever its content appears. */
-export function ActionBar({ children, slotRef, force }: { children?: ReactNode; slotRef?: (el: HTMLElement | null) => void; force?: boolean }) {
+/**
+ * Fixed bottom footer (§4, §5.1): solid --bg, 16 px sides, 12 px top, 16 px + safe area bottom. While a verdict is
+ * showing it becomes the §5.7 feedback sheet: a success / danger tint that rises over the footer (`feedbackSheet`),
+ * radius 24 at the top. The spacer below the content only ever grows (the tallest state seen), so nothing above
+ * moves when the sheet opens.
+ */
+export function ActionBar({ children, slotRef, force, verdict = null }: { children?: ReactNode; slotRef?: (el: HTMLElement | null) => void; force?: boolean; verdict?: boolean | null }) {
+  const reduce = useReducedMotion();
   const has = !!children || !!force;
   const bar = useRef<HTMLDivElement>(null);
   const [h, setH] = useState(112);
   useEffect(() => {
     const el = bar.current;
     if (!el || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => setH(Math.max(112, Math.ceil(el.getBoundingClientRect().height) + 16)));
+    const ro = new ResizeObserver(() => setH((prev) => Math.max(prev, Math.ceil(el.getBoundingClientRect().height) + 16)));
     ro.observe(el);
     return () => ro.disconnect();
   }, [has]);
+  const sheet = verdict !== null;
   return (
     <>
       <div style={{ height: h }} aria-hidden />
@@ -81,13 +95,27 @@ export function ActionBar({ children, slotRef, force }: { children?: ReactNode; 
           <motion.div
             key="bar"
             ref={bar}
-            initial={{ y: 120, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 120, opacity: 0 }}
-            transition={feedbackSheet}
-            className="action-bar fixed inset-x-0 bottom-0 z-30 hairline-t surface-sticky pb-[env(safe-area-inset-bottom)]"
+            initial={reduce ? { opacity: 0 } : { y: 120, opacity: 0 }}
+            animate={reduce ? { opacity: 1 } : { y: 0, opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { y: 120, opacity: 0 }}
+            transition={reduce ? fadeQuick : feedbackSheet}
+            data-sheet={sheet ? (verdict ? "ok" : "no") : undefined}
+            className="action-bar fixed inset-x-0 bottom-0 z-30 bg-canvas"
           >
-            <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3">
+            <AnimatePresence>
+              {sheet && (
+                <motion.div
+                  key={verdict ? "ok" : "no"}
+                  aria-hidden
+                  className={`absolute inset-0 rounded-t-[24px] ${verdict ? "bg-success-tint" : "bg-danger-tint"}`}
+                  initial={reduce ? { opacity: 0 } : { y: "100%" }}
+                  animate={reduce ? { opacity: 1 } : { y: 0 }}
+                  exit={reduce ? { opacity: 0 } : { y: "100%" }}
+                  transition={reduce ? fadeQuick : feedbackSheet}
+                />
+              )}
+            </AnimatePresence>
+            <div className={`relative max-w-[640px] mx-auto pb-[calc(16px+env(safe-area-inset-bottom))] ${sheet ? "px-5 sm:px-6 pt-5" : "px-4 pt-3"}`}>
               {slotRef && <div ref={slotRef} />}
               {children}
             </div>
@@ -100,6 +128,7 @@ export function ActionBar({ children, slotRef, force }: { children?: ReactNode; 
 
 const TONE: Record<string, string> = { ink: "tone-ink", safe: "tone-safe", crit: "tone-crit", tech: "tone-tech", hazard: "tone-hazard", violet: "tone-violet", ghost: "tone-ghost" };
 
+/** §5.1 footer button: 56 px pill, full width. Tone by state: ink Continue · disabled Check · tech (action) Check / Start · safe Continue. */
 export function PrimaryButton({
   children,
   onClick,
@@ -114,81 +143,87 @@ export function PrimaryButton({
   className?: string;
 }) {
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={`btn-3d ${TONE[tone]} w-full px-4 py-3.5 min-h-[52px] ${className}`}>
-      <span className="inline-flex items-center justify-center gap-2">{children}</span>
+    <button type="button" onClick={onClick} disabled={disabled} className={`btn-3d ${TONE[tone]} w-full ${className}`}>
+      <span className="inline-flex items-center justify-center gap-2 text-center">{children}</span>
     </button>
   );
 }
 
-/** Slot inside the card's bottom action bar that Feedback verdicts portal into. */
-const FeedbackSlot = createContext<{ el: HTMLElement | null; bump: (d: number) => void } | null>(null);
+/** Slot inside the footer that Feedback verdicts portal into, and the verdict register that tints the footer. */
+const FeedbackSlot = createContext<{ el: HTMLElement | null; report: (id: string, ok: boolean | null) => void } | null>(null);
 
-/**
- * Verdict, shown as a tinted state of the bottom action bar (no inline panel, no scroll hacks): the
- * verdict, a short reason (expandable with "Why?") and the bar's own action underneath. Plays a chime /
- * thud once when it appears.
- */
-export function Feedback({ show, ok, title, children, compact = false }: { show: boolean; ok: boolean; title: string; children?: ReactNode; /** one-line verdict; the reason only on "Why?" */ compact?: boolean }) {
+/** Register a showing verdict with the enclosing footer so it becomes the success / danger sheet. */
+function useVerdictTone(show: boolean, ok: boolean) {
   const ctx = useContext(FeedbackSlot);
-  const played = useRef(false);
-  const [open, setOpen] = useState(false);
-  const txt = useRef<HTMLDivElement>(null);
-  const [short, setShort] = useState(true);
-  const bump = ctx?.bump;
-  // Only offer "Why?" when the reason is longer than the two-line strip.
+  const id = useId();
+  const report = ctx?.report;
   useEffect(() => {
-    const el = txt.current;
-    if (!show || !el) return;
-    setShort((el.textContent ?? "").length < 120);
-  }, [show, ctx?.el]);
+    if (!report) return;
+    report(id, show ? ok : null);
+    return () => report(id, null);
+  }, [report, id, show, ok]);
+}
+
+/** Plays the chime / thud once each time a verdict appears. */
+function useVerdictSound(show: boolean, ok: boolean) {
+  const played = useRef(false);
   useEffect(() => {
     if (show && !played.current) {
       played.current = true;
       if (ok) sfx.correct();
       else sfx.wrong();
     }
-    if (!show) {
-      played.current = false;
-      setOpen(false);
-    }
+    if (!show) played.current = false;
   }, [show, ok]);
-  useEffect(() => {
-    if (!show || !bump) return;
-    bump(1);
-    return () => bump(-1);
-  }, [show, bump]);
-  if (!show || !ctx?.el) return null;
-  return createPortal(
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={feedbackSheet}
-      role="status"
-      aria-live="polite"
-      className={`-mx-3 sm:-mx-4 -mt-3 mb-3 px-4 sm:px-5 pt-3.5 pb-3 ${ok ? "verdict-ok" : "verdict-no"}`}
-    >
-      <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}>
-        <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...tactilePress, delay: 0.05 }}>
-          {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-red-500 text-white" />}
-        </motion.span>
-        <span className="flex-1 min-w-0">{title}</span>
-        {children && (compact || !short) && (
-          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="shrink-0 min-h-[44px] -my-2 px-2 text-[14px] font-semibold text-slate-700 hover:text-slate-900">
+}
+
+/**
+ * §5.7 row 1: the verdict word (`title` 800, tint text) with a ghost "Why?" pill that opens the existing
+ * explanation inside the sheet. Correct verdicts scale 0.9 → 1.
+ */
+function VerdictRow({ ok, title, why }: { ok: boolean; title: string; why?: ReactNode }) {
+  const reduce = useReducedMotion();
+  const [open, setOpen] = useState(false);
+  return (
+    <div role="status" aria-live="polite" className="mb-4">
+      <div className="flex items-center justify-between gap-3">
+        <motion.div
+          className={`t-title !font-extrabold min-w-0 ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}
+          initial={ok && !reduce ? { scale: 0.9, opacity: 0 } : { opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={reduce ? fadeQuick : feedbackSheet}
+          style={{ transformOrigin: "left center" }}
+        >
+          {title}
+        </motion.div>
+        {why && (
+          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="btn-3d btn-sm tone-ghost shrink-0">
             {open ? "Less" : "Why?"}
           </button>
         )}
       </div>
-      {children && (!compact || open) && <div ref={txt} className={`text-[15px] leading-[1.5] text-slate-700 mt-1 ${open || short ? "max-h-[40vh] overflow-y-auto" : "line-clamp-2"}`}>{children}</div>}
-    </motion.div>,
-    ctx.el,
+      {why && open && <div className="t-secondary !text-fg mt-3 max-h-[40vh] overflow-y-auto">{typeof why === "string" ? nb(why) : why}</div>}
+    </div>
   );
 }
 
-/** Class for a chunky answer tile in one of four states. */
+/**
+ * Verdict from inside a stage's content: portalled into the footer above its button, turning the footer into the
+ * feedback sheet. The reason sits behind "Why?".
+ */
+export function Feedback({ show, ok, title, children }: { show: boolean; ok: boolean; title: string; children?: ReactNode; compact?: boolean }) {
+  const ctx = useContext(FeedbackSlot);
+  useVerdictSound(show, ok);
+  useVerdictTone(show, ok);
+  if (!show || !ctx?.el) return null;
+  return createPortal(<VerdictRow ok={ok} title={title} why={children} />, ctx.el);
+}
+
+/** Class for a chunky answer tile (§5.2) in one of its states. */
 export type OptionState = "idle" | "selected" | "right" | "wrong" | "dim";
 
 export function optionClass(state: OptionState): string {
-  const base = "tile-3d w-full text-left px-4 py-3 text-[14.5px] font-semibold leading-snug";
+  const base = "tile-3d answer-tile w-full text-left";
   if (state === "right") return `${base} !border-success !bg-success-tint text-fg`;
   if (state === "wrong") return `${base} !border-danger !bg-danger-tint text-fg`;
   if (state === "dim") return `${base} !border-line text-fg-2`;
@@ -198,15 +233,15 @@ export function optionClass(state: OptionState): string {
 
 export function OptionKey({ i, state }: { i: number; state: OptionState }) {
   const c = state === "right" ? "bg-success text-white border-success" : state === "wrong" ? "bg-danger text-white border-danger" : state === "selected" ? "bg-action text-white border-action" : "text-fg-2 border-line-strong";
-  return <span className={`readout mr-3 inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg border-2 text-[14px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
+  return <span className={`readout mr-3 inline-flex w-8 h-8 shrink-0 items-center justify-center rounded-lg border-2 text-[14px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
 }
 
-/** Story copy: calm, full-width paragraphs (no clamping). */
+/** Story copy: calm, full-width paragraphs on the canvas (no clamping), 16 px apart. */
 export function Lines({ lines }: { lines: string[] }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {lines.map((l, i) => (
-        <p key={i} className="flow-body text-slate-700">
+        <p key={i} className="flow-body text-fg">
           {l}
         </p>
       ))}
@@ -233,32 +268,19 @@ export interface CardProps<S> {
   screen?: number;
 }
 
-/**
- * Verdict state of the bottom action bar (Brilliant-style): a tinted strip with the verdict, a short
- * reason and the next action. Plays the chime / thud once when it appears.
- */
 /** Keep "12 %"-style figures on one line (non-breaking space before the unit sign). */
 export function nb(t: string): string {
   return t.replace(/(\d) %/g, "$1\u00a0%").replace(/(\d) (°C|ppm|MPa|m³)/g, "$1\u00a0$2");
 }
 
+/** Footer content for a verdict: the §5.7 sheet's verdict row (with "Why?") above its full-width button. */
 export function VerdictBar({ ok, title, why, children }: { ok: boolean; title: string; why?: ReactNode; children: ReactNode }) {
-  useEffect(() => {
-    if (ok) sfx.correct();
-    else sfx.wrong();
-  }, [ok, title]);
+  useVerdictSound(true, ok);
+  useVerdictTone(true, ok);
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={feedbackSheet} className="space-y-3" role="status" aria-live="polite">
-      <div className={`-mx-3 sm:-mx-4 -mt-3 px-4 sm:px-5 pt-3.5 pb-1 ${ok ? "verdict-ok" : "verdict-no"}`}>
-        <div className={`flex items-center gap-2 font-bold text-[17px] ${ok ? "text-success-tint-text" : "text-danger-tint-text"}`}>
-          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...tactilePress, delay: 0.05 }}>
-            {ok ? <CheckCircle2 size={22} className="fill-emerald-500 text-white" /> : <XCircle size={22} className="fill-red-500 text-white" />}
-          </motion.span>
-          {title}
-        </div>
-        {why && <div className="text-[15px] leading-[1.5] text-slate-700 mt-1 max-h-[32vh] overflow-y-auto">{typeof why === "string" ? nb(why) : why}</div>}
-      </div>
+    <div>
+      <VerdictRow ok={ok} title={title} why={why} />
       {children}
-    </motion.div>
+    </div>
   );
 }
