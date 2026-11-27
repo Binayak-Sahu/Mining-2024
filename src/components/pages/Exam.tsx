@@ -109,14 +109,7 @@ export function Exam() {
               </span>
             ))}
           </div>
-          <ul className="t-secondary list-disc pl-5 space-y-2 mt-5">
-            <li>Questions are drawn from every unit&apos;s predictions, shift crises, statutory drills and numericals, plus the audited statute register.</li>
-            <li>
-              Numerical answers accept expressions (e.g. <span className="readout">2.7*sqrt(120)</span>) and are marked within ±2 % unless stated.
-            </li>
-            <li>Review shows step-by-step derivations, citations and a per-unit breakdown. History builds your weak-unit analytics.</li>
-          </ul>
-          <label className="mt-5 flex items-center gap-3 t-label text-fg min-h-[48px] rounded-[12px] bg-surface-2 px-4 py-3" style={{ fontWeight: 400 }}>
+          <label className="mt-4 flex items-center gap-3 t-label text-fg min-h-[48px]" style={{ fontWeight: 400 }}>
             <input type="checkbox" checked={focusWeak} onChange={(e) => setFocusWeak(e.target.checked)} className="w-5 h-5 shrink-0 accent-[var(--action)]" disabled={noWeak} />
             <span>
               Double the weight of my weak units (&lt; 60 %) {noWeak && <span className="text-fg-2">(no weak units recorded yet)</span>}
@@ -126,6 +119,13 @@ export function Exam() {
             Start mock exam
           </button>
         </div>
+        <ul className="t-secondary list-disc pl-5 space-y-2">
+          <li>Questions are drawn from every unit&apos;s predictions, shift crises, statutory drills and numericals, plus the audited statute register.</li>
+          <li>
+            Numerical answers accept expressions (e.g. <span className="readout">2.7*sqrt(120)</span>) and are marked within ±2 % unless stated.
+          </li>
+          <li>Review shows step-by-step derivations, citations and a per-unit breakdown. History builds your weak-unit analytics.</li>
+        </ul>
         {exams.length > 0 && (
           <div className="grid md:grid-cols-2 gap-8 md:gap-6">
             <div className="card p-5">

@@ -1042,6 +1042,10 @@ svg[role="img"] {
   padding: 12px 0;
   border-bottom: 1px solid var(--line);
 }
+/* The last row of a list has no divider: the card ledge or the next control already closes it */
+.ds-readout-row:last-child {
+  border-bottom: 0;
+}
 
 /* §5.7 bottom sheets (Radix dialogs, vaul drawers): --surface-2 face, 2 px --line border, radius 24 top, the one allowed shadow */
 .sheet-face {

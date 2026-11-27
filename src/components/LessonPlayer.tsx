@@ -71,6 +71,19 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   // Resume: offered once when a lesson is reopened mid-way (separate device-local store, not progress).
   const [resumeAsk, setResumeAsk] = useState<number | null>(null);
   const resumeChecked = useRef(false);
+  // The sticky lesson header grows when the Inspector strip shows (and when that strip wraps). Sim plates pin just
+  // under it, so its height (without the safe-area padding, which SimView adds itself) feeds --sim-top.
+  const headObserver = useRef<ResizeObserver | null>(null);
+  const headRef = useCallback((el: HTMLDivElement | null) => {
+    headObserver.current?.disconnect();
+    headObserver.current = null;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const root = el.parentElement;
+    const set = () => root?.style.setProperty("--sim-top", `${el.offsetHeight - (parseFloat(getComputedStyle(el).paddingTop) || 0)}px`);
+    set();
+    headObserver.current = new ResizeObserver(set);
+    headObserver.current.observe(el);
+  }, []);
   const [celebrated, setCelebrated] = useState(false);
   const [recap, setRecap] = useState<number | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(false);
@@ -343,7 +356,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
   return (
     <div className="min-h-[100dvh]">
-      <div className="sticky top-0 z-20 bg-canvas pt-[env(safe-area-inset-top)]">
+      <div ref={headRef} className="sticky top-0 z-20 bg-canvas pt-[env(safe-area-inset-top)]">
         <div className="max-w-[640px] mx-auto px-5 sm:px-6 h-14 flex items-center gap-2">
           <ExitLesson href={`/unit/${unit.id}`} />
           <LessonProgress titles={lesson.stages.map((s) => s.title)} index={index} sub={sub} onRecap={setRecap} />
