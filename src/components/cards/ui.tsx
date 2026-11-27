@@ -8,16 +8,15 @@ import { BookOpen, FlaskConical, Eye, Sigma, Wrench, Siren, Scale } from "lucide
 import { sfx } from "@/lib/sfx";
 import { fadeQuick, feedbackSheet } from "@/lib/motion";
 
-export const STAGE_META: Record<StageKind, { label: string; short: string; color: string; text: string; Icon: typeof BookOpen }> = {
-  // Stage kinds are not colour-coded in the lesson (§5.12: neutral eyebrow + icon). `color` / `text` are only read by
-  // the unit page's stage dots until 15.5d.
-  theory: { label: "Field theory", short: "Field Theory", color: "#3B5BF6", text: "text-blue-700", Icon: BookOpen },
-  sim: { label: "Intuition lab", short: "Intuition Lab", color: "#15803D", text: "text-emerald-700", Icon: FlaskConical },
-  predict: { label: "Predict the outcome", short: "Predict", color: "#15803D", text: "text-emerald-700", Icon: Eye },
-  equation: { label: "Equation forge", short: "Equation Forge", color: "#3B5BF6", text: "text-blue-700", Icon: Sigma },
-  numeric: { label: "Quantitative workbench", short: "Workbench", color: "#F5B417", text: "text-amber-700", Icon: Wrench },
-  crisis: { label: "Shift crisis", short: "Shift Crisis", color: "#DC2626", text: "text-red-700", Icon: Siren },
-  swipe: { label: "Statutory swipe", short: "Statutory Swipe", color: "#DC2626", text: "text-red-700", Icon: Scale },
+export const STAGE_META: Record<StageKind, { label: string; short: string; Icon: typeof BookOpen }> = {
+  // Stage kinds are not colour-coded (§5.12: neutral eyebrow + icon).
+  theory: { label: "Field theory", short: "Field Theory", Icon: BookOpen },
+  sim: { label: "Intuition lab", short: "Intuition Lab", Icon: FlaskConical },
+  predict: { label: "Predict the outcome", short: "Predict", Icon: Eye },
+  equation: { label: "Equation forge", short: "Equation Forge", Icon: Sigma },
+  numeric: { label: "Quantitative workbench", short: "Workbench", Icon: Wrench },
+  crisis: { label: "Shift crisis", short: "Shift Crisis", Icon: Siren },
+  swipe: { label: "Statutory swipe", short: "Statutory Swipe", Icon: Scale },
 };
 
 /**

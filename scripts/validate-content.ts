@@ -17,6 +17,7 @@ import { STATUTES } from "../src/content/statutes";
 import { REFS } from "../src/content/references";
 import type { FlowScreen } from "../src/lib/types";
 import { allMcItems, arrange } from "../src/lib/shuffle";
+import { unitCounts, lessonQuestions } from "../src/lib/questions";
 
 let errors = 0;
 let flows = 0;
@@ -282,6 +283,18 @@ console.log(`concept flows: ${flows}`);
     rows.push(`${unit.padEnd(4)} n=${String(u.total).padStart(3)}  A/B/C/D=${u.slots.slice(0, 4).join("/")}  max ${Math.round(share * 100)}%${u.lenTotal ? `  longest-correct ${u.longest}/${u.lenTotal}` : ""}`);
   }
   console.log(`answer-slot balance (${items.length} multiple-choice items):\n  ` + rows.join("\n  "));
+}
+// Question counts (DESIGN.md §5.10): the one helper must be deterministic and give every unit a non-zero count.
+{
+  const a = UNITS.map((u) => unitCounts(u));
+  const b = [...UNITS].reverse().map((u) => unitCounts(u)).reverse();
+  UNITS.forEach((u, i) => {
+    checks++;
+    if (a[i].lessons !== b[i].lessons || a[i].questions !== b[i].questions) fail(`${u.id}: unitCounts is not deterministic`);
+    if (a[i].questions !== [...u.lessons, u.boss].reduce((n, l) => n + lessonQuestions(l), 0)) fail(`${u.id}: unitCounts disagrees with lessonQuestions`);
+    if (a[i].questions === 0) fail(`${u.id}: unit has 0 answerable screens`);
+  });
+  console.log(`question counts: ` + UNITS.map((u, i) => `${u.id} ${a[i].lessons}L/${a[i].questions}Q`).join(" · "));
 }
 console.log(`${checks} stages checked across ${UNITS.length} units — ${errors} error(s).`);
 process.exit(errors ? 1 : 0);

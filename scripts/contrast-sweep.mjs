@@ -165,6 +165,17 @@ function scan() {
  * Each entry is [route, name, async (page) => void]; run them with the filter argument "states".
  */
 const STATES = [
+  // 15.5d: path-node start popovers (current node, then a locked node).
+  ["/unit/u7/", "node popover: current", async (page) => {
+    await page.locator("button.path-node").first().tap();
+    await page.locator(".node-pop").waitFor();
+  }],
+  ["/unit/u7/", "node popover: locked boss", async (page) => {
+    const n = page.locator("button.path-node").last();
+    await n.scrollIntoViewIfNeeded();
+    await n.tap();
+    await page.locator(".node-pop").waitFor();
+  }],
   ["/lesson/u7-l1/", "wrong sheet + Why?", async (page) => {
     await page.getByRole("radio", { name: /No, dilution makes it safe/ }).click();
     await page.getByRole("button", { name: "Check", exact: true }).click();

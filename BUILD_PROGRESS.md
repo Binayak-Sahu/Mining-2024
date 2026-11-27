@@ -312,3 +312,10 @@ Run `npm run audit:svg` after any diagram change.
 - **Instrument panels follow the theme** in lessons (§5.13): the workbench scratch calculator and crisis telemetry are cards with tint-text values.
 - **Unchanged:** every progress write, XP, hearts, SRS, resume, scoring, stage order, the Inspector sandbox.
 - **Tests:** `scripts/contrast-sweep.mjs` gained a `states` mode; `scripts/shots.mjs` adds `lesson-question-right` and `lesson-more-menu`; the touch suite opens Notes and the Inspector through ⋯ (assertions unchanged).
+
+## Phase 15.5d — Campaign, unit pages and the path (2026-11-27)
+- New: `src/content/unitIcons.ts` (unit → lucide icon), `src/lib/questions.ts` (answerable screens: flow predict/check/situation, predict and equation stages, numeric steps, crisis phases, swipe cards; sim goals, nudges and read-only screens excluded; boss included, lessons count excludes the boss), `src/components/pages/course.tsx` (UnitIconTile, CourseCard, UnitHeader, LevelHeader, ProgressBar).
+- `Campaign.tsx`: canvas hero + course cards on the spine; desktop aside on tokens (no gradients, no hex). `UnitMap.tsx`: §5.10 header, level card, briefing list on tokens. `ExpeditionPath.tsx`: pedestal nodes + Radix popover; history entry pushed on open so Back closes it, replaced (not stacked) when Start navigates. `strata.ts` keeps name + depth only. `STAGE_META` lost its colour fields. CSS: `.unit-tile`, `.course-card`, `.course-badge`, `.level-card`, `.path-node`, `.path-label`, `.brief-chip`, `.node-pop[data-state=closed]`; `.stratum` and `.bob` removed.
+- Counts: u0 1/18, u1 6/58, u2 5/45, u3 7/61, u4 5/49, u5 5/46, u6 4/37, u7 7/65, u8 6/55, u9 4/41, u10 5/54 (lessons/questions).
+- `scripts/contrast-sweep.mjs` gained two node-popover states. Checks and gates: see the ROADMAP run log.
+- Note: after Back, the popover's exit spring finishes ~0.8 s later (Next restores the route on popstate); a closing popover ignores taps.

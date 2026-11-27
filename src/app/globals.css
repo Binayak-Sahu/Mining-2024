@@ -653,19 +653,6 @@ body {
   outline-offset: 2px;
 }
 
-/* Geological strata bands behind the expedition path */
-.stratum {
-  position: relative;
-}
-.stratum::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: var(--texture);
-  opacity: 0.5;
-}
-
 @keyframes pulse-ring {
   0% {
     opacity: 0.8;
@@ -680,19 +667,6 @@ body {
   animation: pulse-ring 1.6s ease-out infinite;
 }
 
-
-@keyframes bob {
-  0%,
-  100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, -6px);
-  }
-}
-.bob {
-  animation: bob 1.8s ease-in-out infinite;
-}
 
 @keyframes live-dot {
   0%,
@@ -1069,4 +1043,94 @@ svg[role="img"] {
   font-size: 20px;
   line-height: 32px;
   font-weight: 600;
+}
+
+/* ---------- Phase 15.5d: course cards, unit tiles, level card, path nodes ---------- */
+/* §5.11 unit icon tile */
+.unit-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: var(--surface-2);
+  border: 2px solid var(--line);
+  border-bottom-width: 5px;
+  color: var(--text);
+}
+/* §5.3 course card: pressing sinks the card into its ledge */
+.course-card {
+  transition: transform 120ms ease-out;
+}
+.course-card:active {
+  transform: translateY(2px);
+}
+.course-card:focus-visible,
+.path-node:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
+  outline-offset: 3px;
+}
+.course-badge[data-badge="Next"] {
+  background: var(--action);
+  color: var(--action-on);
+}
+.course-badge[data-badge="New"] {
+  background: var(--success);
+  color: var(--success-on);
+}
+/* §5.3 level header card: 2 px action border, 5 px action ledge */
+.level-card {
+  border-color: var(--action);
+}
+/* §5.5 path node button: the .ds-node pedestal plus the 44 px+ hit area it already has (72×82) */
+.path-node {
+  cursor: pointer;
+  border-radius: 9999px;
+  -webkit-tap-highlight-color: transparent;
+}
+.path-node .ds-node-face {
+  transition: transform 120ms ease-out;
+}
+.path-node:active .ds-node-face {
+  transform: translateY(6px);
+}
+.path-label {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+/* Shift-briefing status chip (unit page list): the path-node colours at 44 px */
+.brief-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--face);
+  color: var(--glyph);
+  box-shadow: 0 3px 0 var(--rim);
+}
+.brief-chip[data-state="done"] {
+  --face: var(--success);
+  --rim: var(--success-ledge);
+  --glyph: var(--success-on);
+}
+.brief-chip[data-state="current"] {
+  --face: var(--action);
+  --rim: var(--action-ledge);
+  --glyph: var(--action-on);
+}
+.brief-chip[data-state="boss"] {
+  --face: var(--energy);
+  --rim: var(--energy-ledge);
+  --glyph: var(--energy-on);
+}
+.brief-chip[data-state="locked"] {
+  --face: var(--surface);
+  --rim: var(--line-strong);
+  --glyph: var(--text-3);
+}
+/* A closing node popover (exit animation) never intercepts taps */
+.node-pop[data-state="closed"] {
+  pointer-events: none;
 }

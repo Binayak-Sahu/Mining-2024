@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
-import { Check, Lock, Crown, Star, Play, ChevronRight } from "lucide-react";
-import type { Unit } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import * as Popover from "@radix-ui/react-popover";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Check, Lock, Crown, Star, Play } from "lucide-react";
+import type { Lesson, Unit } from "@/lib/types";
 import type { LessonRecord } from "@/lib/store";
-import { lessonUnlocked, bossUnlocked, unitProgress } from "@/lib/progress";
+import { lessonUnlocked, bossUnlocked } from "@/lib/progress";
 import { HEARTS_PER_LESSON } from "@/lib/ranks";
-import { stratumFor } from "./strata";
+import { fadeQuick, feedbackSheet } from "@/lib/motion";
 
 const ROW = 112;
 
@@ -16,49 +19,155 @@ function offset(i: number, phase: number): number {
   return Math.sin(i * 1.05 + phase) * 26;
 }
 
-export function ProgressRing({ f, size, color, track = "rgba(148,163,184,0.25)", width = 6, children }: { f: number; size: number; color: string; track?: string; width?: number; children?: React.ReactNode }) {
-  const r = size / 2 - width / 2 - 1;
-  const c = 2 * Math.PI * r;
+type NodeState = "done" | "current" | "open" | "locked" | "inspect";
+
+/* ------------------------------------------------------------------ */
+/* Back closes the popover: opening pushes one same-URL history entry;  */
+/* closing it any other way pops that entry again.                      */
+/* ------------------------------------------------------------------ */
+const POP = "strataPopover";
+let backPending = false;
+let afterBack: (() => void) | null = null;
+if (typeof window !== "undefined") {
+  window.addEventListener("popstate", () => {
+    backPending = false;
+    const f = afterBack;
+    afterBack = null;
+    f?.();
+  });
+}
+const ourEntry = (token: number) => typeof window !== "undefined" && (window.history.state as Record<string, unknown> | null)?.[POP] === token;
+
+function NodePopover({ lesson, label, eyebrow, state, boss, children }: { lesson: Lesson; label: string; eyebrow: string; state: NodeState; boss: boolean; children: React.ReactNode }) {
+  const reduce = useReducedMotion();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [padBottom, setPadBottom] = useState(16);
+  const [side, setSide] = useState<"top" | "bottom">("bottom");
+  const trigger = useRef<HTMLButtonElement>(null);
+  const token = useRef(0);
+  const href = `/lesson/${lesson.id}`;
+
+  const onOpenChange = (v: boolean) => {
+    if (v) {
+      const push = () => {
+        token.current = Date.now() + Math.random();
+        window.history.pushState({ ...(window.history.state ?? {}), [POP]: token.current }, "");
+        // Clear the fixed tab bar (64 px) on phones; 16 px everywhere else (DESIGN.md §7b).
+        setPadBottom(window.matchMedia("(min-width: 768px)").matches ? 16 : 80);
+        // Open below a node in the upper half of the screen, above one in the lower half, so it stays next to its node.
+        const r = trigger.current?.getBoundingClientRect();
+        setSide(r && r.top + r.height / 2 > window.innerHeight / 2 ? "top" : "bottom");
+        setOpen(true);
+      };
+      if (backPending) afterBack = push;
+      else push();
+    } else {
+      setOpen(false);
+      if (ourEntry(token.current)) {
+        backPending = true;
+        window.history.back();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onPop = () => {
+      if (!ourEntry(token.current)) setOpen(false);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [open]);
+
+  /** Same navigation as the old direct tap (one history entry, unit page → lesson): replace the popover's entry. */
+  const go = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    if (ourEntry(token.current)) router.replace(href);
+    else router.push(href);
+  };
+
+  const action =
+    state === "locked"
+      ? null
+      : state === "done"
+        ? { cls: "tone-ghost", text: "Review" }
+        : boss && state !== "inspect"
+          ? { cls: "tone-hazard", text: "Fight boss" }
+          : { cls: "tone-tech", text: "Start" };
+  const stages = lesson.stages.length;
+
   return (
-    <div className="relative shrink-0" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90 absolute inset-0" aria-hidden>
-        <circle cx={size / 2} cy={size / 2} r={r} stroke={track} strokeWidth={width} fill="none" />
-        <motion.circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={width} fill="none" strokeLinecap="round" strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - f) }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">{children}</div>
-    </div>
+    <Popover.Root open={open} onOpenChange={onOpenChange}>
+      <Popover.Trigger asChild>
+        <button ref={trigger} type="button" className="path-node ds-node" data-state={state === "done" ? "done" : state === "locked" || state === "inspect" ? "locked" : boss ? "boss" : "current"} aria-label={label}>
+          {children}
+        </button>
+      </Popover.Trigger>
+      <AnimatePresence>
+        {open && (
+          <Popover.Portal forceMount>
+            <Popover.Content
+              forceMount
+              side={side}
+              align="center"
+              sideOffset={12}
+              collisionPadding={{ top: 80, left: 16, right: 16, bottom: padBottom }}
+              asChild
+            >
+              <motion.div
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }}
+                transition={reduce ? fadeQuick : feedbackSheet}
+                className="ds-pop node-pop z-50 w-[300px] max-w-[calc(100vw-32px)] p-5 focus:outline-none"
+                data-lesson={lesson.id}
+              >
+                <div className="t-eyebrow">{eyebrow}</div>
+                <div className="t-heading mt-1">{lesson.title}</div>
+                {action ? (
+                  <>
+                    <div className="t-secondary mt-1">
+                      {stages} stage{stages === 1 ? "" : "s"}
+                      {state === "inspect" ? " · Inspector sandbox, progress not saved" : ""}
+                    </div>
+                    <Link href={href} onClick={go} className={`btn-3d ${action.cls} w-full mt-5`}>
+                      {action.text}
+                    </Link>
+                  </>
+                ) : (
+                  <div className="t-secondary mt-1">{boss ? "Finish every lesson in this unit first" : "Finish the previous lesson first"}</div>
+                )}
+              </motion.div>
+            </Popover.Content>
+          </Popover.Portal>
+        )}
+      </AnimatePresence>
+    </Popover.Root>
   );
 }
 
-type NodeState = "done" | "current" | "open" | "locked" | "inspect";
-
 /**
- * One geological stratum on the expedition map: a textured band with its unit header and the unit's
- * lessons laid out on a winding path, ending in a crowned Boss Exam node.
+ * One unit's lessons on STRATA's winding path (S-curve positions unchanged), ending in the Boss Exam node.
+ * Nodes are §5.5 pedestals; tapping one opens the §5.5b start popover.
  */
 export function ExpeditionPath({
   unit,
   done,
   freeRoam,
   currentId,
-  header = true,
-  index = 0,
   master = false,
 }: {
   unit: Unit;
   done: Record<string, LessonRecord>;
   freeRoam: boolean;
   currentId: string | null;
-  header?: boolean;
-  index?: number;
-  /** Inspector Mode: locked nodes become playable sandboxes, badged MASTER. */
+  /** Inspector Mode: locked nodes become playable sandboxes, labelled Master. */
   master?: boolean;
 }) {
-  const reduce = useReducedMotion();
-  const st = stratumFor(unit.n);
   const nodes = [...unit.lessons.map((l, i) => ({ lesson: l, i, boss: false })), { lesson: unit.boss, i: unit.lessons.length, boss: true }];
   const phase = unit.n * 0.8;
-  const f = unitProgress(unit, done);
   const H = nodes.length * ROW;
   const pts = nodes.map((_, k) => [50 + offset(k, phase), k * ROW + ROW / 2] as const);
 
@@ -71,121 +180,75 @@ export function ExpeditionPath({
   const states = nodes.map(stateOf);
 
   return (
-    <section
-      className="stratum rounded-[28px] overflow-hidden"
-      style={{
-        background: `linear-gradient(180deg, color-mix(in oklab, ${st.tint} 30%, var(--surface)) 0%, color-mix(in oklab, ${st.tint} 16%, var(--surface)) 100%)`,
-        boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${st.tint} 40%, transparent), var(--shadow-card)`,
-        ["--texture" as string]: st.texture,
-      }}
-      aria-label={`Unit ${unit.n}: ${unit.title}`}
-    >
-      {header && (
-        <Link href={`/unit/${unit.id}`} className="group relative z-[1] flex items-center gap-3 sm:gap-4 p-4 sm:p-5 pb-2">
-          <ProgressRing f={f} size={56} color={st.accent} width={5}>
-            {f >= 1 ? <Crown size={20} color={st.accent} className="fill-current" /> : <span className="readout text-[15px] font-extrabold text-slate-900">{String(unit.n).padStart(2, "0")}</span>}
-          </ProgressRing>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 text-[10.5px] font-extrabold uppercase tracking-[0.14em]" style={{ color: st.accent }}>
-              <span className="readout normal-case tracking-normal rounded-md px-1.5 py-0.5 bg-surface/70 text-slate-600">{st.depth}</span>
-              <span className="truncate">{st.name}</span>
-            </div>
-            <div className="font-extrabold text-[17px] sm:text-lg leading-snug text-slate-900 mt-0.5 text-balance">{unit.title}</div>
-            <div className="text-[12.5px] text-slate-600 line-clamp-1">{unit.blurb}</div>
-          </div>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[12px] font-bold text-slate-500 group-hover:text-slate-900 shrink-0">
-            <span className="readout">{Math.round(f * 100)}%</span> <ChevronRight size={16} />
-          </span>
-        </Link>
-      )}
-
-      <div className="relative mx-auto max-w-md" style={{ height: H + 8, marginTop: header ? 28 : 40 }}>
-        {/* winding trail */}
+    <section aria-label={`Unit ${unit.n} path`}>
+      <div className="relative mx-auto max-w-md" style={{ height: H + 8 }}>
+        {/* winding trail: --line, lit in success after a finished node */}
         <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 100 ${H}`} preserveAspectRatio="none" aria-hidden>
           {pts.slice(1).map(([x2, y2], k) => {
             const [x1, y1] = pts[k];
             const d = `M${x1} ${y1} C ${x1} ${y1 + ROW / 2}, ${x2} ${y2 - ROW / 2}, ${x2} ${y2}`;
             const lit = states[k] === "done";
-            return (
-              <g key={k}>
-                <path d={d} fill="none" stroke="rgba(15,23,42,0.12)" strokeWidth={14} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                <path d={d} fill="none" stroke={lit ? st.accent : "var(--surface)"} strokeOpacity={lit ? 0.9 : 0.75} strokeWidth={lit ? 8 : 6} strokeLinecap="round" strokeDasharray={lit ? undefined : "2 12"} vectorEffect="non-scaling-stroke" />
-              </g>
-            );
+            return <path key={k} d={d} fill="none" stroke={lit ? "var(--success)" : "var(--line-strong)"} strokeWidth={6} strokeLinecap="round" strokeDasharray={lit ? undefined : "2 12"} vectorEffect="non-scaling-stroke" />;
           })}
         </svg>
 
         {nodes.map((n, k) => {
           const s = states[k];
           const [x, y] = pts[k];
-          const size = n.boss ? 80 : 66;
           const rec = done[n.lesson.id];
-          const perfect = rec && rec.bestHearts >= HEARTS_PER_LESSON;
-          const face =
-            s === "locked"
-              ? { c: "var(--n-200)", e: "var(--n-300)", t: "var(--n-400)" }
-              : s === "inspect"
-                ? { c: "#64748B", e: "#334155", t: "#fff" }
-              : n.boss
-                ? { c: s === "done" ? "#F59E0B" : "#EF4444", e: s === "done" ? "#B45309" : "#991B1B", t: "#fff" }
-                : s === "done"
-                  ? { c: st.accent, e: st.edge, t: "#fff" }
-                  : { c: "#3B82F6", e: "#1D4ED8", t: "#fff" };
-          const Icon = s === "locked" ? Lock : s === "inspect" ? (n.boss ? Crown : Play) : n.boss ? Crown : s === "done" ? (perfect ? Star : Check) : Play;
-          const label = `${n.boss ? "Boss Exam" : `Lesson ${unit.n}.${n.i + 1}`}: ${n.lesson.title}${s === "locked" ? " (locked)" : s === "done" ? " (completed)" : s === "inspect" ? " (Inspector sandbox, progress not saved)" : ""}`;
-
-          const body = (
-            <motion.span
-              whileHover={s !== "locked" ? { scale: 1.06 } : undefined}
-              whileTap={s !== "locked" ? { scale: 0.94, y: 5 } : undefined}
-              transition={{ type: "spring", stiffness: 600, damping: 20 }}
-              className="relative flex items-center justify-center rounded-full"
-              style={{ width: size, height: size - 6, background: face.c, color: face.t, boxShadow: `0 6px 0 ${face.e}, 0 12px 18px -8px rgba(15,23,42,0.45)` }}
-            >
-              <span className="absolute inset-x-3 top-1.5 h-3 rounded-full bg-white/25" aria-hidden />
-              <Icon size={n.boss ? 32 : 26} strokeWidth={2.6} className={s === "done" || n.boss ? "fill-white/30" : ""} />
-            </motion.span>
-          );
-
+          const perfect = !n.boss && !!rec && rec.bestHearts >= HEARTS_PER_LESSON;
+          const eyebrow = n.boss ? "Boss exam" : `Lesson ${unit.n}.${n.i + 1}`;
+          const label = `${eyebrow}: ${n.lesson.title}${s === "locked" ? " (locked)" : s === "done" ? (perfect ? " (perfect)" : " (completed)") : s === "inspect" ? " (Master: Inspector sandbox, progress not saved)" : s === "current" ? " (next)" : ""}`;
+          const glyph =
+            s === "locked" || s === "inspect" ? (
+              n.boss ? <Crown size={18} strokeWidth={2.5} /> : <Lock size={22} strokeWidth={2.5} />
+            ) : n.boss ? (
+              <Crown size={26} strokeWidth={2.5} />
+            ) : s === "done" ? (
+              <Check size={28} strokeWidth={3} />
+            ) : (
+              <Play size={26} fill="currentColor" strokeWidth={0} />
+            );
+          // Label sits 20 px beside the node, on the side with more room, vertically centred on the 72 px face.
+          const right = x <= 50;
+          const lockedLabel = s === "locked" || s === "inspect";
           return (
-            <motion.div
-              key={n.lesson.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-              style={{ left: `${x}%`, top: y }}
-              initial={{ opacity: 0, scale: 0.6 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "40px" }}
-              transition={{ type: "spring", stiffness: 380, damping: 22, delay: Math.min(index, 2) * 0.05 + k * 0.03 }}
-            >
-              {s === "inspect" && (
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 rounded-md bg-amber-400 text-[#422006] px-1.5 py-[1px] text-[9px] font-black tracking-[0.12em] shadow-[0_2px_0_#B45309]">MASTER</span>
-              )}
-              {s === "current" && (
-                <>
-                  <span className="bob absolute left-1/2 -top-11 z-10 rounded-xl bg-surface px-3 py-1.5 text-[12px] font-black tracking-[0.12em] text-blue-600 shadow-[0_3px_0_var(--n-200),0_10px_20px_-8px_rgba(15,23,42,0.35)] whitespace-nowrap">
-                    START
-                    <span className="absolute left-1/2 -bottom-1.5 -ml-1.5 w-3 h-3 rotate-45 bg-surface" />
+            <div key={n.lesson.id}>
+              <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${x}%`, top: y }}>
+                <NodePopover lesson={n.lesson} label={label} eyebrow={eyebrow} state={s} boss={n.boss}>
+                  {s === "current" && <span className="ds-node-ring" aria-hidden />}
+                  <span className="ds-node-rim" aria-hidden />
+                  <span className="ds-node-face" aria-hidden>
+                    {glyph}
                   </span>
-                  <motion.span className="absolute rounded-full pointer-events-none" style={{ top: -10, left: "50%", marginLeft: -(size + 20) / 2, width: size + 20, height: size + 14, border: "4px solid rgba(59,130,246,0.45)" }} animate={reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.9, 0.25, 0.9] }} transition={reduce ? undefined : { duration: 2, repeat: Infinity, ease: "easeInOut" }} aria-hidden />
-                </>
-              )}
-              {s === "locked" ? (
-                <span title="Complete the previous lesson to unlock" aria-label={label} role="img">
-                  {body}
+                  {perfect && (
+                    <span className="ds-node-badge" aria-hidden>
+                      <Star size={13} fill="currentColor" strokeWidth={0} />
+                    </span>
+                  )}
+                </NodePopover>
+              </div>
+              <div
+                aria-hidden
+                className={`absolute -translate-y-1/2 flex ${right ? "justify-start" : "justify-end"}`}
+                style={right ? { left: `calc(${x}% + 56px)`, right: 0, top: y - 5 } : { right: `calc(${100 - x}% + 56px)`, left: 0, top: y - 5 }}
+              >
+                <span className={`path-label flex flex-col ${right ? "items-start text-left" : "items-end text-right"}`}>
+                  <span className="t-heading line-clamp-4" style={{ fontWeight: 600, color: lockedLabel ? "var(--text-3)" : "var(--text)" }}>
+                    {n.lesson.title}
+                  </span>
+                  {s === "inspect" && (
+                    <span className="t-label mt-1 rounded-full px-3 bg-action-tint text-action-tint-text" style={{ fontWeight: 700 }}>
+                      Master
+                    </span>
+                  )}
                 </span>
-              ) : (
-                <Link href={`/lesson/${n.lesson.id}`} aria-label={label} className="rounded-full">
-                  {body}
-                </Link>
-              )}
-              <span className={`mt-2 max-w-[156px] text-center text-[11.5px] leading-tight font-bold rounded-lg px-2 py-0.5 bg-surface/75 backdrop-blur-sm ${s === "locked" ? "text-slate-400" : "text-slate-800"} line-clamp-2`}>
-                {n.boss ? "Boss · " : ""}
-                {n.lesson.title}
-              </span>
-            </motion.div>
+              </div>
+            </div>
           );
         })}
       </div>
     </section>
   );
 }
+

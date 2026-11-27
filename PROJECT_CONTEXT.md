@@ -67,7 +67,7 @@ src/
                           Stage Jumper, completion screen; the ONLY writer of progress in a lesson
     cards/                The 7 card engines + ui.tsx (CardFrame, ActionBar, PrimaryButton,
                           Feedback, Lines, optionClass, STAGE_META)
-    pages/                Campaign, ExpeditionPath (+ strata.ts), UnitMap, CodexLibrary, Exam,
+    pages/                Campaign (course cards), course.tsx, ExpeditionPath (path + start popover, strata.ts), UnitMap, CodexLibrary, Exam,
                           Tools, SimLab, Profile, SyncCard, Warmup, SoundTest
     shell/                TopBar + BottomNav, ClientEffects (theme, global sfx, Shift+M),
                           Providers (MotionConfig + Tooltip), AppToaster, PwaRegister
