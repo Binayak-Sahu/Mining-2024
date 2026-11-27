@@ -80,6 +80,10 @@ The plate follows the theme. Sims draw only with these tokens (no hex in sim fil
 | `--plate-line` | outlines, dividers, leader lines | `#CFCFCF` | `#3A3A3A` |
 
 - **Material fills** (rock, coal, sand, shale, soil, ore, water, air, the heat ramp, …) are `--mat-*` tokens. Light value = today's colour. Dark value = same hue, lightness −12 %, saturation −10 % (HSL points).
+- **Dark materials (Bink, 2026-11-27):** dark lightness is `max(L − 12, 22 + L/3)`, a floor that keeps near-black coal visible and keeps darker-is-darker order; materials whose light L < 30 % also get a 1 px `--plate-line` outline in dark.
+- **Text on a material** uses `--mat-ink`: `#1F1F1F` on light fills, `#FFFFFF` on dark fills, the same in both themes (pick the one with the higher contrast; ≥ 4.5:1).
+- **Markers** (red/blue/green/amber lines, arrows, pins) use the app's `danger` / `action` / `success` / `energy` faces; text in those hues uses the tone's tint text.
+- No glow filters on the plate (§8).
 - Frame: 2 px `--line` inner ring, radius 16, no outer shadow. Plate-met: 2 px `success` inner ring, no glow.
 - **SVG text ≥ 12 px as rendered at 390 px wide** (the plate is ~350 px wide there, so ≥ 14 viewBox units in the 400-wide sims). Codex thumbnails hide labels rather than shrink them.
 - Status: piloted in `/design-system` only; production sims are converted in a later phase, one unit at a time.

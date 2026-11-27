@@ -13,6 +13,7 @@ import { FeedbackSheet } from "./FeedbackSheet";
 import { StageKinds } from "./StageKinds";
 import { Readouts } from "./Readouts";
 import { StrataColours, CardDepth } from "./V21";
+import { PlatePilot } from "./PlatePilot";
 
 const SECTIONS = [
   ["colours", "Colour tokens", "Light and dark side by side. Each text pair shows its contrast, measured live on this device.", Swatches],
@@ -28,6 +29,7 @@ const SECTIONS = [
   ["readouts", "Sim readouts", undefined, Readouts],
   ["strata", "v2.1 · Stratum colours", "One colour per unit, only on the icon tile, the eyebrow dot and the unit header band. The number under each tile is the icon-on-tint contrast, measured live (rule: at least 3:1).", StrataColours],
   ["depth", "v2.1 · Card depth", "Dark surfaces #1E1E1E / #282828, the --ledge token, the 1 px top highlight (dark only) and button-style pressing.", CardDepth],
+  ["plate", "v2.1 · Sim plate pilot", "Three sims on the §2.3b plate. Production sims are unchanged: this sandbox re-colours its own copy with the token rules. The caption under each plate is measured live.", PlatePilot],
 ] as const;
 
 function TopBars() {

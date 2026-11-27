@@ -328,8 +328,8 @@ Run `npm run audit:svg` after any diagram change.
 - Scripts: `scripts/sweep.mjs`, `scripts/list-sim-stages.ts`, `scripts/lib/contrast-scan.mjs` (shared scan), `scripts/lib/sweep-states.mjs` (states; now 25, used by both sweeps).
 - Checks and gates: see the ROADMAP run log.
 
-## Phase 15.5f — v2.1 rules, sandbox preview, Restore placement (2026-11-27, partial)
+## Phase 15.5f — v2.1 rules, sandbox preview, Restore placement, plate pilot (2026-11-27)
 - DESIGN.md v2.1 (depth tokens + `--ledge`, stratum colours §2.4, plate tokens §2.3b, long titles, thin space, no chrome text links). Sandbox-only CSS scope `.ds21-light` / `.ds21-dark` in `globals.css`; demo in `src/components/ds/V21.tsx`.
 - `src/components/shell/ProfileMenu.tsx`: the top-bar rank button opens Profile + Backup & restore (Export, Restore, Repair app). `src/lib/restore.ts` is the one restore path (also used by `SyncCard`). Hero restore link removed from `Campaign.tsx`; touch suite updated.
-- Dark sim-plate pilot not built: sim colours that do not map to the v2.1 tokens are listed in ROADMAP 15.5f for Bink.
+- Dark sim-plate pilot: `src/components/ds/PlatePilot.tsx` re-colours a sandbox copy of 3 sims with the §2.3b rules (incl. Bink's 3 extra rules) and measures text contrast and size live. No production sim changed.
 
