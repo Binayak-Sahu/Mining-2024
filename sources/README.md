@@ -11,7 +11,7 @@ Primary documents supplied by the owner. Text versions sit next to each PDF (`<n
 | `GAZETTE_NOTIFICATIONS_03072024.pdf` | 140 | native text layer |
 | `OSH Code 2020.pdf` | 86 | native text layer |
 | `Occupational_Safety_Rules, 2026.pdf` | 180 | native text layer |
-| `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` | 105 | native text layer (G.S.R. 910(E), see below) |
+| `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` | 105 | native text layer on all 105 pages, no OCR (G.S.R. 910(E), see below) |
 
 Note: the owner brief said 137 of 156 pages were scanned. `pdfinfo` reports 155 pages and the per-page check found 135 without a text layer (a page counts as scanned when `pdftotext` returns under 40 characters).
 
@@ -57,7 +57,9 @@ NIT Rourkela B.Tech Mining (4 yr) curriculum, fetched 2026-11-26 from https://ww
 - Nothing outstanding. G.S.R. 910(E) was added on 2026-11-26 (see below).
 
 ## G.S.R. 910(E): exam bye-laws (added 2026-11-26 by Bink)
-- `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` + `.txt`: Gazette of India, G.S.R. 910(E), Dhanbad, **14 September 2018** (Board of Mining Examinations (Coal)), under CMR 2017 Regs 12(1) and 12(4). 105 pages, Hindi then English; native text layer (no OCR).
+- `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` + `.txt`: G.S.R. 910(E) of the Board of Mining Examinations (Coal), under CMR 2017 Regs 12(1) and 12(4). 105 pages, Hindi then English; native text layer (`pdftotext -layout`; checked 2026-11-27: every page has text, pages 39, 41 and 44 match a fresh extraction line for line, no OCR pages).
+  - **Dates, exactly as printed:** the notification line reads "Dhanbad, the 14th September, 2018"; the masthead reads "No. 672] NEW DELHI, MONDAY, SEPTEMBER 24, 2018/ASVINA 2, 1940". So 14-09-2018 is the notification date and 24-09-2018 the Gazette publication date; §12 says the bye-laws commence on publication. The same issue also holds the companion bye-laws G.S.R. 911(E) Surveyor, 912(E) Overman, 913(E) Sirdar, 914(E) Gas Testing and 915(E) Winding Engineman.
 - English part starts at the line "G.S.R. 910(E).—In accordance with…". §11 lists subjects per qualification; **Annexure I** (English) is the First Class Manager's syllabus; Annexures II–IV cover Second Class and the opencast-restricted certificates.
 - The marks scheme in §2.4–2.6 (80 CBT + 20 oral per subject) was later amended by the 2021 notifications in `AMENDMENTS…CMR, 2017.pdf` (3-hour CBT, 150 marks per subject). Where they differ, the 2021 amendment wins.
-- The DGMS circulars OCR text gives this notification's date as 24-09-2018; the gazette itself prints 14-09-2018, which is authoritative.
+- The DGMS circulars OCR text gives 24-09-2018 (the publication date) and G.S.R. 555(E) gives 14-09-2018 (the notification date). Both are correct; cite G.S.R. 910(E) as "dated 14-09-2018, published 24-09-2018".
+- `coverage/build_map.py` parses Annexure I (gazette pp. 41–45, from the line "ANNEXURE – I" after the English §14 up to "ANNEXURE – II") as the DGMS side of the coverage map.

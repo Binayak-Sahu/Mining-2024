@@ -227,7 +227,7 @@ npm start            # serve out/ locally (respects NEXT_PUBLIC_BASE_PATH)
 | 12 | Inspector Mode (sandboxed master unlock), studio Web Audio engine, UI craft (sonner, canvas-confetti, vaul, Radix, hairline surface tokens, sticky Workbench/Crisis bars) |
 | 13 | ConceptFlow engine + source registry, Brilliant-style feedback and type, 3 sourced and fact-checked theory flows (u7-l1, u0-l1, u10-l3) |
 | 14 | Trust, pacing & situations: balanced answer order, per-screen review, situation screens, theory-first mode + resume, phone-testing kit, storage persistence, deferred sim fixes. Plan in `ROADMAP.md`; rules in `CLAUDE.md` |
-| 15 | Sources & coverage map: text/OCR for every PDF in `sources/`, NITR syllabi in `sources/nitr/`, `coverage/MAP.md` + `map.json` (rebuild: `python3 -I coverage/build_map.py`), ranked gap list, Phase 16 order. The DGMS First Class syllabus (G.S.R. 910(E)) is still missing. |
+| 15 | Sources & coverage map: text/OCR for every PDF in `sources/`, NITR syllabi in `sources/nitr/`, `coverage/MAP.md` + `map.json` (rebuild: `python3 -I coverage/build_map.py`), ranked gap list, Phase 16 order. DGMS side rebuilt 2026-11-27 on the First Class syllabus, G.S.R. 910(E) Annexure I. |
 
 ## 10. Key decisions and conventions
 
@@ -249,5 +249,5 @@ npm start            # serve out/ locally (respects NEXT_PUBLIC_BASE_PATH)
 - The offline precache is ~7.5 MB.
 - `/sound-test` is development-only, so sounds cannot be auditioned on the live site.
 - Statutory figures should be re-verified periodically, especially as OSH&WC Code 2020 regulations are notified. STRATA is a study aid, not a legal reference.
-- The syllabus coverage map is topical (rule-based), and its DGMS side is a CMR-regulation proxy until G.S.R. 910(E) is supplied. Re-run `coverage/build_map.py` after adding lessons.
+- The syllabus coverage map is topical (rule-based), and its DGMS side is the G.S.R. 910(E) Annexure I syllabus (one line per `;`-separated item). Re-run `coverage/build_map.py` after adding lessons.
 - Possible future work: per-unit statutory reference pages, a teacher dashboard.

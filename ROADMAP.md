@@ -36,7 +36,7 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 |---|---|---|
 | 1–13 | Platform, content, design system, ConceptFlow, first 3 sourced flows | done (see BUILD_PROGRESS.md) |
 | 14 | Trust, pacing & situations | done (14.5 partial, see below) |
-| 15 | Sources & coverage map | done 2026-11-26 (DGMS First Class syllabus source missing, see below) |
+| 15 | Sources & coverage map | done 2026-11-26; DGMS side rebuilt on the G.S.R. 910(E) syllabus 2026-11-27 |
 | 15.5 | Design overhaul (DESIGN.md v2) | done 2026-11-27 (15.5-setup, 15.5a–e) |
 | 16 | Deep theory for the 52 remaining theory stages | **next** |
 | 17 | Code Underground merge | planned |
@@ -58,28 +58,29 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 Delivered:
 - `sources/*.txt` next to every PDF. Only `DGMScircularsfrom20182024_06122024.pdf` was scanned: 135 of its 155 pages had no text layer (the owner's 137 of 156 was a near miss) and were OCRed with Tesseract. Listed in `sources/README.md`, which also warns that OCR numbers need checking against the PDF.
 - `sources/nitr/`: the curriculum page and 64 MN-coded syllabus pages. 29 of the 93 MN subject links say "Course Syllabus Not Found" on the NITR site; they are listed in `sources/README.md`. `nitrkl.ac.in` was added to the environment allowlist (owner-authorised in the brief).
-- `coverage/MAP.md` + `coverage/map.json` (built by `coverage/build_map.py` from the real lesson/stage ids in `coverage/inventory.json`). 252 DGMS proxy lines (CMR 2017 regulations) and 198 unique NITR theory lines. Every screen id was checked against the content tree by the script. The ranked gap list is at the top of `MAP.md`.
+- `coverage/MAP.md` + `coverage/map.json` (built by `coverage/build_map.py` from the real lesson/stage ids in `coverage/inventory.json`). Since 2026-11-27 the DGMS side is the official syllabus (324 lines, below); the NITR side is unchanged (198 unique theory lines). Every screen id was checked against the content tree by the script. The ranked gap list is at the top of `MAP.md`.
 - Mapping is by topic rules, so "covered" means a lesson's subject matches, not that its depth is enough. Only u0-l1, u7-l1 (stage 0) and u10-l3 (stage 0) are sourced flows.
 
-**Syllabus source missing (DGMS First Class Manager).**
-- The syllabus is in the bye-laws G.S.R. 910(E) of 14-09-2018. No official copy was found. `egazette.gov.in`/`egazette.nic.in` and `www.dgms.gov.in` refused connections from this session (egazette is not on the allowlist and the owner's brief only named nitrkl.ac.in), and a web search returned no copy.
-- `sources/AMENDMENTS IN EARLIER BYE-LAWS NOTIFIED UNDER CMR, 2017.pdf` holds only the 2021 amendments (G.S.R. 555(E)–559(E)) to 910(E) and 911(E). The 2025 CBT notification names no papers.
-- So the DGMS side of the map uses CMR 2017 regulation headings as proxy syllabus lines. Per-paper weights are unknown, so the gap rank uses the number of CMR regulations touching a topic.
-- **Owner action:** place the G.S.R. 910(E) text (egazette PDF, or the DGMS "Gazette Notification of Exam Bye Laws") in `sources/`, or allow `egazette.gov.in` and `www.dgms.gov.in`, and the map's DGMS side can be rebuilt against the real syllabus.
+**DGMS syllabus source: G.S.R. 910(E) (rebuilt 2026-11-27).**
+- `sources/Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf` (+ `.txt`, native text layer on all 105 pages, no OCR). The notification is dated **Dhanbad, 14 September 2018** and was published in the **Gazette of India Extraordinary No. 672, Monday 24 September 2018**. Both dates are printed, so the 14-09 vs 24-09 disagreement is notification date vs publication date. §12: the bye-laws commence on publication.
+- Annexure I (gazette pp. 41–45) is the First Class Manager's syllabus: (a) Mine Management, Legislation and General Safety; (b) Winning and Working; (c) Mine Ventilation. The map takes each `;`-separated item as one line: 324 lines under 62 topic headings (99 / 137 / 88).
+- §11.1: a mining **degree** holder sits only paper (a); a mining **diploma** holder or other candidate sits (a), (b) and (c).
+- No conflict with the 2021 amendment: G.S.R. 555(E) substitutes §1.3, 1.6, 1.8, 2.0–2.6, 4.2, 8.0 and 10.0–10.2 only. §11 and Annexure I are unchanged.
+- The Legislation item names the Mines Act 1952, Mines Rules 1955, CMR 2017, Mines Rescue Rules 1985, CEA Regulations 2010 and MVTR 1966. Three of those are now historical (CLAUDE.md, OSH Rules 2026). The map keeps the line as printed; lessons teach current law.
+- Limits: Legislation is one paragraph (3 lines), so line counts understate the law syllabus (Phase 17 law books cover it). No source gives marks per topic, so lines are unweighted. `coverage/_cmr_regs.json` (the old CMR-heading stand-in) is no longer read.
 
-**G.S.R. 910(E) check (2026-11-26, 15.5-setup): not in `sources/`.** No file holds it. It is only *referenced*, in `sources/AMENDMENTS IN EARLIER BYE-LAWS NOTIFIED UNDER CMR, 2017.txt` (G.S.R. 555(E) amends it) and in `sources/DGMScircularsfrom20182024_06122024.txt`, an OCR page that lists G.S.R. 910(E)–915(E). That OCR page dates them 24-09-2018; G.S.R. 555(E) says 14-09-2018. The coverage map was not rebuilt.
-
-**Top gaps (full list in `coverage/MAP.md`).** DGMS-first rank:
-1. Officials, returns, certificates and duties (CMR Ch II–V, XVII; 85 regs): new lesson in u10. Phase 17's law books may supersede it, and statutory numbers go through the statute gate.
-2. Mining machinery and haulage (23 regs; 13 NITR lines): new lesson in u8.
-3. Statutory provisions for mine working (19 regs): new screens in u6-l1.
-4. Methane drainage / CBM (18 regs; 5 NITR): new lesson in u7.
-5. Winding in shafts, statutory (17 regs): new screens in u8-l6.
-6. Safety lamps and lighting (12 regs): new lesson in u7.
-7. Mine plans and sections (7 regs; 6 NITR): new lesson in u8.
-8. Inrush and inundation (5 regs): new lesson in u7.
-9. Tailings and mine closure, environment (NITR 21 lines each): new lessons in u5.
-10. NITR-only: numerical modelling (19), levelling/tacheometry/GPS (17), mine planning (14), ground instrumentation (11), data analytics (8), special mining (7), geostatistics, sustainability, mine finance.
+**Top gaps (full list in `coverage/MAP.md`).** Rank = syllabus lines, then NITR lines:
+1. Mine management: organisation, leadership, conflict, motivation (27 lines, paper a): new lesson in u9.
+2. Accidents, investigation, safety audit and training (21 lines; 10 NITR): new lesson in u10.
+3. Thick-seam, multi-seam and special methods (16 lines; 6 NITR): new lesson in u6.
+4. Inrush and inundation (13 lines): new lesson in u7.
+5. Occupational health and hazards: diseases, dust sampling, heights, weather (13 lines, paper a): new lesson in u10.
+6. Rippers, surface miners, BWE, in-pit crushing, dispatch (13 lines, paper b): new lesson in u5.
+7. Methane drainage / CBM (10 lines; 5 NITR): new lesson in u7.
+8. Safety lamps, cap lamps, illumination, gas detectors (8 lines): new lesson in u7.
+9. Mining machinery and haulage (7 lines; 13 NITR): new lesson in u8.
+10. Production and materials management (7 lines, paper a): new lesson in u9.
+- Fell out of the top: officials and duties (was #1 on 85 CMR regs; 1 syllabus line), winding statutory (0 lines) and mine plans (0 lines). The First Class syllabus has no surveying or machinery paper (those are Second Class subjects, §11.2), so these now rank on NITR only.
 
 ### 15.5 — Design overhaul (DESIGN.md v2)
 `DESIGN.md` (root) is the app-wide design system; this phase brings existing screens up to it. Violations found before the work: `docs/design-audit-15.5.md`. Phase 16 waits until 15.5 is done. The owner checks the deployed app on a phone after each slice.
@@ -116,8 +117,9 @@ Delivered:
   - Proposed for DESIGN.md (not applied, needs Bink): §5.14 "Text inputs" to record the `.field-input` style the Tools, Exam and search fields now use (§2.1 already names `--line-strong` for inputs, so no new tokens).
 
 ### 16 — Deep theory (52 remaining theory stages): next
-- **Order (from the Phase 15 map, DGMS proxy count first, NITR lines as tie-break):** U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9. Lines mapped per unit (DGMS regs / NITR lines): U7 34/16, U4 27/17, U8 10/10, U2 8/12, U6 7/17, U10 7/11, U5 4/27, U3 3/38, U1 3/11, U9 0/16.
-- This moves U3 (the old default first) down, because CMR regulations mention it least. U3 carries the most NITR lines, so move it up if the owner prefers university weight. The order rests on the CMR proxy, not on published paper weights.
+- **Order (rebuilt 2026-11-27 on the G.S.R. 910(E) syllabus; syllabus lines with a covered lesson first, NITR lines as tie-break):** U7 → U6 → U5 → U10 → U4 → U3 → U2 → U1 → U9 → U8. Lines per unit (syllabus / NITR): U7 85/16, U6 30/17, U5 28/27, U10 21/11, U4 17/17, U3 15/38, U2 13/12, U1 7/11, U9 6/16, U8 1/10. Per-paper split in `coverage/MAP.md`.
+- Old order (CMR-regulation proxy, 2026-11-26): U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9.
+- **Owner choice open:** a degree holder sits only paper (a). Counting paper (a) alone gives U10 → U7 → U9 → U5 → U8 → U6 → U4 → U3 → U2 → U1. The order above counts all three papers (the diploma route, and the whole syllabus). Pick one; the default is all three papers.
 - Convert 4–5 lessons per run through `.claude/skills/sourced-flow/SKILL.md`.
 - Gap lessons from the ranked list are appended at the end of their units (each unit keeps its separate boss; stage indexes untouched). "Screens in an existing lesson" gaps become new stages appended at the end of that lesson's stage list.
 
@@ -152,8 +154,12 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
   - the pass mark is **at least 50 % in each subject (75 of 150)**;
   - question banks are objective multiple-choice questions;
   - the amended clause 4.2 is omitted, and the original does not say what it held.
-- **Not in any source here:** the list of First Class Manager papers, marks or question counts per paper, negative marking, and syllabus per paper. A search snippet mentioned subject codes such as FCR-W and FCU-L from a DGMS 2021 notice, but that page was never fetched, so it is only a lead and must not be built on.
-- Phase 18 needs the original G.S.R. 910(E) (see "Syllabus source missing" under Phase 15) before it fixes paper names and counts.
+- `Gazette_Notification_of_Exam_Bye_Laws_Under_CMR_2017.pdf`, G.S.R. 910(E) (14-09-2018, published 24-09-2018), the Manager's bye-laws themselves:
+  - **Papers (§11.1, First Class Manager's Certificate):** (a) Mine Management, Legislation and General Safety; (b) Winning and Working; (c) Mine Ventilation. Degree in mining: (a) only. Diploma in mining, or other qualifications: all three. Syllabus per paper: Annexure I.
+  - Restricted to opencast workings (§11.3): (a) and (b), syllabus Annexure III.
+  - **Marks as first notified (§2.1, 2.4–2.6):** per subject a 2-hour CBT (80 marks) plus an oral test (20 marks), 100 in all; pass = 40/80 CBT, 6/20 oral and 50/100 overall. **Superseded** by G.S.R. 555(E) above (3 hours, 150 marks, 75 to pass, no oral). The exam simulator uses the 2021 figures.
+  - Other unchanged clauses: no candidate may leave the CBT hall within one hour of the start (§9.6); at most seven attempts for a certificate from the notification of CMR 2017 (§3.2; 555(E) does not amend §3). The fee of ₹1200 (§11.5) matches the 2025 CBT notice.
+- **Still not in any source here:** question counts per paper, marks per topic, negative marking. A search snippet mentioned subject codes such as FCR-W and FCU-L from a DGMS 2021 notice, but that page was never fetched, so it is only a lead and must not be built on.
 
 ### 19 — Real-phone polish
 - Fixes from the owner's Report exports.
@@ -176,6 +182,7 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 ## Run log
 | date (UTC) | run | outcome |
 |---|---|---|
+| 2026-11-27 | Phase 15 rebuild: coverage map on the G.S.R. 910(E) syllabus | DGMS side of `coverage/build_map.py` now parses Annexure I of G.S.R. 910(E) (3 papers, 62 topics, 324 lines; native text, no OCR) instead of CMR regulation headings; NITR rows byte-identical to before; id-existence asserts pass. Dates: notified 14-09-2018, gazetted 24-09-2018 (both printed). No conflict with G.S.R. 555(E). Gaps re-ranked (management, accidents, thick-seam on top); Phase 16 order U7 → U6 → U5 → U10 → U4 → U3 → U2 → U1 → U9 → U8 (was U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9); paper-(a)-only order left for the owner. Phase 18 paper names and original/2021 marks recorded. No `src/` change. Gates: validate 0 errors (404 stages; quotes 25 found, 0 not found; `excerpts.gen.ts` restored), tsc, lint. Build, audit:svg, touch suite and Inspector check not run: no `src/` change. |
 | 2026-11-27 | Phase 15.5d: Campaign, unit pages, path, start popover | Shipped (see Phase 15.5). Contrast sweep Campaign + 11 unit pages light+dark: 71 → 0 sub-4.5:1 (rock-layer labels, unit eyebrow/depth, header description all fixed); node popover states 0; text < 14 px on these pages: only the 12 px tab labels. Popover check at 390×844 light+dark, fresh and mid-progress profiles (146/146): every node, centred and at the bottom edge, popover fully on screen (x 105–285 node centres); Escape, Back and tap-outside close it; Start opens the right lesson; Back from the lesson returns to the unit page and a second Back leaves it (no stray entry). Gates: validate 0 errors, tsc, lint, base-path build, touch suite 49/49, Inspector acceptance (lesson started from a Master popover, 6/6 jumper stages, hearts lost, progress byte-identical at 390×844 and 1366×900). audit:svg not run: no sim render changed. Lesson screenshots pixel-identical to before. Design review: applied popover side by node position, 4-line labels, Next badge instead of a second action-border card, badge padding; not applied: focus ring solid (DESIGN §2.2 says 60 %), text-3 contrast worry (measured 0 failures). |
 | 2026-11-25 | Phase 13: ConceptFlow + 3 sourced flows | shipped to main (`d1c3d51`) |
 | 2026-11-26 | Phase 14.5 hotfix: real-phone bugs (slider scroll-steal, stuck Sim Lab picker, sim-stage declutter, back navigation + Notes, quote verification, sources policy) | see BUILD_PROGRESS; SW change approved and applied; touch regression suite added; deferred: SVG label size (19), predict-with-sim layout |
