@@ -327,3 +327,9 @@ Run `npm run audit:svg` after any diagram change.
 - Pages: `Tools.tsx` (neutral picker tiles, `.field-input`, output card with readout rows via `src/components/ui/tone.ts`), `Exam.tsx` (card hero, card timer strip, tile question numbers with flags as an `energy` ring, results on tint tokens), `Warmup.tsx`, `CodexLibrary.tsx` (tile chips replace the segmented control; single-column grid uses `minmax(0,1fr)` so long formulas wrap), `Profile.tsx` (neutral rank tile, `Toggle` rows, `.ds-pop` dialog, no sandbox link), `SimLab.tsx` (lesson view on the canvas), `SyncCard.tsx`, `SoundTest.tsx`. `svg.tsx` `HudBadge` and SimView's tooltip/focus dim lost their navy fills (colour only).
 - Scripts: `scripts/sweep.mjs`, `scripts/list-sim-stages.ts`, `scripts/lib/contrast-scan.mjs` (shared scan), `scripts/lib/sweep-states.mjs` (states; now 25, used by both sweeps).
 - Checks and gates: see the ROADMAP run log.
+
+## Phase 15.5f — v2.1 rules, sandbox preview, Restore placement (2026-11-27, partial)
+- DESIGN.md v2.1 (depth tokens + `--ledge`, stratum colours §2.4, plate tokens §2.3b, long titles, thin space, no chrome text links). Sandbox-only CSS scope `.ds21-light` / `.ds21-dark` in `globals.css`; demo in `src/components/ds/V21.tsx`.
+- `src/components/shell/ProfileMenu.tsx`: the top-bar rank button opens Profile + Backup & restore (Export, Restore, Repair app). `src/lib/restore.ts` is the one restore path (also used by `SyncCard`). Hero restore link removed from `Campaign.tsx`; touch suite updated.
+- Dark sim-plate pilot not built: sim colours that do not map to the v2.1 tokens are listed in ROADMAP 15.5f for Bink.
+

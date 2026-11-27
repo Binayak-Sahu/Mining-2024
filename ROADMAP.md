@@ -34,10 +34,11 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 
 | # | Phase | Status |
 |---|---|---|
+| 2026-11-27 | Phase 15.5f: DESIGN.md v2.1, sandbox preview, Restore → profile menu | Partial (see Phase 15.5f; dark-plate pilot waits for Bink). Gates: validate 0 errors (404 stages; quotes 25 found, 0 not found; `excerpts.gen.ts` restored), tsc, lint, build, base-path build, audit:svg 843 renders 0/0/0/0 (no sim changed), touch suite 50/50 (new check: profile menu rows; hero has no restore link). Restore end to end: export from a seeded device via the menu, restore on a fresh device via the menu → 40 XP and u0-l1 back, keys unchanged. /design-system and Path at 390×844 light+dark: 0 console errors, 0 overflow; shots in `.audit/15.5f/`. Inspector acceptance not run: no LessonPlayer, store or sandbox change. Design review not run this time. |
 | 1–13 | Platform, content, design system, ConceptFlow, first 3 sourced flows | done (see BUILD_PROGRESS.md) |
 | 14 | Trust, pacing & situations | done (14.5 partial, see below) |
 | 15 | Sources & coverage map | done 2026-11-26; DGMS side rebuilt on the G.S.R. 910(E) syllabus 2026-11-27 |
-| 15.5 | Design overhaul (DESIGN.md v2) | done 2026-11-27 (15.5-setup, 15.5a–e) |
+| 15.5 | Design overhaul (DESIGN.md v2) | 15.5a–e done 2026-11-27; 15.5f partial (dark-plate pilot waits on Bink) |
 | 16 | Deep theory for the 52 remaining theory stages | **next** |
 | 17 | Code Underground merge | planned |
 | 18 | Exam realism | planned |
@@ -192,6 +193,13 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
 - A reference link checker.
 - Re-verify all CMR content when the OSH (Coal Mines) Regulations 2026 are notified.
 - Optional: Logic Lab as a "Mine Automation" unit.
+
+- [~] 15.5f depth, stratum colours, Restore placement: partial 2026-11-27 (dark sim-plate pilot waits on Bink, see below).
+  - DESIGN.md → v2.1: dark `--surface #1E1E1E` / `--surface-2 #282828` / `--line #333333`, new `--ledge` (`#D4D4D4` / `#3A3A3A`), dark card top highlight, cards and nodes press like buttons (3 px, ledge 5 → 2, `tactilePress`); §2.4 stratum colours; §2.3b sim plate in both themes (`--plate-*`, `--mat-*`, SVG text ≥ 12 px rendered); long titles use `title`; thin space before units; Never List: no text links in chrome. v2.1 values live only in the sandbox (`.ds21-light` / `.ds21-dark`); production still runs v2.
+  - Stratum colours (icon on tint, light / dark): u0 `#3C87AC` 3.49/3.53 · u1 `#977C44` 3.47/3.54 · u2 `#8A812E` 3.49/3.52 · u3 `#8678A8` 3.49/3.51 · u4 `#748544` 3.53/3.49 · u5 `#BC6A2C` 3.48/3.53 · u6 `#9174A2` 3.51/3.51 · u7 `#368C80` 3.49/3.54 · u8 `#5F8A4A` 3.51/3.51 · u9 `#BD5E91` 3.52/3.51 · u10 `#AC65AA` 3.52/3.50. **Pending Bink's review on his phone.**
+  - Sandbox `/design-system`: §12 stratum tiles (11 × light/dark, contrast measured live), §13 card depth (pressable card, pressing nodes, unit header band; secondary text on the band 5.58–5.84:1).
+  - Production: "Restore from backup" text link removed from the Path hero. The rank button (T) in the top bar opens a menu: Profile and settings, then "Backup & restore" (Export progress, Restore from backup = merge, Repair app). Restore uses the same `importProgress` as Profile › Move progress (shared `src/lib/restore.ts`); same storage keys, schema 2 unchanged. The desktop-only export/import icon in the top bar is folded into the menu.
+  - **Blocked, question for Bink: dark plate pilot.** The 61 sims use 72 distinct hard-coded colours in `src/content/sims/*` (115 counting the shared `C` palette in `svg.tsx` and the patterns in `defs.tsx`, plus `"white"` 70×). Most map to `--plate-*` / `--mat-*`, but three groups do not under the §2.3b rule: (1) near-black materials (coal rank ladder `#030712`…`#292524`, coal pattern `#1B2230`) drop to L ≈ 0–3 % and vanish on `#181A1D`; (2) text drawn on top of materials (`white` / `#0F172A` on rock, ore, soil) is neither plate ink nor material; (3) semantic colours (`#EF4444`, `#3B82F6`, `#10B981`, `#F59E0B` + light tints) have no plate token. The 12 px SVG text rule also needs re-layout (current labels are 7–11 viewBox units ≈ 6–10 px at 390), which is a geometry change. No pilot built until Bink decides.
 
 ## Run log
 | date (UTC) | run | outcome |
