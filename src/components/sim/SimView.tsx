@@ -259,15 +259,51 @@ function readoutOrder(def: SimDef): number[] {
   return [...first, ...def.outputs.map((_, i) => i).filter((i) => !first.includes(i))];
 }
 
-function ReadoutRow({ o, out, values }: { o: SimDef["outputs"][number]; out: Vals; values: Vals }) {
+/**
+ * Longest text each formatted (word-valued) output can show, probed at every parameter's min, default and max one at a
+ * time. Used to reserve the value's height so a class name that changes mid-drag never makes the row (and the pinned
+ * block on phones) grow: nothing jumps (§1.5).
+ */
+function longestFormat(def: SimDef): Record<number, string> {
+  const base = Object.fromEntries(def.params.map((p) => [p.key, p.default]));
+  const probes: Vals[] = [base];
+  for (const p of def.params) {
+    const vals = p.options ? p.options.map((o) => o.value) : [p.min, p.max];
+    for (const x of vals) probes.push({ ...base, [p.key]: x });
+  }
+  const longest: Record<number, string> = {};
+  def.outputs.forEach((o, i) => {
+    if (!o.format) return;
+    for (const v of probes) {
+      try {
+        const out = def.compute(v);
+        const t = String(o.format(out[o.key], out, v));
+        if (t.length > (longest[i]?.length ?? 0)) longest[i] = t;
+      } catch {
+        /* a probe outside the sim's domain */
+      }
+    }
+  });
+  return longest;
+}
+
+function ReadoutRow({ o, out, values, ghost }: { o: SimDef["outputs"][number]; out: Vals; values: Vals; ghost?: string }) {
   const v = out[o.key];
   const tone = o.tone ? o.tone(v, out, values) : "info";
   return (
     <div className="ds-readout-row">
       <span className="t-label text-fg-2 min-w-0 break-words">{o.label}</span>
-      <span className={`t-readout text-right min-w-0 max-w-[55%] break-words ${toneText(tone)}`}>
+      <span className={`t-readout text-right min-w-0 max-w-[55%] break-words grid ${toneText(tone)}`}>
+        {/* Invisible longest value in the same grid cell: the row is always as tall as its tallest state. */}
+        {ghost && (
+          <span className="invisible [grid-area:1/1]" aria-hidden>
+            {ghost}
+          </span>
+        )}
+        <span className="[grid-area:1/1]">
         {o.format ? o.format(v, out, values) : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
         {o.unit && !o.format && <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span>}
+        </span>
       </span>
     </div>
   );
@@ -279,10 +315,11 @@ function ReadoutRow({ o, out, values }: { o: SimDef["outputs"][number]; out: Val
  */
 export function Readouts({ def, values, part }: { def: SimDef; values: Vals; part?: "primary" | "rest" }) {
   const out = useMemo(() => def.compute(values), [def, values]);
+  const ghosts = useMemo(() => longestFormat(def), [def]);
   const order = readoutOrder(def);
   const head = order.slice(0, 2);
   const tail = order.slice(2);
-  const rows = (ix: number[]) => ix.map((i) => <ReadoutRow key={`${def.outputs[i].key}-${i}`} o={def.outputs[i]} out={out} values={values} />);
+  const rows = (ix: number[]) => ix.map((i) => <ReadoutRow key={`${def.outputs[i].key}-${i}`} o={def.outputs[i]} out={out} values={values} ghost={ghosts[i]} />);
   return (
     <>
       {part !== "rest" && <div aria-label="Readouts">{rows(head)}</div>}
@@ -356,14 +393,14 @@ export function SimView({ def, values, onChange, overlay, disabled, objective, c
   return (
     <div className="space-y-4">
       {objective && <ObjectiveLine objective={objective} />}
-      {/* Phones: the plate and the 2 primary readouts stay pinned under the header while the controls scroll. */}
-      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:pt-1">
+      {/* Phones: the plate stays pinned under the header while the readouts and controls scroll beneath it. Pinning the
+          2 readout rows too left only 200–345 px for the controls on a 390×844 phone. */}
+      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:py-1">
         <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} noObjectiveLine />
-        <div className="mt-2">
-          <Readouts def={def} values={values} part="primary" />
-        </div>
       </div>
-      <Readouts def={def} values={values} part="rest" />
+      <div>
+        <Readouts def={def} values={values} />
+      </div>
       {open.length > 0 && <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={open} />}
       {more.length > 0 && (
         <details className="group">

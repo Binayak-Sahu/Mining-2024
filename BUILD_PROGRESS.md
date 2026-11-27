@@ -319,3 +319,11 @@ Run `npm run audit:svg` after any diagram change.
 - Counts: u0 1/18, u1 6/58, u2 5/45, u3 7/61, u4 5/49, u5 5/46, u6 4/37, u7 7/65, u8 6/55, u9 4/41, u10 5/54 (lessons/questions).
 - `scripts/contrast-sweep.mjs` gained two node-popover states. Checks and gates: see the ROADMAP run log.
 - Note: after Back, the popover's exit spring finishes ~0.8 s later (Next restores the route on popstate); a closing popover ignores taps.
+
+## Phase 15.5e — Sim stages, remaining pages, whole-app sweep (2026-11-27)
+- `SimView.tsx`: `ObjectiveLine` (Target + `label`, success-tint text when met) above the plate; `Readouts` = §5.9 rows (`.ds-readout-row`), first 2 by `SimDef.primary` else output order, rest in a ghost "All readouts (n)" `<details>`; `KeyReadouts` chips removed; word-valued readouts reserve their longest value (`longestFormat`, probed at each param's min/default/max) so rows never grow mid-drag; controls on the canvas, "More controls"/"Fine-tune" as ghost pills; plate chips `.plate-chip`, reset `.plate-btn`; only the plate is sticky on phones. `PARAM_COLORS`/`PARAM_TEXT` and the `Slider` `color` prop are gone.
+- `SimDef.primary?: string[]` (types.ts), set on 31 sims (list in ROADMAP 15.5e); validator checks keys and length 2.
+- `Slider.tsx` + CSS: flat `--surface-2` track, `.slider-fill` `action`, `.slider-tick`, 28 px ledged thumb centred on the unchanged 30 px geometry, `.slider-pill`. Springs from `motion.ts`.
+- Pages: `Tools.tsx` (neutral picker tiles, `.field-input`, output card with readout rows via `src/components/ui/tone.ts`), `Exam.tsx` (card hero, card timer strip, tile question numbers with flags as an `energy` ring, results on tint tokens), `Warmup.tsx`, `CodexLibrary.tsx` (tile chips replace the segmented control; single-column grid uses `minmax(0,1fr)` so long formulas wrap), `Profile.tsx` (neutral rank tile, `Toggle` rows, `.ds-pop` dialog, no sandbox link), `SimLab.tsx` (lesson view on the canvas), `SyncCard.tsx`, `SoundTest.tsx`. `svg.tsx` `HudBadge` and SimView's tooltip/focus dim lost their navy fills (colour only).
+- Scripts: `scripts/sweep.mjs`, `scripts/list-sim-stages.ts`, `scripts/lib/contrast-scan.mjs` (shared scan), `scripts/lib/sweep-states.mjs` (states; now 25, used by both sweeps).
+- Checks and gates: see the ROADMAP run log.
