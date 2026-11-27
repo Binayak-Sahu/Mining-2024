@@ -1,6 +1,8 @@
-# STRATA — DESIGN.md
+# STRATA — DESIGN.md (v2.1)
 
 The design system for the whole app: every screen, every phase, every new feature. Any UI change follows this file; where it and older notes (PROJECT_CONTEXT.md §6.5) disagree, this file wins. To change the system, change this file first, then the code.
+
+**v2.1 (2026-11-27, Phase 15.5f):** dark depth tokens and `--ledge` (§2.1, §4, §5.3), stratum colours (§2.4), the sim plate in both themes with `--plate-*` / `--mat-*` tokens (§2.3), long titles (§3), thin space before units (§3), no text links in chrome (§8). **Rollout:** the v2.1 values below are live in the `/design-system` sandbox only (`.ds21` scope). Production keeps the v2 values until the rollout slice moves them to `:root`; where this file shows "v2 → v2.1", production still uses the v2 value.
 
 Reference: Brilliant (iOS/Android, Nov 2026). We take its **system** (calm neutral canvas, one idea per screen, chunky ledged controls, bottom feedback sheet, node path). We never take its **assets** (see Never List).
 
@@ -29,9 +31,10 @@ Implement as CSS variables in `src/app/globals.css`. Existing Tailwind names (`s
 | Token | Role | Light | Dark |
 |---|---|---|---|
 | `--bg` | page canvas | `#FFFFFF` | `#121212` |
-| `--surface` | card face | `#FFFFFF` | `#1C1C1C` |
-| `--surface-2` | sheets, popovers, track | `#F5F5F5` | `#242424` |
-| `--line` | card border, ledge, dividers | `#E5E5E5` | `#2E2E2E` |
+| `--surface` | card face | `#FFFFFF` | `#1E1E1E` (v2 `#1C1C1C`) |
+| `--surface-2` | sheets, popovers, track | `#F5F5F5` | `#282828` (v2 `#242424`) |
+| `--line` | card border, dividers | `#E5E5E5` | `#333333` (v2 `#2E2E2E`) |
+| `--ledge` | bottom ledge of every card and tile (v2.1, new) | `#D4D4D4` | `#3A3A3A` |
 | `--line-strong` | tile border, inputs | `#D4D4D4` | `#3A3A3A` |
 | `--text` (`--n-900`) | primary text | `#141414` | `#F5F5F5` |
 | `--text-2` (`--n-500`) | secondary text | `#5C5C5C` | `#A3A3A3` |
@@ -44,7 +47,9 @@ Neutral ramp remap (`--n-50 … --n-950`):
 | Light | `#FAFAFA` | `#F5F5F5` | `#E5E5E5` | `#D4D4D4` | `#6B6B6B` | `#5C5C5C` | `#525252` | `#404040` | `#262626` | `#141414` | `#0A0A0A` |
 | Dark | `#1C1C1C` | `#242424` | `#2E2E2E` | `#3A3A3A` | `#949494` | `#A3A3A3` | `#BDBDBD` | `#D4D4D4` | `#E5E5E5` | `#F5F5F5` | `#FFFFFF` |
 
-Contrast check (WCAG, verified 2026-11-26): `--text-3` is ≥ 4.8:1 on `--bg`, `--surface` and `--surface-2` in both themes, so it may carry small text. Every accent face carries its text-on colour at ≥ 4.8:1. `--line`/`--line-strong` are for borders only, never text.
+Contrast check (WCAG, verified 2026-11-26): `--text-3` is ≥ 4.8:1 on `--bg`, `--surface` and `--surface-2` in both themes, so it may carry small text. Every accent face carries its text-on colour at ≥ 4.8:1. `--line`/`--line-strong`/`--ledge` are for borders only, never text. (v2.1 dark: `--text-3` `#949494` is 5.50:1 on `--surface` `#1E1E1E` and 4.86:1 on `--surface-2` `#282828`, so the ≥ 4.8:1 rule above still holds.)
+
+**Card top highlight (dark only, v2.1):** cards and tiles add `box-shadow: inset 0 1px 0 rgba(255,255,255,0.05)`, a 1 px lit top edge inside the border. It is not a blur shadow; blur/drop shadows stay banned (§1.3).
 
 ### 2.2 Accents (face / ledge / text-on / tint)
 
@@ -62,7 +67,44 @@ Progress fill (bars, done nodes): `success` face. Selected ring/border: `action`
 
 `.studio-bg` dot lattice and radial glow, all `--shadow-card` layers, `surface-sticky` blur, navy neutrals (`#0B0F19`, `#121826`, `#161D2D`), the Tailwind `slate` blue cast.
 
-**Exception, the sim plate:** `.plate` stays a light "daylight lightbox" in both themes (61 sims are drawn for it; a dark plate would be its own future phase). In dark mode give it a 2 px `--line` border and radius 16, and no outer shadow. Plate-met: 2 px `success` inner ring, no glow.
+### 2.3b Sim plate, both themes (v2.1; replaces the old fixed-light exception)
+
+The plate follows the theme. Sims draw only with these tokens (no hex in sim files once a sim is converted):
+
+| Token | Role | Light | Dark |
+|---|---|---|---|
+| `--plate-bg` | plate face | `#F7F6F2` | `#181A1D` |
+| `--plate-grid` | 20 px grid lines | `rgba(0,0,0,.06)` | `rgba(255,255,255,.06)` |
+| `--plate-ink` | labels, values, arrows | `#1F1F1F` | `#ECECEC` |
+| `--plate-ink-2` | captions, ticks, axis text | `#5C5C5C` | `#A3A3A3` |
+| `--plate-line` | outlines, dividers, leader lines | `#CFCFCF` | `#3A3A3A` |
+
+- **Material fills** (rock, coal, sand, shale, soil, ore, water, air, the heat ramp, …) are `--mat-*` tokens. Light value = today's colour. Dark value = same hue, lightness −12 %, saturation −10 % (HSL points).
+- Frame: 2 px `--line` inner ring, radius 16, no outer shadow. Plate-met: 2 px `success` inner ring, no glow.
+- **SVG text ≥ 12 px as rendered at 390 px wide** (the plate is ~350 px wide there, so ≥ 14 viewBox units in the 400-wide sims). Codex thumbnails hide labels rather than shrink them.
+- Status: piloted in `/design-system` only; production sims are converted in a later phase, one unit at a time.
+
+### 2.4 Stratum colours (v2.1)
+
+Each unit 0–10 has one colour that means "which stratum". Use it only on: the unit icon tile (tint bg = the face at 14 % alpha in dark, 12 % in light, over `--surface`; icon in the face colour), the eyebrow dot (8 px) before "UNIT n · …", and the unit page header band. **Never** on buttons, progress, badges or verdicts: those keep `action`/`success`/`danger`/`energy`.
+
+Rules: 11 hues, each ≥ 25° from `action` (230°), `success` (142°) and `danger` (0°); earth/mineral tones that match the stratum's name; icon on its tint ≥ 3:1 in both themes (one face value serves both themes).
+
+| Unit | Stratum | Token | Face | Hue | Icon on tint, light / dark |
+|---|---|---|---|---|---|
+| 0 | Surface · Daylight (sky) | `--stratum-0` | `#3C87AC` | 200° | 3.49 / 3.53 |
+| 1 | Topsoil & Alluvium (umber) | `--stratum-1` | `#977C44` | 40° | 3.47 / 3.54 |
+| 2 | Sandstone (buff ochre) | `--stratum-2` | `#8A812E` | 54° | 3.49 / 3.52 |
+| 3 | Shale & Mudstone (slate) | `--stratum-3` | `#8678A8` | 258° | 3.49 / 3.51 |
+| 4 | Limestone (olive cream) | `--stratum-4` | `#748544` | 76° | 3.53 / 3.49 |
+| 5 | Laterite & Overburden (rust) | `--stratum-5` | `#BC6A2C` | 26° | 3.48 / 3.53 |
+| 6 | Coal Seam (anthracite violet) | `--stratum-6` | `#9174A2` | 278° | 3.51 / 3.51 |
+| 7 | Fireclay & Return Airway (teal) | `--stratum-7` | `#368C80` | 172° | 3.49 / 3.54 |
+| 8 | Metamorphic Schist (chlorite) | `--stratum-8` | `#5F8A4A` | 100° | 3.51 / 3.51 |
+| 9 | Granite Basement (rose granite) | `--stratum-9` | `#BD5E91` | 328° | 3.52 / 3.51 |
+| 10 | DGMS Command Level (amethyst) | `--stratum-10` | `#AC65AA` | 302° | 3.52 / 3.50 |
+
+Contrast is measured against the tint over `--surface` (`#FFFFFF` light, `#1E1E1E` dark); the sandbox re-measures it live. The stratum tint is the one allowed hue-tinted surface (§8).
 
 ---
 
@@ -84,7 +126,11 @@ Font: Plus Jakarta Sans Variable (UI), JetBrains Mono Variable (numbers in reado
 | `tab` | 12 / 16 | 600 (active 700) | 0 | bottom tab labels |
 | `readout` | 17 / 24 | 600 mono | 0 | live numbers, always `tabular-nums` |
 
-Minimum on-screen text: 14 px (tab labels 12 px are the only exception).
+Minimum on-screen text: 14 px (tab labels 12 px are the only exception; SVG text on the plate follows §2.3b, ≥ 12 px rendered).
+
+**Long titles (v2.1):** a sim or lesson title that would wrap past 2 lines at 390 px uses `title` (26 px), not `display`.
+
+**Units (v2.1):** a number and its unit are separated by one thin space (U+2009): "85 °C", "0 XP", "2.5 t/m³", "300 m". Never a normal space, never none.
 
 ---
 
@@ -105,8 +151,8 @@ Minimum on-screen text: 14 px (tab labels 12 px are the only exception).
 | Card radius | 20 px |
 | Tile / chip radius | 12 px |
 | Button radius | 9999 px (pill) |
-| Card border | 2 px `--line`, bottom 5 px (`border-bottom-width: 5px`) |
-| Tile border | 2 px `--line-strong`, bottom 4 px |
+| Card border | 2 px `--line`, bottom 5 px ledge in `--ledge` (v2.1; v2 used `--line`) |
+| Tile border | 2 px `--line-strong`, bottom 4 px ledge in `--ledge` |
 | Max content width | 640 px, centred |
 
 Touch targets ≥ 44×44 px on coarse pointers; primary buttons 56 px tall.
@@ -130,8 +176,9 @@ Touch targets ≥ 44×44 px on coarse pointers; primary buttons 56 px tall.
 - Blank slot inside a sentence: 2 px dashed `--text-3`, radius 8, min 96×44, inline with the text baseline.
 
 ### 5.3 Cards (`.card`)
-- Face `--surface`, card border (§4), radius 20, no shadow.
-- Course/unit card: 88×88 unit icon tile left (§5.11), 16 px gap, eyebrow, `heading` title, optional 6 px progress bar (track `--surface-2`, fill `success`) 12 px under the title. Badge top-right 12 px inset: "Next" (`action` face) or "New" (`success` face), pill, `label` 700, white.
+- Face `--surface`, card border (§4), radius 20, no blur shadow. Dark: the 1 px top highlight (§2.1).
+- **Pressable cards and path nodes press like buttons (v2.1):** on press the face moves `translateY(3px)` and the bottom ledge shrinks 5 → 2 px (the outer box keeps its height, so nothing below moves), animated with `tactilePress`. Release springs back.
+- Course/unit card: 88×88 unit icon tile left (§5.11), 16 px gap, eyebrow (with the 8 px stratum dot, §2.4), `heading` title, optional 6 px progress bar (track `--surface-2`, fill `success`) 12 px under the title. Badge top-right 12 px inset: "Next" (`action` face) or "New" (`success` face), pill, `label` 700, white.
 - Level header card: 2 px `action` border, 5 px `action` ledge, eyebrow in `action` tint text, `heading` title, centred.
 
 ### 5.4 Course spine
@@ -172,17 +219,17 @@ Vertical 4 px line in `--line`, centred horizontally, drawn behind the 32 px gap
 - Remove duplicate value chips under the plate when the same value is already in readouts.
 
 ### 5.10 Course / unit header
-Centred: unit icon tile (§5.11) at 112 px, 24 px gap, `display` title, 12 px gap, `secondary` description (max 3 lines, centred allowed here only), 24 px gap, stats row: lucide `BookOpen` + "N lessons", lucide `CircleHelp` + "N questions" (`secondary`, 24 px apart). Both are computed from content, never typed: lessons = lessons in the unit; questions = every answerable screen in it (flow check and situation screens, predict/choice/equation/hotspot answers, boss items). One helper in `src/lib` does the count so every screen agrees.
+Unit pages (v2.1): the header sits on a full-width band of the unit's stratum tint (§2.4), radius 20, 24 px padding; text stays `--text`/`--text-2` (re-check ≥ 4.5:1 on the tint). Centred: unit icon tile (§5.11) at 112 px, 24 px gap, `display` title, 12 px gap, `secondary` description (max 3 lines, centred allowed here only), 24 px gap, stats row: lucide `BookOpen` + "N lessons", lucide `CircleHelp` + "N questions" (`secondary`, 24 px apart). Both are computed from content, never typed: lessons = lessons in the unit; questions = every answerable screen in it (flow check and situation screens, predict/choice/equation/hotspot answers, boss items). One helper in `src/lib` does the count so every screen agrees.
 
 ### 5.11 Unit icons
-Each unit has one lucide icon, shown in a rounded-square tile: `--surface-2` face, card border, radius 20, icon in `--text` at 45 % of the tile size (88 px tile on cards, 112 px on the unit header). The unit → icon mapping lives in one content file. The run that adds it lists the mapping in ROADMAP as "pending Bink's review"; Bink approves or swaps icons after seeing them on his phone (a one-line change each). Original unit artwork may replace the icons in a later phase (Bink designs it); it must keep the same tile size.
+Each unit has one lucide icon, shown in a rounded-square tile: stratum tint face (§2.4; v2 used `--surface-2`), card border with `--ledge`, radius 20, icon in the stratum face colour (v2: `--text`) at 45 % of the tile size (88 px tile on cards, 112 px on the unit header). The unit → icon mapping lives in one content file. The run that adds it lists the mapping in ROADMAP as "pending Bink's review"; Bink approves or swaps icons after seeing them on his phone (a one-line change each). Original unit artwork may replace the icons in a later phase (Bink designs it); it must keep the same tile size.
 
 
 ### 5.12 Stage-kind label
 Stage types are not colour-coded. Each shows an `eyebrow` in `--text-3` with a 16 px lucide icon before it: Field theory `BookOpen`, Intuition lab `FlaskConical`, Equation forge `Sigma`, Workbench `Wrench`, Crisis `Siren`, Boss `Crown`. Colour stays reserved for meaning (§1.4).
 
 ### 5.13 Instrument panels follow the theme
-Tools calculators, the sim telemetry strip and the Exam hero are no longer always-dark: they use `--surface`, card border and `readout` type like everything else. The sim plate (§2.3) is the only fixed-light surface.
+Tools calculators, the sim telemetry strip and the Exam hero are no longer always-dark: they use `--surface`, card border and `readout` type like everything else. The sim plate follows the theme too (§2.3b, v2.1); until a sim is converted it stays on the old fixed-light plate.
 
 ---
 
@@ -225,7 +272,8 @@ Already in the app and still approved: `framer-motion`, `@radix-ui/react-dialog`
 ## 8. Never List
 
 - Never use Brilliant's mascot (Koji), illustrations, icons, course art, wordmark or wording. STRATA uses its own unit icons and lucide. A STRATA mascot, if ever, is an original design in a later phase.
-- Never use hue-tinted neutrals, gradients on surfaces, glows, card drop shadows, glassmorphism or backdrop blur.
+- Never use hue-tinted neutrals, gradients on surfaces, glows, card drop shadows, glassmorphism or backdrop blur. (The only hue-tinted surface is the stratum tint, §2.4; the only inset highlight is the 1 px dark card top edge, §2.1.)
+- Never use text links in app chrome (top bar, tab bar, menus, heroes, cards). Actions are buttons or menu rows; inline links belong only inside lesson prose and Sources.
 - Never put lesson prose inside a card, centre a paragraph longer than 2 lines, or show more than one filled button per screen.
 - Never use emoji as icons.
 - Never let a verdict, hint or toast push content up or down.

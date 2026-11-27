@@ -1206,3 +1206,81 @@ svg[role="img"] {
   color: #141414;
   border: 2px solid #d4d4d4;
 }
+
+/* ---------- DESIGN.md v2.1 preview (Phase 15.5f) — /design-system sandbox only ----------
+ * `.ds21-light` / `.ds21-dark` sit on top of `.ds2-light` / `.ds2-dark` and carry the v2.1 values: dark depth
+ * (§2.1), `--ledge`, the dark card top highlight, stratum colours (§2.4) and the plate tokens (§2.3b).
+ * Production does not use these classes yet. */
+.ds21-light,
+.ds21-dark {
+  --stratum-0: #3c87ac;
+  --stratum-1: #977c44;
+  --stratum-2: #8a812e;
+  --stratum-3: #8678a8;
+  --stratum-4: #748544;
+  --stratum-5: #bc6a2c;
+  --stratum-6: #9174a2;
+  --stratum-7: #368c80;
+  --stratum-8: #5f8a4a;
+  --stratum-9: #bd5e91;
+  --stratum-10: #ac65aa;
+}
+.ds21-light {
+  --ledge: #d4d4d4;
+  --card-hi: none;
+  --stratum-alpha: 12%;
+  --plate-bg: #f7f6f2;
+  --plate-grid: rgba(0, 0, 0, 0.06);
+  --plate-ink: #1f1f1f;
+  --plate-ink-2: #5c5c5c;
+  --plate-line: #cfcfcf;
+}
+.ds21-dark {
+  --surface: #1e1e1e;
+  --surface-2: #282828;
+  --line: #333333;
+  --n-50: #1e1e1e;
+  --n-100: #282828;
+  --n-200: #333333;
+  --ledge: #3a3a3a;
+  --card-hi: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --stratum-alpha: 14%;
+  --plate-bg: #181a1d;
+  --plate-grid: rgba(255, 255, 255, 0.06);
+  --plate-ink: #ececec;
+  --plate-ink-2: #a3a3a3;
+  --plate-line: #3a3a3a;
+}
+/* §5.3 v2.1 card: --ledge bottom, dark top highlight. Pressed state is animated in JS (tactilePress). */
+.ds21-card {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-bottom: 5px solid var(--ledge);
+  border-radius: 20px;
+  box-shadow: var(--card-hi);
+}
+/* §2.4 / §5.11 v2.1 unit icon tile: stratum tint face, icon in the stratum colour */
+.ds21-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--s) var(--stratum-alpha), var(--surface));
+  border: 2px solid var(--line);
+  border-bottom: 5px solid var(--ledge);
+  box-shadow: var(--card-hi);
+  color: var(--s);
+}
+.ds21-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--s);
+}
+.ds21-band {
+  background: color-mix(in srgb, var(--s) var(--stratum-alpha), var(--surface));
+  border-radius: 20px;
+  padding: 24px;
+}
