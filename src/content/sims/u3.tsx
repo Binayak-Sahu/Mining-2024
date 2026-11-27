@@ -15,6 +15,8 @@ export function erf(x: number): number {
 
 export const kirschSim: SimDef = {
   id: "u3-kirsch",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["p", "roof"],
   title: "Kirsch solution — boundary stress around an opening",
   params: [
     { key: "H", label: "Depth", min: 50, max: 1500, step: 10, unit: "m", default: 400 },
@@ -144,6 +146,8 @@ export function hb(gsi: number, mi: number, D = 0) {
 
 export const failureSim: SimDef = {
   id: "u3-failure",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["diff", "mc"],
   title: "Failure envelopes — Mohr–Coulomb vs Hoek–Brown (σ1–σ3 space)",
   params: [
     { key: "c", label: "MC cohesion c", min: 0.5, max: 20, step: 0.5, unit: "MPa", default: 3 },
@@ -407,6 +411,8 @@ export const boltSim: SimDef = {
 
 export const pillarSim: SimDef = {
   id: "u3-pillar",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["fos", "sp"],
   title: "Bord & pillar — tributary-area stress vs pillar strength",
   params: [
     { key: "f", label: "Strength formula", min: 0, max: 1, step: 1, default: 0, options: [{ value: 0, label: "Salamon–Munro" }, { value: 1, label: "CMRI (Sheorey)" }] },
@@ -489,6 +495,8 @@ export const pillarSim: SimDef = {
 
 export const slopeSim: SimDef = {
   id: "u3-slope",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["fos", "daylight"],
   title: "Plane failure — limit equilibrium of a sliding block",
   params: [
     { key: "H", label: "Slope height", min: 10, max: 60, step: 1, unit: "m", default: 30 },

@@ -375,12 +375,12 @@ export function HudBadge({ x, y, label, value, tone = "info", anchor = "start" }
   const col = toneColor(tone);
   return (
     <g pointerEvents="none">
-      <rect x={bx} y={y} width={w} height={18} rx={9} fill="#0E1424" opacity={0.9} />
+      <rect x={bx} y={y} width={w} height={18} rx={9} fill="#141414" opacity={0.9} />
       <circle cx={bx + 9} cy={y + 9} r={3} fill={col} />
-      <text x={bx + 16} y={y + 12.5} fontSize={8} fill="#8B97AE" fontFamily={SANS} fontWeight={700} letterSpacing={0.4}>
+      <text x={bx + 16} y={y + 12.5} fontSize={8} fill="#BDBDBD" fontFamily={SANS} fontWeight={700} letterSpacing={0.4}>
         {label.toUpperCase()}
       </text>
-      <text x={bx + w - 8} y={y + 12.5} fontSize={9} fill="#F1F5F9" fontFamily={MONO} fontWeight={700} textAnchor="end">
+      <text x={bx + w - 8} y={y + 12.5} fontSize={9} fill="#F5F5F5" fontFamily={MONO} fontWeight={700} textAnchor="end">
         {value}
       </text>
     </g>

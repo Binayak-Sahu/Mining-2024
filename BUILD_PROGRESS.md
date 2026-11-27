@@ -36,7 +36,7 @@ All simulations are hand-built SVG (400×240 viewBox) — no WebGL dependency wa
 - `npm run validate` (scripts/validate-content.ts) proves every SimLab goal is reachable by grid search, hotspots are in-bounds, every crisis phase has exactly one correct option, and every sim renders.
 - QA flag: `localStorage["strata-qa"]="1"` keeps one heart so automated walkthroughs can traverse lessons.
 - Optional `SimDef.handles` add direct-manipulation grips on the canvas: `{ key, axis, at(p,o) → [x,y], toValue(coord,p) }`; the runtime clamps and snaps to the param's range/step. Theory hotspots are placed over the same render, so diorama upgrades must keep geometry (only fills/overlays change).
-- Theming: author UI in light-mode semantics with `slate-*`, `bg-surface`, `bg-canvas`; `.dark` on `<html>` remaps the neutral ramp and accent tints. Always-dark instrument panels (telemetry, calculators) use fixed hex colours. Simulation plates stay daylight-lit in both themes.
+- Theming: author UI in light-mode semantics with `slate-*`, `bg-surface`, `bg-canvas`; `.dark` on `<html>` remaps the neutral ramp and accent tints. Since Phase 15.5e every panel follows the theme (DESIGN.md §5.13); only the simulation plates stay daylight-lit in both themes.
 
 ## Phase checklist
 - [x] **Phase 1** — scaffold, store, Codex, Campaign tree, Unit map, Warmup (SRS), Profile, 7 card engines, Orientation unit (U0) exercising every engine. `npm run build` ✓, `tsc --noEmit` ✓, Playwright walkthrough ✓ (0 console errors).

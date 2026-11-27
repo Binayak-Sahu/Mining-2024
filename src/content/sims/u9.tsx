@@ -140,6 +140,8 @@ export function cutoff(p: Record<string, number>) {
 
 export const cutoffSim: SimDef = {
   id: "u9-cutoff",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["gbe", "profit"],
   title: "Grade–tonnage curve and break-even cut-off grade",
   params: [
     { key: "mean", label: "Deposit mean grade", min: 0.5, max: 5, step: 0.1, unit: "g/t", default: 1.5 },
@@ -261,6 +263,8 @@ export function lgPit(p: Record<string, number>) {
 
 export const pitOptSim: SimDef = {
   id: "u9-pit",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["maxDepth", "value"],
   title: "Lerchs–Grossmann 2-D ultimate pit (45° slopes)",
   params: [
     { key: "price", label: "Metal price factor", min: 0.3, max: 2.5, step: 0.05, default: 1 },
@@ -343,6 +347,8 @@ export function inverseVelocity(p: Record<string, number>) {
 
 export const radarSim: SimDef = {
   id: "u9-radar",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["errPct", "lead"],
   title: "Slope stability radar — Fukuzono inverse-velocity forecast",
   params: [
     { key: "tf", label: "Actual (unknown) failure time", min: 30, max: 120, step: 1, unit: "h", default: 72 },

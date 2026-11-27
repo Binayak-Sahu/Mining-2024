@@ -45,6 +45,8 @@ export function traverse(p: Record<string, number>) {
 
 export const bowditchSim: SimDef = {
   id: "u8-bowditch",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["prec", "angMis"],
   title: "Closed traverse — misclosure and Bowditch adjustment",
   params: [
     { key: "ang", label: "Angular error per station", min: 0, max: 60, step: 1, unit: "″", default: 20 },
@@ -111,6 +113,8 @@ export const bowditchSim: SimDef = {
 
 export const weisbachSim: SimDef = {
   id: "u8-weisbach",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["err", "beta"],
   title: "Shaft plumbing — Weisbach triangle error control",
   params: [
     { key: "c", label: "Wire separation W₁W₂", min: 1, max: 6, step: 0.1, unit: "m", default: 3 },
@@ -364,6 +368,8 @@ export function earth(p: Record<string, number>) {
 
 export const earthSim: SimDef = {
   id: "u8-earth",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["If", "tripped"],
   title: "Earth fault on a UG feeder — restricted neutral & earth-leakage relay",
   params: [
     { key: "V", label: "System voltage", min: 550, max: 3300, step: 1, default: 550, options: [550, 1100, 3300].map((v) => ({ value: v, label: `${v} V` })) },
@@ -448,6 +454,8 @@ export function koepe(p: Record<string, number>) {
 
 export const koepeSim: SimDef = {
   id: "u8-koepe",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["margin", "ratio"],
   title: "Koepe friction winder — rope slip check",
   params: [
     { key: "Q", label: "Payload", min: 5, max: 40, step: 1, unit: "t", default: 20 },

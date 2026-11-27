@@ -145,6 +145,8 @@ for (const u of UNITS) {
           for (const key of Object.keys(params ?? {})) if (!def.params.some((p) => p.key === key)) fail(`${at}: unknown param ${key} for ${id}`);
           const o = def.compute(v);
           for (const out of def.outputs) if (o[out.key] === undefined) fail(`${at}: sim ${id} missing output ${out.key}`);
+          for (const k of def.primary ?? []) if (!def.outputs.some((out) => out.key === k)) fail(`${at}: sim ${id} primary key ${k} is not an output`);
+          if (def.primary && def.primary.length !== 2) fail(`${at}: sim ${id} primary should list exactly 2 outputs (§5.9)`);
           renderToStaticMarkup(createElement("svg", { viewBox: "0 0 400 240" }, def.render(v, o, 0) as ReactNode));
           return def;
         } catch (e) {

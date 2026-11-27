@@ -45,6 +45,11 @@ export interface SimDef {
   caption?: string;
   /** Direct-manipulation grips drawn on the canvas: drag them to change a parameter. */
   handles?: SimHandle[];
+  /**
+   * Output keys shown first in the readout rows (DESIGN.md §5.9: 2 rows show, the rest sit under "All readouts").
+   * Set only where the first 2 outputs in `outputs` order are not the stage objective's variables. Display order only.
+   */
+  primary?: string[];
 }
 
 /** A draggable grip on a simulation canvas bound to one parameter along one axis. */

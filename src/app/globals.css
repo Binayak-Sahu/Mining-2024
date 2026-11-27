@@ -610,8 +610,7 @@ body {
   height: 10px;
   margin-top: -5px;
   border-radius: 999px;
-  background: var(--n-200);
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.12);
+  background: var(--surface-2);
 }
 .slider-fill {
   position: absolute;
@@ -619,20 +618,40 @@ body {
   top: 0;
   bottom: 0;
   border-radius: 999px;
+  background: var(--action);
 }
+.slider-tick {
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+/* 28 px --surface circle, 2 px --line-strong border, 3 px bottom ledge (a ledge like .btn-3d, not a drop shadow).
+ * Centred on the same point as the 30 px native thumb, so travel and hit areas are unchanged. */
 .slider-thumb {
   position: absolute;
   top: 50%;
-  width: 30px;
-  height: 30px;
-  margin: -15px 0 0 -15px;
+  width: 28px;
+  height: 28px;
+  margin: -15.5px 0 0 -14px;
   border-radius: 999px;
-  background: #fff;
-  border: 3px solid currentColor;
-  box-shadow:
-    0 3px 0 rgba(15, 23, 42, 0.18),
-    0 6px 14px -4px rgba(15, 23, 42, 0.3);
+  background: var(--surface);
+  border: 2px solid var(--line-strong);
+  box-shadow: 0 3px 0 var(--line-strong);
   pointer-events: none;
+}
+/* Value pill shown while dragging: `action` face, `label` type, no shadow */
+.slider-pill {
+  padding: 2px 10px;
+  border-radius: 9999px;
+  background: var(--action);
+  color: var(--action-on);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
 }
 .slider-grab {
   /* ≥ 44 px grab zone centred on the thumb; owns the whole gesture (no page scroll mid-drag). */
@@ -1133,4 +1152,53 @@ svg[role="img"] {
 /* A closing node popover (exit animation) never intercepts taps */
 .node-pop[data-state="closed"] {
   pointer-events: none;
+}
+
+/* ---------- Phase 15.5e: sim stage, instrument panels, remaining pages ---------- */
+/* Text inputs and selects (Tools, Exam numericals): --surface face, 2 px --line-strong border (§2.1 "inputs"), radius 12 */
+.field-input {
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  outline: none;
+}
+.field-input:focus-visible,
+.field-input:focus {
+  border-color: var(--action);
+}
+.field-input::placeholder {
+  color: var(--text-3);
+  font-weight: 400;
+}
+/* Chips and the reset button drawn ON the sim plate. The plate is a fixed-light surface in both themes (§2.3),
+ * so these use the light-theme values on purpose. */
+.plate-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #141414;
+  border: 2px solid #d4d4d4;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.plate-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #141414;
+  border: 2px solid #d4d4d4;
 }

@@ -13,12 +13,12 @@ export function SoundTest() {
       {SFX_PALETTE.map((s) => (
         <button key={s.key} type="button" data-silent="1" onClick={() => sfx[s.key]()} className="tile-3d w-full text-left px-4 py-3">
           <span className="block font-bold text-slate-900">{s.label}</span>
-          <span className="block text-[12.5px] text-slate-500">{s.note}</span>
+          <span className="block t-label text-fg-2" style={{ fontWeight: 400 }}>{s.note}</span>
         </button>
       ))}
       <button type="button" data-silent="1" onClick={() => { for (let i = 0; i < 40; i++) setTimeout(() => sfx.tick(), i * 12); }} className="tile-3d w-full text-left px-4 py-3">
         <span className="block font-bold text-slate-900">Fast drag (40 ticks in 0.5 s)</span>
-        <span className="block text-[12.5px] text-slate-500">throttled to ≤ 25 ticks per second</span>
+        <span className="block t-label text-fg-2" style={{ fontWeight: 400 }}>throttled to ≤ 25 ticks per second</span>
       </button>
     </div>
   );

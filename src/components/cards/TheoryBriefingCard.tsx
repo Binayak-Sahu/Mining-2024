@@ -136,7 +136,7 @@ function Briefing({ stage, onDone, seed }: CardProps<TheoryStage>) {
               >
                 <span
                   className="readout mt-0.5 shrink-0 w-6 h-6 rounded-full text-[14px] font-bold flex items-center justify-center"
-                  style={chainStep >= i ? { background: i === stage.chain!.length - 1 ? "var(--danger)" : "var(--action)", color: "#fff" } : { background: "var(--surface-2)", color: "var(--text-2)" }}
+                  style={chainStep >= i ? { background: i === stage.chain!.length - 1 ? "var(--danger)" : "var(--action)", color: "var(--action-on)" } : { background: "var(--surface-2)", color: "var(--text-2)" }}
                 >
                   {i + 1}
                 </span>

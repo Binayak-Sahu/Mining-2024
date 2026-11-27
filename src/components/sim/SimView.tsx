@@ -4,12 +4,13 @@ import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type Point
 import { AnimatePresence, motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 export { AnimatedNumber };
-import { Hand, Check, ChevronDown } from "lucide-react";
+import { Hand, Target, ChevronDown } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
 import { sfx } from "@/lib/sfx";
-import { toneColor } from "./svg";
 import { Slider } from "@/components/ui/Slider";
+import { toneText } from "@/components/ui/tone";
+import { tactilePress } from "@/lib/motion";
 
 export function defaults(def: SimDef, overrides?: Vals): Vals {
   const v: Vals = {};
@@ -40,9 +41,6 @@ function snap(p: SimParam, v: number): number {
   return +c.toFixed(6);
 }
 
-const PARAM_COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#0EA5E9"];
-/** Text shades that keep each parameter colour legible (AA) on the control panel in both themes. */
-const PARAM_TEXT = ["text-blue-700", "text-emerald-700", "text-amber-700", "text-violet-600", "text-red-700", "text-slate-700"];
 
 const HINT_KEY = "strata-grip-hint";
 function markHintSeen() {
@@ -53,16 +51,33 @@ function markHintSeen() {
   }
 }
 
-/** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
-/** A live objective shown in the diagram's own frame; the frame lights up emerald while it is met. */
+/** A live objective: one line above the plate (§5.9); the line turns success-tint and the plate gets its met ring. */
 export interface Objective {
   text: string;
   met: boolean;
-  /** e.g. "Challenge 2 of 3" */
+  /** e.g. "Challenge 2/3" (Sim Lab only; lessons show the text alone) */
   tag?: string;
 }
 
-export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus, corner }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][]; corner?: ReactNode }) {
+/** §5.9 objective line: lucide Target 18 px + `label` text, `success` tint text while met. */
+export function ObjectiveLine({ objective }: { objective: Objective }) {
+  return (
+    <div className={`flex items-start gap-2 t-label transition-colors duration-300 ${objective.met ? "text-success-tint-text" : "text-fg"}`} role="status" aria-live="polite" data-met={objective.met}>
+      <motion.span key={objective.met ? "met" : "open"} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={tactilePress} className="mt-[1px] shrink-0 inline-flex" aria-hidden>
+        <Target size={18} strokeWidth={2.4} />
+      </motion.span>
+      <span className="min-w-0">
+        {objective.tag && <span className="mr-1.5" style={{ fontWeight: 800 }}>{objective.tag}</span>}
+        {objective.text}
+        {objective.met && <span className="sr-only"> (met)</span>}
+      </span>
+    </div>
+  );
+}
+
+/** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
+
+export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus, corner, noObjectiveLine = false }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][]; corner?: ReactNode; noObjectiveLine?: boolean }) {
   const maskId = `focus-${useId().replace(/:/g, "")}`;
   const out = useMemo(() => def.compute(values), [def, values]);
   const wrap = useRef<HTMLDivElement>(null);
@@ -124,31 +139,20 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
     }
   };
 
-  return (
-    <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"} transition-shadow duration-300 ${objective?.met ? "plate-met" : ""}`}>
-      {objective && (
-        <div className={`relative z-[1] flex items-start gap-2 px-3 py-2 text-[13px] font-bold leading-snug transition-colors duration-300 ${objective.met ? "bg-[#047857] text-white" : "bg-[#0E1424] text-[#F1F5F9]"}`} role="status" aria-live="polite">
-          <motion.span key={objective.met ? "met" : "open"} initial={{ scale: 0.4, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 600, damping: 16 }} className={`mt-[1px] inline-flex w-[18px] h-[18px] shrink-0 items-center justify-center rounded-full ${objective.met ? "bg-white text-[#047857]" : "border-2 border-[#93C5FD]"}`}>
-            {objective.met ? <Check size={12} strokeWidth={3.5} /> : <span className="w-1.5 h-1.5 rounded-full bg-[#93C5FD]" />}
-          </motion.span>
-          <span className="min-w-0">
-            {objective.tag && <span className={`mr-1.5 font-extrabold ${objective.met ? "text-[#D1FAE5]" : "text-[#93C5FD]"}`}>{objective.tag}</span>}
-            {objective.text}
-          </span>
-        </div>
-      )}
+  const plate = (
+    <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"} ${objective?.met ? "plate-met" : ""}`}>
       <div className="relative">
       {corner && <div className="absolute right-1.5 top-1.5 z-[2]">{corner}</div>}
       <AnimatePresence>
         {handles.length > 0 && !used && !hintSeen && (
-          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="pointer-events-none absolute z-[3] left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/85 px-2 py-1 text-[11px] font-bold text-white">
-            <Hand size={12} /> Drag the grips on the diagram
+          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="plate-chip pointer-events-none absolute z-[3] left-2 top-2">
+            <Hand size={16} aria-hidden /> Drag the grips
           </motion.div>
         )}
       </AnimatePresence>
       {def.animated && !still && (
-        <span className="pointer-events-none absolute z-[3] right-14 top-2 inline-flex items-center gap-1 rounded-full bg-[#0E1424]/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
-          <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+        <span className="plate-chip pointer-events-none absolute z-[3] right-14 top-2">
+          <span className="live-dot w-2 h-2 rounded-full bg-success" aria-hidden /> Live
         </span>
       )}
 
@@ -176,7 +180,7 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
                 <circle key={i} cx={x} cy={y} r={56} fill={`url(#${maskId}-g)`} />
               ))}
             </mask>
-            <motion.rect x={-24} y={-24} width={448} height={288} fill="#0B0F19" initial={{ opacity: 0 }} animate={{ opacity: 0.35 }} transition={{ duration: 0.35 }} mask={`url(#${maskId})`} />
+            <motion.rect x={-24} y={-24} width={448} height={288} fill="#141414" initial={{ opacity: 0 }} animate={{ opacity: 0.35 }} transition={{ duration: 0.35 }} mask={`url(#${maskId})`} />
           </g>
         )}
         {overlay}
@@ -225,8 +229,8 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
             const by = y - 38 < -20 ? y + 18 : y - 38;
             return (
               <g pointerEvents="none">
-                <rect x={bx} y={by} width={w} height={20} rx={10} fill="#0E1424" opacity={0.92} />
-                <text x={bx + w / 2} y={by + 13.5} fontSize={10} fontWeight={700} fill="#F1F5F9" textAnchor="middle" fontFamily="'JetBrains Mono Variable', ui-monospace, monospace">
+                <rect x={bx} y={by} width={w} height={20} rx={10} fill="#141414" opacity={0.92} />
+                <text x={bx + w / 2} y={by + 13.5} fontSize={10} fontWeight={700} fill="#F5F5F5" textAnchor="middle" fontFamily="'JetBrains Mono Variable', ui-monospace, monospace">
                   {text}
                 </text>
               </g>
@@ -236,92 +240,81 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
       </div>
     </div>
   );
-}
-
-/** Longest text a formatted output can show (probed at its own value range is overkill: label + sample). */
-function maxLen(def: SimDef, o: SimDef["outputs"][number]): number {
-  try {
-    const v = def.compute(Object.fromEntries(def.params.map((p) => [p.key, p.default])));
-    return String(o.format?.(v[o.key], v, {}) ?? "").length;
-  } catch {
-    return 0;
-  }
-}
-
-/** Compact status chips (outputs that carry a tone) shown under the pinned diagram on phones. */
-function KeyReadouts({ def, values }: { def: SimDef; values: Vals }) {
-  const out = useMemo(() => def.compute(values), [def, values]);
-  const keyed = def.outputs.filter((o) => o.tone).slice(0, 2);
-  if (!keyed.length) return null;
+  if (!objective || noObjectiveLine) return plate;
   return (
-    <div className="sm:hidden mt-1.5 flex flex-wrap gap-1.5" aria-hidden>
-      {keyed.map((o, i) => {
-        const v = out[o.key];
-        const tone = o.tone!(v, out, values);
-        const txt = tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : tone === "ok" ? "#34D399" : "#F1F5F9";
-        const text = o.format ? o.format(v, out, values) : `${fmt(v, o.digits ?? 2)}${o.unit ? ` ${o.unit}` : ""}`;
-        return (
-          <span key={`${o.key}-${i}`} className="inline-flex items-center gap-1.5 rounded-full bg-[#0E1424] px-2.5 py-1 text-[12px] font-bold readout max-w-full">
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: txt }} />
-            <span className="text-[#8B97AE] font-semibold truncate">{o.label.replace(/\s*\(.*\)$/, "")}</span>
-            <span style={{ color: txt }} className="shrink-0">{text}</span>
-          </span>
-        );
-      })}
+    <div className="space-y-3">
+      <ObjectiveLine objective={objective} />
+      {plate}
     </div>
   );
 }
 
-/** Instrument-cluster telemetry strip (always a dark display, in both themes). */
-export function Readouts({ def, values }: { def: SimDef; values: Vals }) {
-  const out = useMemo(() => def.compute(values), [def, values]);
+/** Output indexes in display order: the sim's optional `primary` keys first (§5.9), then the rest in their own order. */
+function readoutOrder(def: SimDef): number[] {
+  const first: number[] = [];
+  for (const k of def.primary ?? []) {
+    const i = def.outputs.findIndex((o, j) => o.key === k && !first.includes(j));
+    if (i >= 0) first.push(i);
+  }
+  return [...first, ...def.outputs.map((_, i) => i).filter((i) => !first.includes(i))];
+}
+
+function ReadoutRow({ o, out, values }: { o: SimDef["outputs"][number]; out: Vals; values: Vals }) {
+  const v = out[o.key];
+  const tone = o.tone ? o.tone(v, out, values) : "info";
   return (
-    <div className="rounded-2xl bg-[#0E1424] p-1.5 grid grid-cols-2 sm:grid-cols-3 gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] max-sm:-mx-1.5">
-      {def.outputs.map((o, i) => {
-        const v = out[o.key];
-        const tone = o.tone ? o.tone(v, out, values) : "info";
-        const text = o.format ? o.format(v, out, values) : fmt(v, o.digits ?? 2);
-        const col = tone === "info" ? "#93C5FD" : toneColor(tone);
-        // Text on the dark strip uses lighter tints so warning/critical words stay ≥ AA.
-        const txt = tone === "info" ? "#F1F5F9" : tone === "crit" ? "#F87171" : tone === "warn" ? "#FBBF24" : col;
-        return (
-          <div key={`${o.key}-${i}`} className={`rounded-xl bg-white/[0.04] px-2.5 py-2 min-w-0 ${(def.outputs.length % 2 === 1 && i === def.outputs.length - 1) || (o.format && maxLen(def, o) > 16) ? "max-sm:col-span-2" : ""}`}>
-            <div className="text-[11px] text-[#8B97AE] font-semibold leading-tight break-words" title={o.label}>
-              {o.label}
-            </div>
-            <div className="readout text-[14px] font-bold flex items-center gap-1.5 mt-0.5 text-[#F1F5F9] min-w-0">
-              <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />
-              <span className="break-words leading-tight min-w-0" style={{ color: txt }}>
-                {o.format ? text : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
-              </span>
-              {o.unit && !o.format && <span className="text-[#8B97AE] font-medium text-[11px] shrink-0">{o.unit}</span>}
-            </div>
-          </div>
-        );
-      })}
+    <div className="ds-readout-row">
+      <span className="t-label text-fg-2 min-w-0 break-words">{o.label}</span>
+      <span className={`t-readout text-right min-w-0 max-w-[55%] break-words ${toneText(tone)}`}>
+        {o.format ? o.format(v, out, values) : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
+        {o.unit && !o.format && <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span>}
+      </span>
     </div>
+  );
+}
+
+/**
+ * §5.9 readouts: plain rows (label left, mono value right, 1 px dividers). `part="primary"` renders the first 2,
+ * `part="rest"` the "All readouts (n)" disclosure with the others; the default renders both.
+ */
+export function Readouts({ def, values, part }: { def: SimDef; values: Vals; part?: "primary" | "rest" }) {
+  const out = useMemo(() => def.compute(values), [def, values]);
+  const order = readoutOrder(def);
+  const head = order.slice(0, 2);
+  const tail = order.slice(2);
+  const rows = (ix: number[]) => ix.map((i) => <ReadoutRow key={`${def.outputs[i].key}-${i}`} o={def.outputs[i]} out={out} values={values} />);
+  return (
+    <>
+      {part !== "rest" && <div aria-label="Readouts">{rows(head)}</div>}
+      {part !== "primary" && tail.length > 0 && (
+        <details className="group">
+          <summary className="btn-3d btn-sm tone-ghost list-none cursor-pointer select-none mt-3 [&::-webkit-details-marker]:hidden">
+            All readouts ({def.outputs.length})
+            <ChevronDown size={18} aria-hidden className="transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-2">{rows(tail)}</div>
+        </details>
+      )}
+    </>
   );
 }
 
 export function Controls({ def, values, onChange, disabled, only }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; disabled?: boolean; only?: string[] }) {
   return (
-    <div className="space-y-3">
-      {def.params.map((p, k) => {
+    <div className="space-y-4">
+      {def.params.map((p) => {
         if (only && !only.includes(p.key)) return null;
-        const color = PARAM_COLORS[k % PARAM_COLORS.length];
         const display = p.options
           ? (p.options.find((o) => o.value === values[p.key])?.label ?? "")
           : `${fmt(values[p.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0)}${p.unit ? ` ${p.unit}` : ""}`;
         return (
           <div key={p.key}>
-            <div className="flex items-baseline justify-between gap-3 text-[13px] mb-0.5">
-              <span className="text-slate-600 font-semibold">{p.label}</span>
-              <span className={`readout font-bold shrink-0 ${PARAM_TEXT[k % PARAM_TEXT.length]}`}>
-                {display}
-              </span>
+            <div className="flex items-baseline justify-between gap-3 mb-1">
+              <span className="t-label text-fg-2 min-w-0">{p.label}</span>
+              <span className="t-readout text-fg shrink-0">{display}</span>
             </div>
             {p.options ? (
-              <div className="flex flex-wrap gap-1.5 pt-1">
+              <div className="flex flex-wrap gap-2 pt-1">
                 {p.options.map((o) => {
                   const on = values[p.key] === o.value;
                   return (
@@ -331,7 +324,7 @@ export function Controls({ def, values, onChange, disabled, only }: { def: SimDe
                       disabled={disabled}
                       data-on={on}
                       onClick={() => onChange({ ...values, [p.key]: o.value })}
-                      className="tile-3d px-3 py-2 text-[13px] font-bold text-slate-700 data-[on=true]:text-blue-700"
+                      className="tile-3d min-h-[44px] px-4 py-2 t-label text-fg data-[on=true]:text-action-tint-text"
                     >
                       {o.label}
                     </button>
@@ -339,7 +332,7 @@ export function Controls({ def, values, onChange, disabled, only }: { def: SimDe
                 })}
               </div>
             ) : (
-              <Slider value={values[p.key]} min={p.min} max={p.max} step={p.step} label={p.label} display={display} color={color} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
+              <Slider value={values[p.key]} min={p.min} max={p.max} step={p.step} label={p.label} display={display} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
             )}
           </div>
         );
@@ -361,31 +354,29 @@ export function SimView({ def, values, onChange, overlay, disabled, objective, c
   const more = [...nonGrip.slice(2), ...gripKeys];
   const moreLabel = nonGrip.length > 2 ? `More controls (${more.length})` : `Fine-tune ${gripKeys.length === 1 ? "the grip" : `the ${gripKeys.length} grips`} with sliders`;
   return (
-    <div className="space-y-3">
-      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 max-sm:bg-surface max-sm:rounded-b-2xl max-sm:-mx-1 max-sm:px-1 max-sm:pb-1.5 max-sm:shadow-[0_8px_12px_-10px_rgba(15,23,42,0.35)]">
-        <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} />
-        {/* Status-bearing readouts ride along with the pinned diagram so the answer never scrolls away. */}
-        <KeyReadouts def={def} values={values} />
-      </div>
-      <Readouts def={def} values={values} />
-      {open.length > 0 && (
-        <div className="rounded-2xl bg-slate-50 p-3 sm:p-4 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
-          <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={open} />
+    <div className="space-y-4">
+      {objective && <ObjectiveLine objective={objective} />}
+      {/* Phones: the plate and the 2 primary readouts stay pinned under the header while the controls scroll. */}
+      <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:pt-1">
+        <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} noObjectiveLine />
+        <div className="mt-2">
+          <Readouts def={def} values={values} part="primary" />
         </div>
-      )}
+      </div>
+      <Readouts def={def} values={values} part="rest" />
+      {open.length > 0 && <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={open} />}
       {more.length > 0 && (
-        <details className="group rounded-2xl bg-slate-50 shadow-[inset_0_0_0_1px_var(--n-200)] max-sm:-mx-1.5">
-          <summary className="list-none cursor-pointer select-none min-h-[48px] px-3 sm:px-4 flex items-center justify-between text-[14px] font-semibold text-slate-700">
-            <span>{moreLabel}</span>
-            <ChevronDown size={18} className="text-slate-500 transition-transform group-open:rotate-180" />
+        <details className="group">
+          <summary className="btn-3d btn-sm tone-ghost list-none cursor-pointer select-none [&::-webkit-details-marker]:hidden">
+            {moreLabel}
+            <ChevronDown size={18} aria-hidden className="transition-transform group-open:rotate-180" />
           </summary>
-          <div className="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
+          <div className="pt-4 space-y-4">
             <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={more} />
-            {def.caption && <p className="sm:hidden text-[13px] text-slate-500 leading-relaxed">{def.caption}</p>}
           </div>
         </details>
       )}
-      {def.caption && <p className={`text-[12px] text-slate-500 leading-relaxed ${more.length > 0 ? "max-sm:hidden" : ""}`}>{def.caption}</p>}
+      {def.caption && <p className="t-label text-fg-2" style={{ fontWeight: 400 }}>{def.caption}</p>}
     </div>
   );
 }

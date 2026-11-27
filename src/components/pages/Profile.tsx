@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { stageSlide } from "@/lib/motion";
 import { Shield, Trash2, Unlock, Zap, BookOpen, BookMarked, Sigma, Flame, Trophy, HeartCrack, Repeat, Sun, Moon, MonitorSmartphone, Volume2, VolumeX, Palette } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor, RANKS } from "@/lib/ranks";
@@ -39,64 +40,71 @@ export function Profile() {
   const maxDay = Math.max(1, ...days.map((d) => s.xpByDay[d] ?? 0));
 
   const stats = [
-    { label: "Total XP", v: s.xp, Icon: Zap, c: "#F59E0B" },
-    { label: "Lessons mastered", v: `${done}/${total}`, Icon: Trophy, c: "#10B981" },
-    { label: "Codex sheets", v: `${Object.keys(s.codex).length}/${allCodex().length}`, Icon: BookMarked, c: "#3B82F6" },
-    { label: "Verified formulas", v: Object.keys(s.formulas).length, Icon: Sigma, c: "#8B5CF6" },
-    { label: "Current streak", v: liveStreak(s.streak, s.lastActiveDay), Icon: Flame, c: "#F97316" },
-    { label: "Longest streak", v: s.longestStreak, Icon: Flame, c: "#EA580C" },
-    { label: "Hearts lost", v: s.heartsLost, Icon: HeartCrack, c: "#F43F5E" },
-    { label: "SRS concepts", v: Object.keys(s.srs).length, Icon: Repeat, c: "#0EA5E9" },
+    { label: "Total XP", v: s.xp, Icon: Zap },
+    { label: "Lessons mastered", v: `${done}/${total}`, Icon: Trophy },
+    { label: "Codex sheets", v: `${Object.keys(s.codex).length}/${allCodex().length}`, Icon: BookMarked },
+    { label: "Verified formulas", v: Object.keys(s.formulas).length, Icon: Sigma },
+    { label: "Current streak", v: liveStreak(s.streak, s.lastActiveDay), Icon: Flame },
+    { label: "Longest streak", v: s.longestStreak, Icon: Flame },
+    { label: "Hearts lost", v: s.heartsLost, Icon: HeartCrack },
+    { label: "SRS concepts", v: Object.keys(s.srs).length, Icon: Repeat },
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-3 sm:px-5 py-5 sm:py-8 space-y-4 sm:space-y-5">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative overflow-hidden rounded-[28px] p-5 sm:p-7 text-white" style={{ background: "radial-gradient(120% 140% at 0% 0%, #4338CA 0%, #1E1B4B 55%, #0B0F19 100%)", boxShadow: "var(--shadow-pop)" }}>
+    <div className="max-w-5xl mx-auto px-5 sm:px-6 py-8 space-y-8">
+      <div className="card p-5 sm:p-6">
         <div className="flex items-center gap-4 sm:gap-5">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[26px] bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center readout text-2xl sm:text-3xl font-black shadow-[0_6px_0_#3730A3] shrink-0">{rank.badge}</div>
+          {/* Rank badge: a §5.11-style tile, neutral (no gradient), badge text in --text */}
+          <div className="unit-tile w-20 h-20 sm:w-24 sm:h-24 shrink-0 readout t-title" style={{ fontWeight: 800 }} aria-label={`Rank badge ${rank.badge}`}>
+            {rank.badge}
+          </div>
           <div className="min-w-0 flex-1">
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#C7D2FE]">Current competency</div>
-            <div className="text-[24px] sm:text-[30px] leading-tight font-extrabold tracking-tight text-balance">{rank.title}</div>
-            <div className="mt-3 h-3 rounded-full bg-white/15 overflow-hidden">
-              <motion.div className="h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-500" initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 1 }} />
+            <div className="t-eyebrow">Current competency</div>
+            <div className="t-title text-fg mt-1 text-balance">{rank.title}</div>
+            <div className="ds-progress mt-3" aria-hidden>
+              <motion.div className="ds-progress-fill" initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={stageSlide} />
             </div>
-            <div className="readout text-[12px] text-[#C7D2FE] mt-1.5">{next ? `${s.xp} / ${next.min} XP → ${next.title}` : `${s.xp} XP · maximum rank`}</div>
+            <div className="readout t-label text-fg-2 mt-2" style={{ fontWeight: 400 }}>{next ? `${s.xp} / ${next.min} XP → ${next.title}` : `${s.xp} XP · maximum rank`}</div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {stats.map((x, i) => (
-          <motion.div key={x.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="card p-4">
-            <span className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${x.c}1f` }}>
-              <x.Icon size={18} color={x.c} />
+        {stats.map((x) => (
+          <div key={x.label} className="card p-4">
+            <span className="w-10 h-10 rounded-[12px] bg-surface-2 text-fg flex items-center justify-center" aria-hidden>
+              <x.Icon size={20} />
             </span>
-            <div className="readout text-[22px] font-extrabold text-slate-900 mt-2 leading-none">{x.v}</div>
-            <div className="text-[11.5px] text-slate-500 font-semibold mt-1">{x.label}</div>
-          </motion.div>
+            <div className="readout t-heading text-fg mt-3" style={{ fontWeight: 800 }}>{x.v}</div>
+            <div className="t-label text-fg-2" style={{ fontWeight: 400 }}>{x.label}</div>
+          </div>
         ))}
       </div>
 
-      <div className="grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-4 sm:gap-5">
+      <div className="grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-8 md:gap-6">
         <div className="card p-5">
-          <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3">Activity · last 28 days</div>
-          <div className="grid gap-1.5" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
+          <div className="t-eyebrow mb-4">Activity · last 28 days</div>
+          <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }}>
             {days.map((d) => {
               const v = s.xpByDay[d] ?? 0;
               const a = v === 0 ? 0 : 0.3 + 0.7 * (v / maxDay);
-              return <div key={d} title={`${d}: ${v} XP`} className="aspect-square rounded-lg bg-slate-100" style={v ? { background: `rgba(16,185,129,${a})`, boxShadow: "0 2px 0 rgba(4,120,87,0.35)" } : undefined} />;
+              return (
+                <div key={d} title={`${d}: ${v} XP`} className="relative aspect-square rounded-[8px] bg-surface-2 overflow-hidden">
+                  {v > 0 && <span className="absolute inset-0 bg-success" style={{ opacity: a }} />}
+                </div>
+              );
             })}
           </div>
         </div>
 
         <div className="card p-5">
-          <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3">Rank ladder</div>
+          <div className="t-eyebrow mb-4">Rank ladder</div>
           <ol className="space-y-2">
             {RANKS.map((r, i) => (
-              <li key={r.title} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${i === index ? "bg-slate-900 text-slate-50 shadow-[0_3px_0_var(--n-950)]" : i < index ? "bg-emerald-50 text-emerald-800" : "bg-slate-50 text-slate-400"}`}>
-                <span className="readout w-8 font-extrabold">{r.badge}</span>
-                <span className="flex-1 font-bold text-[14px]">{r.title}</span>
-                <span className="readout text-[11px]">{r.min} XP</span>
+              <li key={r.title} className={`flex items-center gap-3 rounded-[12px] px-3 py-2 t-label ${i === index ? "bg-ink text-canvas" : i < index ? "bg-success-tint text-success-tint-text" : "bg-surface-2 text-fg-3"}`} aria-current={i === index ? "step" : undefined}>
+                <span className="readout w-8" style={{ fontWeight: 800 }}>{r.badge}</span>
+                <span className="flex-1" style={{ fontWeight: 700 }}>{r.title}</span>
+                <span className="readout" style={{ fontWeight: 400 }}>{r.min} XP</span>
               </li>
             ))}
           </ol>
@@ -104,88 +112,65 @@ export function Profile() {
       </div>
 
       <div className="card p-5 space-y-4">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
-          <Palette size={13} /> Appearance & sound
+        <div className="t-eyebrow flex items-center gap-2">
+          <Palette size={16} aria-hidden /> Appearance & sound
         </div>
         <div className="grid grid-cols-3 gap-2">
           {THEMES.map(({ v, label, Icon }) => (
-            <button key={v} type="button" data-on={prefs.theme === v} onClick={() => prefs.setTheme(v)} className="tile-3d flex flex-col items-center gap-1.5 py-3 text-[12.5px] font-bold text-slate-700 data-[on=true]:text-blue-700">
-              <Icon size={20} />
+            <button key={v} type="button" data-on={prefs.theme === v} aria-pressed={prefs.theme === v} onClick={() => prefs.setTheme(v)} className="tile-3d flex flex-col items-center gap-2 py-3 t-label text-fg data-[on=true]:text-action-tint-text" style={{ fontWeight: 700 }}>
+              <Icon size={20} aria-hidden />
               {label}
             </button>
           ))}
         </div>
-        <button type="button" data-silent="1" onClick={prefs.toggleMuted} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left" data-on={!prefs.muted}>
-          {prefs.muted ? <VolumeX size={20} className="text-slate-500" /> : <Volume2 size={20} className="text-blue-600" />}
-          <span className="flex-1">
-            <span className="block font-bold text-[14px] text-slate-900">Tactile sound & haptics</span>
-            <span className="block text-[12.5px] text-slate-500">Soft synthesized clicks, chimes and vibration on phones.</span>
-          </span>
-          <span className={`readout text-[12px] font-extrabold ${prefs.muted ? "text-slate-400" : "text-blue-600"}`}>{prefs.muted ? "OFF" : "ON"}</span>
-        </button>
+        <Toggle on={!prefs.muted} onClick={prefs.toggleMuted} Icon={prefs.muted ? VolumeX : Volume2} title="Tactile sound & haptics" desc="Soft synthesized clicks, chimes and vibration on phones." silent />
       </div>
 
       <div className="card p-5 space-y-3">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
-          <BookOpen size={13} /> Lesson pace
+        <div className="t-eyebrow flex items-center gap-2">
+          <BookOpen size={16} aria-hidden /> Lesson pace
         </div>
-        <button type="button" role="switch" aria-checked={prefs.theoryFirst} onClick={() => prefs.setTheoryFirst(!prefs.theoryFirst)} data-on={prefs.theoryFirst} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
-          <BookOpen size={20} className={prefs.theoryFirst ? "text-blue-700" : "text-slate-500"} />
-          <span className="flex-1">
-            <span className="block font-bold text-[14px] text-slate-900">Theory-first lessons</span>
-            <span className="block text-[12.5px] text-slate-500">Equation and numerical stages become optional “Bonus maths”, so a lesson completes without them. They still earn XP and still appear in the exam simulator.</span>
-          </span>
-          <span className={`readout text-[12px] font-extrabold ${prefs.theoryFirst ? "text-blue-700" : "text-slate-400"}`}>{prefs.theoryFirst ? "ON" : "OFF"}</span>
-        </button>
+        <Toggle on={prefs.theoryFirst} onClick={() => prefs.setTheoryFirst(!prefs.theoryFirst)} Icon={BookOpen} title="Theory-first lessons" desc="Equation and numerical stages become optional “Bonus maths”, so a lesson completes without them. They still earn XP and still appear in the exam simulator." />
       </div>
 
       <div className="card p-5 space-y-3">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 flex items-center gap-1.5">
-          <KeyRound size={13} /> Inspector Mode
+        <div className="t-eyebrow flex items-center gap-2">
+          <KeyRound size={16} aria-hidden /> Inspector Mode
         </div>
-        <button type="button" role="switch" aria-checked={prefs.masterUnlock} onClick={() => setInspector(!prefs.masterUnlock)} data-on={prefs.masterUnlock} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
-          <KeyRound size={20} className={prefs.masterUnlock ? "text-amber-700" : "text-slate-500"} />
-          <span className="flex-1">
-            <span className="block font-bold text-[14px] text-slate-900">Open every lesson, boss and Codex sheet</span>
-            <span className="block text-[12.5px] text-slate-500">Inspector runs are sandboxes: no XP, hearts, streak, completions, review queue or Codex unlocks are saved. Shortcut: Shift + M.</span>
-          </span>
-          <span className={`readout text-[12px] font-extrabold ${prefs.masterUnlock ? "text-amber-700" : "text-slate-400"}`}>{prefs.masterUnlock ? "ON" : "OFF"}</span>
-        </button>
+        <Toggle on={prefs.masterUnlock} onClick={() => setInspector(!prefs.masterUnlock)} Icon={KeyRound} title="Open every lesson, boss and Codex sheet" desc="Inspector runs are sandboxes: no XP, hearts, streak, completions, review queue or Codex unlocks are saved. Shortcut: Shift + M." />
         {prefs.masterUnlock && <PhoneKit />}
       </div>
 
       <SyncCard />
       <div className="card p-5 space-y-3">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Troubleshooting</div>
+        <div className="t-eyebrow">Troubleshooting</div>
         <RepairButton />
       </div>
-      <p className="text-center readout text-[12px] text-slate-500">STRATA build {BUILD}</p>
+      <p className="text-center readout t-label text-fg-2" style={{ fontWeight: 400 }}>STRATA build {BUILD}</p>
 
       <div className="card p-5 space-y-4">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500">Study settings</div>
-        <label className="flex items-center gap-3 cursor-pointer rounded-xl bg-slate-50 px-4 py-3">
-          <input type="checkbox" checked={s.freeRoam} onChange={(e) => s.setFreeRoam(e.target.checked)} className="w-5 h-5 accent-blue-500" />
-          <Unlock size={18} className="text-blue-600 shrink-0" />
-          <span className="text-[14px] text-slate-700">
-            <b className="text-slate-900">Free-roam mode</b> — unlock every lesson and boss exam (for revision before DGMS exams)
+        <div className="t-eyebrow">Study settings</div>
+        <label className="flex items-center gap-3 cursor-pointer rounded-[12px] bg-surface-2 px-4 py-3 min-h-[48px]">
+          <input type="checkbox" checked={s.freeRoam} onChange={(e) => s.setFreeRoam(e.target.checked)} className="w-5 h-5 shrink-0 accent-[var(--action)]" />
+          <Unlock size={18} className="text-fg-2 shrink-0" aria-hidden />
+          <span className="t-label text-fg-2" style={{ fontWeight: 400 }}>
+            <b className="text-fg">Free-roam mode</b> — unlock every lesson and boss exam (for revision before DGMS exams)
           </span>
         </label>
         <Dialog.Root open={confirm} onOpenChange={setConfirm}>
           <Dialog.Trigger asChild>
-            <button type="button" className="btn-press inline-flex items-center gap-2 rounded-xl border border-red-300 px-4 py-2.5 text-[13px] font-bold text-red-700 hover:bg-red-50">
-              <Trash2 size={15} /> Reset all progress
+            <button type="button" className="btn-3d btn-sm tone-ghost" style={{ ["--t" as string]: "var(--danger-tint-text)" }}>
+              <Trash2 size={16} aria-hidden /> Reset all progress
             </button>
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 data-[state=open]:animate-[fadein_160ms_ease-out]" />
-            <Dialog.Content className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,420px)] card card-pop p-6 space-y-4 focus:outline-none">
-              <Dialog.Title className="text-[19px] font-extrabold text-slate-900">Erase all progress?</Dialog.Title>
-              <Dialog.Description className="text-[14px] text-slate-600 leading-relaxed">
-                XP, streaks, completed lessons, Field Codex unlocks, exam history and the review queue on this device will be deleted. Export your progress first if you want a backup.
-              </Dialog.Description>
+            <Dialog.Content className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,420px)] ds-pop p-6 space-y-4 focus:outline-none">
+              <Dialog.Title className="t-heading text-fg">Erase all progress?</Dialog.Title>
+              <Dialog.Description className="t-secondary">XP, streaks, completed lessons, Field Codex unlocks, exam history and the review queue on this device will be deleted. Export your progress first if you want a backup.</Dialog.Description>
               <div className="flex gap-3 pt-1">
                 <Dialog.Close asChild>
-                  <button type="button" className="btn-3d tone-ghost flex-1 py-3 text-[12.5px]">
+                  <button type="button" className="btn-3d tone-ghost flex-1">
                     Cancel
                   </button>
                 </Dialog.Close>
@@ -196,7 +181,7 @@ export function Profile() {
                     setConfirm(false);
                     toast("Progress erased");
                   }}
-                  className="btn-3d tone-crit flex-1 py-3 text-[12.5px]"
+                  className="btn-3d tone-crit flex-1"
                 >
                   Erase
                 </button>
@@ -206,28 +191,28 @@ export function Profile() {
         </Dialog.Root>
       </div>
 
-      <div className="rounded-2xl bg-amber-50 p-4 text-[12.5px] text-slate-600 flex gap-3 leading-relaxed shadow-[inset_0_0_0_1.5px_#F59E0B33]">
-        <Shield size={18} className="shrink-0 text-amber-600 mt-0.5" />
+      <div className="rounded-[20px] bg-energy-tint p-5 t-label text-fg flex gap-3" style={{ fontWeight: 400 }}>
+        <Shield size={18} className="shrink-0 text-energy-tint-text mt-0.5" aria-hidden />
         <p>
           STRATA is a study aid. Statutory figures reflect commonly examined provisions of the Mines Act 1952, Mines Rules 1955, CMR 2017, MMR 1961, Mines Rescue Rules 1985, CEA safety regulations and DGMS circulars, and the transition to the OSH&WC Code 2020. Always verify against the current gazette
           text, DGMS circulars and your mine&apos;s approved Safety Management Plan before acting in the field.
         </p>
       </div>
-      <QaDesignLink />
-      <p className="sr-only">
-        <BookOpen aria-hidden /> Profile
-      </p>
     </div>
   );
 }
 
-/** Link to the /design-system sandbox, shown to everyone while Phase 15.5 runs. Remove in 15.5e (see ROADMAP). */
-function QaDesignLink() {
+/** A settings row that switches one preference on or off (selectable tile, §5.2). */
+function Toggle({ on, onClick, Icon, title, desc, silent }: { on: boolean; onClick: () => void; Icon: typeof Sun; title: string; desc: string; silent?: boolean }) {
   return (
-    <Link href="/design-system" className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
-      <Palette size={18} className="text-slate-600" />
-      <span className="flex-1 text-[14px] font-bold text-slate-900">Design system sandbox</span>
-    </Link>
+    <button type="button" role="switch" aria-checked={on} data-silent={silent ? "1" : undefined} onClick={onClick} data-on={on} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
+      <Icon size={20} className={on ? "text-action-tint-text shrink-0" : "text-fg-2 shrink-0"} aria-hidden />
+      <span className="flex-1 min-w-0">
+        <span className="block t-label text-fg" style={{ fontWeight: 700 }}>{title}</span>
+        <span className="block t-label text-fg-2" style={{ fontWeight: 400 }}>{desc}</span>
+      </span>
+      <span className={`readout t-label shrink-0 ${on ? "text-action-tint-text" : "text-fg-2"}`} style={{ fontWeight: 800 }}>{on ? "On" : "Off"}</span>
+    </button>
   );
 }
 
@@ -240,28 +225,28 @@ function PhoneKit() {
   return (
     <div className="space-y-2 pt-1">
       <div className="flex items-center gap-2">
-        <button type="button" disabled={!reports.length} onClick={() => downloadJson(`strata-reports-${new Date().toISOString().slice(0, 10)}.json`, { app: "strata", kind: "reports", build: BUILD, reports })} className="tile-3d flex-1 flex items-center gap-2 px-4 py-3 text-left disabled:opacity-60">
-          <Download size={18} className="text-slate-600" />
-          <span className="flex-1 text-[14px] font-bold text-slate-900">Export reports</span>
-          <span className="readout text-[12px] font-extrabold text-slate-600">{reports.length}</span>
+        <button type="button" disabled={!reports.length} onClick={() => downloadJson(`strata-reports-${new Date().toISOString().slice(0, 10)}.json`, { app: "strata", kind: "reports", build: BUILD, reports })} className="tile-3d flex-1 flex items-center gap-2 px-4 py-3 text-left min-h-[48px] disabled:text-fg-3">
+          <Download size={18} className="shrink-0" aria-hidden />
+          <span className="flex-1 t-label" style={{ fontWeight: 700 }}>Export reports</span>
+          <span className="readout t-label" style={{ fontWeight: 800 }}>{reports.length}</span>
         </button>
         {reports.length > 0 && (
-          <button type="button" onClick={clear} className="tile-3d px-4 py-3 text-[13px] font-bold text-slate-600">
+          <button type="button" onClick={clear} className="tile-3d px-4 py-3 min-h-[48px] t-label text-fg" style={{ fontWeight: 700 }}>
             Clear
           </button>
         )}
       </div>
-      <p className="text-[12.5px] text-slate-500 flex items-center gap-1.5">
-        <Flag size={13} /> Tap the amber flag on any screen to save a report.
+      <p className="t-label text-fg-2 flex items-center gap-2" style={{ fontWeight: 400 }}>
+        <Flag size={16} aria-hidden /> Tap the amber flag on any screen to save a report.
       </p>
-      <button type="button" role="switch" aria-checked={fps} onClick={() => setFps(!fps)} className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
-        <Gauge size={18} className={fps ? "text-emerald-700" : "text-slate-500"} />
-        <span className="flex-1 text-[14px] font-bold text-slate-900">FPS meter</span>
-        <span className={`readout text-[12px] font-extrabold ${fps ? "text-emerald-700" : "text-slate-400"}`}>{fps ? "ON" : "OFF"}</span>
+      <button type="button" role="switch" aria-checked={fps} data-on={fps} onClick={() => setFps(!fps)} className="tile-3d w-full flex items-center gap-3 px-4 py-3 min-h-[48px] text-left">
+        <Gauge size={18} className={fps ? "text-action-tint-text" : "text-fg-2"} aria-hidden />
+        <span className="flex-1 t-label text-fg" style={{ fontWeight: 700 }}>FPS meter</span>
+        <span className={`readout t-label ${fps ? "text-action-tint-text" : "text-fg-2"}`} style={{ fontWeight: 800 }}>{fps ? "On" : "Off"}</span>
       </button>
-      <Link href="/sound-test" className="tile-3d w-full flex items-center gap-3 px-4 py-3 text-left">
-        <Music size={18} className="text-slate-600" />
-        <span className="flex-1 text-[14px] font-bold text-slate-900">Sound test</span>
+      <Link href="/sound-test" className="tile-3d w-full flex items-center gap-3 px-4 py-3 min-h-[48px] text-left">
+        <Music size={18} className="text-fg-2" aria-hidden />
+        <span className="flex-1 t-label text-fg" style={{ fontWeight: 700 }}>Sound test</span>
       </Link>
     </div>
   );

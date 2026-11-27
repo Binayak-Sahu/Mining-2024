@@ -69,68 +69,73 @@ export function SimLab() {
 
   const browser = (inSheet: boolean) => (
     <>
-        <label className="relative block">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search simulations…" className="w-full rounded-xl bg-slate-100 pl-9 pr-3 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-violet-400" />
-        </label>
-        <div className={`mt-2 ${inSheet ? "max-h-[62vh]" : "max-h-[64vh]"} overflow-y-auto space-y-1 pr-0.5 no-scrollbar`}>
-          {list.map((s) => (
+      <label className="field-input flex items-center gap-3 focus-within:border-action">
+        <Search size={18} className="text-fg-3 shrink-0" aria-hidden />
+        <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search simulations" placeholder="Search simulations…" className="flex-1 min-w-0 bg-transparent outline-none text-fg placeholder:text-fg-3" style={{ fontWeight: 400 }} />
+      </label>
+      <div className={`mt-2 ${inSheet ? "max-h-[62vh]" : "max-h-[64vh]"} overflow-y-auto space-y-1 pr-0.5 no-scrollbar`}>
+        {list.map((s) => {
+          const on = s.id === id;
+          return (
             <button
               key={s.id}
               type="button"
+              aria-current={on ? "true" : undefined}
               onClick={() => {
                 pick(s.id);
                 if (inSheet) setSheet(false);
               }}
-              className={`w-full flex items-start gap-2.5 text-left rounded-xl px-2.5 py-2 text-[13px] font-semibold leading-snug transition-colors ${s.id === id ? "bg-[#7C3AED] text-white shadow-[0_2px_0_#5B21B6]" : "text-slate-700 hover:bg-slate-100"}`}
+              className={`w-full min-h-[44px] flex items-start gap-3 text-left rounded-[12px] px-3 py-2 t-label transition-colors ${on ? "bg-action-tint text-action-tint-text" : "text-fg hover:bg-surface-2"}`}
             >
-              <span className={`readout shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-extrabold ${s.id === id ? "bg-white/20" : "bg-slate-100 text-slate-500"}`}>U{UNIT_OF(s.id)}</span>
+              <span className={`readout shrink-0 rounded-[8px] px-1.5 ${on ? "bg-surface text-action-tint-text" : "bg-surface-2 text-fg-2"}`} style={{ fontWeight: 800 }}>U{UNIT_OF(s.id)}</span>
               <span className="min-w-0">{s.title}</span>
             </button>
-          ))}
-        </div>
-        </>
+          );
+        })}
+      </div>
+    </>
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-5 sm:py-8 grid lg:grid-cols-[300px_minmax(0,1fr)] gap-5 lg:gap-6">
-      <aside className="hidden lg:block order-2 lg:order-1 space-y-3 lg:sticky lg:top-24 self-start">
-        <div className="hidden lg:block">
-          <h1 className="text-[28px] font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <span className="w-10 h-10 rounded-2xl bg-violet-500 text-white flex items-center justify-center shadow-[0_3px_0_#6D28D9]"><FlaskConical size={20} /></span> Sim Lab
-          </h1>
-          <p className="text-[13px] text-slate-500 mt-1.5">All {ALL_SIMS.length} simulations, free-play — no hearts, no objectives.</p>
+    <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 grid lg:grid-cols-[300px_minmax(0,1fr)] gap-8">
+      <aside className="hidden lg:block order-2 lg:order-1 space-y-4 lg:sticky lg:top-24 self-start">
+        <div className="flex items-center gap-3">
+          <span className="unit-tile w-12 h-12 shrink-0" aria-hidden>
+            <FlaskConical size={22} />
+          </span>
+          <h1 className="t-title text-fg">Sim Lab</h1>
         </div>
-        <div className="card p-2.5">{browser(false)}</div>
+        <p className="t-label text-fg-2" style={{ fontWeight: 400 }}>All {ALL_SIMS.length} simulations, free-play — no hearts, no objectives.</p>
+        <div className="card p-3">{browser(false)}</div>
       </aside>
-      <section className="order-1 lg:order-2 card p-4 sm:p-6 min-w-0" style={{ ["--sim-top" as string]: "4rem" }}>
-        <div className="flex items-start justify-between gap-3 mb-4">
+      <section className="order-1 lg:order-2 min-w-0" style={{ ["--sim-top" as string]: "4rem" }}>
+        <div className="flex items-start justify-between gap-3 mb-6">
           <div className="min-w-0">
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-violet-600">Sim Lab · Unit {UNIT_OF(def.id)}</div>
-            <h2 className="text-[20px] sm:text-[24px] font-extrabold leading-tight tracking-tight text-slate-900 mt-0.5 text-balance">{def.title}</h2>
+            <div className="t-eyebrow">Sim Lab · Unit {UNIT_OF(def.id)}</div>
+            <h2 className="t-title text-fg mt-1 text-balance">{def.title}</h2>
           </div>
-          <button type="button" onClick={() => setVals(defaults(def))} className="btn-3d tone-ghost shrink-0 inline-flex items-center gap-1.5 px-3 py-2 text-[13px]">
-            <RotateCcw size={12} /> Reset
+          <button type="button" onClick={() => setVals(defaults(def))} className="btn-3d btn-sm tone-ghost shrink-0">
+            <RotateCcw size={16} aria-hidden /> Reset
           </button>
         </div>
         <Drawer.Root open={sheet} onOpenChange={setSheet}>
           <Drawer.Trigger asChild>
-            <button type="button" className="lg:hidden mb-3 w-full flex items-center gap-2 rounded-xl hairline bg-surface-2 px-3 py-2.5 text-[13.5px] font-bold text-slate-700">
-              <ListFilter size={16} className="text-violet-600" /> Browse all {ALL_SIMS.length} simulations
+            <button type="button" className="lg:hidden mb-6 w-full btn-3d btn-sm tone-ghost !justify-start">
+              <ListFilter size={18} aria-hidden /> Browse all {ALL_SIMS.length} simulations
             </button>
           </Drawer.Trigger>
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-            <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 sheet-face p-3 pb-[calc(12px+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
-              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-300" aria-hidden />
-              <Drawer.Title className="px-1 pb-2 text-[16px] font-extrabold text-slate-900">Simulations</Drawer.Title>
+            <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 sheet-face p-4 pb-[calc(16px+env(safe-area-inset-bottom))] focus:outline-none" aria-describedby={undefined}>
+              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-line-strong" aria-hidden />
+              <Drawer.Title className="px-1 pb-3 t-heading text-fg">Simulations</Drawer.Title>
               {browser(true)}
             </Drawer.Content>
           </Drawer.Portal>
         </Drawer.Root>
         <SimView key={id} def={def} values={vals} onChange={setVals} objective={ch ? { text: ch.text, met, tag: challenges.length > 1 ? `Challenge ${ci + 1}/${challenges.length}` : "Challenge" } : undefined} />
         {ch && met && ci + 1 < challenges.length && (
-          <button type="button" onClick={() => setCi(ci + 1)} className="btn-3d tone-safe w-full mt-3 py-3 text-[15px]">
+          <button type="button" onClick={() => setCi(ci + 1)} className="btn-3d tone-safe w-full mt-4">
             Next challenge
           </button>
         )}

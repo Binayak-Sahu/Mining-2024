@@ -154,6 +154,8 @@ const BANDS = ["Low", "Medium", "High", "Very high"];
 
 export const riskSim: SimDef = {
   id: "u10-risk",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["res", "br"],
   title: "Risk matrix — hazard rating and hierarchy of controls",
   params: [
     { key: "L", label: "Likelihood (1 rare – 5 almost certain)", min: 1, max: 5, step: 1, default: 4 },
@@ -236,6 +238,8 @@ export function fta(p: Record<string, number>) {
 
 export const ftaSim: SimDef = {
   id: "u10-fta",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["gas", "top"],
   title: "Fault tree — firedamp explosion",
   params: [
     { key: "p1", label: "Ventilation failure (per yr)", min: 0, max: 0.5, step: 0.005, default: 0.1 },
@@ -337,6 +341,8 @@ export function scba(p: Record<string, number>) {
 
 export const scbaSim: SimDef = {
   id: "u10-scba",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["workTime", "dur"],
   title: "Rescue mission planner — closed-circuit oxygen breathing apparatus",
   params: [
     { key: "V", label: "Oxygen cylinder (water capacity)", min: 1, max: 3, step: 0.1, unit: "L", default: 2 },

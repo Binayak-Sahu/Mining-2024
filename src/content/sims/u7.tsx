@@ -112,6 +112,8 @@ export function network(p: Record<string, number>) {
 
 export const networkSim: SimDef = {
   id: "u7-network",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["Q1", "Q2"],
   title: "Ventilation network — Atkinson's law, splits and a regulator",
   params: [
     { key: "Pf", label: "Fan pressure", min: 500, max: 3000, step: 50, unit: "Pa", default: 1500 },
@@ -232,6 +234,8 @@ export function fanOp(p: Record<string, number>) {
 
 export const fanSim: SimDef = {
   id: "u7-fan",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["Q", "stall"],
   title: "Axial fan characteristic, mine curve, stall and NVP",
   params: [
     { key: "N", label: "Fan speed", min: 60, max: 110, step: 1, unit: "% rated", default: 100 },
@@ -287,6 +291,8 @@ export function es(T: number): number {
 
 export const psychroSim: SimDef = {
   id: "u7-psychro",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["status", "rh"],
   title: "Psychrometry & heat stress at the face",
   params: [
     { key: "Td", label: "Dry-bulb temperature", min: 20, max: 45, step: 0.5, unit: "°C", default: 34 },
@@ -383,6 +389,8 @@ export function ratios(p: Record<string, number>) {
 
 export const sponcomSim: SimDef = {
   id: "u7-sponcom",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["gr", "jtr"],
   title: "Spontaneous heating early-warning analyser",
   params: [
     { key: "o2", label: "O₂", min: 12, max: 20.9, step: 0.05, unit: "%", default: 20.2 },
@@ -531,6 +539,8 @@ export function pump(p: Record<string, number>) {
 
 export const pumpSim: SimDef = {
   id: "u7-pump",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["margin", "npsha"],
   title: "Mine dewatering — multistage pump head, power and NPSH",
   params: [
     { key: "Q", label: "Flow", min: 50, max: 500, step: 10, unit: "m³/h", default: 200 },

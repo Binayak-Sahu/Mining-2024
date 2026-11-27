@@ -39,9 +39,9 @@ export function SimLabCard({ stage, onDone }: CardProps<SimStage>) {
         def={def}
         values={values}
         onChange={change}
-        objective={{ text: stage.goal.text, met: met && touched, tag: "Objective" }}
+        objective={{ text: stage.goal.text, met: met && touched }}
         corner={
-          <button type="button" onClick={() => setValues(start)} aria-label="Reset the rig" title="Reset the rig" className="w-11 h-11 rounded-full flex items-center justify-center bg-white text-[#141414] border-2 border-[#E5E5E5]">
+          <button type="button" onClick={() => setValues(start)} aria-label="Reset the rig" title="Reset the rig" className="plate-btn">
             <RotateCcw size={17} />
           </button>
         }

@@ -171,32 +171,17 @@ BUILD_PROGRESS.md         Phase-by-phase build log and decisions
 
 **Inspector phone kit:** a header Report flag (it used to float), an Inspector menu with the stage jumper and refill (in lessons it opens from the ⋯ menu since 15.5c), a (saves route, lesson/stage/screen, viewport, user agent and build) and an FPS meter. Profile can export reports as JSON, open the Sound test (now available in production) and shows the build stamp (`NEXT_PUBLIC_BUILD`, git short hash + date, injected in `next.config.ts`). Each card's footer renders in a sticky, safe-area-aware **ActionBar** whose spacer tracks the bar's real height; the Workbench and Crisis cards put their step indicator, active input and primary action in that bar so they never fall below the fold on a 390 × 844 phone.
 
-### 6.5 Design system ("Tactile Engineering Studio")
-DESIGN.md is the app-wide design system; existing screens move to it in Phase 15.5. DESIGN.md wins on any conflict.
-
-- **v2 is the app palette (Phase 15.5b).** DESIGN.md §2 tokens live on `:root` (light) and `:root.dark`: neutrals `--bg`, `--surface`, `--surface-2`, `--line`, `--line-strong`, `--text`/`--text-2`/`--text-3`, the `--n-*` ramp, and accents `--action|success|danger|energy` with `-ledge`, `-on`, `-tint`, `-tint-text`, plus `--ink*` and `--sheet-shadow`. Tailwind names resolve to them: `slate-*` → `--n-*`; `emerald/red/amber/blue-*` ramps → success/danger/energy/action (each `-500` is the face); `violet-*` → action (retired). Token utilities: `bg-canvas`, `bg-surface(-2)`, `border-line(-strong)`, `text-fg(-2|-3)`, `bg-action`, `bg-success-tint`, `text-danger-tint-text`, …
-- `.ds2` is kept as an alias for the /design-system sandbox (`src/components/ds/`); `.ds2-light` / `.ds2-dark` force a theme on a sub-tree. Motion presets: `src/lib/motion.ts`. Screenshot/pixel-diff harness: `scripts/shots.mjs`; text-contrast sweep of every route: `scripts/contrast-sweep.mjs`.
-- Global base styles: `.card` (2 px `--line`, 5 px bottom ledge, radius 20, no shadow), `.btn-3d` (56 px pill, 18/700; tones ink, safe → success, crit → danger, tech/violet → action, hazard → energy, ghost; `.btn-sm` 44 px/14 px), `.tile-3d` (2 px `--line-strong`, 4 px ledge, radius 12; `data-on` / `data-state` selected·correct·wrong·dim), `.t-display … .t-readout` type styles, `.sheet-face` for bottom sheets, `.ds-tabbar`/`.ds-tab` (the phone tab bar). `surface-sticky` is now a solid `--bg` (no blur); `hairline` is a 2 px `--line` border. `.studio-bg` and card shadows are gone (`--shadow-card` is `none`).
-- `.plate` stays a light lightbox in both themes; its frame is a 2 px `--line` inner ring drawn by `::after` (`success` when the objective is met), so sim geometry is unchanged.
-- Accessibility: WCAG AA text contrast in both themes (verified by sweep), ≥ 44 px touch targets on coarse pointers, `prefers-reduced-motion` honoured (CSS and framer `MotionConfig reducedMotion="user"`; confetti disabled), visible focus rings, sentence-case labels.
-- Type and spacing (Phase 13):
-  - `.btn-3d` is sentence case, weight 700, 18 px, at least 56 px tall (15.5b).
-  - Card titles are 24 px (30 px on sm+) at weight 700, and collapse after the first flow screen.
-  - Body text (`.flow-body`) and questions (`.flow-q`) are §3 `body`, 18/29 400 (15.5b). Cards use p-5 (sm:p-8) with space-y-5/6.
-- **Lesson player (15.5c).** Stages sit on the canvas (`CardFrame` = §5.12 eyebrow + `t-display` title + content, no card). The top bar (`shell/LessonTopBar.tsx`) is X, one notched green progress bar (`LessonProgress`; each finished section keeps a 44 px invisible button that opens the read-only recap), the ⋯ menu (`MoreMenu`: Notes, Sources for the screen on show via `src/lib/lessonSources.ts`, Inspector; 8 px `action` dot when there are notes) and the hearts pill. The footer `ActionBar` is the §5.7 feedback sheet while a verdict shows: `Feedback` (portalled from the content) and `VerdictBar` (footer content) register their verdict with `CardFrame`, which tints the footer success/danger and slides the tint up (`feedbackSheet`); the reason sits behind a "Why?" ghost pill. The bottom spacer only grows (tallest footer state seen), so content never moves when the sheet opens. Answer tiles use `optionClass` / `.answer-tile` (§5.2); Equation forge is a word bank (`ds-well`) with a dashed tray and `layoutId` fly-in.
-- `SimCanvas` also takes `focus` (a feathered, fading dim around chosen pins) and `corner` (an overlay control, such as Sim lab's Reset icon).
-- **Sim stages on phones (14.5):**
-  - The diagram is sticky under the header, carrying status chips.
-  - Grips are the primary control; at most 2 sliders are open and the rest sit in "More controls" / "Fine-tune".
-  - The grip hint shows once (`strata-grip-hint`).
-  - Readouts sit in a 2-column wrapping grid, and `fmt` normalises -0.
-  - `Plot` takes `grips` to move axis text off grip tracks.
-  - Sliders have a 48 px `touch-action: none` thumb zone over a `pan-y` track; SVG grips claim touches via a non-passive `touchstart`.
-- Troubleshooting: Profile → **Repair app** (`src/lib/repair.ts`) unregisters the SW and deletes `strata-*` caches only. The same action is in `src/app/error.tsx`.
-- Mobile: bottom tab bar (Path, Warmup, Exam, Lab, Tools, Codex); compact lesson header with a progress segment that fills as you move through a stage; story copy shown in full (no clamp); Sim Lab simulation browser in a vaul bottom sheet.
+### 6.5 Design system
+**`DESIGN.md` is the design system** for every screen (tokens, type, spacing, components §5, motion §6, checks §7, Never List §8). Change it first, then the code. Phase 15.5 (done 2026-11-27) moved the whole app onto it. Where the code lives:
+- Tokens and base styles: `src/app/globals.css` (§2 tokens on `:root` / `:root.dark`; Tailwind `slate/emerald/red/amber/blue/violet-*` resolve to them; utilities such as `bg-canvas`, `bg-surface-2`, `text-fg-2`, `text-success-tint-text`). Shared classes: `.card`, `.btn-3d` (+ tones, `.btn-sm`), `.tile-3d`, `.t-display … .t-readout`, `.sheet-face`, `.ds-pop`, `.ds-progress`, `.ds-readout-row`, `.unit-tile`, `.field-input`, `.plate` (+ `.plate-chip`, `.plate-btn`, the fixed-light sim surface).
+- Motion presets: `src/lib/motion.ts` (no inline spring numbers anywhere). Status tone → text colour: `src/components/ui/tone.ts`.
+- Sim stage (§5.9): `src/components/sim/SimView.tsx` (objective line above the plate, 2 readout rows + "All readouts (n)", controls on the canvas). Sims list their objective outputs first with an optional `primary` field. Slider: `src/components/ui/Slider.tsx`.
+- Sandbox of every component: `/design-system` (noindex, not linked from the app; `src/components/ds/`).
+- Checks: `scripts/shots.mjs` (fixed screenshot set + pixel diff), `scripts/contrast-sweep.mjs` (text contrast per route), `scripts/sweep.mjs` (every route, every sim stage and the interaction states at 390×844 and 1440×900, light and dark, reduced motion, confetti off).
+- Kept behaviours: sticky plate + 2 readouts on phones; grips first, at most 2 sliders open; 48 px slider thumb zone; Profile → **Repair app** (`src/lib/repair.ts`); Sim Lab browser in a vaul sheet.
 
 ### 6.6 Simulations
-61 dioramas built from a shared SVG material library (`MAT`: soil, sand, shale, coal, rock, lime, ore, goaf, hatch, metal, steel, wood, glass, sky, water, heat; shadow/glow filters). Motion where it carries meaning (airflow streamlines scaled by Q, spinning drums/impellers/fans/Koepe wheel, blast fronts and shock rings, rising gas and smoke, tumbling mill charge), animated fracture cracks and shaking when factors of safety drop below 1, live telemetry strip with springing numbers, objective bar that lights emerald when a goal is met, and drag grips with a floating value tooltip. Animated sims pause when off-screen. The Sim Lab turns every lesson goal into chained challenges.
+61 dioramas built from a shared SVG material library (`MAT`: soil, sand, shale, coal, rock, lime, ore, goaf, hatch, metal, steel, wood, glass, sky, water, heat; shadow/glow filters). Motion where it carries meaning (airflow streamlines scaled by Q, spinning drums/impellers/fans/Koepe wheel, blast fronts and shock rings, rising gas and smoke, tumbling mill charge), animated fracture cracks and shaking when factors of safety drop below 1, live readout rows with springing numbers, an objective line that turns green when a goal is met, and drag grips with a floating value tooltip. Animated sims pause when off-screen. The Sim Lab turns every lesson goal into chained challenges.
 
 ### 6.7 Audio
 `src/lib/sfx.ts`: one lazily created AudioContext; every layer has an ADSR envelope; each sound has a low-pass filter; all sounds pass a shared bus → compressor → dry + generated-impulse convolution reverb (12 % wet). Palette: tick (noise burst + resonant click, ≤ 25/s, jittered), tap (soft low thud), correct (marimba rising fifth), wrong/heart (muted wooden thump), unlock (grace figure), fanfare (three-note marimba arpeggio). One global listener gives every button its tap and every slider its tick. Global persistent mute. `/sound-test` audition page in development builds.
@@ -251,9 +236,9 @@ npm start            # serve out/ locally (respects NEXT_PUBLIC_BASE_PATH)
 - **Never write progress outside `LessonPlayer`** (Warmup and Exam record through their own store actions); cards stay pure.
 - **Sandbox runs must be side-effect free** (verified byte-for-byte).
 - **Diagram edits keep geometry** where theory hotspots point; run `audit:svg` after any render change, and `validate` after any content change.
-- **Sims stay light ("daylight plates") in dark mode;** always-dark instrument panels (telemetry, calculator, timers) use fixed hex colours.
+- **Sims stay light ("daylight plates") in dark mode;** everything else, including the sim readouts, the Tools calculators and the Exam strip, follows the theme (DESIGN.md §5.13).
 - **Accessibility floor:** AA contrast, 44 px targets, reduced motion, keyboard-reachable controls, inputs with visible 1 px borders.
-- **Violet** is kept as the Equation Forge stage colour even though the installed `design-taste-frontend` skill (aimed at marketing sites) discourages it; it is darkened to meet AA.
+- **Violet is retired** (DESIGN.md §5.1, §5.12); stage kinds are neutral eyebrows with a lucide icon.
 - **Commit attribution and pushes:** feature work is committed on the working branch and pushed to `main` (which deploys); each Phase 12 section shipped as its own commit.
 
 ## 11. Known limitations and open items

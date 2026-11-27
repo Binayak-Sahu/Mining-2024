@@ -106,6 +106,8 @@ export function dragline(p: Record<string, number>) {
 
 export const draglineSim: SimDef = {
   id: "u5-dragline",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["reh", "Rreq"],
   title: "Dragline side-casting — spoil geometry and rehandle",
   params: [
     { key: "H", label: "Overburden thickness", min: 10, max: 60, step: 1, unit: "m", default: 30 },
@@ -197,6 +199,8 @@ export function truckShovel(p: Record<string, number>) {
 
 export const matchSim: SimDef = {
   id: "u5-match",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["mf", "prod"],
   title: "Truck–shovel match factor and queueing",
   animated: true,
   params: [
@@ -291,6 +295,8 @@ export function haul(p: Record<string, number>) {
 
 export const haulSim: SimDef = {
   id: "u5-haul",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["v", "gr"],
   title: "Haul road physics — resistance, rimpull, speed and super-elevation",
   params: [
     { key: "gvw", label: "Gross vehicle weight", min: 100, max: 450, step: 10, unit: "t", default: 300 },
@@ -377,6 +383,8 @@ export function dump(p: Record<string, number>) {
 
 export const dumpSim: SimDef = {
   id: "u5-dump",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["Ht", "fos"],
   title: "Multi-deck waste dump — overall slope and stability",
   params: [
     { key: "n", label: "Number of decks", min: 1, max: 5, step: 1, default: 3 },

@@ -15,6 +15,8 @@ export function goaf(p: Record<string, number>) {
 
 export const goafSim: SimDef = {
   id: "u6-goaf",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["state", "Lm"],
   title: "Depillaring goaf — immediate caving, main fall and air blast",
   params: [
     { key: "t", label: "Main roof (sandstone) thickness", min: 5, max: 30, step: 1, unit: "m", default: 10 },
@@ -118,6 +120,8 @@ export function shield(p: Record<string, number>) {
 
 export const longwallSim: SimDef = {
   id: "u6-longwall",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["util", "req"],
   title: "Longwall face — abutment pressure and shield capacity",
   params: [
     { key: "m", label: "Extraction height", min: 1.5, max: 5, step: 0.1, unit: "m", default: 3.5 },

@@ -6,6 +6,8 @@ import { MAT } from "@/components/sim/defs";
 
 export const accessSim: SimDef = {
   id: "u2-access",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["best", "shaft"],
   title: "Access trade-off — adit, incline or shaft",
   params: [
     { key: "D", label: "Seam depth below portal", min: 50, max: 900, step: 10, unit: "m", default: 250 },
@@ -96,6 +98,8 @@ export const accessSim: SimDef = {
 
 export const sinkingSim: SimDef = {
   id: "u2-sinking",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["perMonth", "cycle"],
   title: "Conventional sinking cycle & Galloway stage",
   params: [
     { key: "dia", label: "Finished shaft diameter", min: 4, max: 8, step: 0.5, unit: "m", default: 6 },
@@ -208,6 +212,8 @@ export const sinkingSim: SimDef = {
 
 export const freezeSim: SimDef = {
   id: "u2-freeze",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["e", "pr"],
   title: "Freeze-wall design through a running-sand aquifer",
   params: [
     { key: "h", label: "Depth to base of aquifer", min: 30, max: 300, step: 5, unit: "m", default: 120 },

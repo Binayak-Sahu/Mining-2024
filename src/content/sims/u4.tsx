@@ -20,6 +20,8 @@ export function penetration(m: number, ucs: number, depth: number): number {
 
 export const drillSim: SimDef = {
   id: "u4-drill",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["th", "pr"],
   title: "Rock drilling — percussive, DTH and rotary penetration",
   params: [
     { key: "m", label: "Drilling method", min: 0, max: 2, step: 1, default: 0, options: RIGS.map((r, i) => ({ value: i, label: `${r.name} ${Math.round(r.d * 1000)} mm` })) },
@@ -235,6 +237,8 @@ export function kuzRam(p: Record<string, number>) {
 
 export const kuzRamSim: SimDef = {
   id: "u4-kuzram",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["K", "over"],
   title: "Kuz-Ram blast optimiser — bench round fragmentation",
   params: [
     { key: "B", label: "Burden B", min: 2, max: 8, step: 0.1, unit: "m", default: 4.5 },

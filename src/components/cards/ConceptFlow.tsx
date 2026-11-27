@@ -292,7 +292,7 @@ export function ConceptFlow({ stage, onMistake, onDone, onSubProgress, seed, scr
             setNudgeVals(v);
             if (s.goal(v, nudgeDef.compute(v))) setPh((p) => ({ ...p, met: true }));
           }}
-          objective={{ text: s.ask, met: ph.met, tag: "Try" }}
+          objective={{ text: s.ask, met: ph.met }}
         />
       </div>
     );

@@ -2,10 +2,12 @@
 
 import { useRef, useState, type PointerEvent as RPointerEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { tactilePress, feedbackSheet } from "@/lib/motion";
 
 /**
- * Brilliant-style track slider. A transparent native range input sits on top for keyboard, screen-reader
- * and touch handling; the chunky track, gradient fill, 3D thumb and floating value pill are drawn beneath.
+ * Track slider (DESIGN.md 15.5e): a transparent native range input sits on top for keyboard, screen-reader and touch
+ * handling; the flat --surface-2 track, `action` fill, ledged --surface thumb and floating value pill are drawn beneath.
+ * The thumb is drawn at 28 px but every position and hit-area calculation still uses the 30 px native thumb geometry.
  */
 export function Slider({
   value,
@@ -15,7 +17,6 @@ export function Slider({
   onChange,
   label,
   display,
-  color = "#3B82F6",
   disabled,
 }: {
   value: number;
@@ -25,7 +26,6 @@ export function Slider({
   onChange: (v: number) => void;
   label: string;
   display: string;
-  color?: string;
   disabled?: boolean;
 }) {
   const [active, setActive] = useState(false);
@@ -71,11 +71,11 @@ export function Slider({
   };
 
   return (
-    <div ref={box} className={`slider ${disabled ? "opacity-50" : ""}`} style={{ color }}>
+    <div ref={box} className={`slider ${disabled ? "opacity-50" : ""}`}>
       <div className="slider-track">
-        <div className="slider-fill" style={{ width: pos, background: `linear-gradient(90deg, ${color}99, ${color})` }} />
+        <div className="slider-fill" style={{ width: pos }} />
         {ticks.map((t) => (
-          <span key={t} className="absolute top-1/2 -mt-[2px] w-1 h-1 rounded-full bg-slate-50/80" style={{ left: `calc(${t} * (100% - 30px) + 15px - 2px)` }} />
+          <span key={t} className="slider-tick" style={{ left: `calc(${t} * (100% - 30px) + 15px - 2px)` }} />
         ))}
       </div>
       <input
@@ -93,7 +93,7 @@ export function Slider({
         onPointerCancel={() => setActive(false)}
         onBlur={() => setActive(false)}
       />
-      <motion.div className="slider-thumb" style={{ left: pos }} animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 600, damping: 22 }} />
+      <motion.div className="slider-thumb" style={{ left: pos }} animate={{ scale: active ? 1.1 : 1 }} transition={tactilePress} />
       <div className="slider-grab" style={{ left: pos }} aria-hidden {...grab} />
       <AnimatePresence>
         {active && (
@@ -101,12 +101,11 @@ export function Slider({
             initial={{ opacity: 0, y: 6, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 700, damping: 30 }}
-            className="pointer-events-none absolute -top-7 -translate-x-1/2 whitespace-nowrap rounded-lg px-2 py-1 text-[11px] font-bold text-white readout shadow-lg"
-            style={{ left: pos, background: color }}
+            transition={feedbackSheet}
+            className="slider-pill pointer-events-none absolute -top-9 -translate-x-1/2 whitespace-nowrap readout"
+            style={{ left: pos }}
           >
             {display}
-            <span className="absolute left-1/2 -bottom-1 -ml-1 w-2 h-2 rotate-45" style={{ background: color }} />
           </motion.div>
         )}
       </AnimatePresence>

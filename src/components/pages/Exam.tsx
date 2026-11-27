@@ -88,71 +88,77 @@ export function Exam() {
   if (!hydrated) return null;
 
   if (!paper) {
+    const noWeak = weak.every((w) => w.pct >= 60);
     return (
-      <div className="max-w-5xl mx-auto px-3 sm:px-5 py-5 sm:py-8 space-y-4 sm:space-y-5">
-        <div className="relative overflow-hidden rounded-[28px] p-5 sm:p-8 text-white" style={{ background: "radial-gradient(120% 140% at 100% 0%, #991B1B 0%, #3F0D12 50%, #0B0F19 100%)", boxShadow: "var(--shadow-pop)" }}>
-          <div className="absolute -right-6 -bottom-8 opacity-15 pointer-events-none" aria-hidden>
-            <GraduationCap size={220} />
-          </div>
-          <div className="relative">
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#FECACA]">Exam hall · First-Class Unrestricted weighting</div>
-            <h1 className="mt-2 text-[28px] sm:text-[38px] leading-[1.05] font-extrabold tracking-[-0.02em]">DGMS Exam Simulator</h1>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["25 questions", "30 minutes", "≥ 7 numericals", "≥ 8 statutory"].map((t) => (
-                <span key={t} className="readout rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-white/90 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)]">
-                  {t}
-                </span>
-              ))}
+      <div className="max-w-5xl mx-auto px-5 sm:px-6 py-8 space-y-8">
+        {/* §5.13 Exam hero: follows the theme (card, no gradient) */}
+        <div className="card p-5 sm:p-6">
+          <div className="flex items-start gap-4">
+            <span className="unit-tile w-14 h-14 shrink-0" aria-hidden>
+              <GraduationCap size={26} />
+            </span>
+            <div className="min-w-0">
+              <div className="t-eyebrow">Exam hall · First-Class Unrestricted weighting</div>
+              <h1 className="t-display text-fg mt-1">DGMS Exam Simulator</h1>
             </div>
           </div>
-        </div>
-        <div className="card p-5 sm:p-6 space-y-4">
-          <ul className="text-[14px] text-slate-600 list-disc pl-5 space-y-1.5 leading-relaxed">
+          <div className="mt-5 flex flex-wrap gap-2">
+            {["25 questions", "30 minutes", "≥ 7 numericals", "≥ 8 statutory"].map((t) => (
+              <span key={t} className="readout t-label rounded-[12px] bg-surface-2 text-fg px-3 py-1">
+                {t}
+              </span>
+            ))}
+          </div>
+          <ul className="t-secondary list-disc pl-5 space-y-2 mt-5">
             <li>Questions are drawn from every unit&apos;s predictions, shift crises, statutory drills and numericals, plus the audited statute register.</li>
-            <li>Numerical answers accept expressions (e.g. <span className="readout">2.7*sqrt(120)</span>) and are marked within ±2 % unless stated.</li>
+            <li>
+              Numerical answers accept expressions (e.g. <span className="readout">2.7*sqrt(120)</span>) and are marked within ±2 % unless stated.
+            </li>
             <li>Review shows step-by-step derivations, citations and a per-unit breakdown. History builds your weak-unit analytics.</li>
           </ul>
-          <label className="flex items-center gap-3 text-[14px] text-slate-700 min-h-[44px] rounded-xl bg-slate-50 px-3.5 py-2.5">
-            <input type="checkbox" checked={focusWeak} onChange={(e) => setFocusWeak(e.target.checked)} className="w-4 h-4 accent-blue-500" disabled={weak.every((w) => w.pct >= 60)} />
-            Double the weight of my weak units (&lt; 60 %) {weak.every((w) => w.pct >= 60) && <span className="text-slate-400">(no weak units recorded yet)</span>}
+          <label className="mt-5 flex items-center gap-3 t-label text-fg min-h-[48px] rounded-[12px] bg-surface-2 px-4 py-3" style={{ fontWeight: 400 }}>
+            <input type="checkbox" checked={focusWeak} onChange={(e) => setFocusWeak(e.target.checked)} className="w-5 h-5 shrink-0 accent-[var(--action)]" disabled={noWeak} />
+            <span>
+              Double the weight of my weak units (&lt; 60 %) {noWeak && <span className="text-fg-2">(no weak units recorded yet)</span>}
+            </span>
           </label>
-          <button type="button" onClick={start} className="btn-3d tone-crit w-full py-4 text-sm">
+          <button type="button" onClick={start} className="btn-3d tone-tech w-full mt-6">
             Start mock exam
           </button>
         </div>
         {exams.length > 0 && (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-6">
             <div className="card p-5">
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3">Recent attempts</div>
-              <ul className="space-y-1">
+              <div className="t-eyebrow">Recent attempts</div>
+              <div className="mt-2">
                 {exams
                   .slice(-8)
                   .reverse()
                   .map((e, k) => (
-                    <li key={k} className="flex justify-between text-[13px] readout rounded-lg bg-slate-50 px-3 py-2">
-                      <span>{e.at}</span>
-                      <span className={e.score / e.total >= 0.6 ? "text-emerald-600 font-bold" : "text-red-600 font-bold"}>
+                    <div key={k} className="ds-readout-row last:border-b-0">
+                      <span className="t-label text-fg-2 readout" style={{ fontWeight: 400 }}>{e.at}</span>
+                      <span className={`t-readout ${e.score / e.total >= 0.6 ? "text-success-tint-text" : "text-danger-tint-text"}`}>
                         {e.score}/{e.total} · {Math.round(e.seconds / 60)} min
                       </span>
-                    </li>
+                    </div>
                   ))}
-              </ul>
+              </div>
             </div>
             <div className="card p-5">
-              <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3 flex items-center gap-1.5">
-                <BarChart3 size={12} /> Weak-unit analytics (all attempts)
+              <div className="t-eyebrow flex items-center gap-2">
+                <BarChart3 size={16} aria-hidden /> Weak-unit analytics
               </div>
-              <div className="space-y-1.5">
+              <div className="mt-4 space-y-4">
                 {weak.map((w) => (
-                  <div key={w.u} className="text-xs">
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{unitName(w.u)}</span>
-                      <span className="readout">
+                  <div key={w.u}>
+                    <div className="flex justify-between gap-3 t-label">
+                      <span className="text-fg">{unitName(w.u)}</span>
+                      <span className="readout text-fg-2" style={{ fontWeight: 400 }}>
                         {w.c}/{w.a} · {w.pct.toFixed(0)} %
                       </span>
                     </div>
-                    <div className="h-2.5 mt-1 rounded-full bg-slate-100 overflow-hidden">
-                      <div className={`h-full rounded-full ${w.pct < 60 ? "bg-red-500" : w.pct < 80 ? "bg-amber-500" : "bg-emerald-500"}`} style={{ width: `${w.pct}%` }} />
+                    <div className="ds-progress mt-2" aria-hidden>
+                      <div className={`ds-progress-fill ${w.pct < 60 ? "!bg-danger" : w.pct < 80 ? "!bg-energy" : ""}`} style={{ width: `${w.pct}%` }} />
                     </div>
                   </div>
                 ))}
@@ -167,34 +173,36 @@ export function Exam() {
   if (done) {
     const pct = (100 * done.score) / paper.questions.length;
     return (
-      <div className="max-w-4xl mx-auto px-3 sm:px-5 py-5 sm:py-8 space-y-4">
-        <div className="card card-pop p-5 sm:p-6 flex flex-wrap items-center gap-4 sm:gap-6">
-          <div className={`readout text-5xl font-extrabold tracking-tight ${pct >= 60 ? "text-emerald-600" : "text-red-600"}`}>
-            {done.score}/{paper.questions.length}
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <div className="font-extrabold text-[18px] text-slate-900">{pct >= 75 ? "First-class standard" : pct >= 60 ? "Pass standard — keep sharpening" : "Below pass standard"}</div>
-            <div className="text-xs text-slate-500">
-              {Math.round(done.used / 60)} min used · +{done.score * 8} XP
+      <div className="max-w-4xl mx-auto px-5 sm:px-6 py-8 space-y-8">
+        <div className="card p-5 sm:p-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div className={`readout t-display ${pct >= 60 ? "text-success-tint-text" : "text-danger-tint-text"}`}>
+              {done.score}/{paper.questions.length}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <div className="t-heading text-fg">{pct >= 75 ? "First-class standard" : pct >= 60 ? "Pass standard — keep sharpening" : "Below pass standard"}</div>
+              <div className="t-label text-fg-2 readout" style={{ fontWeight: 400 }}>
+                {Math.round(done.used / 60)} min used · +{done.score * 8} XP
+              </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={start} className="btn-3d tone-crit px-4 py-2.5 text-[12px]">
+          <div className="flex flex-col sm:flex-row gap-3 mt-5">
+            <button type="button" onClick={start} className="btn-3d tone-tech flex-1">
               New paper
             </button>
-            <button type="button" onClick={() => setPaper(null)} className="btn-3d tone-ghost px-4 py-2.5 text-[12px]">
+            <button type="button" onClick={() => setPaper(null)} className="btn-3d tone-ghost flex-1">
               Analytics
             </button>
           </div>
         </div>
-        <div className="card p-4">
-          <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-slate-500 mb-3">This paper by unit</div>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+        <div>
+          <div className="t-eyebrow">This paper by unit</div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-3">
             {Object.entries(done.byUnit)
               .sort()
               .map(([u, [c, a]]) => (
-                <div key={u} className={`rounded-xl px-2.5 py-2 text-xs ${c / a >= 0.6 ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"}`}>
-                  <div className="font-extrabold">{unitName(u)}</div>
+                <div key={u} className={`rounded-[12px] px-3 py-2 t-label ${c / a >= 0.6 ? "bg-success-tint text-success-tint-text" : "bg-danger-tint text-danger-tint-text"}`}>
+                  <div style={{ fontWeight: 800 }}>{unitName(u)}</div>
                   <div className="readout">
                     {c}/{a}
                   </div>
@@ -206,35 +214,37 @@ export function Exam() {
           const ok = isCorrect(q, resp[k]);
           const r = resp[k];
           return (
-            <div key={q.id} className={`card p-4 sm:p-5 border-l-[6px] ${ok ? "border-emerald-500" : "border-red-500"}`}>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                {ok ? <CheckCircle2 size={14} className="text-emerald-600" /> : <XCircle size={14} className="text-red-600" />}
-                Q{k + 1} · {unitName(q.unitId)} · {q.family}
+            <div key={q.id} className="card p-5 sm:p-6">
+              <div className="t-eyebrow flex items-center gap-2">
+                {ok ? <CheckCircle2 size={16} className="text-success-tint-text shrink-0" aria-label="Correct" /> : <XCircle size={16} className="text-danger-tint-text shrink-0" aria-label="Wrong" />}
+                <span className="min-w-0">
+                  Q{k + 1} · {unitName(q.unitId)} · {q.family}
+                </span>
               </div>
-              {q.context && <p className="text-xs text-slate-500 mt-1">{q.context}</p>}
-              <p className="font-bold text-[15px] text-slate-900 mt-1.5">{q.prompt}</p>
+              {q.context && <p className="t-label text-fg-2 mt-2" style={{ fontWeight: 400 }}>{q.context}</p>}
+              <p className="t-body text-fg mt-2" style={{ fontWeight: 700 }}>{q.prompt}</p>
               {q.kind === "num" ? (
-                <p className="readout text-sm mt-1">
+                <p className="readout t-label text-fg mt-2" style={{ fontWeight: 400 }}>
                   Your answer: {r === undefined || r === "" ? "—" : r} · Correct: {fmt(q.answer, 3)} {q.unit}
                 </p>
               ) : (
-                <p className="text-sm mt-1">
-                  Your answer: <b>{r === undefined ? "—" : q.options![Number(r)]}</b> · Correct: <b className="text-emerald-700">{q.options![q.answer]}</b>
+                <p className="t-secondary !text-fg mt-2">
+                  Your answer: <b>{r === undefined ? "—" : q.options![Number(r)]}</b> · Correct: <b className="text-success-tint-text">{q.options![q.answer]}</b>
                 </p>
               )}
               {!ok && q.kind !== "num" && r !== undefined && q.optionWhy?.[Number(r)] && (
-                <p className="text-[13.5px] mt-1.5 rounded-xl bg-red-50 text-red-800 px-3 py-2 leading-snug">
+                <p className="t-label mt-3 rounded-[12px] bg-danger-tint text-danger-tint-text px-4 py-3" style={{ fontWeight: 400 }}>
                   <b>Why that fails: </b>
                   {q.optionWhy[Number(r)]}
                 </p>
               )}
-              <ol className="mt-2 space-y-1 text-sm text-slate-700 list-decimal pl-5">
+              <ol className="mt-3 space-y-1 t-secondary list-decimal pl-5">
                 {q.derivation.map((d, j) => (
                   <li key={j}>{d}</li>
                 ))}
               </ol>
               {q.lessonId && (
-                <Link href={`/lesson/${q.lessonId}`} className="inline-block mt-2 text-[11px] font-bold uppercase tracking-wider text-blue-600">
+                <Link href={`/lesson/${q.lessonId}`} className="inline-flex items-center min-h-[44px] mt-1 t-label text-action-tint-text" style={{ fontWeight: 700 }}>
                   Revise: {q.source}
                 </Link>
               )}
@@ -258,36 +268,46 @@ export function Exam() {
   const answered = Object.keys(resp).filter((k) => resp[Number(k)] !== "").length;
 
   return (
-    <div className="max-w-4xl mx-auto px-3 sm:px-5 py-4 sm:py-6 space-y-3">
-      <div className="rounded-2xl bg-[#0E1424] px-4 py-3 flex items-center gap-3 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.6)]">
-        <span className={`readout text-[20px] font-extrabold flex items-center gap-1.5 ${left < 300 ? "text-[#F87171]" : "text-[#F1F5F9]"}`}>
-          <Timer size={18} /> {Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}
+    <div className="max-w-4xl mx-auto px-5 sm:px-6 py-4 sm:py-6 space-y-4">
+      {/* §5.13 instrument strip: follows the theme */}
+      <div className="card px-4 py-2 flex items-center gap-3">
+        <span className={`t-readout flex items-center gap-2 ${left < 300 ? "text-danger-tint-text" : "text-fg"}`} style={{ fontSize: 20 }}>
+          <Timer size={18} aria-hidden /> {Math.floor(left / 60)}:{String(left % 60).padStart(2, "0")}
         </span>
-        <div className="flex-1 hidden sm:block h-2 rounded-full bg-white/10 overflow-hidden">
-          <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-blue-400" style={{ width: `${(answered / paper.questions.length) * 100}%` }} />
+        <div className="flex-1 hidden sm:block ds-progress" aria-hidden>
+          <div className="ds-progress-fill" style={{ width: `${(answered / paper.questions.length) * 100}%` }} />
         </div>
-        <span className="readout text-[12px] text-[#8B97AE] ml-auto sm:ml-0">
+        <span className="readout t-label text-fg-2 ml-auto sm:ml-0" style={{ fontWeight: 400 }} aria-label={`${answered} of ${paper.questions.length} answered`}>
           {answered}/{paper.questions.length}
         </span>
-        <button type="button" onClick={submit} className="btn-3d tone-crit px-4 py-2 text-[11.5px]">
+        <button type="button" onClick={submit} className="btn-3d btn-sm tone-ghost">
           Submit
         </button>
       </div>
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap pb-1">
-        {paper.questions.map((_, k) => (
-          <button
-            key={k}
-            type="button"
-            onClick={() => setI(k)}
-            className={`readout shrink-0 w-9 h-9 rounded-xl text-[12px] font-extrabold transition ${k === i ? "bg-blue-500 text-white shadow-[0_3px_0_#1D4ED8]" : resp[k] !== undefined && resp[k] !== "" ? "bg-emerald-50 text-emerald-700 shadow-[inset_0_0_0_1.5px_#10B98166]" : "bg-surface text-slate-500 shadow-[inset_0_0_0_1.5px_var(--n-200)]"} ${flags.has(k) ? "ring-2 ring-amber-400" : ""}`}
-          >
-            {k + 1}
-          </button>
-        ))}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0 sm:flex-wrap pt-1 pb-2" aria-label="Questions">
+        {paper.questions.map((_, k) => {
+          const has = resp[k] !== undefined && resp[k] !== "";
+          return (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setI(k)}
+              data-on={k === i}
+              aria-current={k === i ? "step" : undefined}
+              aria-label={`Question ${k + 1}${has ? ", answered" : ""}${flags.has(k) ? ", flagged" : ""}`}
+              className={`tile-3d readout t-label shrink-0 w-11 h-11 !rounded-[12px] flex items-center justify-center ${k === i ? "text-action-tint-text" : has ? "!bg-success-tint !border-success text-success-tint-text" : "text-fg-2"} ${flags.has(k) ? "ring-2 ring-energy ring-offset-2 ring-offset-[var(--bg)]" : ""}`}
+              style={{ fontWeight: 800 }}
+            >
+              {k + 1}
+            </button>
+          );
+        })}
       </div>
-      <div className="card p-5 sm:p-6 space-y-4">
-        <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-500">
-          Q{i + 1} · {unitName(q.unitId)} · {q.kind === "num" ? "numerical" : q.kind === "tf" ? "true / false" : "multiple choice"}
+      <div className="card p-5 sm:p-6 space-y-5">
+        <div className="flex items-center gap-2 t-eyebrow">
+          <span className="min-w-0">
+            Q{i + 1} · {unitName(q.unitId)} · {q.kind === "num" ? "numerical" : q.kind === "tf" ? "true / false" : "multiple choice"}
+          </span>
           <button
             type="button"
             onClick={() =>
@@ -298,17 +318,18 @@ export function Exam() {
                 return n;
               })
             }
-            className={`ml-auto inline-flex items-center gap-1 ${flags.has(i) ? "text-amber-600" : "text-slate-400"}`}
+            aria-pressed={flags.has(i)}
+            className={`ml-auto shrink-0 inline-flex items-center gap-1.5 min-h-[44px] px-2 t-label normal-case tracking-normal ${flags.has(i) ? "text-energy-tint-text" : "text-fg-2"}`}
           >
-            <Flag size={12} /> {flags.has(i) ? "Flagged" : "Flag"}
+            <Flag size={16} aria-hidden fill={flags.has(i) ? "currentColor" : "none"} /> {flags.has(i) ? "Flagged" : "Flag"}
           </button>
         </div>
-        {q.context && <p className="text-sm text-slate-600 leading-snug">{q.context}</p>}
-        <p className="font-extrabold text-[17px] sm:text-[19px] leading-snug text-slate-900">{q.prompt}</p>
+        {q.context && <p className="t-secondary">{q.context}</p>}
+        <p className="t-body text-fg" style={{ fontWeight: 700 }}>{q.prompt}</p>
         {q.givens && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {q.givens.map((g) => (
-              <span key={g.sym} className="readout text-[12px] rounded-lg bg-amber-50 text-amber-800 px-2.5 py-1 font-semibold">
+              <span key={g.sym} className="readout t-label rounded-[12px] bg-surface-2 text-fg px-3 py-1">
                 {g.label}: {g.value} {g.unit}
               </span>
             ))}
@@ -316,39 +337,30 @@ export function Exam() {
         )}
         {q.kind === "num" ? (
           <div>
-            <div className="flex gap-2 items-center">
-              <input
-                value={r ?? ""}
-                onChange={(e) => setResp((p) => ({ ...p, [i]: e.target.value }))}
-                placeholder="number or expression"
-                className="readout flex-1 min-w-0 rounded-xl border border-slate-400 bg-surface px-3 py-3 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
-              />
-              <span className="readout text-sm text-slate-600">{q.unit}</span>
+            <div className="flex gap-3 items-center">
+              <input value={r ?? ""} onChange={(e) => setResp((p) => ({ ...p, [i]: e.target.value }))} placeholder="number or expression" aria-label="Your answer" className="field-input readout flex-1 min-w-0" />
+              <span className="readout t-label text-fg-2">{q.unit}</span>
             </div>
-            <p className="readout text-xs text-slate-500 mt-1">{preview}</p>
+            <p className="readout t-label text-fg-2 mt-2 min-h-[20px]" style={{ fontWeight: 400 }}>{preview}</p>
           </div>
         ) : (
-          <div className="grid gap-2">
+          <div className="grid gap-3">
             {q.options!.map((o, k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setResp((p) => ({ ...p, [i]: String(k) }))}
-                data-on={r === String(k)}
-                className="tile-3d w-full flex items-center text-left px-4 py-3 text-[14.5px] font-semibold text-slate-800"
-              >
-                <span className={`readout mr-3 inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-lg border-2 text-[12px] font-extrabold ${r === String(k) ? "bg-blue-500 border-blue-500 text-white" : "border-slate-200 text-slate-400"}`}>{String.fromCharCode(65 + k)}</span>
+              <button key={k} type="button" onClick={() => setResp((p) => ({ ...p, [i]: String(k) }))} data-on={r === String(k)} aria-pressed={r === String(k)} className="tile-3d w-full flex items-center text-left px-4 py-3 t-secondary !text-fg" style={{ fontWeight: 600 }}>
+                <span className={`readout t-label mr-3 inline-flex w-8 h-8 shrink-0 items-center justify-center rounded-[8px] border-2 ${r === String(k) ? "bg-action border-action text-[var(--action-on)]" : "border-line-strong text-fg-2"}`} style={{ fontWeight: 800 }} aria-hidden>
+                  {String.fromCharCode(65 + k)}
+                </span>
                 <span>{o}</span>
               </button>
             ))}
           </div>
         )}
         <div className="flex justify-between gap-3 pt-2">
-          <button type="button" disabled={i === 0} onClick={() => setI(i - 1)} className="btn-3d tone-ghost inline-flex items-center gap-1 px-4 py-2.5 text-[12px] disabled:opacity-40">
-            <ChevronLeft size={16} /> Previous
+          <button type="button" disabled={i === 0} onClick={() => setI(i - 1)} className="btn-3d tone-ghost flex-1 sm:flex-none">
+            <ChevronLeft size={20} aria-hidden /> Previous
           </button>
-          <button type="button" disabled={i === paper.questions.length - 1} onClick={() => setI(i + 1)} className="btn-3d tone-tech inline-flex items-center gap-1 px-4 py-2.5 text-[12px]">
-            Next <ChevronRight size={16} />
+          <button type="button" disabled={i === paper.questions.length - 1} onClick={() => setI(i + 1)} className="btn-3d tone-tech flex-1 sm:flex-none">
+            Next <ChevronRight size={20} aria-hidden />
           </button>
         </div>
       </div>

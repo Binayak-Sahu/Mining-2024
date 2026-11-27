@@ -4,14 +4,18 @@ import { useMemo, useState } from "react";
 import { Calculator, Wind, Columns3, Bomb, Activity, Mountain, Compass, Droplets, RotateCcw, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
-const TOOL_STYLE: Record<string, { Icon: LucideIcon; c: string; e: string; blurb: string }> = {
-  atkinson: { Icon: Wind, c: "#0EA5E9", e: "#0369A1", blurb: "Airway pressure & power" },
-  pillar: { Icon: Columns3, c: "#64748B", e: "#334155", blurb: "Pillar FoS + Reg. 111" },
-  kuzram: { Icon: Bomb, c: "#EF4444", e: "#991B1B", blurb: "Blast fragmentation" },
-  ppv: { Icon: Activity, c: "#8B5CF6", e: "#5B21B6", blurb: "Ground vibration limit" },
-  besr: { Icon: Mountain, c: "#F59E0B", e: "#B45309", blurb: "Break-even strip ratio" },
-  dipstrike: { Icon: Compass, c: "#10B981", e: "#047857", blurb: "Three-point problem" },
-  pump: { Icon: Droplets, c: "#3B82F6", e: "#1D4ED8", blurb: "Head, power & NPSH" },
+import { stageSlide, fadeQuick } from "@/lib/motion";
+import { toneText } from "@/components/ui/tone";
+
+/** Picker icon and one-line blurb per calculator. Tiles are neutral (§1.4: colour is for meaning only). */
+const TOOL_STYLE: Record<string, { Icon: LucideIcon; blurb: string }> = {
+  atkinson: { Icon: Wind, blurb: "Airway pressure & power" },
+  pillar: { Icon: Columns3, blurb: "Pillar FoS + Reg. 111" },
+  kuzram: { Icon: Bomb, blurb: "Blast fragmentation" },
+  ppv: { Icon: Activity, blurb: "Ground vibration limit" },
+  besr: { Icon: Mountain, blurb: "Break-even strip ratio" },
+  dipstrike: { Icon: Compass, blurb: "Three-point problem" },
+  pump: { Icon: Droplets, blurb: "Head, power & NPSH" },
 };
 import { fmt } from "@/lib/calc";
 import { kuzRam } from "@/content/sims/u4";
@@ -255,46 +259,42 @@ export function Tools() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-5 py-5 sm:py-8 space-y-5">
-      <div>
-        <h1 className="text-[28px] sm:text-[34px] font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-          <span className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-[0_3px_0_#B45309]">
-            <Calculator size={22} />
-          </span>
-          Field Calculators
-        </h1>
-        <p className="text-slate-500 text-[14px] mt-2">The same engineering models as the lessons — plug in your own mine&apos;s numbers.</p>
+    <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 space-y-8">
+      <div className="flex items-start gap-4">
+        <span className="unit-tile w-14 h-14 shrink-0 mt-1" aria-hidden>
+          <Calculator size={26} />
+        </span>
+        <div className="min-w-0">
+          <h1 className="t-display text-fg">Field calculators</h1>
+          <p className="t-secondary mt-1">The same engineering models as the lessons. Plug in your own mine&apos;s numbers.</p>
+        </div>
       </div>
-      <div className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1.5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 lg:grid-cols-7">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-5 px-5 pb-1.5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 lg:grid-cols-7" aria-label="Calculators" role="group">
         {TOOLS.map((t) => {
-          const st = TOOL_STYLE[t.id] ?? { Icon: Calculator, c: "#64748B", e: "#334155", blurb: "" };
+          const st = TOOL_STYLE[t.id] ?? { Icon: Calculator, blurb: "" };
           const on = t.id === id;
           return (
-            <button key={t.id} type="button" onClick={() => setId(t.id)} data-on={on} className="tile-3d shrink-0 w-[148px] sm:w-auto text-left p-3 flex flex-col gap-2 min-h-[104px]" style={on ? { borderColor: st.c, boxShadow: `0 3px 0 ${st.c}`, background: `color-mix(in oklab, ${st.c} 10%, var(--surface))` } : undefined}>
-              <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white" style={{ background: st.c, boxShadow: `0 2px 0 ${st.e}` }}>
-                <st.Icon size={18} />
+            <button key={t.id} type="button" aria-pressed={on} onClick={() => setId(t.id)} data-on={on} className="tile-3d shrink-0 w-[156px] sm:w-auto text-left p-3 flex flex-col gap-2 min-h-[112px]">
+              <span className="w-10 h-10 rounded-[12px] bg-surface-2 text-fg flex items-center justify-center" aria-hidden>
+                <st.Icon size={20} />
               </span>
-              <span className="text-[13px] font-extrabold leading-tight text-slate-900">{t.name}</span>
-              <span className="text-[11px] text-slate-500 leading-tight -mt-1">{st.blurb}</span>
+              <span className="t-label text-fg" style={{ fontWeight: 700 }}>{t.name}</span>
+              <span className="t-label text-fg-2 -mt-1" style={{ fontWeight: 400 }}>{st.blurb}</span>
             </button>
           );
         })}
       </div>
-      <motion.div key={id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 380, damping: 30 }} className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
-        <div className="card p-5 sm:p-6 space-y-3.5">
-          <h2 className="font-extrabold text-[20px] tracking-tight text-slate-900">{tool.name}</h2>
+      <motion.div key={id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={stageSlide} className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 md:gap-6">
+        <div className="card p-5 sm:p-6 space-y-4">
+          <h2 className="t-heading text-fg">{tool.name}</h2>
           {tool.fields.map((f) => (
             <label key={f.key} className="block">
-              <span className="text-[12.5px] font-bold text-slate-600">
+              <span className="t-label text-fg-2">
                 {f.label}
-                {f.unit && <span className="text-slate-400"> ({f.unit})</span>}
+                {f.unit && <span className="text-fg-3"> ({f.unit})</span>}
               </span>
               {f.options ? (
-                <select
-                  value={v[f.key]}
-                  onChange={(e) => setVals((all) => ({ ...all, [id]: { ...all[id], [f.key]: Number(e.target.value) } }))}
-                  className="mt-1.5 w-full rounded-xl border border-slate-400 px-3 py-2.5 text-[15px] font-semibold text-slate-900 bg-surface outline-none focus:border-blue-500"
-                >
+                <select value={v[f.key]} onChange={(e) => setVals((all) => ({ ...all, [id]: { ...all[id], [f.key]: Number(e.target.value) } }))} className="field-input mt-2 w-full">
                   {f.options.map((o) => (
                     <option key={o.value} value={o.value}>
                       {o.label}
@@ -302,13 +302,7 @@ export function Tools() {
                   ))}
                 </select>
               ) : (
-                <input
-                  inputMode="decimal"
-                  aria-label={f.label}
-                  value={raw[`${id}.${f.key}`] ?? String(v[f.key])}
-                  onChange={(e) => setField(f.key, e.target.value)}
-                  className="readout mt-1.5 w-full rounded-xl border border-slate-400 bg-surface px-3 py-2.5 text-[16px] font-bold text-slate-900 outline-none focus:border-blue-500"
-                />
+                <input inputMode="decimal" aria-label={f.label} value={raw[`${id}.${f.key}`] ?? String(v[f.key])} onChange={(e) => setField(f.key, e.target.value)} className="field-input readout mt-2 w-full" />
               )}
             </label>
           ))}
@@ -318,30 +312,25 @@ export function Tools() {
               setVals((all) => ({ ...all, [id]: defaultsOf(tool) }));
               setRaw((r) => Object.fromEntries(Object.entries(r).filter(([k]) => !k.startsWith(`${id}.`))));
             }}
-            className="btn-press inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            className="btn-3d btn-sm tone-ghost"
           >
-            <RotateCcw size={12} /> Reset to example values
+            <RotateCcw size={16} aria-hidden /> Reset to example values
           </button>
         </div>
-        <div className="rounded-[1.25rem] bg-[#0E1424] p-4 sm:p-5 space-y-2.5 shadow-[var(--shadow-card)] self-start">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#8B97AE]">
-            <span className="live-dot w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live output
-          </div>
-          <div className="rounded-xl bg-white/[0.05] text-[#E2E8F0] px-3.5 py-2.5 readout text-[12px] leading-relaxed shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">{tool.formula}</div>
-          {outs.map((o) => {
-            const col = o.tone === "crit" ? "#F87171" : o.tone === "warn" ? "#FBBF24" : o.tone === "ok" ? "#34D399" : "#F1F5F9";
-            return (
-              <div key={o.label} className="flex items-center justify-between gap-3 rounded-xl bg-white/[0.04] px-3.5 py-2.5">
-                <span className="text-[13px] text-[#A6B1C6] flex items-center gap-2 min-w-0">
-                  {o.tone && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: col, boxShadow: `0 0 8px ${col}` }} />}
-                  <span className="truncate">{o.label}</span>
-                </span>
-                <motion.span key={String(o.value)} initial={{ opacity: 0.4, y: -2 }} animate={{ opacity: 1, y: 0 }} className="readout font-extrabold text-[15px] text-right shrink-0" style={{ color: col }}>
-                  {typeof o.value === "number" ? fmt(o.value, o.digits ?? 2) : o.value} {typeof o.value === "number" && o.unit ? <span className="text-[#8B97AE] font-medium text-[11px]">{o.unit}</span> : null}
+        <div className="card p-5 sm:p-6 self-start">
+          <div className="t-eyebrow">Live output</div>
+          <p className="readout t-label text-fg-2 mt-3" style={{ fontWeight: 400 }}>{tool.formula}</p>
+          <div className="mt-2">
+            {outs.map((o) => (
+              <div key={o.label} className="ds-readout-row last:border-b-0">
+                <span className="t-label text-fg-2 min-w-0">{o.label}</span>
+                <motion.span key={String(o.value)} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }} transition={fadeQuick} className={`t-readout text-right shrink-0 max-w-[60%] ${toneText(o.tone)}`}>
+                  {typeof o.value === "number" ? fmt(o.value, o.digits ?? 2) : o.value}
+                  {typeof o.value === "number" && o.unit ? <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span> : null}
                 </motion.span>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>

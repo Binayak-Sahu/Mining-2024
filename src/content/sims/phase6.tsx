@@ -381,6 +381,8 @@ export function lwCycle(p: Record<string, number>) {
 
 export const longwallCycleSim: SimDef = {
   id: "u6-lwcycle",
+  // §5.9: the objective's variables come first in the readout rows.
+  primary: ["prod", "shears"],
   title: "Longwall face cycle — DERD shearer, AFC snake and shield advance",
   animated: true,
   params: [
