@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 export { AnimatedNumber };
 import { Hand, Target, ChevronDown } from "lucide-react";
@@ -10,7 +10,7 @@ import { fmt } from "@/lib/calc";
 import { sfx } from "@/lib/sfx";
 import { Slider } from "@/components/ui/Slider";
 import { toneText } from "@/components/ui/tone";
-import { tactilePress } from "@/lib/motion";
+import { tactilePress, fadeQuick } from "@/lib/motion";
 
 export function defaults(def: SimDef, overrides?: Vals): Vals {
   const v: Vals = {};
@@ -143,18 +143,6 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
     <div ref={wrap} className={`plate ${still ? "" : "max-sm:-mx-1.5"} ${objective?.met ? "plate-met" : ""}`}>
       <div className="relative">
       {corner && <div className="absolute right-1.5 top-1.5 z-[2]">{corner}</div>}
-      <AnimatePresence>
-        {handles.length > 0 && !used && !hintSeen && (
-          <motion.div key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.6 } }} className="plate-chip pointer-events-none absolute z-[3] left-2 top-2">
-            <Hand size={16} aria-hidden /> Drag the grips
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {def.animated && !still && (
-        <span className="plate-chip pointer-events-none absolute z-[3] right-14 top-2">
-          <span className="live-dot w-2 h-2 rounded-full bg-success" aria-hidden /> Live
-        </span>
-      )}
 
       <svg
         ref={svg}
@@ -240,11 +228,29 @@ export function SimCanvas({ def, values, overlay, onChange, still = false, objec
       </div>
     </div>
   );
-  if (!objective || noObjectiveLine) return plate;
+  // One-time grip tutorial, under the plate so it never covers the diagram. It fades after the first drag but keeps its
+  // line until the stage changes, so nothing below it moves mid-drag (§1.5).
+  const hint =
+    handles.length > 0 && !hintSeen ? (
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: used ? 0 : 1 }} transition={fadeQuick} className="t-label text-fg-2 flex items-center gap-2 mt-2" style={{ fontWeight: 400 }} aria-hidden={used}>
+        <Hand size={16} aria-hidden /> Drag the grips on the diagram
+      </motion.p>
+    ) : null;
+  // Same wrapper whether or not the hint shows: re-parenting the plate would remount the SVG and drop its grip listener.
+  if (!objective || noObjectiveLine)
+    return (
+      <div>
+        {plate}
+        {hint}
+      </div>
+    );
   return (
     <div className="space-y-3">
       <ObjectiveLine objective={objective} />
-      {plate}
+      <div>
+        {plate}
+        {hint}
+      </div>
     </div>
   );
 }
@@ -260,7 +266,7 @@ function readoutOrder(def: SimDef): number[] {
 }
 
 /**
- * Longest text each formatted (word-valued) output can show, probed at every parameter's min, default and max one at a
+ * Longest text each output can show (formatted word, or number + unit), probed at every parameter's min, default and max one at a
  * time. Used to reserve the value's height so a class name that changes mid-drag never makes the row (and the pinned
  * block on phones) grow: nothing jumps (§1.5).
  */
@@ -273,11 +279,10 @@ function longestFormat(def: SimDef): Record<number, string> {
   }
   const longest: Record<number, string> = {};
   def.outputs.forEach((o, i) => {
-    if (!o.format) return;
     for (const v of probes) {
       try {
         const out = def.compute(v);
-        const t = String(o.format(out[o.key], out, v));
+        const t = o.format ? String(o.format(out[o.key], out, v)) : `${fmt(out[o.key], o.digits ?? 2)}${o.unit ? ` ${o.unit}` : ""}`;
         if (t.length > (longest[i]?.length ?? 0)) longest[i] = t;
       } catch {
         /* a probe outside the sim's domain */
@@ -290,21 +295,42 @@ function longestFormat(def: SimDef): Record<number, string> {
 function ReadoutRow({ o, out, values, ghost }: { o: SimDef["outputs"][number]; out: Vals; values: Vals; ghost?: string }) {
   const v = out[o.key];
   const tone = o.tone ? o.tone(v, out, values) : "info";
-  return (
-    <div className="ds-readout-row">
-      <span className="t-label text-fg-2 min-w-0 break-words">{o.label}</span>
-      <span className={`t-readout text-right min-w-0 max-w-[55%] break-words grid ${toneText(tone)}`}>
-        {/* Invisible longest value in the same grid cell: the row is always as tall as its tallest state. */}
-        {ghost && (
-          <span className="invisible [grid-area:1/1]" aria-hidden>
-            {ghost}
-          </span>
-        )}
-        <span className="[grid-area:1/1]">
-        {o.format ? o.format(v, out, values) : <AnimatedNumber value={v} digits={o.digits ?? 2} />}
-        {o.unit && !o.format && <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span>}
+  // Word-valued outputs (classes, verdicts) use the UI font: mono is for numbers only (§3). A value that can run past
+  // ~18 characters sits on its own line under the label instead of squeezing into the right-hand column.
+  const words = !!o.format && /[A-Za-z]{3,}/.test(ghost ?? "");
+  const stacked = words && (ghost?.length ?? 0) > 18;
+  const valueCls = `${words ? "t-readout !font-sans" : "t-readout"} ${toneText(tone)}`;
+  const value = o.format ? (
+    o.format(v, out, values)
+  ) : (
+    <span className="whitespace-nowrap">
+      <AnimatedNumber value={v} digits={o.digits ?? 2} />
+      {o.unit && <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span>}
+    </span>
+  );
+  // An invisible copy of the longest value shares the value's grid cell, so the row is always as tall as its tallest
+  // state: a class name that changes mid-drag never makes the page jump (§1.5).
+  const cell = (cls: string) => (
+    <span className={`grid min-w-0 break-words ${cls} ${valueCls}`}>
+      {ghost && (
+        <span className={`invisible [grid-area:1/1] ${words ? "" : "whitespace-nowrap"}`} aria-hidden>
+          {ghost}
         </span>
-      </span>
+      )}
+      <span className="[grid-area:1/1]">{value}</span>
+    </span>
+  );
+  if (stacked)
+    return (
+      <div className="ds-readout-row !flex-col !items-stretch !gap-1">
+        <span className="t-label text-fg-2">{o.label}</span>
+        {cell("text-left")}
+      </div>
+    );
+  return (
+    <div className="ds-readout-row" style={{ alignItems: "baseline" }}>
+      <span className="t-label text-fg-2 min-w-0 break-words">{o.label}</span>
+      {cell("text-right shrink-0 max-w-[60%]")}
     </div>
   );
 }

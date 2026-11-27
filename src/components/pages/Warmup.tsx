@@ -121,13 +121,13 @@ export function Warmup() {
           <h1 className="t-display text-fg">Daily Warmup</h1>
           <p className="t-secondary text-left">Leitner spaced repetition: concepts you missed return after 1, 2, 4, 7, 15 and 30 days as you answer them correctly. A miss sends a concept back to box 1.</p>
           <div className="grid grid-cols-2 gap-3 text-left">
-            <div className="rounded-[12px] bg-danger-tint p-4">
-              <div className="t-label text-danger-tint-text" style={{ fontWeight: 700 }}>Due today</div>
-              <div className="readout t-display text-danger-tint-text mt-1">{due}</div>
+            <div className="rounded-[12px] bg-surface-2 p-4">
+              <div className="t-label text-fg-2">Due today</div>
+              <div className={`readout t-display mt-1 ${due > 0 ? "text-danger-tint-text" : "text-fg"}`}>{due}</div>
             </div>
-            <div className="rounded-[12px] bg-action-tint p-4">
-              <div className="t-label text-action-tint-text" style={{ fontWeight: 700 }}>Tracked concepts</div>
-              <div className="readout t-display text-action-tint-text mt-1">{srsCount}</div>
+            <div className="rounded-[12px] bg-surface-2 p-4">
+              <div className="t-label text-fg-2">Tracked concepts</div>
+              <div className="readout t-display text-fg mt-1">{srsCount}</div>
             </div>
           </div>
           <div className="flex justify-center flex-wrap gap-2" role="img" aria-label="Leitner boxes: 1, 2, 4, 7, 15, 30 days">
@@ -138,7 +138,7 @@ export function Warmup() {
             ))}
           </div>
           {due === 0 && lessonsDone === 0 ? (
-            <p className="t-secondary">Nothing to review yet. Complete a lesson first — missed concepts and completed stages feed this queue.</p>
+            <p className="t-secondary text-left">Nothing to review yet. Complete a lesson first — missed concepts and completed stages feed this queue.</p>
           ) : (
             <button type="button" onClick={start} className="btn-3d tone-tech w-full">
               Start warmup
