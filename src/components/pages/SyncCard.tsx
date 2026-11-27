@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { Download, Upload, Smartphone } from "lucide-react";
-import { downloadProgress, importProgress } from "@/lib/sync";
-import { toast } from "sonner";
+import { downloadProgress } from "@/lib/sync";
+import { restoreFromFile } from "@/lib/restore";
 
 /** Export / import progress JSON so XP, streaks, Codex unlocks and SRS move between PC and phone. */
 export function SyncCard() {
@@ -11,17 +11,8 @@ export function SyncCard() {
   const [mode, setMode] = useState<"merge" | "replace">("merge");
 
   const onFile = async (f: File | undefined) => {
-    if (!f) return;
-    try {
-      const text = await f.text();
-      if (mode === "replace" && !window.confirm("Replace ALL progress on this device with the imported file?")) return;
-      const r = importProgress(text, mode);
-      toast.success(`Imported (${mode}): ${r.xp} XP, ${r.lessons} lessons, ${r.codex} Codex sheets.`);
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      if (fileRef.current) fileRef.current.value = "";
-    }
+    await restoreFromFile(f, mode);
+    if (fileRef.current) fileRef.current.value = "";
   };
 
   return (

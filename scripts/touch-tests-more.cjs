@@ -73,12 +73,23 @@ module.exports = async function more(t) {
     const page = await ctx.newPage();
     const cdp = await ctx.newCDPSession(page);
     await page.goto(`${base}/`, { waitUntil: "networkidle" });
-    ok("home: 'Restore from backup' shown when progress is empty", (await page.getByRole("link", { name: /Restore from backup/ }).count()) === 1);
+    ok("home: no restore text link in the hero (15.5f)", (await page.getByRole("link", { name: /Restore from backup/ }).count()) === 0);
+    {
+      // 15.5f: the profile (rank) button opens Backup & restore with Export, Restore and Repair app as buttons
+      const pb = await page.getByRole("button", { name: /Profile menu/ }).boundingBox();
+      await touchTap(cdp, pb.x + pb.width / 2, pb.y + pb.height / 2);
+      await page.waitForTimeout(400);
+      const dlg = page.getByRole("dialog");
+      const rows = await Promise.all([/Export progress/, /Restore from backup/, /Repair app/].map((n) => dlg.getByRole("button", { name: n }).count()));
+      ok("profile menu: Export, Restore, Repair app rows", rows.every((c) => c === 1), rows.join(","));
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(300);
+    }
     const seed = JSON.stringify({ state: { xp: 40, xpByDay: {}, streak: 1, longestStreak: 1, lastActiveDay: "2026-11-25", heartsLost: 0, lessons: { "u0-l1": { done: true, best: 3, completedAt: 1 } }, attempts: {}, codex: {}, formulas: {}, srs: {}, warmupDoneDay: null, exams: [], freeRoam: false }, version: 2 });
     await page.evaluate((s) => localStorage.setItem("strata-progress-v1", s), seed);
     await page.evaluate(async () => { const c = await caches.open("strata-test-old"); await c.put("/x", new Response("x")); const d = await caches.open("other-app"); await d.put("/y", new Response("y")); });
     await page.goto(`${base}/`, { waitUntil: "networkidle" });
-    ok("home: no restore link once progress exists", (await page.getByRole("link", { name: /Restore from backup/ }).count()) === 0);
+    ok("home: still no restore link once progress exists", (await page.getByRole("link", { name: /Restore from backup/ }).count()) === 0);
     await page.goto(`${base}/profile/`, { waitUntil: "networkidle" });
     await page.waitForTimeout(400);
     const btn = page.getByRole("button", { name: /Repair app/ });

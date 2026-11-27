@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import { motion, useAnimationControls } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
-import { Flame, Zap, Map, BookMarked, Dumbbell, GraduationCap, Calculator, FlaskConical, ArrowLeftRight, KeyRound, Volume2, VolumeX, Sun, Moon, MonitorSmartphone } from "lucide-react";
+import { Flame, Zap, Map, BookMarked, Dumbbell, GraduationCap, Calculator, FlaskConical, KeyRound, Volume2, VolumeX, Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { useStrata, liveStreak } from "@/lib/store";
 import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { setInspector } from "@/lib/inspector";
 import { ReportFlag } from "./InspectorKit";
+import { ProfileMenu } from "./ProfileMenu";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import type { ReactNode } from "react";
 import { tactilePress } from "@/lib/motion";
@@ -170,14 +171,7 @@ export function TopBar() {
           <span className="hidden sm:inline-flex">
             <ThemeToggle />
           </span>
-          <Tip label={"Export / import progress"}>
-      <Link href="/profile/#sync" aria-label="Export or import progress" className="hidden sm:flex w-11 h-11 rounded-xl items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100">
-            <ArrowLeftRight size={17} />
-          </Link>
-    </Tip>
-          <Link href="/profile" title={`Profile · ${rank.title}`} aria-label={`Profile, rank ${rank.title}`} className="ml-0.5 flex items-center justify-center w-11 h-11 rounded-full bg-action text-white text-[14px] font-extrabold readout">
-            {["T", "OM", "AM", "2C", "1C"][index]}
-          </Link>
+          <ProfileMenu badge={["T", "OM", "AM", "2C", "1C"][index]} rankTitle={rank.title} />
         </div>
       </div>
     </header>
