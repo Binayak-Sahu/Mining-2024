@@ -18,7 +18,7 @@ const RANKS = [
 ];
 
 /** Ladder names short enough for 14 px labels (the readout keeps the full name). */
-const SHORT = ["Peat", "Lignite", "Sub-bituminous", "HV bituminous", "MV bituminous", "LV bituminous", "Semi-anthr.", "Anthracite"];
+const SHORT = ["Peat", "Lignite", "Sub-bitum.", "HV bitum.", "MV bitum.", "LV bitum.", "Semi-anthr.", "Anthracite"];
 /** §5.6d frame: burial column x 32–88 (lesson pins 1 and 2 sit on it), depth scale y 30–210, ladder x 186 (pin 3 on Anthracite). */
 const CR = { top: 30, bottom: 210, x0: 32, x1: 88, lx: 186, lw: 26, bandH: 180 / 8 };
 const crY = (D: number) => CR.top + (D / 8) * (CR.bottom - CR.top);

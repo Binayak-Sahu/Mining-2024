@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
@@ -94,7 +94,8 @@ export const pitSim: SimDef = {
         <rect x={116} y={ly - 14} width={16} height={16} rx={3} fill={GREYS.deep} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
         <T x={138} y={ly} fill={ON_LIGHT}>Coal</T>
         <g data-state={ok ? "met" : "unmet"}>
-          <SvgTex x={376} y={ly} tex={ok ? "\\mathrm{SR}\\le\\mathrm{BESR}" : "\\mathrm{SR}>\\mathrm{BESR}"} size={18} anchor="end" color={ok ? OK_TEXT : BAD_TEXT} />
+          <rect x={246} y={ly - 22} width={130} height={32} rx={16} style={{ fill: ok ? OK_LIGHT : BAD_LIGHT }} />
+          <SvgTex x={361} y={ly - 1} tex={ok ? "\\mathrm{SR}\\le\\mathrm{BESR}" : "\\mathrm{SR}>\\mathrm{BESR}"} size={18} anchor="end" color={ON_LIGHT} />
         </g>
       </g>
     );
