@@ -65,7 +65,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u8-bowditch` | U8 | unsure: traverse spans ~49% of stage width (moving it would shift lesson pins A and C) and at angular/tape error maxima the lines run under the legend box | exact (min, default, objective-met) | Closed traverse — misclosure and Bowditch adjustment |
 | `u8-weisbach` | U8 | done-v2 | exact (min, default, objective-met) | Shaft plumbing — Weisbach triangle error control |
 | `u8-bond` | U8 | done-v2 | exact (min, default, objective-met) | Comminution energy — Bond's third theory |
-| `u8-wash` | U8 | todo | — | Coal washability — cut-point, yield, ash and near-gravity material |
+| `u8-wash` | U8 | done-v2 | exact (min, default, objective-met) | Coal washability — cut-point, yield, ash and near-gravity material |
 | `u8-earth` | U8 | done-v2 | exact (min, default, objective-met) | Earth fault on a UG feeder — restricted neutral & earth-leakage relay |
 | `u8-koepe` | U8 | todo | — | Koepe friction winder — rope slip check |
 | `u8-flot` | U8 | todo | — | Froth flotation circuit — reagents, aeration, grade–recovery |

@@ -385,7 +385,7 @@ export const washSim: SimDef = {
     { key: "cls", label: "Ease of washing (Bird)", format: (v) => DIFF[v], tone: (v) => (v <= 1 ? "ok" : v <= 3 ? "warn" : "crit") },
   ],
   caption: "Float–sink data of a high-ash Indian coking coal (head ash ≈ 30 %). Ep = 0 is an ideal separator; real dense-medium cyclones achieve Ep ≈ 0.02–0.05.",
-  v3: { viewH: 290 },
+  v3: { viewH: 300 },
   render: (p, o) => {
     const cum: [number, number][] = [];
     let m = 0;
