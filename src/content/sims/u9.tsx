@@ -188,7 +188,7 @@ export const cutoffSim: SimDef = {
   ],
   caption: "Lognormal grade distribution; each tonne above cut-off is mined and processed. Lane's theory raises the cut-off above break-even when the mill (or mine/market) is the bottleneck and time value matters.",
   handles: [{ key: "c", axis: "x", at: (p) => [40 + (p.c / 5) * 320, 204], toValue: (x) => ((x - 40) / 320) * 5, color: "#0F172A" }],
-  v3: { viewH: 284 },
+  v3: { viewH: 300 },
   render: (p, o) => {
     const sx = v3scale(0, 5, 40, 360);
     const sy = v3scale(0, 10, 204, 14);
@@ -205,18 +205,18 @@ export const cutoffSim: SimDef = {
         <polyline points={v3curve(grade, 0.01, 5, 80, sx, sy)} fill="none" style={{ stroke: INK }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" strokeLinejoin="round" />
         <line x1={sx(p.c)} x2={sx(p.c)} y1={sy(0)} y2={sy(10)} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
         <Dot x={sx(p.c)} y={sy(o.tonnes)} ring />
-        <T x={beC} y={226} anchor="middle">
+        <T x={beC} y={244} anchor="middle">
           Break-even
         </T>
-        <T x={360} y={226} anchor="end">
+        <T x={360} y={244} anchor="end">
           Cut-off g/t
         </T>
-        <line x1={40} x2={62} y1={245} y2={245} style={{ stroke: U.ink }} strokeWidth={2} strokeLinecap="round" />
-        <T x={68} y={250}>
+        <line x1={40} x2={62} y1={269} y2={269} style={{ stroke: U.ink }} strokeWidth={2} strokeLinecap="round" />
+        <T x={68} y={274}>
           Ore (Mt)
         </T>
-        <line x1={170} x2={192} y1={245} y2={245} style={{ stroke: INK }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />
-        <T x={198} y={250}>
+        <line x1={170} x2={192} y1={269} y2={269} style={{ stroke: INK }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />
+        <T x={198} y={274}>
           Grade (g/t)
         </T>
       </g>
