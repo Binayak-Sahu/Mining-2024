@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
@@ -42,7 +42,7 @@ export const kirschSim: SimDef = {
     { key: "roofFail", label: "Roof", format: (v, o) => (v === 0 ? "Stable" : o.roof < 0 ? (v === 2 ? "Tensile failure" : "In tension") : v === 2 ? "Shear / guttering" : "High compression"), tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
   // §5.6d redraw (v3e): legacy 0..400 × 0..240 box kept, so the lesson pins still land on the crown, wall, far-field arrows and legend.
-  v3: { viewH: 250, formula: "\\sigma_\\theta = p\\,[(1+K) + 2(1-K)\\cos 2\\theta]" },
+  v3: { viewH: 250, formula: () => "\\sigma_\\theta = p\\,[(1+K) + 2(1-K)\\cos 2\\theta]" },
   render: (p, o) => {
     const cx = 140;
     const cy = 136;

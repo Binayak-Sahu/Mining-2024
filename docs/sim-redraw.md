@@ -27,18 +27,18 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u5-dragline` | U5 | done-v2 | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
 | `u5-match` | U5 | unsure: pin 4 Match factor (150,24) sits over empty stage | exact (min, default, objective-met) | Truck–shovel match factor and queueing |
 | `u5-haul` | U5 | unsure: pin Total resistance (260,22) in the top inset | exact (min, default, objective-met) | Haul road physics — resistance, rimpull, speed and super-elevation |
-| `u5-dump` | U5 | todo | — | Multi-deck waste dump — overall slope and stability |
+| `u5-dump` | U5 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Multi-deck waste dump — overall slope and stability |
 | `u10-roles` | U10 | unsure: pins 1 (290,22) and 4 (385,150) outside the inset | exact (min, default, objective-met) | Statutory architecture & duty explorer |
 | `u10-gassy` | U10 | done-v2 | exact (min, default, objective-met) | Degree of gassiness classifier (coal seams) |
-| `u10-risk` | U10 | todo | — | Risk matrix — hazard rating and hierarchy of controls |
+| `u10-risk` | U10 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Risk matrix — hazard rating and hierarchy of controls |
 | `u10-fta` | U10 | unsure: pin top event (290,20) above the inset; golden objective-met state not found (pre-existing) | exact (min, default, objective-met) | Fault tree — firedamp explosion |
 | `u10-scba` | U10 | unsure: pin Turn-around pressure (380,170) outside the inset | exact (min, default, objective-met) | Rescue mission planner — closed-circuit oxygen breathing apparatus |
-| `u4-drill` | U4 | todo | — | Rock drilling — percussive, DTH and rotary penetration |
-| `u4-explosive` | U4 | todo | — | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
-| `u4-kuzram` | U4 | todo | — | Kuz-Ram blast optimiser — bench round fragmentation |
+| `u4-drill` | U4 | unsure: pin 1 Top-hammer (92,19) above the inset | exact (min, default, objective-met) | Rock drilling — percussive, DTH and rotary penetration |
+| `u4-explosive` | U4 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
+| `u4-kuzram` | U4 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Kuz-Ram blast optimiser — bench round fragmentation |
 | `u4-delay` | U4 | todo | — | NONEL firing-wave visualiser — spot the cut-offs |
 | `u4-vibe` | U4 | todo | — | Scaled distance — PPV, DGMS limits and airblast |
-| `u3-kirsch` | U3 | todo | — | Kirsch solution — boundary stress around an opening |
+| `u3-kirsch` | U3 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Kirsch solution — boundary stress around an opening |
 | `u3-failure` | U3 | todo | — | Failure envelopes — Mohr–Coulomb vs Hoek–Brown (σ1–σ3 space) |
 | `u3-rmr` | U3 | todo | — | RMR (Bieniawski 1989) scorer with Q and GSI |
 | `u3-bolt` | U3 | todo | — | Roof bolting — suspension and beam-building |

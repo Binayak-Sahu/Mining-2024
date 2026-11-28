@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, Meter } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_PALE, LBL, Dot, curve, clamp as vclamp, scale, hue } from "@/components/sim/v3";
+import { OK_LIGHT, BAD_PALE, LBL, Dot, curve, scale } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, hue } from "@/components/sim/v3";
 
@@ -84,7 +84,7 @@ export const drillSim: SimDef = {
             <rect key={i} x={90} y={holeTop + (i + 1) * rodLen - 3} width={10} height={6} rx={1.5} fill={ORG.mid} />
           ))}
         {p.m === 0 && (
-          <T x={114} y={52}>
+          <T x={126} y={52}>
             Joints
           </T>
         )}
@@ -106,7 +106,7 @@ export const drillSim: SimDef = {
         ) : (
           <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 9}`} style={{ fill: GREYS.light, stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
         )}
-        <T x={114} y={Math.min(holeBot + 6, 218)} fill={ON_LIGHT}>
+        <T x={126} y={Math.min(holeBot + 6, 218)} fill={ON_LIGHT}>
           {`${p.depth} m`}
         </T>
         {bars.map((b, i) => {

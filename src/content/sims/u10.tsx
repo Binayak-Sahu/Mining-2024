@@ -213,10 +213,10 @@ export const riskSim: SimDef = {
   ],
   caption: "Hierarchy of controls: elimination > substitution > engineering > administrative > PPE. PPE only reduces consequence for the wearer; it never removes the hazard.",
   // §5.6d redraw: matrix 70..210 × 24..164 (cell 28); pins (210,37) and (74,190) keep their features, the controls ladder pin (388,143) is outside the 24-unit inset.
-  v3: { viewH: 260 },
+  v3: { viewH: 270 },
   handles: [
-    { key: "C", axis: "x", at: (p) => [RM.x0 + (p.C - 1) * RM.s + RM.s / 2, 172], toValue: (x) => (x - RM.x0 - RM.s / 2) / RM.s + 1 },
-    { key: "L", axis: "y", at: (p) => [70, RM.y0 + (5 - p.L) * RM.s + RM.s / 2], toValue: (y) => 5 - (y - RM.y0 - RM.s / 2) / RM.s },
+    { key: "C", axis: "x", at: (p) => [RM.x0 + (p.C - 1) * RM.s + RM.s / 2, 170], toValue: (x) => (x - RM.x0 - RM.s / 2) / RM.s + 1 },
+    { key: "L", axis: "y", at: (p) => [66, RM.y0 + (5 - p.L) * RM.s + RM.s / 2], toValue: (y) => 5 - (y - RM.y0 - RM.s / 2) / RM.s },
   ],
   render: (p, o) => {
     const { s, x0, y0 } = RM;
@@ -238,22 +238,17 @@ export const riskSim: SimDef = {
         {cells}
         {[1, 2, 3, 4, 5].map((v) => (
           <g key={v}>
-            <T x={cx(v) - 1} y={202} anchor="middle">
+            <T x={cx(v) - 1} y={208} anchor="middle">
               {String(v)}
             </T>
-            <T x={56} y={cy(v) + 5} anchor="middle">
+            <T x={36} y={cy(v) + 5} anchor="middle">
               {String(v)}
             </T>
           </g>
         ))}
-        <T x={x0 + 2.5 * s - 1} y={230} anchor="middle">
-          Consequence
+        <T x={24} y={241}>
+          Likelihood ↑ · Consequence →
         </T>
-        <g transform={`rotate(-90 38 ${y0 + 2.5 * s})`}>
-          <T x={38} y={y0 + 2.5 * s} anchor="middle">
-            Likelihood
-          </T>
-        </g>
         {moved && <Stream d={`M${cx(p.C)} ${cy(p.L)} Q ${(cx(p.C) + cx(o.C2)) / 2 + 14} ${(cy(p.L) + cy(o.L2)) / 2 - 14} ${cx(o.C2)} ${cy(o.L2)}`} color="var(--u-ink)" width={2} speed={0.5} />}
         <circle cx={cx(p.C)} cy={cy(p.L)} r={11} fill="none" style={{ stroke: INK }} strokeWidth={2.5} />
         <g data-state={o.br >= 2 ? "unsafe" : "safe"}>
@@ -263,19 +258,19 @@ export const riskSim: SimDef = {
           const y = y0 + i * RM.s;
           return (
             <g key={c.name}>
-              <rect x={218} y={y + 5} width={14} height={14} rx={3} fill={i === sel ? U.deep : "none"} style={{ stroke: i === sel ? U.deep : INK3 }} strokeWidth={1.5} />
-              <T x={236} y={y + 20} fill={i === sel ? INK : INK2} weight={i === sel ? 800 : 600}>
+              <rect x={216} y={y + 5} width={14} height={14} rx={3} fill={i === sel ? U.deep : "none"} style={{ stroke: i === sel ? U.deep : INK3 }} strokeWidth={1.5} />
+              <T x={234} y={y + 20} fill={i === sel ? INK : INK2} weight={i === sel ? 800 : 600}>
                 {c.name.split(" (")[0]}
               </T>
             </g>
           );
         })}
-        <circle cx={225} cy={192} r={9} fill="none" style={{ stroke: INK }} strokeWidth={2.5} />
-        <T x={240} y={198}>
+        <circle cx={225} cy={190} r={9} fill="none" style={{ stroke: INK }} strokeWidth={2.5} />
+        <T x={240} y={196}>
           Inherent
         </T>
-        <circle cx={225} cy={222} r={7} style={{ fill: INK2 }} />
-        <T x={240} y={228}>
+        <circle cx={225} cy={213} r={7} style={{ fill: INK2 }} />
+        <T x={240} y={219}>
           Residual
         </T>
       </g>
