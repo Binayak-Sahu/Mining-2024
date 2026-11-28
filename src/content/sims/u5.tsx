@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, LBL, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
+import { T, LBL, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, OK, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
@@ -478,44 +478,70 @@ export const dumpSim: SimDef = {
     { key: "fos", label: "FOS (infinite slope at z = H/2)", digits: 2, tone: (v) => (v >= 1.2 ? "ok" : v >= 1 ? "warn" : "crit") },
   ],
   caption: "Simplified effective-stress infinite-slope check of the overall dump profile (γ = 18 kN/m³). Detailed design uses limit-equilibrium circular/non-circular analyses including the foundation.",
+  // §5.6d redraw (v3.2): same toe (40, 215) and scale as the legacy section, so hotspots stay put.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const k = Math.min(300 / (o.horiz + 20), 170 / (o.Ht + 5));
     const toeX = 40;
     const base = 215;
-    const pts: [number, number][] = [[toeX, base]];
+    const pp: [number, number][] = [[toeX, base]];
     let x = toeX;
     let y = base;
     for (let i = 0; i < p.n; i++) {
       x += (p.h / Math.tan(rad(p.a))) * k;
       y -= p.h * k;
-      pts.push([x, y]);
+      pp.push([x, y]);
       if (i < p.n - 1) {
         x += p.b * k;
-        pts.push([x, y]);
+        pp.push([x, y]);
       }
     }
-    pts.push([390, y], [390, base]);
-    const col = o.fos >= 1.2 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
+    const crest = pp[pp.length - 1];
+    const safe = o.fos >= 1.2;
+    const col = safe ? OK : BAD;
+    const poly = [...pp, [400, y], [400, base]] as [number, number][];
+    // labels on the left, with 1.5 px leaders to the part they name
+    const faceT: [number, number] = [(pp[0][0] + pp[1][0]) / 2, (pp[0][1] + pp[1][1]) / 2];
+    const bermT: [number, number] = p.n > 1 ? [(pp[1][0] + pp[2][0]) / 2, pp[1][1]] : [(crest[0] + 376) / 2, crest[1]];
+    const ovT: [number, number] = [(toeX + crest[0]) / 2, (base + crest[1]) / 2];
+    const lead = (lx: number, ly: number, t: [number, number]) => (
+      <line x1={lx} y1={ly} x2={t[0]} y2={t[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+    );
+    // water label on the top deck, above the line when it fits
+    const wx = (crest[0] + 376) / 2;
+    const wLine = base - o.Ht * k * p.ru * 1.6 * ((wx - toeX) / (390 - toeX));
+    const wAbove = wLine - 8 - 18 - 8 >= crest[1];
+    const wY = wAbove ? wLine - 8 : wLine + 26;
+    const showW = p.ru > 0 && 376 - crest[0] >= textW("Water") + 12 && wY <= base - 8;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <rect x={0} y={base} width={400} height={25} fill={MAT.soil} />
-        <g className={o.fos < 1 ? "shake" : undefined}>
-          <polygon points={polyline(pts)} fill={MAT.goaf} stroke={C.ink} />
-          <polygon points={polyline(pts)} fill={MAT.rockShade} />
+        <clipPath id="u5-dump-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5-dump-clip)">
+          <rect x={0} y={base} width={400} height={35} fill={GREYS.light} />
+          <g className={o.fos < 1 ? "shake" : undefined}>
+            <polygon points={pts(poly)} style={{ fill: U.light, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+          </g>
+          {o.fos < 1 && (
+            <g data-state="unsafe">
+              <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: crest[0] - 10, y: crest[1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + crest[0]) / 2, y: (base + crest[1]) / 2, len: 30, angle: 150, seed: 7 }]} color={ON_LIGHT} width={2} />
+            </g>
+          )}
+          <line data-state={safe ? "safe" : "unsafe"} x1={toeX} y1={base} x2={crest[0]} y2={crest[1]} style={{ stroke: col }} strokeWidth={2.5} strokeDasharray="6 4" strokeLinecap="round" />
+          {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color="var(--u-ink)" width={2} speed={0.3} />}
         </g>
-        {o.fos < 1 && <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: pts[pts.length - 3][0] - 10, y: pts[pts.length - 3][1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + pts[pts.length - 3][0]) / 2, y: (base + pts[pts.length - 3][1]) / 2, len: 30, angle: 150, seed: 7 }]} color="#7F1D1D" width={2} />}
-        <line x1={toeX} y1={base} x2={pts[pts.length - 3][0]} y2={pts[pts.length - 3][1]} stroke={col} strokeWidth={2} strokeDasharray="6 4" />
-        <Txt x={toeX + 30} y={base - 6} size={9} weight={800} fill={col}>
-          {`overall ${o.bo.toFixed(1)}°`}
-        </Txt>
-        <Txt x={20} y={26} size={16} weight={900} mono fill={col}>
-          {`FOS ${o.fos.toFixed(2)}`}
-        </Txt>
-        <Txt x={20} y={42} size={9} mono>
-          {`${p.n} × ${p.h} m decks · berms ${p.b} m`}
-        </Txt>
-        {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color={C.tech} width={2} speed={0.3} />}
+        {showW && (
+          <T x={wx} y={wY} anchor="middle" fill={ON_LIGHT}>
+            Water
+          </T>
+        )}
+        <T x={24} y={44}>Overall slope</T>
+        {lead(24 + textW("Overall slope") + 6, 38, ovT)}
+        <T x={24} y={74}>Berm</T>
+        {lead(24 + textW("Berm") + 6, 68, bermT)}
+        <T x={24} y={104}>Deck face</T>
+        {lead(24 + textW("Deck face") + 6, 98, faceT)}
       </g>
     );
   },

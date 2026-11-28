@@ -31,8 +31,8 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u10-roles` | U10 | unsure: pins 1 (290,22) and 4 (385,150) outside the inset | exact (min, default, objective-met) | Statutory architecture & duty explorer |
 | `u10-gassy` | U10 | done-v2 | exact (min, default, objective-met) | Degree of gassiness classifier (coal seams) |
 | `u10-risk` | U10 | todo | — | Risk matrix — hazard rating and hierarchy of controls |
-| `u10-fta` | U10 | todo | — | Fault tree — firedamp explosion |
-| `u10-scba` | U10 | todo | — | Rescue mission planner — closed-circuit oxygen breathing apparatus |
+| `u10-fta` | U10 | unsure: pin top event (290,20) above the inset; golden objective-met state not found (pre-existing) | exact (min, default, objective-met) | Fault tree — firedamp explosion |
+| `u10-scba` | U10 | unsure: pin Turn-around pressure (380,170) outside the inset | exact (min, default, objective-met) | Rescue mission planner — closed-circuit oxygen breathing apparatus |
 | `u4-drill` | U4 | todo | — | Rock drilling — percussive, DTH and rotary penetration |
 | `u4-explosive` | U4 | todo | — | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
 | `u4-kuzram` | U4 | todo | — | Kuz-Ram blast optimiser — bench round fragmentation |

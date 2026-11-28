@@ -1,7 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, clamp, SANS, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, textW } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, textW, OK, BAD, OK_LIGHT, BAD_LIGHT } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Statutory hierarchy & duties explorer ---------------- */
 
@@ -192,6 +193,7 @@ export function risk(p: Record<string, number>) {
 }
 
 const BANDS = ["Low", "Medium", "High", "Very high"];
+const RM = { x0: 76, y0: 24, s: 27 };
 
 export const riskSim: SimDef = {
   id: "u10-risk",
@@ -210,59 +212,72 @@ export const riskSim: SimDef = {
     { key: "br", label: "Residual band", format: (v) => BANDS[v], tone: (v) => (["ok", "warn", "crit", "crit"] as const)[v] },
   ],
   caption: "Hierarchy of controls: elimination > substitution > engineering > administrative > PPE. PPE only reduces consequence for the wearer; it never removes the hazard.",
+  // §5.6d redraw: matrix 70..210 × 24..164 (cell 28); pins (210,37) and (74,190) keep their features, the controls ladder pin (388,143) is outside the 24-unit inset.
+  v3: { viewH: 260 },
   handles: [
-    { key: "C", axis: "x", at: (p) => [40 + (p.C - 1) * 34 + 16, 196], toValue: (x) => (x - 40 - 16) / 34 + 1, color: "#EF4444" },
-    { key: "L", axis: "y", at: (p) => [24, 20 + (5 - p.L) * 34 + 16], toValue: (y) => 5 - (y - 20 - 16) / 34, color: "#EF4444" },
+    { key: "C", axis: "x", at: (p) => [RM.x0 + (p.C - 1) * RM.s + RM.s / 2, 172], toValue: (x) => (x - RM.x0 - RM.s / 2) / RM.s + 1 },
+    { key: "L", axis: "y", at: (p) => [70, RM.y0 + (5 - p.L) * RM.s + RM.s / 2], toValue: (y) => 5 - (y - RM.y0 - RM.s / 2) / RM.s },
   ],
   render: (p, o) => {
-    const s = 34;
-    const x0 = 40;
-    const y0 = 20;
-    const col = (r: number) => (r <= 4 ? "#86efac" : r <= 9 ? "#fde68a" : r <= 16 ? "#fdba74" : "#fca5a5");
+    const { s, x0, y0 } = RM;
+    const fillOf = (r: number) => (r <= 4 ? GREYS.light : r <= 9 ? U.light : r <= 16 ? U.mid : U.deep);
+    const cx = (Cc: number) => x0 + (Cc - 1) * s + s / 2;
+    const cy = (L: number) => y0 + (5 - L) * s + s / 2;
+    const moved = p.C !== o.C2 || p.L !== o.L2;
+    const sel = CONTROLS.length - 1 - p.ctrl; // ladder row index, top = Elimination
     const cells = [];
     for (let L = 1; L <= 5; L++)
       for (let Cc = 1; Cc <= 5; Cc++)
         cells.push(
           <g key={`${L}${Cc}`}>
-            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={s - 2} rx={4} fill={col(L * Cc)} />
-            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={10} rx={4} fill={MAT.glass} />
-            <Txt x={x0 + (Cc - 1) * s + s / 2 - 1} y={y0 + (5 - L) * s + s / 2 + 3} size={8} anchor="middle" mono fill={C.slate}>
-              {L * Cc}
-            </Txt>
+            <rect x={x0 + (Cc - 1) * s} y={y0 + (5 - L) * s} width={s - 2} height={s - 2} rx={4} fill={fillOf(L * Cc)} />
           </g>,
         );
-    const cx = (Cc: number) => x0 + (Cc - 1) * s + s / 2 - 1;
-    const cy = (L: number) => y0 + (5 - L) * s + s / 2 - 1;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
         {cells}
-        <Txt x={x0 + 2.5 * s} y={y0 + 5 * s + 14} size={8} anchor="middle" fill={C.slate} weight={700}>
-          CONSEQUENCE →
-        </Txt>
-        <Txt x={12} y={y0 + 2.5 * s} size={8} fill={C.slate} weight={700}>
-          L
-        </Txt>
-        {(p.C !== o.C2 || p.L !== o.L2) && <Stream d={`M${cx(p.C)} ${cy(p.L)} Q ${(cx(p.C) + cx(o.C2)) / 2 + 16} ${(cy(p.L) + cy(o.L2)) / 2 - 16} ${cx(o.C2)} ${cy(o.L2)}`} color={C.tech} width={2} speed={0.5} />}
-        <circle cx={cx(p.C)} cy={cy(p.L)} r={12} fill="none" stroke={C.crit} strokeWidth={3} />
-        <circle cx={cx(o.C2)} cy={cy(o.L2)} r={9} fill="none" stroke={C.tech} strokeWidth={3.5} />
-        <circle cx={cx(o.C2)} cy={cy(o.L2)} r={11} fill="none" stroke="white" strokeWidth={1} />
-        <Txt x={235} y={40} size={10} weight={800}>
-          ○ inherent ({o.inh})
-        </Txt>
-        <Txt x={235} y={58} size={10} weight={800} fill={C.tech}>
-          ● residual ({o.res})
-        </Txt>
-        {CONTROLS.slice(1)
-          .reverse()
-          .map((c, i) => (
+        {[1, 2, 3, 4, 5].map((v) => (
+          <g key={v}>
+            <T x={cx(v) - 1} y={202} anchor="middle">
+              {String(v)}
+            </T>
+            <T x={56} y={cy(v) + 5} anchor="middle">
+              {String(v)}
+            </T>
+          </g>
+        ))}
+        <T x={x0 + 2.5 * s - 1} y={230} anchor="middle">
+          Consequence
+        </T>
+        <g transform={`rotate(-90 38 ${y0 + 2.5 * s})`}>
+          <T x={38} y={y0 + 2.5 * s} anchor="middle">
+            Likelihood
+          </T>
+        </g>
+        {moved && <Stream d={`M${cx(p.C)} ${cy(p.L)} Q ${(cx(p.C) + cx(o.C2)) / 2 + 14} ${(cy(p.L) + cy(o.L2)) / 2 - 14} ${cx(o.C2)} ${cy(o.L2)}`} color="var(--u-ink)" width={2} speed={0.5} />}
+        <circle cx={cx(p.C)} cy={cy(p.L)} r={11} fill="none" style={{ stroke: INK }} strokeWidth={2.5} />
+        <g data-state={o.br >= 2 ? "unsafe" : "safe"}>
+          <circle cx={cx(o.C2)} cy={cy(o.L2)} r={7} fill={o.br >= 2 ? BAD : OK} style={{ stroke: "#FFFFFF" }} strokeWidth={1.5} />
+        </g>
+        {[...CONTROLS.slice(1)].reverse().map((c, i) => {
+          const y = y0 + i * RM.s;
+          return (
             <g key={c.name}>
-              <rect x={235} y={80 + i * 22} width={150 - i * 14} height={18} rx={5} fill={p.ctrl === CONTROLS.length - 1 - i ? C.tech : "#e2e8f0"} filter={p.ctrl === CONTROLS.length - 1 - i ? "url(#f-shadow)" : undefined} />
-              <Txt x={240} y={93 + i * 22} size={8} weight={700} fill={p.ctrl === CONTROLS.length - 1 - i ? "white" : C.ink}>
+              <rect x={218} y={y + 5} width={14} height={14} rx={3} fill={i === sel ? U.deep : "none"} style={{ stroke: i === sel ? U.deep : INK3 }} strokeWidth={1.5} />
+              <T x={236} y={y + 20} fill={i === sel ? INK : INK2} weight={i === sel ? 800 : 600}>
                 {c.name.split(" (")[0]}
-              </Txt>
+              </T>
             </g>
-          ))}
+          );
+        })}
+        <circle cx={225} cy={192} r={9} fill="none" style={{ stroke: INK }} strokeWidth={2.5} />
+        <T x={240} y={198}>
+          Inherent
+        </T>
+        <circle cx={225} cy={222} r={7} style={{ fill: INK2 }} />
+        <T x={240} y={228}>
+          Residual
+        </T>
       </g>
     );
   },
@@ -297,66 +312,76 @@ export const ftaSim: SimDef = {
     { key: "top", label: "P(explosion) — AND gate", digits: 5, tone: (v) => (v <= 0.001 ? "ok" : v <= 0.01 ? "warn" : "crit") },
   ],
   caption: "OR: P = 1 − Π(1 − pᵢ). AND: P = Π pᵢ. Independent basic events assumed; probabilities per year.",
+  // §5.6 redraw (v3e): tree drawn top-down; gates sit under the lesson pins (AND ~200,62; OR ~105,122; basic events ~252,158).
+  v3: { viewH: 290 },
   render: (p, o) => {
-    const box = (x: number, y: number, w: number, label: string, val: number, color: string) => (
+    const box = (cx: number, y: number, w: number, label: string, main = false) => (
       <g>
-        <rect x={x - w / 2} y={y} width={w} height={30} rx={6} fill="white" stroke={color} strokeWidth={2} filter="url(#f-shadow)" />
-        <Txt x={x} y={y + 12} size={7.5} anchor="middle" weight={700}>
+        <rect x={cx - w / 2} y={y} width={w} height={28} rx={6} fill={U.light} style={{ stroke: main ? INK : INK3 }} strokeWidth={main ? 2.5 : 1.5} />
+        <T x={cx} y={y + 20} anchor="middle" fill={ON_LIGHT} weight={700}>
           {label}
-        </Txt>
-        <Txt x={x} y={y + 24} size={8} anchor="middle" mono fill={color}>
-          {val.toFixed(val < 0.01 ? 5 : 3)}
-        </Txt>
+        </T>
       </g>
     );
-    const gate = (x: number, y: number, kind: "AND" | "OR") =>
-      kind === "AND" ? (
-        <path d={`M ${x - 12} ${y + 20} L ${x - 12} ${y + 8} A 12 12 0 0 1 ${x + 12} ${y + 8} L ${x + 12} ${y + 20} Z`} fill={MAT.metal} stroke={C.ink} />
-      ) : (
-        <path d={`M ${x - 12} ${y + 20} Q ${x} ${y + 12} ${x + 12} ${y + 20} Q ${x + 10} ${y + 6} ${x} ${y} Q ${x - 10} ${y + 6} ${x - 12} ${y + 20} Z`} fill={MAT.metal} stroke={C.ink} />
-      );
+    const gate = (x: number, y: number, kind: "AND" | "OR") => (
+      <g>
+        {kind === "AND" ? (
+          <path d={`M ${x - 16} ${y + 24} L ${x - 16} ${y + 12} A 16 12 0 0 1 ${x + 16} ${y + 12} L ${x + 16} ${y + 24} Z`} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+        ) : (
+          <path d={`M ${x - 16} ${y + 24} Q ${x} ${y + 16} ${x + 16} ${y + 24} Q ${x + 14} ${y + 8} ${x} ${y} Q ${x - 14} ${y + 8} ${x - 16} ${y + 24} Z`} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+        )}
+        <T x={x + 24} y={y + 20}>
+          {kind}
+        </T>
+      </g>
+    );
+    const ln = (x1: number, y1: number, x2: number, y2: number) => <line x1={x1} y1={y1} x2={x2} y2={y2} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />;
     const leaves = [
-      { x: 40, l: "Vent fail", v: p.p1 },
-      { x: 105, l: "Outburst", v: p.p2 },
-      { x: 170, l: "Layering", v: p.p3 },
+      { x: 50, l: "Vent", v: p.p1 },
+      { x: 110, l: "Burst", v: p.p2 },
+      { x: 170, l: "Layer", v: p.p3 },
       { x: 230, l: "Spark", v: p.p4 },
-      { x: 295, l: "Friction", v: p.p5 },
-      { x: 360, l: "Shotfiring", v: p.p6 },
+      { x: 290, l: "Frict.", v: p.p5 },
+      { x: 350, l: "Shot", v: p.p6 },
     ];
+    const safe = o.top <= 0.001;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        {o.top > 0.001 && <rect x={135} y={6} width={130} height={30} rx={6} fill={C.crit} opacity={0.35} filter="url(#f-glow)" />}
-        {box(200, 6, 130, "FIREDAMP EXPLOSION", o.top, o.top <= 0.001 ? C.safe : C.crit)}
-        <line x1={200} y1={36} x2={200} y2={50} stroke={C.ink} />
-        {gate(200, 50, "AND")}
-        <line x1={105} y1={70} x2={295} y2={70} stroke={C.ink} />
-        <line x1={105} y1={70} x2={105} y2={80} stroke={C.ink} />
-        <line x1={295} y1={70} x2={295} y2={80} stroke={C.ink} />
-        {box(105, 80, 120, "Flammable mixture", o.gas, C.hazard)}
-        {box(295, 80, 120, "Ignition source", o.ign, C.hazard)}
-        {gate(105, 112, "OR")}
-        {gate(295, 112, "OR")}
-        <line x1={40} y1={140} x2={170} y2={140} stroke={C.ink} />
-        <line x1={230} y1={140} x2={360} y2={140} stroke={C.ink} />
-        <line x1={105} y1={132} x2={105} y2={140} stroke={C.ink} />
-        <line x1={295} y1={132} x2={295} y2={140} stroke={C.ink} />
+        <rect x={100} y={24} width={200} height={28} rx={6} data-state={safe ? "safe" : "unsafe"} fill={safe ? OK_LIGHT : BAD_LIGHT} style={{ stroke: INK }} strokeWidth={2.5} />
+        <T x={200} y={44} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Firedamp explosion
+        </T>
+        {ln(200, 52, 200, 56)}
+        {gate(200, 56, "AND")}
+        {ln(200, 80, 200, 86)}
+        {ln(105, 86, 295, 86)}
+        {ln(105, 86, 105, 92)}
+        {ln(295, 86, 295, 92)}
+        {box(105, 92, 150, "Flammable gas")}
+        {box(295, 92, 110, "Ignition")}
+        {ln(105, 120, 105, 122)}
+        {ln(295, 120, 295, 122)}
+        {gate(105, 122, "OR")}
+        {gate(295, 122, "OR")}
+        {ln(105, 146, 105, 156)}
+        {ln(295, 146, 295, 156)}
+        {ln(50, 156, 170, 156)}
+        {ln(230, 156, 350, 156)}
         {leaves.map((lf) => (
           <g key={lf.l}>
-            <line x1={lf.x} y1={140} x2={lf.x} y2={156} stroke={C.ink} />
-            <circle cx={lf.x} cy={176} r={20} fill="white" stroke={C.tech} strokeWidth={1.5} />
-            <circle cx={lf.x} cy={176} r={20} fill={lf.v > 0.1 ? C.crit : lf.v > 0.02 ? C.hazard : C.safe} opacity={0.12 + Math.min(lf.v, 0.5)} />
-            <Txt x={lf.x} y={174} size={7} anchor="middle" weight={700}>
+            {ln(lf.x, 156, lf.x, 168)}
+            <circle cx={lf.x} cy={190} r={22} fill={lf.v > 0.1 ? U.mid : U.light} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <T x={lf.x} y={196} anchor="middle" fill={ON_LIGHT} weight={700}>
+              {lf.v.toFixed(2)}
+            </T>
+            <T x={lf.x} y={228} anchor="middle">
               {lf.l}
-            </Txt>
-            <Txt x={lf.x} y={185} size={7} anchor="middle" mono fill={C.tech}>
-              {lf.v.toFixed(3)}
-            </Txt>
+            </T>
           </g>
         ))}
-        <Txt x={200} y={226} size={9} anchor="middle" fill={C.slate}>
-          AND gate: both branches must occur · OR gate: any one event suffices
-        </Txt>
+        <T x={200} y={256} anchor="middle">
+          AND: both needed · OR: any one
+        </T>
       </g>
     );
   },
@@ -401,68 +426,60 @@ export const scbaSim: SimDef = {
   ],
   caption: "Consumption = metabolic O₂ + 0.2 L/min allowance. The team turns back when the gauge reaches the turn-around pressure — whichever member reaches it first.",
   animated: true,
-  handles: [{ key: "travel", axis: "x", at: (p, o) => [30 + p.travel * (340 / Math.max(o.dur, 1)), 70], toValue: (x, p) => (x - 30) / (340 / Math.max(scbaSim.compute(p).dur, 1)), color: "#3B82F6" }],
+  v3: { viewH: 250 },
+  handles: [{ key: "travel", axis: "x", at: (p, o) => [30 + p.travel * (340 / Math.max(o.dur, 1)), 59], toValue: (x, p) => (x - 30) / (340 / Math.max(scbaSim.compute(p).dur, 1)), color: "#3B82F6" }],
   render: (p, o, t) => {
     const total = Math.max(o.dur, 1);
     const k = 340 / total;
     const tr = p.travel * k;
     const res = o.dur * (p.res / 100) * k;
     const wk = Math.max(0, o.workTime) * k;
+    const okWork = o.workTime >= 20;
+    const frac = clamp(o.turn / p.P, 0, 1);
+    const ang = Math.PI * (1 - frac); // gauge needle: 0 bar at left, charged pressure at right
+    const gx = 340, gy = 186, gr = 28;
+    const cyc = (t * 0.08) % 1;
+    const wx = 30 + cyc * (2 * tr + wk);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <Txt x={30} y={24} size={9} weight={700} fill={C.slate}>
-          MISSION OXYGEN BUDGET (minutes)
-        </Txt>
-        <rect x={30} y={34} width={340} height={30} rx={6} fill="#e2e8f0" />
-        <rect x={30} y={34} width={tr} height={30} fill={C.tech} />
-        <rect x={30 + tr} y={34} width={wk} height={30} fill={C.safe} />
-        <rect x={30 + tr + wk} y={34} width={tr} height={30} fill={C.tech} opacity={0.7} />
-        <rect x={370 - res} y={34} width={res} height={30} fill={C.crit} opacity={0.75} />
-        <Txt x={34} y={53} size={8} fill="white" weight={800}>
-          in
-        </Txt>
-        {wk > 30 && (
-          <Txt x={34 + tr} y={53} size={8} fill="white" weight={800}>
-            work
-          </Txt>
-        )}
-        <Txt x={366} y={53} size={8} anchor="end" fill="white" weight={800}>
-          reserve
-        </Txt>
-        <rect x={40} y={90} width={60} height={120} rx={28} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} filter="url(#f-shadow)" />
-        <rect x={62} y={80} width={16} height={12} rx={3} fill={MAT.steel} />
-        <rect x={48} y={90 + 120 * (1 - clamp(o.turn / p.P, 0, 1))} width={44} height={120 * clamp(o.turn / p.P, 0, 1) - 6} rx={18} fill={C.hazard} opacity={0.8} />
-        {[0, 1, 2].map((k) => {
-          const ph = (t * 0.5 + k / 3) % 1;
-          return <circle key={k} cx={70 + Math.sin(ph * 6 + k) * 5} cy={200 - ph * 100} r={2 + ph * 2} fill="white" opacity={0.6 * (1 - ph)} />;
-        })}
-        {(() => {
-          // rescuer marker walking the mission timeline: in → work → out
-          const cyc = (t * 0.08) % 1;
-          const x = 30 + cyc * (2 * tr + wk);
-          return (
-            <g transform={`translate(${x.toFixed(1)} 30)`}>
-              <circle cx={0} cy={-6} r={3} fill={C.ink} />
-              <path d="M0 -3 L0 3 M-3 0 L3 0 M0 3 L-2.5 7 M0 3 L2.5 7" stroke={C.ink} strokeWidth={1.4} />
-            </g>
-          );
-        })()}
-        <Txt x={70} y={226} size={8} anchor="middle" weight={700}>
-          O₂ cylinder
-        </Txt>
-        <Txt x={120} y={110} size={10} weight={800}>
-          {`${o.o2.toFixed(0)} L O₂ ÷ ${o.q.toFixed(1)} L/min = ${o.dur.toFixed(0)} min`}
-        </Txt>
-        <Txt x={120} y={140} size={14} weight={900} mono fill={o.workTime >= 20 ? C.safe : C.crit}>
-          {`work time ${Math.max(0, o.workTime).toFixed(0)} min`}
-        </Txt>
-        <Txt x={120} y={170} size={11} weight={800} mono fill={C.hazard}>
-          {`turn back at ${o.turn.toFixed(0)} bar`}
-        </Txt>
-        <Txt x={120} y={195} size={8} fill={C.slate}>
-          CO₂ absorbed by alkali (e.g. LiOH/soda lime); O₂ re-supplied.
-        </Txt>
+        {/* mission timeline: in, work, out, reserve */}
+        <rect x={30} y={40} width={340} height={38} rx={6} fill={GREYS.light} />
+        <rect x={30} y={40} width={tr} height={38} fill={U.mid} />
+        <rect x={30 + tr} y={40} width={wk} height={38} data-state={okWork ? "met" : "unmet"} fill={okWork ? OK_LIGHT : BAD_LIGHT} />
+        <rect x={30 + tr + wk} y={40} width={tr} height={38} fill={U.mid} />
+        <rect x={370 - res} y={40} width={res} height={38} fill={GREYS.deep} />
+        <rect x={30} y={40} width={340} height={38} rx={6} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <g transform={`translate(${wx.toFixed(1)} 40)`}>
+          <circle cx={0} cy={-9} r={3.5} style={{ fill: INK }} />
+          <path d="M0 -5 L0 3 M-4 -1 L4 -1 M0 3 L-3 9 M0 3 L3 9" style={{ stroke: INK }} strokeWidth={1.5} fill="none" strokeLinecap="round" />
+        </g>
+        {/* legend */}
+        <rect x={30} y={92} width={14} height={14} rx={3} fill={U.mid} />
+        <T x={50} y={106}>Travel</T>
+        <rect x={128} y={92} width={14} height={14} rx={3} data-state={okWork ? "met" : "unmet"} fill={okWork ? OK_LIGHT : BAD_LIGHT} />
+        <T x={148} y={106}>Work</T>
+        <rect x={218} y={92} width={14} height={14} rx={3} fill={GREYS.deep} />
+        <T x={238} y={106}>Reserve</T>
+        {/* cylinder, filled to the turn-around pressure */}
+        <rect x={62} y={122} width={16} height={10} rx={3} fill={GREYS.mid} />
+        <rect x={44} y={130} width={52} height={70} rx={20} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2.5} />
+        <clipPath id="u10scba-cyl">
+          <rect x={45} y={131} width={50} height={68} rx={19} />
+        </clipPath>
+        <g clipPath="url(#u10scba-cyl)">
+          <rect x={44} y={130 + 70 * (1 - frac)} width={52} height={70 * frac} fill={U.mid} />
+        </g>
+        <T x={70} y={220} anchor="middle">Cylinder</T>
+        {/* working formula and loop note */}
+        <SvgTex x={116} y={158} tex="t=V\,P/q" size={20} color="var(--text)" />
+        <T x={116} y={192} size={18}>Alkali absorbs CO₂</T>
+        <T x={116} y={216} size={18}>Cylinder adds O₂</T>
+        {/* turn-around gauge */}
+        <path d={`M ${gx - gr} ${gy} A ${gr} ${gr} 0 0 1 ${gx + gr} ${gy}`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={gx - gr} y1={gy} x2={gx + gr} y2={gy} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={gx} y1={gy} x2={gx + Math.cos(ang) * (gr - 4)} y2={gy - Math.sin(ang) * (gr - 4)} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <circle cx={gx} cy={gy} r={3.5} style={{ fill: INK }} />
+        <T x={gx + gr} y={220} anchor="end">Turn gauge</T>
       </g>
     );
   },

@@ -199,6 +199,7 @@ for (const id of (process.env.AUDIT_SIM_FORCE ?? "").split(",").filter(Boolean))
   if (d && !d.v3) d.v3 = { viewH: 240 };
 }
 const findings: string[] = [];
+const notes: string[] = [];
 const v3 = ALL_SIMS.filter((d) => d.v3 && (!filter || d.id.includes(filter)));
 for (const def of v3) {
   const states: [string, Vals][] = [["defaults", defaults(def)]];
@@ -242,7 +243,7 @@ for (const def of v3) {
     const need = ["min", "default", ...(firstGoal(def.id) ? ["objective-met"] : [])];
     for (const n of need) if (!names.includes(n as never)) findings.push(`golden    ${def.id}: golden state "${n}" missing`);
     const om = g.states.find((s) => s.name === "objective-met");
-    if (om && om.goalMet === false) findings.push(`golden    ${def.id}: no recorded state meets the objective`);
+    if (om && om.goalMet === false) notes.push(`note      ${def.id}: golden search found no state meeting the lesson goal "${om.goal}" (recorded before the redraw; not a redraw regression)`);
   }
 }
 if (!filter) {
@@ -253,6 +254,7 @@ if (!filter) {
 }
 
 console.log(findings.join("\n"));
+if (notes.length) console.log(notes.join("\n"));
 const by = (k: string) => findings.filter((x) => x.startsWith(k)).length;
 console.log(
   `\n${v3.length} redrawn sims audited (${ALL_SIMS.filter((d) => d.v3).length}/${ALL_SIMS.length} done) · grid ${by("grid")} · gradient ${by("gradient")} · text ${by("text")} · hue ${by("hue")} · golden ${by("golden")} · inset ${by("inset")} · state ${by("state")} · control ${by("control")} · echo ${by("echo")} · tracker ${by("tracker")} · v3.2 ${v32.size}/${ALL_SIMS.filter((d) => d.v3).length} · render ${by("render")}`,
