@@ -10,21 +10,21 @@ Status: `todo` or `done`. Golden: the result of `test:golden` after the redraw (
 
 | Sim | Unit | Status | Golden | Title |
 |---|---|---|---|---|
-| `u7-coward` | U7 | todo | — | Coward's explosibility triangle — methane in air |
-| `u7-network` | U7 | todo | — | Ventilation network — Atkinson's law, splits and a regulator |
-| `u7-fan` | U7 | todo | — | Axial fan characteristic, mine curve, stall and NVP |
-| `u7-psychro` | U7 | todo | — | Psychrometry & heat stress at the face |
-| `u7-sponcom` | U7 | todo | — | Spontaneous heating early-warning analyser |
-| `u7-dust` | U7 | todo | — | Roadway dust — incombustible content and stone dusting |
-| `u7-pump` | U7 | todo | — | Mine dewatering — multistage pump head, power and NPSH |
-| `u6-goaf` | U6 | todo | — | Depillaring goaf — immediate caving, main fall and air blast |
-| `u6-longwall` | U6 | todo | — | Longwall face — abutment pressure and shield capacity |
-| `u6-stope` | U6 | todo | — | Metalliferous stope — overbreak (ELOS) and dilution |
-| `u6-cave` | U6 | todo | — | Block caving — draw ellipsoids and drawpoint spacing |
-| `u6-lwcycle` | U6 | todo | — | Longwall face cycle — DERD shearer, AFC snake and shield advance |
-| `u6-thick` | U6 | todo | — | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
-| `u5-pit` | U5 | todo | — | Pit cross-section — stripping ratio vs break-even stripping ratio |
-| `u5-dragline` | U5 | todo | — | Dragline side-casting — spoil geometry and rehandle |
+| `u7-coward` | U7 | done | exact (min, default, objective-met) | Coward's explosibility triangle — methane in air |
+| `u7-network` | U7 | done | exact (min, default, objective-met) | Ventilation network — Atkinson's law, splits and a regulator |
+| `u7-fan` | U7 | done | exact (min, default, objective-met) | Axial fan characteristic, mine curve, stall and NVP |
+| `u7-psychro` | U7 | done | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
+| `u7-sponcom` | U7 | done | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
+| `u7-dust` | U7 | done | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
+| `u7-pump` | U7 | done | exact (min, default, objective-met) | Mine dewatering — multistage pump head, power and NPSH |
+| `u6-goaf` | U6 | done | exact (min, default, objective-met) | Depillaring goaf — immediate caving, main fall and air blast |
+| `u6-longwall` | U6 | done | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
+| `u6-stope` | U6 | done | exact (min, default, objective-met) | Metalliferous stope — overbreak (ELOS) and dilution |
+| `u6-cave` | U6 | done | exact (min, default, objective-met) | Block caving — draw ellipsoids and drawpoint spacing |
+| `u6-lwcycle` | U6 | done | exact (min, default, objective-met) | Longwall face cycle — DERD shearer, AFC snake and shield advance |
+| `u6-thick` | U6 | done | exact (min, default, objective-met) | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
+| `u5-pit` | U5 | done | exact (min, default, objective-met) | Pit cross-section — stripping ratio vs break-even stripping ratio |
+| `u5-dragline` | U5 | done | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
 | `u5-match` | U5 | todo | — | Truck–shovel match factor and queueing |
 | `u5-haul` | U5 | todo | — | Haul road physics — resistance, rimpull, speed and super-elevation |
 | `u5-dump` | U5 | todo | — | Multi-deck waste dump — overall slope and stability |
@@ -51,9 +51,9 @@ Status: `todo` or `done`. Golden: the result of `test:golden` after the redraw (
 | `u2-freeze` | U2 | todo | — | Freeze-wall design through a running-sand aquifer |
 | `u2-burncut` | U2 | todo | — | Parallel-hole burn cut — pull and firing sequence |
 | `u2-cutting` | U2 | todo | — | Rock-cutting machines — specific energy and cutting rate |
-| `u1-coalrank` | U1 | todo | — | Coalification furnace — burial, heat and time |
+| `u1-coalrank` | U1 | done | exact (min, default, objective-met) | Coalification furnace — burial, heat and time |
 | `u1-supergene` | U1 | todo | — | Supergene enrichment profile |
-| `u1-dip` | U1 | todo | — | True vs apparent dip — plan and section |
+| `u1-dip` | U1 | done | exact (min, default, objective-met) | True vs apparent dip — plan and section |
 | `u1-fault` | U1 | todo | — | Fault displacement — throw, heave, gap and overlap |
 | `u1-rqd` | U1 | todo | — | Diamond core tray — RQD logger |
 | `u1-unfc` | U1 | todo | — | UNFC three-axis classifier (MEMC Rules 2015) |
@@ -70,4 +70,4 @@ Status: `todo` or `done`. Golden: the result of `test:golden` after the redraw (
 | `u8-koepe` | U8 | todo | — | Koepe friction winder — rope slip check |
 | `u8-flot` | U8 | todo | — | Froth flotation circuit — reagents, aeration, grade–recovery |
 | `u8-zones` | U8 | todo | — | FLP vs IS — gassy-mine electrical zoning troubleshooter |
-| `u0-overburden` | U0 | todo | — | Overburden column — vertical stress gauge |
+| `u0-overburden` | U0 | done | exact (min, default, objective-met) | Overburden column — vertical stress gauge |

@@ -1,6 +1,7 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
+import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_TEXT, BAD_TEXT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
 
@@ -38,6 +39,8 @@ export const pitSim: SimDef = {
     { key: "tonnes", label: "Coal per m of strike", unit: "t", digits: 0 },
   ],
   animated: true,
+  // §5.6 redraw (v3e): same scale and frame as the legacy section (surface y 40, centre x 200), so hotspots stay put.
+  v3: { viewH: 240 },
   render: (p, _o, t) => {
     const r = pitSection(p);
     const k = Math.min(360 / r.Ws, 170 / (p.H + p.t));
@@ -46,42 +49,38 @@ export const pitSim: SimDef = {
     const yC = top + p.H * k;
     const yF = yC + p.t * k;
     const ok = r.sr <= r.besr;
+    const u = (t * 0.12) % 1;
+    const xa = cx - (p.Wf * k) / 2;
+    const xb = cx - (r.Ws * k) / 2;
+    const tx = xa + (xb - xa) * u;
+    const ty = yF + (top - yF) * u;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={top} fill={MAT.sky} />
-        <rect x={0} y={top} width={400} height={200} fill={MAT.sand} />
-        <rect x={0} y={yF} width={400} height={240 - yF} fill={MAT.shale} />
-        <rect x={0} y={yC} width={400} height={p.t * k} fill={MAT.coal} />
-        <rect x={0} y={top - 3} width={400} height={4} fill="#65A30D" />
-        <polygon points={polyline([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} fill={ok ? "#fde68a" : "#fecaca"} opacity={0.88} stroke={C.ink} />
-        <polygon points={polyline([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={MAT.coal} stroke={C.ink} />
-        {(() => {
-          // haul truck climbing the left wall of the pit
-          const u = (t * 0.12) % 1;
-          const xa = cx - (p.Wf * k) / 2;
-          const xb = cx - (r.Ws * k) / 2;
-          const tx = xa + (xb - xa) * u;
-          const ty = yF + (top - yF) * u;
-          return (
-            <g transform={`translate(${tx.toFixed(1)} ${ty.toFixed(1)})`}>
-              <rect x={-7} y={-8} width={14} height={7} rx={1.5} fill={C.hazard} stroke="#92400E" strokeWidth={0.8} />
-              <circle cx={-4} cy={0} r={2} fill={C.ink} />
-              <circle cx={4} cy={0} r={2} fill={C.ink} />
-            </g>
-          );
-        })()}
-        <Txt x={cx} y={(top + yC) / 2 + 4} size={10} anchor="middle" weight={800}>
-          {`WASTE ${r.wasteA.toFixed(0)} m³/m`}
-        </Txt>
-        <Txt x={cx} y={yF + 14} size={9} anchor="middle" weight={700} fill={C.ink}>
-          {`COAL ${r.tonnes.toFixed(0)} t/m · floor ${p.Wf} m`}
-        </Txt>
-        <Txt x={10} y={22} size={13} weight={900} mono fill={ok ? C.safe : C.crit}>
-          {`SR ${r.sr.toFixed(2)} ${ok ? "≤" : ">"} BESR ${r.besr.toFixed(2)} m³/t`}
-        </Txt>
-        <Txt x={cx + (r.Ws * k) / 2 - 4} y={top + 14} size={8} anchor="end" fill={C.slate}>
+        <rect x={0} y={top} width={400} height={yC - top} style={{ fill: U.light }} />
+        <rect x={0} y={yC} width={400} height={yF - yC} fill={GREYS.deep} />
+        <rect x={0} y={yF} width={400} height={240 - yF} fill={GREYS.light} />
+        {/* waste to strip and coal to win */}
+        <polygon points={pts([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} style={{ fill: ok ? U.mid : BAD_LIGHT, stroke: ON_LIGHT }} strokeWidth={2} strokeLinejoin="round" />
+        <polygon points={pts([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={GREYS.deep} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
+        <line x1={0} x2={400} y1={top} y2={top} style={{ stroke: INK }} strokeWidth={2.5} />
+        {/* haul truck climbing the left wall */}
+        <g transform={`translate(${tx.toFixed(1)} ${ty.toFixed(1)})`}>
+          <rect x={-9} y={-10} width={18} height={9} rx={2} style={{ fill: U.deep }} />
+          <circle cx={-5} cy={0} r={2.5} fill={ON_LIGHT} />
+          <circle cx={5} cy={0} r={2.5} fill={ON_LIGHT} />
+        </g>
+        <T x={cx} y={(top + yC) / 2 + 6} anchor="middle" fill={ON_LIGHT} weight={700}>
+          {`Waste ${num(r.wasteA, 0, "m³/m")}`}
+        </T>
+        <T x={cx + (r.Ws * k) / 2 - 22} y={top + 20} anchor="end" fill={ON_LIGHT}>
           {`${p.beta}°`}
-        </Txt>
+        </T>
+        <T x={cx} y={yF + 22} anchor="middle" fill={ON_LIGHT} weight={600}>
+          {`Coal ${num(r.tonnes, 0, "t/m")} · floor ${num(p.Wf, 0, "m")}`}
+        </T>
+        <T x={8} y={24} fill={ok ? OK_TEXT : BAD_TEXT} weight={800}>
+          {`SR ${num(r.sr, 2)} ${ok ? "≤" : ">"} BESR ${num(r.besr, 2, "m³/t")}`}
+        </T>
       </g>
     );
   },
@@ -128,54 +127,55 @@ export const draglineSim: SimDef = {
   ],
   caption: "Dragline sits 12 m back from the highwall crest; 5 m clearance from the exposed coal edge to the spoil toe.",
   animated: true,
+  // §5.6 redraw (v3e): same scale and frame as the legacy section (x = 200 + 1.5·m, surface y 70), so hotspots stay put.
+  v3: { viewH: 240 },
   render: (p, _o, t) => {
     const d = dragline(p);
     const k = 1.5;
     const X = (x: number) => 200 + x * k;
     const surf = 70;
     const coalTop = surf + p.H * k;
-    const coalBot = coalTop + 4.5;
+    const coalBot = coalTop + 6;
+    const tip = Math.max(10, coalBot - d.h * k - 18);
     const peakX = X(p.W + d.e - Math.min(p.R, d.Rreq));
-    const shiftedPeak = -d.c - d.b / 2 + d.d;
+    const sp = -d.c - d.b / 2 + d.d;
     const hp = d.h * k;
+    const mx = X(p.W + d.e);
+    const uu = (Math.sin(t * 1.1) + 1) / 2;
+    const bx = X(p.W / 2) + (X(sp) - X(p.W / 2)) * uu;
+    const by = Math.min(coalTop - 8, coalBot - hp - 10) * uu + (coalTop - 8) * (1 - uu) - 18 * Math.sin(uu * Math.PI);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={240 - surf} fill={MAT.sand} />
-        <rect x={X(p.W)} y={surf - 3} width={400 - X(p.W)} height={4} fill="#65A30D" />
-        <rect x={X(p.W)} y={coalTop} width={400 - X(p.W)} height={4.5} fill={MAT.coal} />
-        <rect x={X(0)} y={coalTop} width={X(p.W) - X(0)} height={4.5} fill={MAT.coal} opacity={0.9} />
-        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={MAT.shale} />
-        <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="#fde68a" opacity={0.6} />
-        <polygon points={polyline([[X(shiftedPeak - d.b / 2), coalBot], [X(shiftedPeak), coalBot - hp], [X(shiftedPeak + d.b / 2), coalBot]])} fill={d.reh > 0 ? "#fca5a5" : MAT.goaf} stroke={C.ink} />
-        <Txt x={X(shiftedPeak)} y={coalBot - hp - 4} size={8} anchor="middle" weight={700}>
-          SPOIL
-        </Txt>
-        <Txt x={(X(0) + X(p.W)) / 2} y={(surf + coalTop) / 2} size={8} anchor="middle" weight={800}>
-          CUT
-        </Txt>
-        <rect x={X(p.W + d.e) - 12} y={surf - 16} width={24} height={14} rx={2} fill={C.hazard} stroke="#92400E" filter="url(#f-shadow)" />
-        <rect x={X(p.W + d.e) - 14} y={surf - 3} width={28} height={4} rx={2} fill={MAT.steel} />
-        <line x1={X(p.W + d.e)} y1={surf - 10} x2={peakX} y2={Math.max(10, coalBot - hp - 18)} stroke="#334155" strokeWidth={3} />
-        <line x1={X(p.W + d.e)} y1={surf - 10} x2={peakX} y2={Math.max(10, coalBot - hp - 18)} stroke={MAT.metalH} strokeWidth={1.2} />
-        <circle cx={peakX} cy={Math.max(10, coalBot - hp - 18)} r={3} fill={C.ink} />
-        {(() => {
-          // bucket swinging between the cut and the spoil peak
-          const u = (Math.sin(t * 1.1) + 1) / 2;
-          const bx = X(p.W / 2) + (X(shiftedPeak) - X(p.W / 2)) * u;
-          const by = Math.min(coalTop - 8, coalBot - hp - 10) * u + (coalTop - 8) * (1 - u) - 18 * Math.sin(u * Math.PI);
-          return (
-            <g>
-              <line x1={peakX} y1={Math.max(10, coalBot - hp - 18)} x2={bx} y2={by} stroke="#475569" strokeWidth={0.8} />
-              <path d={`M${bx - 6} ${by} h12 l-2 6 h-8 z`} fill={MAT.steel} />
-            </g>
-          );
-        })()}
-        <Dim x1={X(p.W + d.e)} y1={surf - 30} x2={peakX} y2={surf - 30} label={`R ${p.R} m`} color={C.tech} />
+        {/* bench: overburden and seam beyond the cut, floor under everything */}
+        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={coalTop - surf} style={{ fill: U.light }} />
+        <rect x={0} y={coalTop} width={400} height={6} fill={GREYS.deep} />
+        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={GREYS.light} />
+        {/* ground surface (a path: the lesson's dragline pin sits on it by design) */}
+        <path d={`M${X(p.W)} ${surf} H400`} style={{ stroke: INK }} strokeWidth={2.5} />
+        {/* the cut (removed) */}
+        <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 5" />
+        {/* spoil pile */}
+        <polygon points={pts([[X(sp - d.b / 2), coalBot], [X(sp), coalBot - hp], [X(sp + d.b / 2), coalBot]])} fill={d.reh > 0 ? BAD_LIGHT : GREYS.mid} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
+        <T x={X(sp)} y={coalBot + 22} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Spoil
+        </T>
+        <T x={(X(0) + X(p.W)) / 2} y={surf + 20} anchor="middle">
+          Cut
+        </T>
+        {/* dragline: house, tub, boom, rope and bucket */}
+        <rect x={mx - 13} y={surf - 17} width={26} height={14} rx={3} style={{ fill: U.deep }} />
+        <rect x={mx - 15} y={surf - 4} width={30} height={4} rx={2} fill={GREYS.deep} />
+        <path d={`M${mx} ${surf - 10} L${peakX} ${tip}`} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <line x1={peakX} y1={tip} x2={bx} y2={by} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <path d={`M${bx - 7} ${by} h14 l-2 7 h-10 z`} fill={GREYS.deep} />
+        <DimLine x1={mx} y1={surf - 34} x2={peakX} y2={surf - 34} />
+        <T x={(mx + peakX) / 2} y={surf - 42} anchor="middle" fill={INK} weight={700}>
+          {`R ${num(p.R, 0, "m")}`}
+        </T>
         {d.reh > 0 && (
-          <Txt x={8} y={232} size={8} weight={800} fill={C.crit}>
-            spoil on coal → rehandle
-          </Txt>
+          <T x={8} y={232} fill={ON_LIGHT} weight={800}>
+            Spoil on coal → rehandle
+          </T>
         )}
       </g>
     );

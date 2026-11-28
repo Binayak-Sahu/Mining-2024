@@ -11,7 +11,7 @@ import { createRequire } from "node:module";
 import { UNITS } from "../src/content";
 import { ALL_SIMS } from "../src/content/sims";
 import { familyOf } from "../src/lib/family";
-import type { SimDef, Vals, Hotspot } from "../src/lib/types";
+import type { Vals, Hotspot } from "../src/lib/types";
 
 const require = createRequire(import.meta.url);
 const id = process.argv[2];
