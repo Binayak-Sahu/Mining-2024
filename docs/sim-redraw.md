@@ -59,7 +59,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u1-unfc` | U1 | done-v2 | exact (min, default, objective-met) | UNFC three-axis classifier (MEMC Rules 2015) |
 | `u1-dip3` | U1 | done-v2 | exact (min, default, objective-met) | Three-point problem — seam dip & strike from three boreholes |
 | `u9-npv` | U9 | done-v2 | exact (min, default, objective-met) | Project DCF — NPV, IRR and payback with royalty, DMF and NMET |
-| `u9-cutoff` | U9 | todo | — | Grade–tonnage curve and break-even cut-off grade |
+| `u9-cutoff` | U9 | done-v2 | exact (min, default, objective-met) | Grade–tonnage curve and break-even cut-off grade |
 | `u9-pit` | U9 | done-v2 | exact (min, default, objective-met) | Lerchs–Grossmann 2-D ultimate pit (45° slopes) |
 | `u9-radar` | U9 | todo | — | Slope stability radar — Fukuzono inverse-velocity forecast |
 | `u8-bowditch` | U8 | todo | — | Closed traverse — misclosure and Bowditch adjustment |
