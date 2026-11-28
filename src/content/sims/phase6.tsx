@@ -52,7 +52,7 @@ export const dipStrikeSim: SimDef = {
   ],
   caption: "Seam RL = collar RL − depth. The plane through the three seam points gives gradient (a, b); tan θ = √(a² + b²); down-dip azimuth = atan2(−a, −b); apparent dip tan α = tan θ·cos(section az − dip az).",
   // §5.6d redraw (v3.2): plan (left) and section (right) panels; no hotspot pins on this sim.
-  v3: { viewH: 310, formula: () => "\\tan\\theta=\\sqrt{a^2+b^2},\\quad \\tan\\alpha=\\tan\\theta\\cos(\\psi-\\psi_d)" },
+  v3: { viewH: 316, formula: () => "\\tan\\theta=\\sqrt{a^2+b^2},\\quad \\tan\\alpha=\\tan\\theta\\cos(\\psi-\\psi_d)" },
   render: (p) => {
     const r = threePoint(p);
     const k = 0.36;
