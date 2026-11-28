@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, pts, num } from "@/components/sim/v3";
+import { T, INK, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -509,6 +509,7 @@ export function thickSeam(p: Record<string, number>) {
 
 export const thickSeamSim: SimDef = {
   id: "u6-thick",
+  primary: ["rec", "dil"],
   title: "Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving",
   animated: true,
   params: [
@@ -525,75 +526,118 @@ export const thickSeamSim: SimDef = {
     { key: "top", label: "Top coal drawn (LTCC)", unit: "%", digits: 0, format: (v, _, p) => (p.meth ? `${v.toFixed(0)} %` : "—") },
   ],
   caption: "Indicative performance model. LTCC: longer draw recovers more top coal until caved roof shale reaches the window (dilution). BG: tighter ring burden improves fragmentation and recovery but raises explosive use and over-break dilution.",
-  // §5.6 redraw (v3e): seam section with the roof shale above; BG ring holes or the LTCC shield and draw window.
-  v3: { viewH: 256 },
+  // §5.6d redraw (v3.2): seam section between roof shale and floor; BG ring holes over a gallery, or the LTCC shield, draw window and goaf.
+  v3: { viewH: 250 },
   render: (p, o, t) => {
-    const top = 56;
-    const bot = 216;
-    const k = (bot - top) / 15;
+    const bot = 198;
+    const k = 9;
     const seamTop = bot - p.T * k;
     const flow = (t % 2) / 2;
-    const roofTop = Math.max(seamTop - 40, 32); // the title row stays clear of the roof band
-    const roof = <rect x={0} y={roofTop} width={400} height={seamTop - roofTop} fill={GREYS.light} />;
-    const seam = <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={GREYS.deep} />;
-    const floor = <rect x={0} y={bot} width={400} height={18} fill={GREYS.light} />;
+    const mid = (seamTop + bot) / 2;
+    const scene = (
+      <>
+        <defs>
+          <clipPath id="thick-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#thick-clip)">
+          <rect x={0} y={0} width={400} height={seamTop} fill={GREYS.light} />
+          <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={GREYS.deep} />
+          <rect x={0} y={bot} width={400} height={52} fill={GREYS.light} />
+        </g>
+      </>
+    );
+    const leaderDown = (x: number) => <line x1={x} y1={bot + 4} x2={x} y2={202} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />;
     if (p.meth === 0) {
+      const gap = p.B * 10;
+      const xs = [0, 1, 2, 3, 4, 5].map((i) => 190 + i * gap);
       const rings = [];
       for (let i = 0; i < 6; i++) {
-        const x = 140 + i * p.B * 14;
-        for (let j = -3; j <= 3; j++) rings.push(<line key={`${i}${j}`} x1={x} y1={bot - 10} x2={x + j * 9} y2={seamTop + 6} style={{ stroke: i < 2 ? BAD : ON_DEEP }} strokeWidth={1.5} />);
+        for (let j = -3; j <= 3; j++) rings.push(<line key={`${i}_${j}`} x1={xs[i]} y1={bot - 4} x2={xs[i] + j * 6} y2={seamTop + 6} stroke={ON_DEEP} strokeWidth={1.5} strokeLinecap="round" />);
       }
       return (
         <g>
-          {roof}
-          {seam}
-          {floor}
-          <rect x={20} y={bot - 20} width={110} height={20} fill={GREYS.light} />
+          {scene}
+          <rect x={0} y={bot - 20} width={124} height={20} style={{ fill: SURFACE }} />
+          <polygon points={pts([[124, bot], [150, bot - 26], [176, bot]])} fill={GREYS.mid} />
           {rings}
-          <polygon points={pts([[130, bot], [200, seamTop + 20], [260, bot]])} fill={GREYS.mid} />
-          <rect x={30 + flow * 60} y={bot - 16} width={28} height={13} rx={3} style={{ fill: U.mid }} />
-          <T x={140} y={seamTop - 10} fill={ON_LIGHT} weight={700}>
-            {`Ring holes · burden ${num(p.B, 1, "m")}`}
+          <rect x={30 + flow * 60} y={bot - 16} width={28} height={12} rx={3} style={{ fill: U.mid }} />
+          <line x1={xs[0]} y1={bot + 6} x2={xs[1]} y2={bot + 6} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+          <line x1={xs[0]} y1={bot + 2} x2={xs[0]} y2={bot + 10} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+          <line x1={xs[1]} y1={bot + 2} x2={xs[1]} y2={bot + 10} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+          <T x={(xs[0] + xs[1]) / 2} y={220} anchor="middle" fill={ON_LIGHT} weight={700}>
+            Burden
           </T>
-          <T x={20} y={250}>LHD in the gallery, remote controlled</T>
-          <T x={8} y={22} fill={INK} weight={800}>
-            {`BG · recovery ${num(o.rec, 0, "%")} · dilution ${num(o.dil, 0, "%")}`}
+          <T x={24} y={220} fill={ON_LIGHT} weight={700}>
+            Gallery, LHD
+          </T>
+          {leaderDown(60)}
+          <T x={376} y={220} anchor="end" fill={ON_LIGHT} weight={700}>
+            Floor
+          </T>
+          <T x={24} y={46} fill={ON_LIGHT} weight={700}>
+            Roof shale
+          </T>
+          <T x={376} y={46} anchor="end" fill={ON_LIGHT} weight={700}>
+            Ring holes
+          </T>
+          <line x1={xs[5]} y1={54} x2={xs[5]} y2={seamTop + 4} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+          <T x={28} y={(seamTop + bot - 20) / 2 + 6} fill={ON_DEEP} weight={700}>
+            Seam
           </T>
         </g>
       );
     }
     const cut = bot - p.hc * k;
     const drawn = clamp(o.top / 100, 0, 1);
-    const cone = seamTop - 10 + (cut - seamTop) * (1 - drawn);
+    const yTop = seamTop + (cut - seamTop) * drawn; // top of the caved coal still in the window
+    const shaleD = clamp(o.dil / 26, 0, 1) * (cut - seamTop);
+    const shaleState = o.dil > 8 ? "unsafe" : undefined;
+    const dash = -((t * 20) % 16);
     return (
       <g>
-        {roof}
-        {seam}
-        {floor}
-        <rect x={95} y={cut} width={120} height={bot - cut} fill={GREYS.light} />
-        <polygon points={pts([[40, seamTop], [140, seamTop], [125, cone], [55, cone]])} fill={GREYS.mid} />
-        {o.dil > 4 && <polygon points={pts([[70, seamTop - 30], [110, seamTop - 30], [100, cone + 10], [80, cone + 10]])} fill={BAD_LIGHT} />}
-        {[0, 1, 2, 3].map((i) => (
-          <circle key={i} cx={95 + (i % 2) * 8} cy={cone + ((flow + i * 0.25) % 1) * (bot - 12 - cone)} r={3} fill={o.dil > 8 && i % 2 ? BAD_LIGHT : "#FFFFFF"} />
-        ))}
+        {scene}
+        {/* goaf, cut void, caved top coal behind the canopy, shale intruding from the roof */}
+        <g clipPath="url(#thick-clip)">
+          <rect x={0} y={seamTop} width={112} height={bot - seamTop} fill={GREYS.mid} />
+          <rect x={112} y={cut} width={150} height={bot - cut} style={{ fill: SURFACE }} />
+          <rect x={112} y={seamTop} width={38} height={yTop - seamTop} style={{ fill: SURFACE }} />
+          <rect x={112} y={yTop} width={38} height={cut - yTop} style={{ fill: U.mid }} />
+          {shaleD > 2 && <rect x={112} y={seamTop} width={38} height={shaleD} data-state={shaleState} fill={shaleState ? BAD_LIGHT : GREYS.light} />}
+        </g>
+        {cut - yTop > 6 && <line x1={131} y1={yTop + 4} x2={131} y2={cut} stroke={ON_DEEP} strokeWidth={2.5} strokeDasharray="8 8" strokeDashoffset={dash} strokeLinecap="round" />}
+        <line x1={131} y1={cut + 2} x2={131} y2={bot - 16} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="8 8" strokeDashoffset={dash} strokeLinecap="round" />
         {/* shield: canopy, legs, tail canopy over the rear AFC */}
-        <rect x={150} y={cut} width={55} height={8} rx={2} style={{ fill: U.mid }} />
-        <line x1={160} y1={cut + 8} x2={165} y2={bot - 6} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={190} y1={cut + 8} x2={185} y2={bot - 6} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={150} y1={cut + 4} x2={110} y2={bot - 20} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
-        <rect x={100} y={bot - 12} width={60} height={10} rx={2} style={{ fill: U.deep }} />
-        <T x={300} y={cut - 8} anchor="middle" fill={ON_DEEP} weight={700}>
-          Top coal
-        </T>
-        <T x={300} y={bot - 8} anchor="middle" fill={ON_DEEP} weight={700}>
-          {`Cut ${num(p.hc, 1, "m")}`}
-        </T>
-        <T x={392} y={seamTop - 12} anchor="end" fill={ON_LIGHT} weight={600}>
+        <rect x={150} y={cut} width={108} height={7} rx={2} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+        <line x1={176} y1={cut + 7} x2={180} y2={bot - 8} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <line x1={226} y1={cut + 7} x2={222} y2={bot - 8} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <line x1={150} y1={cut + 4} x2={124} y2={bot - 24} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <rect x={160} y={bot - 8} width={80} height={8} rx={2} style={{ fill: U.deep }} />
+        <rect x={112} y={bot - 12} width={44} height={12} rx={2} style={{ fill: U.deep }} />
+        <T x={24} y={46} fill={ON_LIGHT} weight={700}>
           Roof shale
         </T>
-        <T x={100} y={250}>Rear AFC and draw window</T>
-        <T x={8} y={22} fill={INK} weight={800}>
-          {`LTCC · recovery ${num(o.rec, 0, "%")} · dilution ${num(o.dil, 1, "%")}`}
+        <T x={376} y={46} anchor="end" fill={ON_LIGHT} weight={700}>
+          Top coal
+        </T>
+        <line x1={330} y1={54} x2={330} y2={seamTop + 6} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+        <T x={372} y={mid + 6} anchor="end" fill={ON_DEEP} weight={700}>
+          Seam
+        </T>
+        <T x={28} y={bot - 12} fill={ON_LIGHT} weight={700}>
+          Goaf
+        </T>
+        <T x={134} y={220} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Rear AFC
+        </T>
+        {leaderDown(134)}
+        <T x={210} y={220} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Shield
+        </T>
+        {leaderDown(210)}
+        <T x={376} y={220} anchor="end" fill={ON_LIGHT} weight={700}>
+          Floor
         </T>
       </g>
     );

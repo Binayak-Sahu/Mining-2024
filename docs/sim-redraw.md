@@ -11,20 +11,20 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | Sim | Unit | Status | Golden | Title |
 |---|---|---|---|---|
 | `u7-coward` | U7 | done-v2 | exact (min, default, objective-met) | Coward's explosibility triangle — methane in air |
-| `u7-network` | U7 | done | exact (min, default, objective-met) | Ventilation network — Atkinson's law, splits and a regulator |
-| `u7-fan` | U7 | done | exact (min, default, objective-met) | Axial fan characteristic, mine curve, stall and NVP |
-| `u7-psychro` | U7 | done | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
+| `u7-network` | U7 | done-v2 | exact (min, default, objective-met) | Ventilation network — Atkinson's law, splits and a regulator |
+| `u7-fan` | U7 | done-v2 | exact (min, default, objective-met) | Axial fan characteristic, mine curve, stall and NVP |
+| `u7-psychro` | U7 | unsure: pin statutory-lines (160,72) sits ~40 units above the wet-bulb limit lines | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
 | `u7-sponcom` | U7 | done | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
 | `u7-dust` | U7 | done | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
 | `u7-pump` | U7 | done | exact (min, default, objective-met) | Mine dewatering — multistage pump head, power and NPSH |
 | `u6-goaf` | U6 | unsure: pin 3 Main roof (381,88) lies outside the 24-unit inset | exact (min, default, objective-met) | Depillaring goaf — immediate caving, main fall and air blast |
-| `u6-longwall` | U6 | done | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
-| `u6-stope` | U6 | done | exact (min, default, objective-met) | Metalliferous stope — overbreak (ELOS) and dilution |
+| `u6-longwall` | U6 | unsure: pin Front abutment (258,12) lies outside the inset | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
+| `u6-stope` | U6 | done-v2 | exact (min, default, objective-met) | Metalliferous stope — overbreak (ELOS) and dilution |
 | `u6-cave` | U6 | done | exact (min, default, objective-met) | Block caving — draw ellipsoids and drawpoint spacing |
 | `u6-lwcycle` | U6 | done-v2 | exact (min, default, objective-met) | Longwall face cycle — DERD shearer, AFC snake and shield advance |
-| `u6-thick` | U6 | done | exact (min, default, objective-met) | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
+| `u6-thick` | U6 | done-v2 | exact (min, default, objective-met) | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
 | `u5-pit` | U5 | unsure: pin SR vs BESR (380,22) lies outside the inset | exact (min, default, objective-met) | Pit cross-section — stripping ratio vs break-even stripping ratio |
-| `u5-dragline` | U5 | done | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
+| `u5-dragline` | U5 | done-v2 | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
 | `u5-match` | U5 | todo | — | Truck–shovel match factor and queueing |
 | `u5-haul` | U5 | todo | — | Haul road physics — resistance, rimpull, speed and super-elevation |
 | `u5-dump` | U5 | todo | — | Multi-deck waste dump — overall slope and stability |
@@ -53,7 +53,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u2-cutting` | U2 | todo | — | Rock-cutting machines — specific energy and cutting rate |
 | `u1-coalrank` | U1 | unsure: pin 4 (150,178) only lands on the Ro pointer at some depths | exact (min, default, objective-met) | Coalification furnace — burial, heat and time |
 | `u1-supergene` | U1 | todo | — | Supergene enrichment profile |
-| `u1-dip` | U1 | done | exact (min, default, objective-met) | True vs apparent dip — plan and section |
+| `u1-dip` | U1 | unsure: pin 1 (67,136) sits ~11 units below the strike line (as before the redraw) | exact (min, default, objective-met) | True vs apparent dip — plan and section |
 | `u1-fault` | U1 | todo | — | Fault displacement — throw, heave, gap and overlap |
 | `u1-rqd` | U1 | todo | — | Diamond core tray — RQD logger |
 | `u1-unfc` | U1 | todo | — | UNFC three-axis classifier (MEMC Rules 2015) |
