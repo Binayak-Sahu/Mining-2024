@@ -72,9 +72,21 @@ export const accessSim: SimDef = {
           <g clipPath="url(#u2acc-gnd)">
             <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
             <rect x={0} y={yS + 6} width={400} height={250 - yS} fill={GREYS.mid} />
-            <rect x={0} y={yS} width={400} height={6} fill={GREYS.deep} />
           </g>
           <path d={hill ? "M0 100 L120 100 L220 15 L400 15" : `M0 ${surf} H400`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        </g>
+        {bars.map((b, i) => (
+          <g key={b.label}>
+            <rect x={100} y={148 + i * 28} width={(140 * b.v) / max} height={20} rx={4} data-state={b.on ? "safe" : undefined} fill={b.on ? OK_LIGHT : U.mid} />
+            <T x={28} y={148 + i * 28 + 15} fill={ON_LIGHT}>
+              {b.label}
+            </T>
+          </g>
+        ))}
+        <g clipPath="url(#u2acc-clip)">
+          <g clipPath="url(#u2acc-gnd)">
+            <rect x={0} y={yS} width={400} height={6} fill={GREYS.deep} />
+          </g>
         </g>
         {hill ? (
           <g>
@@ -108,15 +120,6 @@ export const accessSim: SimDef = {
           </g>
         )}
         <F3.DimLine x1={372} y1={surf} x2={372} y2={yS} />
-        <rect x={16} y={136} width={236} height={panelH} rx={8} style={{ fill: F3.SURFACE, stroke: INK3 }} strokeWidth={1.5} />
-        {bars.map((b, i) => (
-          <g key={b.label}>
-            <rect x={100} y={148 + i * 28} width={(140 * b.v) / max} height={20} rx={4} data-state={b.on ? "safe" : undefined} fill={b.on ? OK_LIGHT : U.mid} />
-            <T x={28} y={148 + i * 28 + 15} fill={INK}>
-              {b.label}
-            </T>
-          </g>
-        ))}
       </g>
     );
   },

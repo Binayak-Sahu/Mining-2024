@@ -403,6 +403,15 @@ export const slopeModesSim: SimDef = {
     const blk: [number, number][] = fits ? [[toeX, toeY], [crestX, topY], [planeX, topY]] : [[toeX, toeY], [crestX, topY], [400, topY], [400, endY]];
     const bc: [number, number] = [blk.reduce((s, q) => s + q[0], 0) / blk.length, blk.reduce((s, q) => s + q[1], 0) / blk.length];
     const wy = topY + (1 - p.ru * 1.5) * Hp * 0.8;
+    // keep the "Crest" label off the block leader (64,52) -> centroid
+    const yC = Math.max(topY - 12, 42);
+    const lx = 64 + ((bc[0] - 64) * (yC - 52)) / Math.max(bc[1] - 52, 1);
+    const crestHit = o.kin === 1 && lx > crestX - 4 && lx < crestX + 62;
+    const crestEl = (
+      <T x={crestX > 290 ? 376 : crestHit ? crestX + 62 + 8 : Math.max(crestX + 10, topY < 66 ? 160 : 0)} y={yC} anchor={crestX > 290 ? "end" : "start"}>
+        Crest
+      </T>
+    );
     return (
       <g>
         {clip}
@@ -422,7 +431,7 @@ export const slopeModesSim: SimDef = {
           {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={wy} style={{ stroke: U.ink }} strokeWidth={2} strokeDasharray="8 4" />}
           {profile}
         </g>
-        {crestLabel}
+        {crestEl}
         {o.kin === 1 && (
           <>
             <T x={24} y={44}>Sliding block</T>
