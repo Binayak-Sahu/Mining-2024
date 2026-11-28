@@ -185,7 +185,7 @@ export const supergene: SimDef = {
 
 /** §5.6 frame: legacy plan circle (100, 125, r 80) and section x 215–385, ground y 70 (lesson hotspots). */
 const PV = { cx: 100, cy: 125, r: 64 };
-const SV = { x0: 215, x1: 374, g: 76, bottom: 196 };
+const SV = { x0: 215, x1: 374, g: 76, bottom: 168 };
 
 export const apparentDip: SimDef = {
   id: "u1-dip",
@@ -226,16 +226,16 @@ export const apparentDip: SimDef = {
         <line x1={cx} y1={cy} x2={cx} y2={cy + 42} stroke={ON_LIGHT} strokeWidth={2.5} strokeLinecap="round" />
         <path d={`M${cx - 7} ${cy + 38} L${cx} ${cy + 52} L${cx + 7} ${cy + 38} Z`} fill={ON_LIGHT} strokeLinejoin="round" />
         {p.beta > 2 && <path d={`M${cx + 28} ${cy} A28 28 0 0 1 ${cx + 28 * Math.cos(b)} ${cy + 28 * Math.sin(b)}`} fill="none" stroke={ON_LIGHT} strokeWidth={1.5} />}
-        <SvgTex x={cx + 8} y={cy - 18} tex={`\\beta = ${p.beta}\\degree`} size={LBL} color={ON_LIGHT} />
+        <SvgTex x={cx + 6} y={cy - 10} tex={`\\beta = ${p.beta}\\degree`} size={LBL} color={ON_LIGHT} />
         <circle cx={cx} cy={cy} r={4} fill={ON_LIGHT} />
         <SvgTex x={cx - 12} y={cy + 20} tex="\delta" size={LBL} anchor="end" color={ON_LIGHT} />
         {/* legend for the two lines, off the fill */}
-        <line x1={cx - r} x2={cx - r + 22} y1={cy + r + 19} y2={cy + r + 19} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
-        <T x={cx - r + 30} y={cy + r + 25}>
+        <line x1={SV.x0} x2={SV.x0 + 22} y1={SV.bottom + 18} y2={SV.bottom + 18} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={SV.x0 + 30} y={SV.bottom + 24}>
           Strike
         </T>
-        <line x1={cx + 18} x2={cx + 40} y1={cy + r + 19} y2={cy + r + 19} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="7 6" strokeLinecap="round" />
-        <T x={cx + 48} y={cy + r + 25}>
+        <line x1={SV.x0} x2={SV.x0 + 22} y1={SV.bottom + 40} y2={SV.bottom + 40} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="7 6" strokeLinecap="round" />
+        <T x={SV.x0 + 30} y={SV.bottom + 46}>
           Section
         </T>
 
@@ -249,7 +249,7 @@ export const apparentDip: SimDef = {
         <polygon clipPath="url(#u1-dip-sec)" points={`${SV.x0},${SV.g} ${SV.x1},${ey} ${SV.x1},${ey + 16} ${SV.x0},${SV.g + 16}`} fill={GREYS.deep} />
         <line x1={SV.x0 - 4} x2={SV.x1 + 4} y1={SV.g} y2={SV.g} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
         {o.alpha > 1 && <path clipPath="url(#u1-dip-sec)" d={`M${SV.x0 + 64} ${SV.g} A64 64 0 0 1 ${SV.x0 + 64 * Math.cos(a)} ${SV.g + 64 * Math.sin(a)}`} fill="none" stroke={ON_LIGHT} strokeWidth={2} />}
-        <SvgTex x={SV.x0 + 4} y={SV.g + 26} tex="\alpha" size={20} color="var(--text)" />
+        <SvgTex x={SV.x0 + 82} y={SV.g + (82 * Math.tan(a) >= 32 ? 28 : 82 * Math.tan(a) + 44)} tex="\alpha" size={20} color={ON_LIGHT} />
       </g>
     );
   },
