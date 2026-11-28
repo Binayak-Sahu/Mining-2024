@@ -575,7 +575,7 @@ export const koepeSim: SimDef = {
         </clipPath>
         <g clipPath="url(#koepe-clip)">
           <rect x={0} y={112} width={400} height={150} style={{ fill: GREYS.light }} />
-          <rect x={120} y={112} width={210} height={138} style={{ fill: "var(--surface)" }} />
+          <rect x={120} y={112} width={236} height={138} style={{ fill: "var(--surface)" }} />
         </g>
         <path d={`M 130 112 L 195 24 M 300 112 L 245 24`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
         <line x1={lx} y1={cy} x2={lx} y2={170 + tr} style={{ stroke: GREYS.deep }} strokeWidth={2} />
@@ -596,7 +596,7 @@ export const koepeSim: SimDef = {
         <T x={26} y={132} fill={ON_LIGHT}>
           T₁
         </T>
-        <T x={308} y={132} fill={INK}>
+        <T x={296} y={132} fill={INK}>
           T₂
         </T>
         <T x={278} y={52}>
@@ -605,7 +605,7 @@ export const koepeSim: SimDef = {
         <T x={26} y={206} fill={ON_LIGHT}>
           Loaded
         </T>
-        <T x={308} y={176}>
+        <T x={296} y={176}>
           Empty
         </T>
         <T x={232} y={232}>

@@ -953,8 +953,8 @@ export const zonesSim: SimDef = {
         <Arrow x1={128} y1={200} x2={162} y2={200} color={ON_LIGHT} width={2} head={10} />
         <Arrow x1={162} y1={70} x2={128} y2={70} color={ON_LIGHT} width={2} head={10} />
         <T x={24} y={44} fill={ON_LIGHT}>Shaft</T>
-        <T x={262} y={44} fill={ON_LIGHT}>Return</T>
-        <T x={262} y={240} fill={ON_LIGHT}>Intake</T>
+        <T x={292} y={44} fill={ON_LIGHT}>Return</T>
+        <T x={292} y={240} fill={ON_LIGHT}>Intake</T>
         {p.ev === 1 && (
           <g data-state="unsafe">
             <ellipse cx={340} cy={100} rx={22} ry={10} fill={BAD_PALE} style={{ stroke: BAD }} strokeWidth={1.5} />
@@ -970,6 +970,15 @@ export const zonesSim: SimDef = {
             </g>
           );
         })}
+        {z.ignition > 0 && flash && (() => {
+          const [x, y] = z.ignition === 2 ? pos.ret : pos.face;
+          const star = Array.from({ length: 16 }, (_, i) => {
+            const r = i % 2 ? 14 : 28;
+            const a = (i / 16) * Math.PI * 2;
+            return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
+          });
+          return <polygon data-state="unsafe" points={pts(star)} fill={BAD_LIGHT} fillOpacity={0.7} style={{ stroke: BAD }} strokeWidth={1.5} strokeLinejoin="round" />;
+        })()}
         {LOC.map((l, i) => {
           const [x, y] = pos[l.k];
           const e = p[l.k];
@@ -988,15 +997,6 @@ export const zonesSim: SimDef = {
             </g>
           );
         })}
-        {z.ignition > 0 && flash && (() => {
-          const [x, y] = z.ignition === 2 ? pos.ret : pos.face;
-          const star = Array.from({ length: 16 }, (_, i) => {
-            const r = i % 2 ? 14 : 28;
-            const a = (i / 16) * Math.PI * 2;
-            return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
-          });
-          return <polygon data-state="unsafe" points={pts(star)} fill={BAD_LIGHT} fillOpacity={0.7} style={{ stroke: BAD }} strokeWidth={1.5} strokeLinejoin="round" />;
-        })()}
         {p.ev === 2 && (
           <polyline data-state={z.trip ? "safe" : "unsafe"} points="296,150 304,134 296,134 306,118" fill="none" style={{ stroke: z.trip ? GREYS.deep : BAD }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         )}
