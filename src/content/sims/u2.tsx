@@ -33,64 +33,90 @@ export const accessSim: SimDef = {
   ],
   caption: "Indicative cost model (₹ crore): incline ≈ 0.08/m + belt drives; shaft ≈ fixed headgear + 0.25/m sinking & lining + winding capacity. Adit only where the seam outcrops above drainage.",
   handles: [{ key: "D", axis: "y", at: (p) => [372, 40 + (p.D * 170) / 900 + 3], toValue: (y) => ((y - 43) * 900) / 170, color: "#0F172A" }],
+  // §5.6d redraw (v3.2): legacy frame kept (surface y 40, scale 170/900, shaft x 324, bars at y 150) so the four pins stay put.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const surf = 40;
     const scale = 170 / 900;
     const yS = surf + p.D * scale;
-    const xShaft = 300;
-    const xEnd = xShaft;
-    const xStart = clamp(xEnd - (p.D * scale) / Math.tan(rad(p.ang)), -400, 400);
-    const max = Math.max(o.incline, o.shaft, Number.isFinite(o.adit) ? o.adit : 0);
+    const xShaft = 324;
+    const xEnd = 270;
+    const tan = Math.tan(rad(p.ang));
+    const xStart = xEnd - (p.D * scale) / tan;
+    const hill = p.hill === 1;
+    const ground = hill ? "M0 100 L120 100 L220 15 L400 15 L400 250 L0 250 Z" : `M0 ${surf} H400 V250 H0 Z`;
+    const best = o.best;
+    const yAt = (x: number) => yS - (xEnd - x) * tan;
+    const x0 = Math.max(xStart, 0);
+    const y0 = xStart < 0 ? yAt(0) : surf;
+    const adit0 = clamp(120 + (100 - yS) / 0.85, 24, 220);
+    const bars = [
+      { label: "Incline", v: o.incline, on: best === 1 },
+      { label: "Shaft", v: o.shaft, on: best === 2 },
+      ...(hill ? [{ label: "Adit", v: o.adit, on: best === 0 }] : []),
+    ];
+    const max = Math.max(...bars.map((b) => b.v));
+    const seamY = yS + 28 <= 221 ? yS + 28 : yS - 30;
+    const panelH = bars.length * 28 + 12;
     return (
       <g>
-        {p.hill ? (
-          <path d={`M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 0 L0 0 Z`} fill={MAT.sky} />
-        ) : (
-          <rect x={0} y={0} width={400} height={surf} fill={MAT.sky} />
-        )}
-        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 240 L0 240 Z` : `M0 ${surf} L400 ${surf} L400 240 L0 240 Z`} fill={MAT.sand} />
-        <rect x={0} y={yS + 6} width={400} height={240 - yS} fill={MAT.shale} />
-        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25}` : `M0 ${surf} L400 ${surf}`} fill="none" stroke="#65A30D" strokeWidth={3} />
-        <rect x={0} y={yS} width={400} height={6} fill={MAT.coal} />
-        {p.hill ? (
-          <g>
-            <line x1={120} y1={surf + 55} x2={300} y2={surf + 55} stroke={C.safe} strokeWidth={4} />
-            <Txt x={130} y={surf + 50} size={9} weight={800} fill={C.safe}>
-              ADIT — gravity drainage, no hoisting
-            </Txt>
+        <defs>
+          <clipPath id="u2acc-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+          <clipPath id="u2acc-gnd">
+            <path d={ground} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2acc-clip)">
+          <g clipPath="url(#u2acc-gnd)">
+            <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
+            <rect x={0} y={yS + 6} width={400} height={250 - yS} fill={GREYS.mid} />
+            <rect x={0} y={yS} width={400} height={6} fill={GREYS.deep} />
           </g>
-        ) : (
-          <g>
-            <line x1={Math.max(xStart, 0)} y1={xStart < 0 ? yS - (xEnd - 0) * Math.tan(rad(p.ang)) : surf} x2={xEnd} y2={yS} stroke={o.best === 1 ? C.safe : C.slate} strokeWidth={4} />
-            <path d={`M${xShaft + 26} ${surf} L${xShaft + 31} ${surf - 22} L${xShaft + 43} ${surf - 22} L${xShaft + 48} ${surf}`} fill="none" stroke="#334155" strokeWidth={2.5} />
-            <circle cx={xShaft + 37} cy={surf - 22} r={4} fill={MAT.metalH} stroke="#334155" />
-            <line x1={xShaft + 37} y1={surf} x2={xShaft + 37} y2={yS} stroke={o.best === 2 ? C.safe : C.slate} strokeWidth={6} />
-            <Txt x={xShaft + 52} y={surf - 14} size={8} weight={700} fill={C.ink}>
-              SHAFT
-            </Txt>
-            <Txt x={Math.max(xStart, 0) + 6} y={surf - 4} size={8} weight={700} fill={C.ink}>
-              {xStart < 0 ? "INCLINE (off-chart)" : "INCLINE"}
-            </Txt>
-          </g>
-        )}
-        <Dim x1={392} y1={surf} x2={392} y2={yS} label="" color={C.ink} />
-        <Txt x={386} y={(surf + yS) / 2 + 3} size={9} anchor="end" mono weight={700}>
-          {`${p.D} m`}
-        </Txt>
-        <g transform="translate(16,150)">
-          {[
-            { label: "Incline", v: o.incline, c: C.tech },
-            { label: "Shaft", v: o.shaft, c: C.hazard },
-            ...(p.hill ? [{ label: "Adit", v: o.adit, c: C.safe }] : []),
-          ].map((b, i) => (
-            <g key={b.label}>
-              <rect x={0} y={i * 22} width={(170 * b.v) / max} height={14} fill={b.c} rx={2} />
-              <Txt x={4} y={i * 22 + 10} size={8} fill="white" weight={800}>
-                {b.label} ₹{b.v.toFixed(0)} cr
-              </Txt>
-            </g>
-          ))}
+          <path d={hill ? "M0 100 L120 100 L220 15 L400 15" : `M0 ${surf} H400`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
         </g>
+        {hill ? (
+          <g>
+            <path d={`M${adit0} ${yS - 1} H300 V${yS + 7} H${adit0} Z`} data-state="safe" fill={OK_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+            <T x={262} y={seamY} fill={ON_LIGHT} weight={700}>
+              Adit
+            </T>
+          </g>
+        ) : (
+          <g>
+            <path
+              d={`M${x0} ${y0 - 3} L${xEnd} ${yS - 3} V${yS + 3} L${x0} ${y0 + 3} Z`}
+              data-state={best === 1 ? "safe" : undefined}
+              fill={best === 1 ? OK_LIGHT : U.deep}
+              stroke={ON_LIGHT}
+              strokeWidth={1.5}
+              strokeLinejoin="round"
+            />
+            <rect x={xShaft - 3} y={surf} width={6} height={yS - surf} data-state={best === 2 ? "safe" : undefined} fill={best === 2 ? OK_LIGHT : U.deep} stroke={ON_LIGHT} strokeWidth={1.5} />
+            <path d={`M${xShaft - 9} ${surf} L${xShaft - 5} ${surf - 16} H${xShaft + 5} L${xShaft + 9} ${surf}`} fill="none" style={{ stroke: INK }} strokeWidth={1.5} strokeLinejoin="round" />
+            <circle cx={xShaft} cy={surf - 16} r={4} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={1.5} />
+            <T x={312} y={38} anchor="end" fill={INK}>
+              Shaft
+            </T>
+            <T x={clamp(xStart, 24, 182)} y={38} fill={INK}>
+              Incline
+            </T>
+            <T x={262} y={seamY} fill={ON_LIGHT} weight={700}>
+              Seam
+            </T>
+          </g>
+        )}
+        <F3.DimLine x1={372} y1={surf} x2={372} y2={yS} />
+        <rect x={16} y={136} width={236} height={panelH} rx={8} style={{ fill: F3.SURFACE, stroke: INK3 }} strokeWidth={1.5} />
+        {bars.map((b, i) => (
+          <g key={b.label}>
+            <rect x={100} y={148 + i * 28} width={(140 * b.v) / max} height={20} rx={4} data-state={b.on ? "safe" : undefined} fill={b.on ? OK_LIGHT : U.mid} />
+            <T x={28} y={148 + i * 28 + 15} fill={INK}>
+              {b.label}
+            </T>
+          </g>
+        ))}
       </g>
     );
   },
@@ -344,6 +370,8 @@ export const burnCutSim: SimDef = {
     { key: "N", label: "Holes N = 2.7√(fS)", digits: 0 },
     { key: "vol", label: "Solid rock / round", unit: "m³", digits: 1 },
   ],
+  // §5.6d redraw (v3.2): face geometry and centre unchanged (pins stay put); room added below for the labels.
+  v3: { viewH: 260 },
   render: (p, o, t) => {
     const w = Math.sqrt(p.S) * 1.15;
     const h = p.S / w;
@@ -386,40 +414,54 @@ export const burnCutSim: SimDef = {
       holes.push({ x: ccx + Math.cos(a) * W * 0.3, y: ccy + Math.sin(a) * Hh * 0.28, d: 3 + (i % 2) });
     }
     const phase = (t % 4) / 4 * 7;
+    const KP = 31; // px per metre of pull in the side column
+    const colTop = 36;
+    const colBase = 200;
+    const pullH = Math.min(o.adv * KP, colBase - colTop);
+    const holeFill = (fired: boolean) => (fired ? F3.U.mid : F3.ON_LIGHT);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#57534E" opacity={0.35} />
-        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill={MAT.shale} stroke={C.ink} strokeWidth={1.5} />
-        <circle cx={ccx} cy={ccy} r={Math.max(3, (p.phi / 1000) * k * 2.2)} fill="white" stroke={C.ink} strokeWidth={1.5} />
+        <defs>
+          <clipPath id="u2bc-clip">
+            <rect x={12} y={12} width={376} height={236} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2bc-clip)">
+          {/* host rock */}
+          <rect x={0} y={0} width={400} height={260} fill={GREYS.mid} />
+        </g>
+        <F3.T x={24} y={48} fill={F3.ON_LIGHT}>
+          Host rock
+        </F3.T>
+        {/* drift face, seen end-on */}
+        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} strokeLinejoin="round" />
+        <circle cx={ccx} cy={ccy} r={Math.max(3, (p.phi / 1000) * k * 2.2)} fill="#F5F5F5" stroke={ON_LIGHT} strokeWidth={1.5} />
         {holes.map((hh, i) => {
           const fired = phase >= hh.d;
-          return <circle key={i} cx={hh.x} cy={hh.y} r={fired ? 4 : 3.2} fill={fired ? "#F97316" : C.ink} stroke={fired ? "#FDE68A" : "none"} filter={fired ? "url(#f-glow)" : undefined} />;
+          return <circle key={i} cx={hh.x} cy={hh.y} r={fired ? 4 : 3.2} style={{ fill: holeFill(fired) }} stroke={fired ? ON_LIGHT : "none"} strokeWidth={1} />;
         })}
-        <Txt x={cx} y={228} size={8} anchor="middle" fill={C.slate}>
-          Firing order by delay: cut → cut-spreaders → easers → perimeter → lifters
-        </Txt>
-        <Txt x={265} y={40} size={10} weight={800}>
-          Holmberg pull
-        </Txt>
-        <Txt x={265} y={54} size={8} mono>
-          H = 0.15 + 34.1φ − 39.4φ²
-        </Txt>
-        <Txt x={265} y={80} size={10} weight={800}>
-          Relief hole
-        </Txt>
-        <Txt x={265} y={94} size={8} mono>
-          φ = {p.phi} mm (free face)
-        </Txt>
-        <Txt x={265} y={128} size={20} weight={900} mono fill={o.adv >= 3.5 ? C.safe : C.hazard}>
-          {o.adv.toFixed(2)} m
-        </Txt>
-        <Txt x={265} y={142} size={8} fill={C.slate}>
-          pull per round
-        </Txt>
-        <Txt x={265} y={170} size={9} mono>
-          delay #{Math.min(Math.floor(phase), 6)}
-        </Txt>
+        <F3.T x={cx} y={228} anchor="middle" fill={ON_LIGHT}>
+          Drift face
+        </F3.T>
+        {/* legend */}
+        <circle cx={240} cy={72} r={4} fill={ON_LIGHT} />
+        <F3.T x={254} y={78} fill={ON_LIGHT}>
+          Loaded
+        </F3.T>
+        <circle cx={240} cy={102} r={4} style={{ fill: F3.U.mid }} stroke={ON_LIGHT} strokeWidth={1} />
+        <F3.T x={254} y={108} fill={ON_LIGHT}>
+          Fired
+        </F3.T>
+        <circle cx={240} cy={132} r={6} fill="#F5F5F5" stroke={ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={254} y={138} fill={ON_LIGHT}>
+          Relief
+        </F3.T>
+        {/* pull column: round length with the pulled part filled */}
+        <rect x={330} y={colTop} width={40} height={colBase - colTop} rx={4} fill={GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={330} y={colBase - pullH} width={40} height={pullH} rx={4} style={{ fill: F3.U.mid }} stroke={ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={350} y={228} anchor="middle" fill={ON_LIGHT}>
+          Pull
+        </F3.T>
       </g>
     );
   },

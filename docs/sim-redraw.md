@@ -49,7 +49,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u2-access` | U2 | todo | — | Access trade-off — adit, incline or shaft |
 | `u2-sinking` | U2 | done-v2 | exact (min, default, objective-met) | Conventional sinking cycle & Galloway stage |
 | `u2-freeze` | U2 | done-v2 | exact (min, default, objective-met) | Freeze-wall design through a running-sand aquifer |
-| `u2-burncut` | U2 | todo | — | Parallel-hole burn cut — pull and firing sequence |
+| `u2-burncut` | U2 | done-v2 | exact (min, default, objective-met) | Parallel-hole burn cut — pull and firing sequence |
 | `u2-cutting` | U2 | todo | — | Rock-cutting machines — specific energy and cutting rate |
 | `u1-coalrank` | U1 | unsure: pin 4 (150,178) only lands on the Ro pointer at some depths | exact (min, default, objective-met) | Coalification furnace — burial, heat and time |
 | `u1-supergene` | U1 | todo | — | Supergene enrichment profile |

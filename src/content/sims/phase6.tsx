@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, textW, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, textW, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -281,7 +281,7 @@ export const slopeModesSim: SimDef = {
       <polyline points={pts([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
     );
     const crestLabel = (
-      <T x={crestX > 290 ? 376 : crestX + 10} y={Math.max(topY - 12, 42)} anchor={crestX > 290 ? "end" : "start"}>
+      <T x={crestX > 290 ? 376 : Math.max(crestX + 10, topY < 66 ? 160 : 0)} y={Math.max(topY - 12, 42)} anchor={crestX > 290 ? "end" : "start"}>
         Crest
       </T>
     );
@@ -356,9 +356,9 @@ export const slopeModesSim: SimDef = {
     }
     if (p.mode === 3) {
       const bw = 26;
-      const bhgt = Math.min(bw / p.bh, 140);
+      const bhgt = Math.min(bw / p.bh, 72);
       const a = rad(p.pp);
-      const x0 = 40;
+      const x0 = clamp(24 + bhgt * Math.sin(a), 40, 130);
       const y0 = 195;
       const step = bw + 2;
       const n = Math.max(4, Math.min(9, Math.floor(140 / (step * Math.sin(a)))));
@@ -385,7 +385,7 @@ export const slopeModesSim: SimDef = {
             <polyline points={pts([[0, y0], [x0, y0], [xe, yAt(xe)]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
             {blocks}
           </g>
-          <T x={24} y={44}>Rock columns</T>
+          <T x={376} y={44} anchor="end" fill={yAt(376 - textW("Rock columns")) < 40 ? ON_LIGHT : INK2}>Rock columns</T>
           <T x={376} y={220} anchor="end" fill={ON_LIGHT}>Intact rock</T>
           <T x={24} y={220} fill={ON_LIGHT}>Pit floor</T>
         </g>
@@ -401,11 +401,6 @@ export const slopeModesSim: SimDef = {
     const blk: [number, number][] = fits ? [[toeX, toeY], [crestX, topY], [planeX, topY]] : [[toeX, toeY], [crestX, topY], [400, topY], [400, endY]];
     const bc: [number, number] = [blk.reduce((s, q) => s + q[0], 0) / blk.length, blk.reduce((s, q) => s + q[1], 0) / blk.length];
     const wy = topY + (1 - p.ru * 1.5) * Hp * 0.8;
-    const fw = textW("Failure plane");
-    const mx = toeX + (endX - toeX) * 0.5;
-    const my = toeY + (endY - toeY) * 0.5;
-    const px0 = Math.max(130, o.kin === 1 ? Math.min(mx + 12, 376 - fw) : Math.max(24, mx - 12 - fw));
-    const py0 = o.kin === 1 ? Math.min(my + 28, 214) : my - 10;
     return (
       <g>
         {clip}
@@ -432,12 +427,15 @@ export const slopeModesSim: SimDef = {
             <line x1={64} y1={52} x2={bc[0]} y2={bc[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
           </>
         )}
-        <T x={24} y={220} fill={ON_LIGHT}>Pit floor</T>
-        <T x={px0} y={py0} fill={o.kin === 1 ? ON_LIGHT : INK3}>Failure plane</T>
+        <line x1={24} y1={213} x2={48} y2={213} style={{ stroke: o.kin === 1 ? ON_LIGHT : INK3 }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+        <T x={56} y={220} fill={ON_LIGHT}>Failure plane</T>
         {p.ru > 0 && (
-          <T x={376} y={Math.min(wy + 26, 220)} anchor="end" fill={ON_LIGHT}>
-            Water table
-          </T>
+          <>
+            <line x1={232} y1={213} x2={256} y2={213} style={{ stroke: U.ink }} strokeWidth={2} strokeDasharray="8 4" />
+            <T x={376} y={220} anchor="end" fill={ON_LIGHT}>
+              Water table
+            </T>
+          </>
         )}
       </g>
     );
