@@ -129,15 +129,39 @@ function StreakFlame({ n }: { n: number }) {
   );
 }
 
+/** §5.1b streak pill (flame in `energy`). Shared by the top bar and the §5.8 board bar. */
+export function StreakPill({ className = "" }: { className?: string }) {
+  const hydrated = useHydrated();
+  const streak = useStrata((s) => s.streak);
+  const last = useStrata((s) => s.lastActiveDay);
+  const st = hydrated ? liveStreak(streak, last) : 0;
+  return (
+    <span className={`stat-pill !px-2.5 !gap-1 text-fg ${className}`} title="Daily streak" aria-label={`Daily streak ${st}`} data-testid="stat-streak">
+      <span className="text-energy-tint-text inline-flex"><StreakFlame n={st} /></span> {st}
+    </span>
+  );
+}
+
+/** §5.1b XP pill (neutral). */
+export function XpPill() {
+  const hydrated = useHydrated();
+  const xp = useStrata((s) => s.xp);
+  return (
+    <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Experience points" aria-label={`Experience points ${hydrated ? xp : 0}`} data-testid="stat-xp">
+      <Zap size={20} className="text-fg fill-current" aria-hidden /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
+    </span>
+  );
+}
+
+/** The §5.8 unit board draws its own bar (back arrow, stat pills, unit illustration). */
+export const isBoardPath = (path: string) => /^\/unit\/[^/]+\/board(\/|$)/.test(path);
+
 export function TopBar() {
   const hydrated = useHydrated();
   const path = usePathname();
   const xp = useStrata((s) => s.xp);
-  const streak = useStrata((s) => s.streak);
-  const last = useStrata((s) => s.lastActiveDay);
-  if (path.startsWith("/lesson")) return null;
+  if (path.startsWith("/lesson") || isBoardPath(path)) return null;
   const { rank, index } = rankFor(hydrated ? xp : 0);
-  const st = hydrated ? liveStreak(streak, last) : 0;
 
   return (
     <header className="chrome sticky top-0 z-30 bg-canvas pt-[env(safe-area-inset-top)]">
@@ -158,13 +182,9 @@ export function TopBar() {
           })}
         </nav>
         {/* §5.1b: streak pill left; XP pill, sound and avatar right. Key, flag and theme live in the avatar menu. */}
-        <span className="stat-pill !px-2.5 !gap-1 text-fg md:ml-auto" title="Daily streak" aria-label={`Daily streak ${st}`} data-testid="stat-streak">
-          <span className="text-energy-tint-text inline-flex"><StreakFlame n={st} /></span> {st}
-        </span>
+        <StreakPill className="md:ml-auto" />
         <div className="ml-auto md:ml-0 flex items-center gap-1 sm:gap-1.5">
-          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Experience points" aria-label={`Experience points ${hydrated ? xp : 0}`} data-testid="stat-xp">
-            <Zap size={20} className="text-fg fill-current" aria-hidden /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
-          </span>
+          <XpPill />
           <MuteToggle />
           <ProfileMenu badge={["T", "OM", "AM", "2C", "1C"][index]} rankTitle={rank.title} />
         </div>

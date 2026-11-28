@@ -35,9 +35,10 @@ function UnitTabs({ selected }: { selected: string }) {
           return (
             <Link
               key={u.id}
-              href={`/unit/${u.id}`}
-              replace
-              scroll={false}
+              // §5.8: tapping the selected unit again opens its board.
+              href={on ? `/unit/${u.id}/board` : `/unit/${u.id}`}
+              replace={!on}
+              scroll={on ? undefined : false}
               data-family={familyOf(u.id)}
               aria-current={on ? "page" : undefined}
               data-on={on}
@@ -151,7 +152,10 @@ export function UnitMap({ unitId }: { unitId: string }) {
               Unit {unit.n} · {levels.length} level{levels.length === 1 ? "" : "s"}
             </div>
             <h1 className="t-hero text-fg mt-2 text-balance" lang="en">
-              {nbh(unit.shortTitle)}
+              <Link href={`/unit/${unit.id}/board`} data-testid="path-board-link">
+                {nbh(unit.shortTitle)}
+                <span className="sr-only"> · open the unit board</span>
+              </Link>
             </h1>
             <p className="t-secondary mt-2 text-balance" lang="en" data-testid="unit-subtitle">
               {nbh(unit.title)}
@@ -172,7 +176,9 @@ export function UnitMap({ unitId }: { unitId: string }) {
               </div>
             )}
           </div>
-          <UnitArt unitId={unit.id} size={120} />
+          <Link href={`/unit/${unit.id}/board`} className="shrink-0" aria-label={`Open the Unit ${unit.n} board`} tabIndex={-1}>
+            <UnitArt unitId={unit.id} size={120} />
+          </Link>
         </header>
 
         <div className="px-6 mt-10 space-y-10" style={{ visibility: hydrated ? "visible" : "hidden" }}>

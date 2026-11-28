@@ -236,14 +236,16 @@ export function Home() {
           <div className="px-6">
             <Layers keep={keep} index={index} className="xfade">
               {(i, live) => (
-                <>
+                // §5.8: the title and LEVEL n open the unit's board. A plain block link, so the geometry is unchanged.
+                <Link href={`/unit/${UNITS[i].id}/board`} className="home-board-link block" data-testid={live ? "home-board-link" : undefined}>
                   <h1 className="home-title t-hero text-fg text-center" lang="en" title={UNITS[i].title}>
                     <span>{nbh(UNITS[i].shortTitle)}</span>
                   </h1>
                   <div className="t-eyebrow text-center mt-6" style={{ color: "var(--u-ink)" }} data-testid={live ? "home-level" : undefined}>
                     Level {levelOf(UNITS[i], currentLessonId(UNITS[i], done, free))}
+                    <span className="sr-only"> · open the unit board</span>
                   </div>
-                </>
+                </Link>
               )}
             </Layers>
           </div>

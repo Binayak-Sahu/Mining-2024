@@ -344,15 +344,15 @@ The Brilliant diagram language:
 One unit's lessons as a vertical board of pedestals (route `/unit/<id>/board/`). It opens from the Path header (title or illustration), from tapping the already-selected unit tab on Path, and from the unit title / LEVEL n on Home.
 - **Top bar** (replaces the §5.1b bar on this route; height 56 + safe area, `--bg`, no border, sticky): a back arrow (lucide `ArrowLeft` 24 px, 44 px target, `--text-2`) and the streak pill on the left, the XP pill on the right, the unit illustration at 48 px in the exact centre. The chrome stays neutral (§5.1b); the illustration is the only colour in it.
 - **Level header card**, one per level: a §4 card with a 3 px border and a 6 px ledge in the unit `face` / `ledge`. The `LEVEL n` eyebrow is in the unit hue: `ink`, not `face`, because `face` as text fails 4.5:1 for yellow, orange and teal in light (§2.2b). The level title (`card-title`, `--text`) is centred and reads "Lessons 1.1–1.6" (the level's first and last lesson numbers; no new content field). The card is `position: sticky` directly under the top bar inside its level's section, so it sticks only while that level is on screen (pure CSS, no scroll listener).
-- **Nodes:** a vertical zigzag. x offsets from the column centre cycle −96, −32, +96, +32 px (one cycle across the whole board, not per level), 150 px apart. The label sits on the open side (right of a node left of centre, left of a node right of centre), `card-title`, clamped to 3 lines; locked labels use `--text-2`.
+- **Nodes:** a vertical zigzag. x offsets from the column centre cycle −96, −32, +96, +32 px (one cycle across the whole board, not per level), 150 px apart. The label sits on the open side (right of a node left of centre, left of a node right of centre), `card-title`, clamped to 4 lines and centred 6 px above the pedestal middle; locked labels use `--text-2`.
 - **Pedestal** (`Pedestal`, an SVG, 120×84): an ellipse top face (rx 54, ry 24) over a side band 30 px deep.
 
 | State | Top face | Side band | Mark |
 |---|---|---|---|
 | Locked | `#9A9A9A` | `#5E5E5E` | lucide `Lock` in `#3A3A3A` on the top face |
 | Open (free roam, unlocked but not current) | `#FFFFFF`, 2 px `--edge-strong` rim | unit `mid` | none |
-| Current | `#FFFFFF` | unit `mid` | 6 px unit-`face` ring round the top face; the unit illustration (64 px) floats 56 px above the top face over a soft unit-`face` glow (a radial ellipse, 35 % → 0, no blur filter), bobbing 6 px over 2 s ease-in-out (off under reduced motion) |
-| Done | unit `face` | unit `deep` | white lucide `Check` on the top face |
+| Current | `#FFFFFF` | unit `mid` | 6 px unit-`face` ring round the top face; the unit illustration (56 px) floats with its centre 56 px above the top-face centre over a soft unit-`face` glow (a radial ellipse, 35 % → 0, no blur filter), bobbing 6 px over 2 s ease-in-out (off under reduced motion) |
+| Done | unit `face` | unit `deep` | lucide `Check` on the top face in the family text-on (`#FFFFFF` on blue and purple; the dark text-on on yellow, orange and teal, where white is under 3:1) |
 
   The pedestal greys and white are fixed in both themes, like illustration greys (§5.5).
 - **Boss exam:** the last node of the last level, a trophy token (a 56 px `energy` disc with an `energy` ledge and a lucide `Trophy` in `energy` text-on; locked: `--surface-2` disc, `--edge-strong` ledge, `--text-3` trophy) floating over a pedestal in the boss's state. When the boss is current, the token takes the place of the floating illustration and bobs.
