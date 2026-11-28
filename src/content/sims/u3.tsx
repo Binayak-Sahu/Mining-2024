@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
@@ -209,9 +209,9 @@ export const failureSim: SimDef = {
           <V3T x={80} y={265}>
             Hoek–Brown
           </V3T>
-          <line x1={206} x2={238} y1={259} y2={259} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
-          <circle cx={222} cy={259} r={5} style={{ fill: V3U.deep }} />
-          <V3T x={246} y={265}>
+          <line x1={180} x2={212} y1={259} y2={259} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+          <circle cx={196} cy={259} r={5} style={{ fill: V3U.deep }} />
+          <V3T x={220} y={265}>
             Mohr–Coulomb
           </V3T>
         </g>
