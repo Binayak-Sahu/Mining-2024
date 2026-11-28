@@ -59,17 +59,26 @@ async function sliderDiagonal(phone, label) {
   // Grip parameters keep their sliders in a collapsed "Fine-tune" row — open it so every slider is tested.
   await page.evaluate(() => document.querySelectorAll("details").forEach((d) => (d.open = true)));
   await page.waitForTimeout(200);
-  const sliders = page.locator(".slider");
+  const sliders = page.locator(".slider, .sim-slider");
   const n = await sliders.count();
   let failures = 0;
   for (let k = 0; k < n; k++) {
     const s = sliders.nth(k);
     const input = s.locator("input[type=range]");
     if (await input.isDisabled()) continue;
-    const box = await centre(page, s);
+    let box = await centre(page, s);
     if (!box) continue;
+    // The lesson's sim stage is sticky: scroll until the slider is clear of it (a finger can only reach an uncovered slider).
+    for (let tries = 0; tries < 20; tries++) {
+      const t0 = await s.locator(".slider-thumb, .sim-slider-thumb").boundingBox();
+      const covered = await page.evaluate(([x, y, sel]) => { const e = document.elementFromPoint(x, y); return !(e && e.closest(sel)); }, [t0.x + t0.width / 2, t0.y + t0.height / 2, ".slider, .sim-slider"]);
+      if (!covered) break;
+      await page.evaluate(() => window.scrollBy(0, -40));
+      await page.waitForTimeout(80);
+    }
+    box = await s.boundingBox();
     const before = await input.inputValue();
-    const thumb = await s.locator(".slider-thumb").boundingBox();
+    const thumb = await s.locator(".slider-thumb, .sim-slider-thumb").boundingBox();
     const sy0 = await page.evaluate(() => scrollY);
     const x0 = thumb.x + thumb.width / 2;
     const y0 = thumb.y + thumb.height / 2;
@@ -113,10 +122,10 @@ async function gripDiagonal(phone, label) {
 async function pageStillScrolls(phone, label) {
   // Scrolling must still work when a finger lands on a slider track away from the thumb (vertical swipe).
   const { page, cdp } = phone;
-  const s = page.locator(".slider").first();
+  const s = page.locator(".slider, .sim-slider").first();
   if (!(await s.count())) return;
   const box = await centre(page, s);
-  const thumb = await s.locator(".slider-thumb").boundingBox();
+  const thumb = await s.locator(".slider-thumb, .sim-slider-thumb").boundingBox();
   const x = thumb.x + thumb.width / 2 > box.x + box.width / 2 ? box.x + 20 : box.x + box.width - 20;
   const y = box.y + box.height / 2;
   const sy0 = await page.evaluate(() => scrollY);
