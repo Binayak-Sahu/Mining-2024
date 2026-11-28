@@ -52,7 +52,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u2-burncut` | U2 | done-v2 | exact (min, default, objective-met) | Parallel-hole burn cut — pull and firing sequence |
 | `u2-cutting` | U2 | todo | — | Rock-cutting machines — specific energy and cutting rate |
 | `u1-coalrank` | U1 | unsure: pin 4 (150,178) only lands on the Ro pointer at some depths | exact (min, default, objective-met) | Coalification furnace — burial, heat and time |
-| `u1-supergene` | U1 | todo | — | Supergene enrichment profile |
+| `u1-supergene` | U1 | done-v2 | exact (min, default, objective-met) | Supergene enrichment profile |
 | `u1-dip` | U1 | unsure: pin 1 (67,136) sits ~11 units below the strike line (as before the redraw) | exact (min, default, objective-met) | True vs apparent dip — plan and section |
 | `u1-fault` | U1 | todo | — | Fault displacement — throw, heave, gap and overlap |
 | `u1-rqd` | U1 | todo | — | Diamond core tray — RQD logger |

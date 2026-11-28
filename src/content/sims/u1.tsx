@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter, Stream } from "@/components/sim/svg";
+import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, LBL, HeatRamp, num } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, LBL, HeatRamp, num, OK_LIGHT, BAD_LIGHT } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Coalification & rank ---------------- */
@@ -137,45 +137,47 @@ export const supergene: SimDef = {
     { key: "blanket", label: "Blanket grade", unit: "% Cu", digits: 2, tone: (v) => (v >= 2 ? "ok" : "info") },
     { key: "ef", label: "Enrichment factor", unit: "×", digits: 2 },
   ],
+  // §5.6d redraw (v3.2): layer depths keep the legacy scale (surface y 40, 150 units over Hl+Hb+60), so the lesson pins stay on their layers.
+  primary: ["blanket", "ef"],
+  v3: { viewH: 250, formula: () => "G_b = g_0\\left(1 + \\dfrac{\\eta\\,H_l}{H_b}\\right)" },
   handles: [
     { key: "Hl", axis: "y", at: (p) => [215, 40 + (p.Hl * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (d * (p.Hb + 60)) / (150 - d); }, color: "#0EA5E9" },
     { key: "Hb", axis: "y", at: (p) => [265, 40 + ((p.Hl + p.Hb) * 150) / (p.Hl + p.Hb + 60)], toValue: (y, p) => { const d = clamp(y - 40, 1, 148); return (60 * d) / (150 - d) - p.Hl; }, color: "#1D4ED8" },
   ],
-  render: (p, o) => {
+  render: (p) => {
     const scale = 150 / (p.Hl + p.Hb + 60);
     const y0 = 40;
     const y1 = y0 + p.Hl * scale;
     const y2 = y1 + p.Hb * scale;
+    const yB = 238;
+    const sx = 144;
+    // label lanes in the left column: the water table keeps its own height, the others give way
+    const c = [(y0 + y1) / 2, y1, (y1 + y2) / 2, (y2 + yB) / 2];
+    const l1 = c[1];
+    const l0 = Math.min(c[0], l1 - 24);
+    const l2 = Math.max(c[2], l1 + 24);
+    const l3 = Math.max(c[3], l2 + 24);
+    const lanes = [l0, l1, l2, l3];
+    const names = ["Leached cap", "Water table", "Blanket", "Primary"];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={y0} fill={MAT.sky} />
-        <rect x={0} y={y0} width={400} height={y1 - y0} fill={MAT.soil} />
-        <rect x={0} y={y0} width={400} height={y1 - y0} fill="#c2410c" opacity={0.35} />
-        <rect x={0} y={y1} width={400} height={y2 - y1} fill={MAT.ore} />
-        <rect x={0} y={y1} width={400} height={y2 - y1} fill="#1d4ed8" opacity={0.55} />
-        <rect x={0} y={y2} width={400} height={240 - y2} fill={MAT.rock} />
-        <path d={`M0 ${y0} Q100 ${y0 - 12} 200 ${y0} T400 ${y0} L400 ${y0 + 4} L0 ${y0 + 4} Z`} fill="#65A30D" />
-        <Stream d={`M0 ${y1} L400 ${y1}`} color={C.air} width={2.5} speed={0.25} />
-        <Txt x={392} y={y1 - 3} size={8} anchor="end" fill="#075985" weight={700}>
-          WATER TABLE
-        </Txt>
-        {[60, 140, 220, 300].map((x) => (
-          <Stream key={x} d={`M${x} ${y0 + 6} L${x} ${y1 - 4}`} color="#BAE6FD" width={1.6} speed={0.35} />
+        <clipPath id="u1-sg-scene">
+          <rect x={sx} y={y0} width={388 - sx} height={yB - y0} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u1-sg-scene)">
+          <rect x={sx} y={y0} width={388 - sx} height={y1 - y0} fill={GREYS.light} />
+          <rect x={sx} y={y1} width={388 - sx} height={y2 - y1} style={{ fill: U.mid }} />
+          <rect x={sx} y={y2} width={388 - sx} height={yB - y2} fill={GREYS.mid} />
+        </g>
+        <line x1={sx} x2={388} y1={y1} y2={y1} style={{ stroke: INK }} strokeWidth={2} strokeDasharray="7 6" strokeLinecap="round" />
+        {lanes.map((l, i) => (
+          <g key={names[i]}>
+            <T x={136} y={l + 6} anchor="end">
+              {names[i]}
+            </T>
+            <line x1={140} y1={l} x2={sx + 4} y2={c[i]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+          </g>
         ))}
-        <Txt x={10} y={y0 + 14} size={9} weight={800} fill="white">
-          Leached cap / gossan (limonite, hematite) · {o.cap.toFixed(2)}% Cu
-        </Txt>
-        <Txt x={10} y={y1 + 13} size={9} weight={800} fill="white">
-          Enriched blanket (chalcocite, covellite) · {o.blanket.toFixed(2)}% Cu
-        </Txt>
-        <Txt x={10} y={y2 + 14} size={9} weight={800}>
-          Primary sulphide (chalcopyrite, pyrite) · {p.g0.toFixed(2)}% Cu
-        </Txt>
-        <Dim x1={355} y1={y0} x2={355} y2={y1} label={`${p.Hl} m`} color={C.ink} />
-        <Dim x1={355} y1={y1} x2={355} y2={y2} label={`${p.Hb} m`} color={C.ink} />
-        <Txt x={10} y={232} size={8} fill={C.ink}>
-          Cu leached above the water table re-precipitates in the reducing zone below.
-        </Txt>
       </g>
     );
   },
@@ -368,6 +370,7 @@ export const rqdSim: SimDef = {
     const rqdT = 100 * Math.exp(-x) * (x + 1);
     return { rqd, rqdT, n: pieces.length, cls: rqd < 25 ? 0 : rqd < 50 ? 1 : rqd < 75 ? 2 : rqd < 90 ? 3 : 4 };
   },
+  v3: { viewH: 266 },
   outputs: [
     { key: "rqd", label: "Logged RQD", unit: "%", digits: 1, tone: (v) => (v < 50 ? "crit" : v < 75 ? "warn" : "ok") },
     { key: "rqdT", label: "Priest–Hudson RQD (100% rec.)", unit: "%", digits: 1 },
@@ -393,25 +396,39 @@ export const rqdSim: SimDef = {
       }
       pos += len;
     }
+    const lg = 196;
     return (
       <g>
-        <rect x={28} y={25} width={347} height={170} rx={6} fill={MAT.wood} filter="url(#f-shadow)" />
+        <clipPath id="u1-rqd-clip">
+          <rect x={0} y={0} width={400} height={266} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u1-rqd-clip)">
+          <rect x={0} y={0} width={400} height={266} fill={GREYS.light} />
+        </g>
+        <rect x={27} y={30} width={346} height={148} rx={6} style={{ fill: GREYS.mid, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
         {[0, 1, 2].map((r) => (
-          <g key={r}>
-            <rect x={35} y={40 + r * 50} width={330} height={30} rx={3} fill="#5B3410" />
-            <rect x={35} y={40 + r * 50} width={330} height={4} rx={2} fill="#3B200A" opacity={0.6} />
-            <Txt x={22} y={60 + r * 50} size={8} anchor="end" fill={C.slate} mono>
-              {r}m
-            </Txt>
-          </g>
+          <rect key={r} x={35} y={40 + r * 50} width={330} height={30} rx={3} fill={GREYS.deep} />
         ))}
         {rows.map((s, i) => (
-          <rect key={i} x={s.x + 0.8} y={44 + s.row * 50} width={Math.max(s.w - 1.6, 0.8)} height={22} rx={3} fill={MAT.core} stroke={s.ok ? C.safe : C.crit} strokeWidth={s.ok ? 1.5 : 0.8} />
+          <rect key={i} x={s.x + 0.8} y={44 + s.row * 50} width={Math.max(s.w - 1.6, 0.8)} height={22} rx={3} style={{ fill: s.ok ? U.mid : GREYS.light, stroke: ON_LIGHT }} strokeWidth={1.5} />
         ))}
-        <Txt x={35} y={214} size={9} weight={700}>
-          <tspan fill={C.safe}>■</tspan> piece ≥ 10 cm (counts) <tspan fill={C.crit}>■</tspan> &lt; 10 cm · lost core = empty tray
-        </Txt>
-        <Meter x={35} y={224} w={330} value={p.rec} max={100} label="" color={C.tech} />
+        <rect x={24} y={lg - 13} width={14} height={14} rx={3} style={{ fill: U.mid, stroke: ON_LIGHT }} strokeWidth={1.5} />
+        <T x={44} y={lg} fill={ON_LIGHT}>
+          ≥ 10 cm
+        </T>
+        <rect x={134} y={lg - 13} width={14} height={14} rx={3} style={{ fill: GREYS.light, stroke: ON_LIGHT }} strokeWidth={1.5} />
+        <T x={154} y={lg} fill={ON_LIGHT}>
+          &lt; 10 cm
+        </T>
+        <rect x={244} y={lg - 13} width={14} height={14} rx={3} fill={GREYS.deep} />
+        <T x={264} y={lg} fill={ON_LIGHT}>
+          Lost core
+        </T>
+        <T x={24} y={233} fill={ON_LIGHT}>
+          Recovery
+        </T>
+        <rect x={118} y={220} width={258} height={16} rx={3} fill={GREYS.mid} />
+        <rect x={118} y={220} width={(258 * p.rec) / 100} height={16} rx={3} style={{ fill: U.deep }} />
       </g>
     );
   },
@@ -453,46 +470,47 @@ export const unfcSim: SimDef = {
     { key: "code", label: "Category", format: (v) => unfcName(v), tone: (_, o) => (o.valid ? "ok" : "crit") },
     { key: "reserve", label: "Class", format: (v, o) => (!o.valid ? "—" : v ? "RESERVE (mineable)" : "REMAINING RESOURCE"), tone: (v, o) => (!o.valid ? "crit" : v ? "ok" : "warn") },
   ],
+  // §5.6 redraw (v3.2): three option rows keep their legacy places (pins on the row starts), code box keeps its place.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const axes = [
-      { k: "E", n: 3, v: p.E, color: C.safe, labels: ["Economic", "Pot. econ.", "Intrinsic"] },
-      { k: "F", n: 3, v: p.F, color: C.tech, labels: ["Feasibility", "Prefeas.", "Geological"] },
-      { k: "G", n: 4, v: p.G, color: C.hazard, labels: ["Detailed", "General", "Prospect.", "Recon."] },
+      { k: "E", n: 3, v: p.E, name: "Economic" },
+      { k: "F", n: 3, v: p.F, name: "Feasibility" },
+      { k: "G", n: 4, v: p.G, name: "Geological" },
     ];
+    const state = o.valid ? (o.reserve ? "safe" : undefined) : "unsafe";
+    const fill = o.valid ? (o.reserve ? OK_LIGHT : U.light) : BAD_LIGHT;
     return (
       <g>
-        {axes.map((a, i) => (
-          <g key={a.k}>
-            <Txt x={30} y={42 + i * 52} size={16} weight={900} fill={a.color}>
-              {a.k}
-            </Txt>
-            {Array.from({ length: a.n }).map((_, j) => (
-              <g key={j}>
-                <rect x={52 + j * 52} y={26 + i * 52} width={48} height={24} rx={6} fill={a.v === j + 1 ? a.color : "#f8fafc"} stroke={a.color} strokeWidth={a.v === j + 1 ? 0 : 1.2} filter={a.v === j + 1 ? "url(#f-shadow)" : undefined} />
-                <Txt x={76 + j * 52} y={42 + i * 52} size={8} anchor="middle" weight={700} fill={a.v === j + 1 ? "white" : C.slate}>
-                  {`${a.k}${j + 1}`}
-                </Txt>
-                <Txt x={76 + j * 52} y={60 + i * 52} size={6.5} anchor="middle" fill={C.slate}>
-                  {a.labels[j]}
-                </Txt>
-              </g>
-            ))}
-          </g>
-        ))}
-        <rect x={270} y={30} width={115} height={150} rx={14} fill={o.valid ? (o.reserve ? C.safe : C.tech) : C.crit} filter="url(#f-shadow)" />
-        <rect x={270} y={30} width={115} height={150} rx={14} fill={MAT.glass} />
-        <Txt x={327} y={95} size={34} weight={900} anchor="middle" fill="white" mono>
-          {String(o.code)}
-        </Txt>
-        <Txt x={327} y={120} size={8} anchor="middle" fill="white" weight={700}>
-          {o.valid ? (o.reserve ? "RESERVE" : "RESOURCE") : "INVALID"}
-        </Txt>
-        <Txt x={20} y={205} size={9} fill={C.ink} weight={700}>
-          {unfcName(o.code)}
-        </Txt>
-        <Txt x={20} y={222} size={8} fill={C.slate}>
-          Reserves need E1 + a feasibility (F1) or prefeasibility (F2) study + G1/G2 assurance.
-        </Txt>
+        {axes.map((a, i) => {
+          const cy = 38 + i * 52;
+          return (
+            <g key={a.k}>
+              {Array.from({ length: a.n }).map((_, j) => {
+                const on = a.v === j + 1;
+                const x = 10 + j * 46;
+                return (
+                  <g key={j}>
+                    <rect x={x} y={cy - 16} width={42} height={32} rx={8} style={{ fill: on ? U.deep : GREYS.light, stroke: on ? U.deep : INK3 }} strokeWidth={1.5} />
+                    <T x={x + 21} y={cy + 6} anchor="middle" fill={on ? "#FFFFFF" : ON_LIGHT}>
+                      {`${a.k}${j + 1}`}
+                    </T>
+                  </g>
+                );
+              })}
+              <T x={20 + a.n * 46} y={cy + 6}>
+                {a.name}
+              </T>
+            </g>
+          );
+        })}
+        <rect data-state={state} x={276} y={30} width={96} height={92} rx={14} style={{ fill, stroke: INK }} strokeWidth={2.5} />
+        <T x={324} y={108} anchor="middle" fill={ON_LIGHT}>
+          Code
+        </T>
+        <T x={24} y={224}>
+          Reserve: E1, F1–F2, G1–G2
+        </T>
       </g>
     );
   },
