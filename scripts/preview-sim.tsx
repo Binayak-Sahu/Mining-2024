@@ -30,6 +30,8 @@ for (const p of def.params) {
   states.push({ ctx: `${p.key}=max`, vals: dflt({ [p.key]: p.options ? p.options[p.options.length - 1].value : p.max }), pins: [] });
 }
 const U = 400 / 314;
+if (process.env.PV_N) states.splice(Number(process.env.PV_N));
+if (process.env.PV_CTX) states.splice(0, states.length, ...states.filter((x) => process.env.PV_CTX!.split(",").some((c) => x.ctx.includes(c))));
 const one = (s: (typeof states)[number]) => {
   const o = def.compute(s.vals);
   const grips = (def.handles ?? []).map((h, i) => {

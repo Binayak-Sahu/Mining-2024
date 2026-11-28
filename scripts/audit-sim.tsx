@@ -50,7 +50,7 @@ const hueOf = ([r, g, b]: [number, number, number]) => {
   if (h < 0) h += 360;
   return { h, chroma: d };
 };
-const STATE_HEX = ["#22c55e", "#15803d", "#ef4444", "#b91c1c", "#dcfce7", "#fee2e2", "#0f2e1a", "#f87171", "#4ade80"];
+const STATE_HEX = ["#86efac", "#fca5a5", "#22c55e", "#15803d", "#ef4444", "#b91c1c", "#dcfce7", "#fee2e2", "#0f2e1a", "#f87171", "#4ade80"];
 const famHues = (Object.keys(FAMILIES) as Family[]).map((f) => {
   const t = FAMILIES[f];
   return { f, hues: [t.face, t.deep, t.mid, t.light, t.ink.light, t.ink.dark].map((c) => hueOf(hexRgb(c)!).h) };

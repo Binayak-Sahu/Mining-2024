@@ -33,6 +33,12 @@ export const OK = "var(--success)";
 export const BAD = "var(--danger)";
 export const BAD_TEXT = "var(--danger-tint-text)";
 export const OK_TEXT = "var(--success-tint-text)";
+/** State fills (fixed light values, both themes): success / danger at light and pale strength. Text on them: ON_LIGHT. */
+export const OK_LIGHT = "#86EFAC";
+export const BAD_LIGHT = "#FCA5A5";
+export const BAD_PALE = "#FEE2E2";
+/** Rough label width in viewBox units (UI font, ~0.56 em per character). */
+export const textW = (s: string, size = LBL) => s.length * size * 0.56;
 
 /** A second hue family's fill tones (fixed hex: fills keep their light values in both themes). Never use for text. */
 export function hue(f: Family) {
