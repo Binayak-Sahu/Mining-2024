@@ -1,7 +1,9 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, polyline, Dim, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as T3, GREYS, Arrow as Arrow3, INK as BINK, INK3 as BINK3, U as BU } from "@/components/sim/v3";
+import { DimLine as WbDimLine } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
+import { T as T3, GREYS, Arrow as Arrow3, INK as BINK, INK3 as BINK3, U as BU, ON_LIGHT as BON } from "@/components/sim/v3";
 import { T, INK, INK3, ON_LIGHT, U, OK, BAD, Dot } from "@/components/sim/v3";
 
 /* ---------------- Closed traverse & Bowditch ---------------- */
@@ -165,44 +167,57 @@ export const weisbachSim: SimDef = {
     { key: "err", label: "Orientation error carried underground", unit: "″", digits: 2, tone: (v) => (v <= 1 ? "ok" : v <= 3 ? "warn" : "crit") },
   ],
   caption: "Sine rule with small angles: β ≈ (b/c)·α, so any error in α is multiplied by b/c. Keep the instrument close to the near wire, wires far apart, and α under ~1°.",
-  handles: [{ key: "b", axis: "x", at: (p) => [360 - p.c * 22 - p.b * 22, 132], toValue: (x, p) => (360 - p.c * 22 - x) / 22, color: "#F59E0B" }],
-  render: (p) => {
+  // v3.2 redraw: instrument, near wire, b/c dimension row and shaft keep their lesson-pin places.
+  v3: { viewH: 250, formula: () => "\\beta \\approx \\dfrac{b}{c}\\,\\alpha" },
+  handles: [{ key: "b", axis: "x", at: (p) => [360 - p.c * 22 - p.b * 22, 167], toValue: (x, p) => (360 - p.c * 22 - x) / 22, color: "#F59E0B" }],
+  render: (p, o) => {
     const k = 22;
-    const y = 120;
+    const y = 105;
     const xW2 = 360;
     const xW1 = xW2 - p.c * k;
     const xC = xW1 - p.b * k;
     const off = clamp(p.al / 60, 2, 50);
+    const cx = (xW1 + xW2) / 2;
+    const r = p.c * (k / 2) + 16;
+    const state = o.ok ? "safe" : "unsafe";
+    const instrRight = xC + 14 + 120 > 376;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.6} />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill="#9CA3AF" />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill={MAT.hatch} />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20)} fill="#1E293B" />
-        <Txt x={(xW1 + xW2) / 2} y={y - Math.max(60, (p.c * k) / 2 + 20) + 14} size={8} anchor="middle" fill="#CBD5E1" weight={700}>
-          SHAFT
-        </Txt>
-        <Stream d={`M${xC} ${y} L${xW2} ${y - off}`} color="#38BDF8" width={1.5} speed={0.7} />
-        <Stream d={`M${xC} ${y} L${xW1} ${y}`} color="#38BDF8" width={1.5} speed={0.7} />
-        <line x1={xW1} y1={y} x2={xW2} y2={y - off} stroke="#F8FAFC" strokeWidth={2} />
-        <circle cx={xW1} cy={y} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
-        <circle cx={xW2} cy={y - off} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
-        <Txt x={xW1} y={y + 18} size={9} anchor="middle" weight={800} fill="#F8FAFC">
+        <defs>
+          <clipPath id="u8wb-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u8wb-clip)">
+          <rect x={0} y={0} width={400} height={250} style={{ fill: GREYS.light }} />
+        </g>
+        <T x={24} y={44} fill={ON_LIGHT}>
+          Rock
+        </T>
+        <circle cx={cx} cy={y} r={r + 7} style={{ fill: GREYS.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <circle cx={cx} cy={y} r={r} style={{ fill: U.light }} />
+        <T x={cx - r - 14} y={50} anchor="end" fill={ON_LIGHT}>
+          Shaft
+        </T>
+        <line x1={xC} y1={y} x2={xW1} y2={y} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <line x1={xC} y1={y} x2={xW2} y2={y - off} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <line x1={xW1} y1={y} x2={xW2} y2={y - off} data-state={state} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <Dot x={xW1} y={y} />
+        <Dot x={xW2} y={y - off} />
+        <polygon points={`${xC - 10},${y + 12} ${xC + 10},${y + 12} ${xC},${y - 10}`} style={{ fill: U.deep, stroke: INK }} strokeWidth={2} strokeLinejoin="round" />
+        <T x={xW1} y={y + 34} anchor="middle" fill={ON_LIGHT}>
           W₁
-        </Txt>
-        <Txt x={xW2} y={y - off - 10} size={9} anchor="middle" weight={800} fill="#F8FAFC">
+        </T>
+        <T x={xW2} y={y - off - 14} anchor="middle" fill={ON_LIGHT}>
           W₂
-        </Txt>
-        <polygon points={`${xC - 7},${y + 12} ${xC + 7},${y + 12} ${xC},${y - 2}`} fill={C.hazard} stroke={C.ink} />
-        <Txt x={xC} y={y + 26} size={9} anchor="middle" weight={800}>
-          C (theodolite)
-        </Txt>
-        <Dim x1={xC} y1={y + 40} x2={xW1} y2={y + 40} label={`b ${p.b} m`} />
-        <Dim x1={xW1} y1={y + 56} x2={xW2} y2={y + 56} label={`c ${p.c} m`} />
-        <Txt x={20} y={30} size={10} weight={800}>
-          α = {p.al}″ (exaggerated)
-        </Txt>
+        </T>
+        <T x={instrRight ? xC + 14 : Math.max(24, xC - 14)} y={78} anchor={instrRight ? "end" : "start"} fill={ON_LIGHT}>
+          Instrument C
+        </T>
+        <WbDimLine x1={xC} y1={167} x2={xW1} y2={167} />
+        <WbDimLine x1={xW1} y1={167} x2={xW2} y2={167} />
+        <SvgTex x={(xC + xW1) / 2} y={204} tex="b" anchor="middle" color="var(--text-2)" />
+        <SvgTex x={(xW1 + xW2) / 2} y={204} tex="c" anchor="middle" color="var(--text-2)" />
       </g>
     );
   },
@@ -245,7 +260,7 @@ export const bondSim: SimDef = {
     const close = Math.abs(xF - xP) < 64;
     const cx = 90;
     const cy = 165;
-    const R = 40;
+    const R = 38;
     const bar = clamp(o.W / 32, 0, 1) * 68;
     const ticks: [number, string][] = [
       [100, "100 µm"],
@@ -266,17 +281,17 @@ export const bondSim: SimDef = {
         <rect x={30} y={30} width={340} height={20} rx={10} style={{ fill: BU.light, stroke: BINK3 }} strokeWidth={1.5} />
         {ticks.map(([u, l]) => (
           <g key={u}>
-            <line x1={lx(u)} y1={50} x2={lx(u)} y2={56} style={{ stroke: BINK3 }} strokeWidth={1.5} strokeLinecap="round" />
-            <T3 x={lx(u)} y={76} anchor="middle">
+            <line x1={lx(u)} y1={50} x2={lx(u)} y2={54} style={{ stroke: BINK3 }} strokeWidth={1.5} strokeLinecap="round" />
+            <T3 x={lx(u)} y={80} anchor="middle">
               {l}
             </T3>
           </g>
         ))}
-        {Math.abs(xF - xP) > 16 && <Arrow3 x1={xF} y1={92} x2={xP + (xF > xP ? 6 : -6)} y2={92} color={BU.deep} />}
-        <T3 x={xF} y={116} anchor="middle" fill={BINK} weight={700}>
+        {Math.abs(xF - xP) > 16 && <Arrow3 x1={xF} y1={96} x2={xP + (xF > xP ? 6 : -6)} y2={96} color={BU.deep} />}
+        <T3 x={xF} y={118} anchor="middle" fill={BINK} weight={700}>
           F80
         </T3>
-        <T3 x={xP} y={close ? 138 : 116} anchor="middle" fill={BINK} weight={700}>
+        <T3 x={xP} y={close ? 140 : 118} anchor="middle" fill={BINK} weight={700}>
           P80
         </T3>
         <circle cx={cx} cy={cy} r={R} style={{ fill: GREYS.light, stroke: BINK }} strokeWidth={2.5} />
@@ -299,7 +314,7 @@ export const bondSim: SimDef = {
         </T3>
         <rect x={344} y={124} width={32} height={72} rx={4} style={{ fill: "none", stroke: BINK3 }} strokeWidth={1.5} />
         <rect x={347} y={193 - bar} width={26} height={bar} rx={2} style={{ fill: BU.mid }} />
-        <T3 x={376} y={222} anchor="end" weight={700}>
+        <T3 x={376} y={222} anchor="end" fill={BON} weight={700}>
           Energy
         </T3>
       </g>
