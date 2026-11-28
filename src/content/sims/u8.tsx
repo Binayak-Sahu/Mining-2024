@@ -427,7 +427,7 @@ export const washSim: SimDef = {
         </T>
         <line x1={218} x2={240} y1={258} y2={258} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
         <T x={246} y={264}>
-          17 % ash target
+          Ash target
         </T>
       </g>
     );
@@ -486,7 +486,7 @@ export const earthSim: SimDef = {
         <path d="M60 94 L60 120 M60 164 L60 190" fill="none" style={{ stroke: EINK }} strokeWidth={2} strokeLinecap="round" />
         <rect x={50} y={120} width={20} height={44} rx={3} style={{ fill: _p.Rn > 0 ? EU.mid : EGREYS.light, stroke: EINK3 }} strokeWidth={1.5} />
         <ET x={82} y={148}>
-          {_p.Rn > 0 ? "Resistor" : "Solid earth"}
+          {_p.Rn > 0 ? "Resistor" : "Solid link"}
         </ET>
         <path d="M96 72 L250 72 L250 40 L300 40" fill="none" style={{ stroke: EINK }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         <ET x={110} y={62}>
@@ -512,7 +512,7 @@ export const earthSim: SimDef = {
         </ET>
         <path d="M220 115 L270 115 L270 150 L343 150" fill="none" style={{ stroke: EINK3 }} strokeWidth={1.5} strokeDasharray="5 5" strokeLinejoin="round" />
         <rect x={160} y={98} width={60} height={34} rx={6} data-state={tripped ? "safe" : "unsafe"} style={{ fill: tripped ? EOK_LIGHT : EBAD_LIGHT, stroke: EINK }} strokeWidth={2} />
-        <ET x={190} y={156} anchor="middle">
+        <ET x={196} y={156} anchor="start">
           Relay
         </ET>
       </g>
