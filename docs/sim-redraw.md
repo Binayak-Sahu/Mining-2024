@@ -46,7 +46,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u3-slope` | U3 | done-v2 | exact (min, default, objective-met) | Plane failure — limit equilibrium of a sliding block |
 | `u3-subsidence` | U3 | done-v2 | exact (min, default, objective-met) | Subsidence trough — sub-critical, critical, super-critical |
 | `u3-slope-modes` | U3 | done-v2 | exact (min, default, objective-met) | Slope failure modes — plane, wedge, circular (Bishop) and toppling |
-| `u2-access` | U2 | todo | — | Access trade-off — adit, incline or shaft |
+| `u2-access` | U2 | unsure: at D=max the incline is drawn over the "Incline" label and capex bars (label looks struck through) | exact (min, default, objective-met) | Access trade-off — adit, incline or shaft |
 | `u2-sinking` | U2 | done-v2 | exact (min, default, objective-met) | Conventional sinking cycle & Galloway stage |
 | `u2-freeze` | U2 | done-v2 | exact (min, default, objective-met) | Freeze-wall design through a running-sand aquifer |
 | `u2-burncut` | U2 | done-v2 | exact (min, default, objective-met) | Parallel-hole burn cut — pull and firing sequence |
