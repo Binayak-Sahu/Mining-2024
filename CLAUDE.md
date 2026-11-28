@@ -62,6 +62,8 @@ Never apply a change to a statutory value or citation directly. That covers `src
 
 If any gate fails, push only the working branch and record what is broken in `ROADMAP.md`.
 
+**Always merge to `main` (Bink, 2026-11-28):** at the end of every run, once all gates pass, merge the working branch into `main` and push `main`, so the changes appear on the live site. No need to ask first. Record the merge in the `ROADMAP.md` run log.
+
 ## Working style
 - Run `date` at the start and at each checkpoint.
 - Commit at every checkpoint. Commit messages end with the session attribution lines.
