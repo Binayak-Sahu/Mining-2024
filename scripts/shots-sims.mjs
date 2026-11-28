@@ -13,7 +13,7 @@ import { execSync } from "node:child_process";
 import { join } from "node:path";
 
 const [base = "http://localhost:4310", outDir = ".audit/v3e", ...ids0] = process.argv.slice(2);
-const ids = ids0.length ? ids0 : [...readFileSync("docs/sim-redraw.md", "utf8").matchAll(/^\|\s*`([^`]+)`\s*\|[^|]*\|\s*done\s*\|/gm)].map((m) => m[1]);
+const ids = ids0.length ? ids0 : [...readFileSync("docs/sim-redraw.md", "utf8").matchAll(/^\|\s*`([^`]+)`\s*\|[^|]*\|\s*(?:done-v2|done|unsure[^|]*)\s*\|/gm)].map((m) => m[1]);
 const stages = JSON.parse(execSync("npx tsx --tsconfig scripts/tsconfig.json scripts/sim-stages.ts", { encoding: "utf8" }));
 mkdirSync(outDir, { recursive: true });
 const PREFS = JSON.stringify({ state: { theme: "system", muted: true, masterUnlock: true, theoryFirst: true }, version: 1 });
@@ -53,7 +53,16 @@ const measure = (page) =>
       const c = g.querySelectorAll("circle");
       return { hit: c[0].getBoundingClientRect().width, disc: c[1].getBoundingClientRect().width }; // c[1]: the 28 px disc incl. ring and ledge
     });
-    return { stageW: st.getBoundingClientRect().width, drawW: r.width, min, minWhat, grips, overflow: document.documentElement.scrollWidth - innerWidth };
+    // v3.2: every label and KaTeX box inside the 24-unit inset (real boxes)
+    const ins = 24 * k - 0.5;
+    const outside = [];
+    for (const t of svg.querySelectorAll("text, [data-tex] .sim-fo")) {
+      if (t.closest("[data-pill]") || t.closest("[data-pin]")) continue;
+      const b = t.getBoundingClientRect();
+      if (!b.width || !t.textContent.trim()) continue;
+      if (b.left < r.left + ins || b.right > r.right - ins || b.top < r.top + ins || b.bottom > r.bottom - ins) outside.push(t.textContent.trim().slice(0, 24));
+    }
+    return { outside, stageW: st.getBoundingClientRect().width, drawW: r.width, min, minWhat, grips, overflow: document.documentElement.scrollWidth - innerWidth };
   });
 
 const browser = await chromium.launch();
@@ -81,6 +90,7 @@ for (const scheme of ["light", "dark"]) {
     ok(`${L}: §5.6 stage renders`, !!m);
     if (m) {
       ok(`${L}: smallest label ≥ 14 px`, m.min >= 13.95, `${m.min.toFixed(1)} px (${m.minWhat}) · stage ${m.stageW.toFixed(0)} px, drawing ${m.drawW.toFixed(0)} px`);
+      if (process.env.V32) ok(`${L}: labels inside the 24 px inset`, m.outside.length === 0, m.outside.slice(0, 3).join(" | "));
       ok(`${L}: no horizontal overflow`, m.overflow <= 0, `${m.overflow}`);
       for (const [i, g] of m.grips.entries()) ok(`${L}: grip ${i + 1} disc 28 px, hit ≥ 44 px`, Math.abs(g.disc - 28) < 1.5 && g.hit >= 43.5, `disc ${g.disc.toFixed(1)}, hit ${g.hit.toFixed(1)}`);
     }

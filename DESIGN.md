@@ -338,6 +338,19 @@ The Brilliant diagram language:
 - **Sim stage titles** use `display` when they fit in 2 lines and `title` otherwise (measured at the current width).
 - **Checks.** `npm run audit:sim` (grid paper, ungated gradients and filters, text < 14 px, > 2 hue families, missing golden values, tracker drift), `npm run test:golden` (readouts unchanged), `audit:svg` (per-sim viewBox). Tracker: `docs/sim-redraw.md`.
 
+### 5.6d v3.2 composition rules (Bink, 2026-11-28; applies to every sim, the shared controls and the readouts)
+Supersedes §5.6 / §5.6b wherever they differ (stage padding, hue count, readout order).
+a) **Composition.** A fixed-aspect viewBox (16:10 default: `0 0 400 250`; taller only when the subject needs it, `viewH` in `SimDef.v3`). 24 px inner padding (24 viewBox units at 400 wide): nothing touches or crosses the stage edge. Scene fills are clipped to an inner radius-12 rect (`<clipPath>`). Always draw context: the host rock as a neutral band, and labels for the key parts (HW/FW, drawpoints, seam, etc.). The subject fills at least 60 % of the stage width. Lesson hotspot pins are content and do not move: where a pin falls outside the padded area, the sim is marked `unsure`.
+b) **Text.** No title text inside the stage; the caption goes above as the objective line. Labels ≥ 14 px with ≥ 8 px clearance from edges and fills. A label sits inside a band only if the band is ≥ 32 px tall; otherwise outside, with a 1.5 px leader line.
+c) **Colour.** Unit family tones + neutral greys + at most one accent family. `success` / `danger` only on elements carrying `data-state` (met/unmet, safe/unsafe), never as decoration. The main subject's outline is 2.5 px; everything else is 1.5 px `--text-3` or has no outline.
+d) **No echo.** No value text inside the stage that repeats a readout. Readout rows that only echo the selected chip move to "All readouts".
+e) **Order.** Objective, stage, controls, 2 key readouts, "All readouts (n)" disclosure.
+f) **Text-valued readouts** render as a status pill (tint background, `label` size), never as large coloured text. Numeric values stay in `readout` size with the state colour on the value only.
+g) **Dots / particles** must be in a legend or removed.
+h) **Formulas** in labels and readout names use inline KaTeX.
+- **Shared controls** (`src/components/sim/SimControls.tsx`; no other slider or chip in a sim). `SimSlider`: 8 px pill track `--surface-2`, fill in the unit face, tick dots only for ≤ 6 steps, a 28 px `#F5F5F5` thumb with a 3 px unit-face ring and a 3 px ledge, a 44 px hit area, and a value bubble above the thumb while dragging. `SimChips`: unselected = 2 px `--edge` border; selected = the unit's tab tint with a 2 px unit-face border. No action-blue in sims.
+- **Checks.** `npm run audit:sim` (sims marked `done-v2` in `docs/sim-redraw.md`) additionally fails on: a `<text>` outside the 24 px inset; a success/danger fill with no `data-state`; a raw `<input type=range>`, `<input>` or `<button>` in a sim render; stage text equal to a readout value; more hue families than the unit family plus one accent; text under 14 px.
+
 ### 5.7 Lesson top bar (kept from v2)
 - **Bar:** height 56, bg `--bg`, no border, no blur.
 - **Left:** `X` (lucide, 24 px, 44 px target, `--text-2`).

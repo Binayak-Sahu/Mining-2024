@@ -8,7 +8,8 @@ import { Hand, Target, ChevronDown } from "lucide-react";
 import type { SimDef, SimParam, Vals } from "@/lib/types";
 import { fmt } from "@/lib/calc";
 import { sfx } from "@/lib/sfx";
-import { Slider } from "@/components/ui/Slider";
+import { SimSlider, SimChips } from "./SimControls";
+import { familyOf } from "@/lib/family";
 import { toneText } from "@/components/ui/tone";
 import { tactilePress, fadeQuick } from "@/lib/motion";
 import { NNBSP, tx, withUnit } from "@/lib/typo";
@@ -333,7 +334,9 @@ function ReadoutRow({ o, out, values, ghost }: { o: SimDef["outputs"][number]; o
   // ~18 characters sits on its own line under the label instead of squeezing into the right-hand column.
   const words = !!o.format && /[A-Za-z]{3,}/.test(ghost ?? "");
   const stacked = words && (ghost?.length ?? 0) > 18;
-  const valueCls = `${words ? "t-readout !font-sans" : "t-readout"} ${toneText(tone)}`;
+  // v3.2f: text-valued readouts are a status pill (tint bg, label size); numbers keep `readout` with the state colour on the value only.
+  const pillBg = tone === "crit" ? "bg-danger-tint" : tone === "warn" ? "bg-energy-tint" : tone === "ok" ? "bg-success-tint" : "bg-surface-2";
+  const valueCls = words ? `t-label sim-pill ${pillBg} ${toneText(tone)}` : `t-readout ${toneText(tone)}`;
   const formatted = o.format ? o.format(v, out, values) : null;
   const value = o.format ? (
     typeof formatted === "string" ? tx(formatted) : formatted
@@ -399,7 +402,7 @@ export function Readouts({ def, values, part }: { def: SimDef; values: Vals; par
 
 export function Controls({ def, values, onChange, disabled, only }: { def: SimDef; values: Vals; onChange: (v: Vals) => void; disabled?: boolean; only?: string[] }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-family={familyOf(def.id)}>
       {def.params.map((p) => {
         if (only && !only.includes(p.key)) return null;
         const display = p.options
@@ -412,25 +415,9 @@ export function Controls({ def, values, onChange, disabled, only }: { def: SimDe
               <span className="t-readout text-fg shrink-0">{display}</span>
             </div>
             {p.options ? (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {p.options.map((o) => {
-                  const on = values[p.key] === o.value;
-                  return (
-                    <button
-                      key={o.value}
-                      type="button"
-                      disabled={disabled}
-                      data-on={on}
-                      onClick={() => onChange({ ...values, [p.key]: o.value })}
-                      className="tile-3d min-h-[44px] px-4 py-2 t-label text-fg data-[on=true]:text-action-tint-text"
-                    >
-                      {o.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <SimChips options={p.options} value={values[p.key]} label={p.label} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
             ) : (
-              <Slider value={values[p.key]} min={p.min} max={p.max} step={p.step} label={p.label} display={display} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
+              <SimSlider value={values[p.key]} min={p.min} max={p.max} step={p.step} label={p.label} display={display} disabled={disabled} onChange={(v) => onChange({ ...values, [p.key]: v })} />
             )}
           </div>
         );
@@ -459,9 +446,6 @@ export function SimView({ def, values, onChange, overlay, disabled, objective, c
       <div className="max-sm:sticky max-sm:top-[calc(env(safe-area-inset-top)+var(--sim-top,3.5rem))] max-sm:z-10 bg-canvas max-sm:-mx-1 max-sm:px-1 max-sm:py-1">
         <SimCanvas def={def} values={values} overlay={overlay} onChange={disabled ? undefined : onChange} objective={objective} corner={corner} noObjectiveLine />
       </div>
-      <div>
-        <Readouts def={def} values={values} />
-      </div>
       {open.length > 0 && <Controls def={def} values={values} onChange={onChange} disabled={disabled} only={open} />}
       {more.length > 0 && (
         <details className="group">
@@ -474,6 +458,10 @@ export function SimView({ def, values, onChange, overlay, disabled, objective, c
           </div>
         </details>
       )}
+      <div>
+        <Readouts def={def} values={values} part="primary" />
+      </div>
+      <Readouts def={def} values={values} part="rest" />
       {def.caption && <p className="t-label text-fg-2" style={{ fontWeight: 400 }}>{def.caption}</p>}
     </div>
   );

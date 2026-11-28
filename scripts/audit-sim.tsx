@@ -24,6 +24,8 @@ import { GOLDEN_FILE, firstGoal, type Golden } from "./lib/golden";
 import type { SimDef, Vals } from "../src/lib/types";
 
 const filter = process.argv[2] ?? "";
+import { readouts as goldenReadouts } from "./lib/golden";
+const readoutTexts = (def: SimDef, vals: Vals) => goldenReadouts(def, vals).map((r) => r.text.replace(/\u00a0|\u202f|\u2009/g, " ").trim()).filter((t) => t.length >= 2);
 const MIN_UNITS = (14 * 400) / 314; // 17.83: 14 px at the 314 px drawing width of a 390 px phone
 
 function defaults(def: SimDef, o?: Vals): Vals {
@@ -138,11 +140,57 @@ function check(def: SimDef, svg: string): string[] {
   return f;
 }
 
+
+/* ---------- v3.2 checks (§5.6d) on one static render ---------- */
+const STATE_RE = /var\(--(success|danger)|#(86efac|fca5a5|22c55e|15803d|ef4444|b91c1c|dcfce7|fee2e2|0f2e1a|f87171|4ade80)\b/i;
+const INSET = 24;
+const decode = (t: string) => t.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/\u00a0|\u202f|\u2009/g, " ").trim();
+function checkV32(def: SimDef, svg: string, viewH: number, readoutTexts: string[]): string[] {
+  const f: string[] = [];
+  // raw controls
+  if (/<input\b|<button\b|<select\b/.test(svg)) f.push("control   raw <input>/<button>/<select> in a sim render (use SimSlider / SimChips)");
+  // text inside the 24 px inset (estimated: 0.56 em per char; KaTeX boxes are not measured here, shots-sims.mjs measures the real boxes)
+  for (const m of svg.matchAll(/<text\b([^>]*)>([\s\S]*?)<\/text>/g)) {
+    const a = (k: string) => Number(new RegExp(`\\b${k}="([^"]+)"`).exec(m[1])?.[1] ?? NaN);
+    const t = decode(m[2].replace(/<[^>]+>/g, ""));
+    if (!t) continue;
+    if (/data-pill|data-pin/.test(m[1])) continue;
+    const x = a("x"), y = a("y"), fs = a("font-size") || 18;
+    const anchor = /text-anchor="(\w+)"/.exec(m[1])?.[1] ?? "start";
+    const w = t.length * fs * 0.56;
+    const l = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
+    const r = l + w;
+    if (!(l >= INSET - 0.5 && r <= 400 - INSET + 0.5 && y - fs * 0.75 >= INSET - 0.5 && y + fs * 0.25 <= viewH - INSET + 0.5)) f.push(`inset     "${t}" (x ${l.toFixed(0)}–${r.toFixed(0)}, y ${y}) is outside the ${INSET}px inset`);
+    if (readoutTexts.includes(t)) f.push(`echo      stage text "${t}" repeats a readout value`);
+  }
+  // state colours need data-state on the element or an ancestor <g>
+  const stack: boolean[] = [];
+  for (const m of svg.matchAll(/<(\/?)([a-zA-Z][\w:-]*)\b([^>]*?)(\/?)>/g)) {
+    const [, close, tag, attrs, self] = m;
+    if (close) {
+      if (tag === "g" || tag === "svg") stack.pop();
+      continue;
+    }
+    const has = /\bdata-state=/.test(attrs);
+    if ((tag === "g" || tag === "svg") && !self) {
+      stack.push(has || stack[stack.length - 1] === true);
+      continue;
+    }
+    if (STATE_RE.test(attrs) && !has && !stack.includes(true)) f.push(`state     <${tag}> uses a success/danger colour with no data-state`);
+  }
+  return f;
+}
+
 /* ---------- run ---------- */
 const golden: Record<string, Golden> = existsSync(GOLDEN_FILE) ? JSON.parse(readFileSync(GOLDEN_FILE, "utf8")) : {};
 const tracker = resolve("docs/sim-redraw.md");
-const doneInDoc = new Set<string>();
-if (existsSync(tracker)) for (const m of readFileSync(tracker, "utf8").matchAll(/^\|\s*`([^`]+)`\s*\|[^|]*\|\s*done\s*\|/gm)) doneInDoc.add(m[1]);
+const doneInDoc = new Set<string>(); // any redrawn status: done, done-v2, unsure
+const v32 = new Set<string>(); // sims that must pass the v3.2 checks (§5.6d): done-v2 only
+if (existsSync(tracker))
+  for (const m of readFileSync(tracker, "utf8").matchAll(/^\|\s*`([^`]+)`\s*\|[^|]*\|\s*(done-v2|done|unsure[^|]*)\s*\|/gm)) {
+    doneInDoc.add(m[1]);
+    if (m[2] === "done-v2") v32.add(m[1]);
+  }
 
 // Self-test: AUDIT_SIM_FORCE=u3-kirsch,u9-npv audits legacy sims as if redrawn (they must fail).
 for (const id of (process.env.AUDIT_SIM_FORCE ?? "").split(",").filter(Boolean)) {
@@ -178,7 +226,8 @@ for (const def of v3) {
       findings.push(`render    ${def.id} [${ctx}]: ${(e as Error).message}`);
       continue;
     }
-    for (const x of check(def, svg)) {
+    const extra = v32.has(def.id) ? checkV32(def, svg, def.v3!.viewH, readoutTexts(def, vals)) : [];
+    for (const x of [...check(def, svg), ...extra]) {
       const key = `${def.id} ${x}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -205,6 +254,6 @@ if (!filter) {
 console.log(findings.join("\n"));
 const by = (k: string) => findings.filter((x) => x.startsWith(k)).length;
 console.log(
-  `\n${v3.length} redrawn sims audited (${ALL_SIMS.filter((d) => d.v3).length}/${ALL_SIMS.length} done) · grid ${by("grid")} · gradient ${by("gradient")} · text ${by("text")} · hue ${by("hue")} · golden ${by("golden")} · tracker ${by("tracker")} · render ${by("render")}`,
+  `\n${v3.length} redrawn sims audited (${ALL_SIMS.filter((d) => d.v3).length}/${ALL_SIMS.length} done) · grid ${by("grid")} · gradient ${by("gradient")} · text ${by("text")} · hue ${by("hue")} · golden ${by("golden")} · inset ${by("inset")} · state ${by("state")} · control ${by("control")} · echo ${by("echo")} · tracker ${by("tracker")} · v3.2 ${v32.size}/${ALL_SIMS.filter((d) => d.v3).length} · render ${by("render")}`,
 );
 process.exit(findings.length ? 1 : 0);
