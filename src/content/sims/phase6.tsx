@@ -5,6 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -401,10 +402,12 @@ export const longwallCycleSim: SimDef = {
     { key: "weighting", label: "Weighting events per day", digits: 2 },
   ],
   caption: "Shields 15 % of face length behind the trailing drum lower–advance–set; the AFC is snaked over behind them. Leg pressure spikes each time cumulative advance crosses the periodic-weighting interval.",
+  // §5.6 redraw (v3e): plan view on top, shield section and leg pressure below.
+  v3: { viewH: 304 },
   render: (p, _o, t) => {
-    const T = 8;
-    const u = (t % T) / T;
-    const shearNo = Math.floor(t / T);
+    const T8 = 8;
+    const u = (t % T8) / T8;
+    const shearNo = Math.floor(t / T8);
     const cum = shearNo * p.web + u * p.web;
     const weighting = cum > p.wi * 0.5 && cum % p.wi < p.web * 1.5;
     const n = 22;
@@ -414,66 +417,66 @@ export const longwallCycleSim: SimDef = {
     const lag = 0.15;
     const shX = u;
     const shields = [];
-    let afc = `M ${fx(0)} 92`;
+    let afc = `M ${fx(0)} 100`;
     for (let i = 0; i < n; i++) {
       const f = (i + 0.5) / n;
       const behind = shX - f;
       const state = behind > lag + 0.06 ? 2 : behind > lag ? 1 : 0; // 0 old, 1 advancing, 2 advanced
       const dy = state === 2 ? -8 : state === 1 ? -4 : 0;
-      shields.push(<rect key={i} x={fx(f) - 6} y={98 + dy} width={12} height={22} rx={2} fill={state === 1 ? C.hazard : C.tech} stroke={C.ink} strokeWidth={0.6} />);
-      afc += ` L ${fx(f)} ${92 + (state >= 1 ? -8 : 0) * (state === 1 ? 0.5 : 1)}`;
+      shields.push(<rect key={i} x={fx(f) - 6} y={106 + dy} width={12} height={22} rx={2} style={{ fill: state === 1 ? U.deep : U.light }} />);
+      afc += ` L ${fx(f)} ${100 + (state >= 1 ? -8 : 0) * (state === 1 ? 0.5 : 1)}`;
     }
-    afc += ` L ${fx(1)} 92`;
-    const sec = Math.floor(u * 3) % 3; // section view of the middle shield
+    afc += ` L ${fx(1)} 100`;
+    const sec = Math.floor(u * 3) % 3;
     const midBehind = shX - 0.5;
     const midState = midBehind > lag + 0.06 ? 2 : midBehind > lag ? 1 : 0;
     const pressure = weighting ? 100 : midState === 1 ? 5 : 55 + 25 * clamp(midBehind < 0 ? u : 1 - u, 0, 1);
+    const sx = midState === 2 ? 14 : midState === 1 ? 7 : 0;
+    const cy = midState === 1 ? 214 : 206;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f1f5f9" />
-        <Txt x={20} y={14} size={8} weight={700} fill={C.slate}>
-          PLAN VIEW · coal face ↑ · goaf ↓
-        </Txt>
-        <rect x={x0} y={20} width={W} height={56 - 8 * u} fill={MAT.coal} />
-        <rect x={x0} y={76 - 8 * u} width={fx(shX) - x0} height={8 * u + 6} fill="#334155" opacity={0.25} />
-        <path d={afc} fill="none" stroke={C.hazard} strokeWidth={3} />
+        <T x={20} y={20} weight={700}>
+          Plan · coal face ↑ goaf ↓
+        </T>
+        <rect x={x0} y={28} width={W} height={56 - 8 * u} fill={GREYS.deep} />
+        <rect x={x0} y={84 - 8 * u} width={fx(shX) - x0} height={8 * u + 6} fill={GREYS.mid} />
+        <path d={afc} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
         {shields}
-        <rect x={x0} y={124} width={W} height={16} fill={MAT.goaf} />
-        <Txt x={x0 + 4} y={135} size={7} fill="white" weight={700}>
-          GOAF (caving)
-        </Txt>
-        <g transform={`translate(${fx(shX)} 84)`}>
-          <rect x={-16} y={-4} width={32} height={10} fill={C.crit} rx={2} />
-          <circle cx={-18} cy={-10 + 4} r={7} fill={C.slate} stroke={C.ink} />
-          <circle cx={18} cy={-14 + 4} r={7} fill={C.slate} stroke={C.ink} />
-        </g>
-        <Txt x={fx(shX)} y={20 + 10} size={7} anchor="middle" fill="white" weight={800}>
+        <rect x={x0} y={134} width={W} height={22} fill={GREYS.mid} />
+        <T x={x0 + 8} y={151} fill={ON_LIGHT} weight={700}>
+          Goaf (caving)
+        </T>
+        {/* DERD shearer: body and two drums */}
+        <rect x={fx(shX) - 16} y={88} width={32} height={10} rx={3} style={{ fill: U.mid }} />
+        <circle cx={fx(shX) - 18} cy={86} r={7} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} />
+        <circle cx={fx(shX) + 18} cy={82} r={7} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} />
+        <T x={clamp(fx(shX), 44, 356)} y={52} anchor="middle" fill={ON_DEEP} weight={700}>
           DERD
-        </Txt>
-        <Txt x={20} y={156} size={8} weight={700} fill={C.slate}>
-          {`SECTION · shield ${["SET against roof", "LOWER → ADVANCE", "SET (new web)"][midState]}`}
-        </Txt>
-        <rect x={20} y={162} width={190} height={8} fill={MAT.shale} />
-        <rect x={20} y={222} width={190} height={8} fill={MAT.sand} />
-        <g transform={`translate(${midState === 2 ? 14 : midState === 1 ? 7 : 0} 0)`}>
-          <rect x={70} y={midState === 1 ? 178 : 171} width={80} height={6} fill={C.tech} />
-          <line x1={95} y1={midState === 1 ? 184 : 177} x2={100} y2={216} stroke={C.ink} strokeWidth={4} />
-          <line x1={125} y1={midState === 1 ? 184 : 177} x2={120} y2={216} stroke={C.ink} strokeWidth={4} />
-          <rect x={80} y={216} width={60} height={6} fill={C.slate} />
-          <line x1={70} y1={174} x2={45} y2={210} stroke={C.ink} strokeWidth={3} />
+        </T>
+        <T x={20} y={184} weight={700}>
+          {`Shield: ${["set against roof", "lower → advance", "set (new web)"][midState]}`}
+        </T>
+        {/* section of the middle shield */}
+        <rect x={20} y={192} width={190} height={8} fill={GREYS.light} />
+        <rect x={20} y={258} width={190} height={8} fill={GREYS.light} />
+        <g transform={`translate(${sx} 0)`}>
+          <rect x={70} y={cy} width={80} height={7} rx={2} style={{ fill: U.mid }} />
+          <line x1={95} y1={cy + 7} x2={100} y2={250} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+          <line x1={125} y1={cy + 7} x2={120} y2={250} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+          <rect x={80} y={250} width={60} height={8} rx={2} fill={GREYS.deep} />
+          <line x1={70} y1={cy + 3} x2={45} y2={244} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
         </g>
-        <rect x={160} y={200} width={24} height={16} fill={C.hazard} />
-        <Txt x={230} y={170} size={9} weight={800}>
+        <rect x={160} y={240} width={24} height={18} rx={2} style={{ fill: U.deep }} />
+        <T x={230} y={206} fill={INK} weight={700}>
           Leg pressure
-        </Txt>
-        <rect x={230} y={178} width={150} height={12} fill="#e2e8f0" rx={6} />
-        <rect x={230} y={178} width={1.5 * pressure} height={12} fill={pressure >= 100 ? C.crit : pressure < 20 ? C.hazard : C.safe} rx={6} />
-        <Txt x={230} y={206} size={9} mono fill={weighting ? C.crit : C.ink} weight={700}>
-          {weighting ? "PERIODIC WEIGHTING — yield!" : `${pressure.toFixed(0)} % of yield`}
-        </Txt>
-        <Txt x={230} y={224} size={8} mono fill={C.slate}>
-          {`advance ${cum.toFixed(1)} m · sweep ${sec + 1}`}
-        </Txt>
+        </T>
+        <rect x={230} y={214} width={150} height={14} rx={7} fill={GREYS.light} />
+        <rect x={230} y={214} width={1.5 * pressure} height={14} rx={7} style={{ fill: pressure >= 100 ? BAD : pressure < 20 ? U.mid : OK }} />
+        <T x={230} y={250} fill={weighting ? BAD_TEXT : INK} weight={700}>
+          {weighting ? "Weighting: yield!" : `${num(pressure, 0, "%")} of yield`}
+        </T>
+        <T x={230} y={274}>{`Advance ${num(cum, 1, "m")}`}</T>
+        <T x={230} y={296}>{`Sweep ${sec + 1}`}</T>
       </g>
     );
   },
@@ -514,74 +517,76 @@ export const thickSeamSim: SimDef = {
     { key: "top", label: "Top coal drawn (LTCC)", unit: "%", digits: 0, format: (v, _, p) => (p.meth ? `${v.toFixed(0)} %` : "—") },
   ],
   caption: "Indicative performance model. LTCC: longer draw recovers more top coal until caved roof shale reaches the window (dilution). BG: tighter ring burden improves fragmentation and recovery but raises explosive use and over-break dilution.",
+  // §5.6 redraw (v3e): seam section with the roof shale above; BG ring holes or the LTCC shield and draw window.
+  v3: { viewH: 256 },
   render: (p, o, t) => {
-    const top = 40;
-    const bot = 200;
+    const top = 56;
+    const bot = 216;
     const k = (bot - top) / 15;
     const seamTop = bot - p.T * k;
     const flow = (t % 2) / 2;
+    const roofTop = Math.max(seamTop - 40, 32); // the title row stays clear of the roof band
+    const roof = <rect x={0} y={roofTop} width={400} height={seamTop - roofTop} fill={GREYS.light} />;
+    const seam = <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={GREYS.deep} />;
+    const floor = <rect x={0} y={bot} width={400} height={18} fill={GREYS.light} />;
     if (p.meth === 0) {
       const rings = [];
       for (let i = 0; i < 6; i++) {
         const x = 140 + i * p.B * 14;
-        for (let j = -3; j <= 3; j++) rings.push(<line key={`${i}${j}`} x1={x} y1={bot - 10} x2={x + j * 9} y2={seamTop + 6} stroke={i < 2 ? C.crit : C.ink} strokeWidth={1} />);
+        for (let j = -3; j <= 3; j++) rings.push(<line key={`${i}${j}`} x1={x} y1={bot - 10} x2={x + j * 9} y2={seamTop + 6} style={{ stroke: i < 2 ? BAD : ON_DEEP }} strokeWidth={1.5} />);
       }
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.shale} />
-          <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={MAT.coal} />
-          <rect x={20} y={bot - 18} width={110} height={18} fill="#f8fafc" />
-          <rect x={0} y={bot} width={400} height={40} fill={MAT.sand} />
+          {roof}
+          {seam}
+          {floor}
+          <rect x={20} y={bot - 20} width={110} height={20} fill={GREYS.light} />
           {rings}
-          <polygon points={polyline([[130, bot], [200, seamTop + 20], [260, bot]])} fill={MAT.goaf} opacity={0.85} />
-          <rect x={30 + flow * 60} y={bot - 15} width={26} height={12} rx={2} fill={C.hazard} />
-          <Txt x={30} y={bot + 14} size={8} weight={700}>
-            remote-controlled LHD in gallery
-          </Txt>
-          <Txt x={140} y={seamTop - 6} size={8} weight={700} fill={C.crit}>
-            {`ring holes · burden ${p.B} m (fired in sequence)`}
-          </Txt>
-          <Txt x={12} y={22} size={13} weight={900} mono>
-            {`BG · recovery ${o.rec.toFixed(0)}% · dilution ${o.dil.toFixed(0)}%`}
-          </Txt>
+          <polygon points={pts([[130, bot], [200, seamTop + 20], [260, bot]])} fill={GREYS.mid} />
+          <rect x={30 + flow * 60} y={bot - 16} width={28} height={13} rx={3} style={{ fill: U.mid }} />
+          <T x={140} y={seamTop - 10} fill={ON_LIGHT} weight={700}>
+            {`Ring holes · burden ${num(p.B, 1, "m")}`}
+          </T>
+          <T x={20} y={250}>LHD in the gallery, remote controlled</T>
+          <T x={8} y={22} fill={INK} weight={800}>
+            {`BG · recovery ${num(o.rec, 0, "%")} · dilution ${num(o.dil, 0, "%")}`}
+          </T>
         </g>
       );
     }
     const cut = bot - p.hc * k;
     const drawn = clamp(o.top / 100, 0, 1);
-    const cone = (seamTop - 10) + (cut - seamTop) * (1 - drawn);
+    const cone = seamTop - 10 + (cut - seamTop) * (1 - drawn);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.shale} />
-        <rect x={0} y={seamTop} width={400} height={bot - seamTop} fill={MAT.coal} />
-        <rect x={0} y={bot} width={400} height={40} fill={MAT.sand} />
-        <rect x={95} y={cut} width={120} height={bot - cut} fill="#f8fafc" />
-        <Txt x={300} y={cut - 6} size={8} fill="white" weight={700} anchor="middle">
-          top coal above the shield (caves on release)
-        </Txt>
-        <Txt x={300} y={bot - 10} size={8} fill="white" weight={700} anchor="middle">
-          {`face: cutting height ${p.hc} m`}
-        </Txt>
-        <rect x={150} y={cut} width={55} height={8} fill={C.tech} />
-        <line x1={160} y1={cut + 8} x2={165} y2={bot - 6} stroke={C.ink} strokeWidth={4} />
-        <line x1={190} y1={cut + 8} x2={185} y2={bot - 6} stroke={C.ink} strokeWidth={4} />
-        <line x1={150} y1={cut + 4} x2={110} y2={bot - 20} stroke={C.ink} strokeWidth={3} />
-        <rect x={100} y={bot - 12} width={60} height={10} fill={C.hazard} />
-        <Txt x={100} y={bot + 14} size={7} weight={700}>
-          rear AFC + draw window
-        </Txt>
-        <polygon points={polyline([[40, seamTop], [140, seamTop], [125, cone], [55, cone]])} fill={MAT.goaf} />
-        {o.dil > 4 && <polygon points={polyline([[70, seamTop - 30], [110, seamTop - 30], [100, cone + 10], [80, cone + 10]])} fill="#a8a29e" opacity={0.9} stroke={C.crit} />}
+        {roof}
+        {seam}
+        {floor}
+        <rect x={95} y={cut} width={120} height={bot - cut} fill={GREYS.light} />
+        <polygon points={pts([[40, seamTop], [140, seamTop], [125, cone], [55, cone]])} fill={GREYS.mid} />
+        {o.dil > 4 && <polygon points={pts([[70, seamTop - 30], [110, seamTop - 30], [100, cone + 10], [80, cone + 10]])} fill={BAD_LIGHT} />}
         {[0, 1, 2, 3].map((i) => (
-          <circle key={i} cx={95 + (i % 2) * 8} cy={cone + ((flow + i * 0.25) % 1) * (bot - 12 - cone)} r={2.5} fill={o.dil > 8 && i % 2 ? C.rock : "#0f172a"} stroke="white" strokeWidth={0.5} />
+          <circle key={i} cx={95 + (i % 2) * 8} cy={cone + ((flow + i * 0.25) % 1) * (bot - 12 - cone)} r={3} fill={o.dil > 8 && i % 2 ? BAD_LIGHT : "#FFFFFF"} />
         ))}
-        <rect x={0} y={seamTop - 40} width={400} height={40} fill={MAT.sand} opacity={0.85} />
-        <Txt x={200} y={Math.max(seamTop - 26, 42)} size={8} anchor="middle" weight={700}>
-          ROOF SHALE (dilution source)
-        </Txt>
-        <Txt x={12} y={22} size={13} weight={900} mono>
-          {`LTCC · recovery ${o.rec.toFixed(0)}% · dilution ${o.dil.toFixed(1)}%`}
-        </Txt>
+        {/* shield: canopy, legs, tail canopy over the rear AFC */}
+        <rect x={150} y={cut} width={55} height={8} rx={2} style={{ fill: U.mid }} />
+        <line x1={160} y1={cut + 8} x2={165} y2={bot - 6} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={190} y1={cut + 8} x2={185} y2={bot - 6} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={150} y1={cut + 4} x2={110} y2={bot - 20} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <rect x={100} y={bot - 12} width={60} height={10} rx={2} style={{ fill: U.deep }} />
+        <T x={300} y={cut - 8} anchor="middle" fill={ON_DEEP} weight={700}>
+          Top coal
+        </T>
+        <T x={300} y={bot - 8} anchor="middle" fill={ON_DEEP} weight={700}>
+          {`Cut ${num(p.hc, 1, "m")}`}
+        </T>
+        <T x={392} y={seamTop - 12} anchor="end" fill={ON_LIGHT} weight={600}>
+          Roof shale
+        </T>
+        <T x={100} y={250}>Rear AFC and draw window</T>
+        <T x={8} y={22} fill={INK} weight={800}>
+          {`LTCC · recovery ${num(o.rec, 0, "%")} · dilution ${num(o.dil, 1, "%")}`}
+        </T>
       </g>
     );
   },
