@@ -212,7 +212,7 @@ export const explosiveSim: SimDef = {
           return <circle key={k} cx={323 + Math.sin(ph * 6 + k) * 8} cy={122 - ph * 12} r={5 + ph * 8} fill={fumeCol} opacity={0.4 * (1 - ph)} />;
         })}
         <ellipse cx={323} cy={124} rx={34} ry={20} fill={fumeCol} />
-        <T x={323} y={166} anchor="middle">
+        <T x={376} y={166} anchor="end">
           {`Fumes: ${o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}`}
         </T>
         {/* impedance: explosive vs rock, rock = reference length */}
@@ -318,12 +318,12 @@ export const kuzRamSim: SimDef = {
           </g>
         ))}
         {/* part labels, with leaders to the third hole */}
-        <line x1={holes[2] + 7} y1={top + (k.T * sc) / 2} x2={146} y2={top + 26} style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <T x={150} y={top + 30} fill={ON_LIGHT}>
+        <line x1={holes[2] + 7} y1={top + (k.T * sc) / 2} x2={138} y2={top + 26} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={142} y={top + 30} fill={ON_LIGHT}>
           Stemming
         </T>
-        <line x1={holes[2] + 7} y1={top + k.T * sc + (k.L * sc) / 2} x2={146} y2={top + 74} style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <T x={150} y={top + 78} fill={ON_LIGHT}>
+        <line x1={holes[2] + 7} y1={top + k.T * sc + (k.L * sc) / 2} x2={138} y2={top + 74} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={142} y={top + 78} fill={ON_LIGHT}>
           Charge
         </T>
         {/* size-distribution plot */}

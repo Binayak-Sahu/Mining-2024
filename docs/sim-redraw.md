@@ -13,32 +13,32 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u7-coward` | U7 | done-v2 | exact (min, default, objective-met) | Coward's explosibility triangle — methane in air |
 | `u7-network` | U7 | done-v2 | exact (min, default, objective-met) | Ventilation network — Atkinson's law, splits and a regulator |
 | `u7-fan` | U7 | done-v2 | exact (min, default, objective-met) | Axial fan characteristic, mine curve, stall and NVP |
-| `u7-psychro` | U7 | unsure: pin statutory-lines (160,72) sits ~40 units above the wet-bulb limit lines | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
-| `u7-sponcom` | U7 | unsure: pin Graham's ratio (232,22) in the top inset | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
-| `u7-dust` | U7 | unsure: pin Incombustible content (380,212) outside the inset | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
+| `u7-psychro` | U7 | unsure: pin 3 statutory-lines (160,72) sits ~40 units above the wet-bulb limit lines (lesson pin; a real mismatch, not the inset) | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
+| `u7-sponcom` | U7 | done-v2 | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
+| `u7-dust` | U7 | done-v2 | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
 | `u7-pump` | U7 | done-v2 | exact (min, default, objective-met) | Mine dewatering — multistage pump head, power and NPSH |
-| `u6-goaf` | U6 | unsure: pin 3 Main roof (381,88) lies outside the 24-unit inset | exact (min, default, objective-met) | Depillaring goaf — immediate caving, main fall and air blast |
-| `u6-longwall` | U6 | unsure: pin Front abutment (258,12) lies outside the inset | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
+| `u6-goaf` | U6 | done-v2 | exact (min, default, objective-met) | Depillaring goaf — immediate caving, main fall and air blast |
+| `u6-longwall` | U6 | done-v2 | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
 | `u6-stope` | U6 | done-v2 | exact (min, default, objective-met) | Metalliferous stope — overbreak (ELOS) and dilution |
 | `u6-cave` | U6 | done-v2 | exact (min, default, objective-met) | Block caving — draw ellipsoids and drawpoint spacing |
 | `u6-lwcycle` | U6 | done-v2 | exact (min, default, objective-met) | Longwall face cycle — DERD shearer, AFC snake and shield advance |
 | `u6-thick` | U6 | done-v2 | exact (min, default, objective-met) | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
-| `u5-pit` | U5 | unsure: pin SR vs BESR (380,22) lies outside the inset | exact (min, default, objective-met) | Pit cross-section — stripping ratio vs break-even stripping ratio |
+| `u5-pit` | U5 | done-v2 | exact (min, default, objective-met) | Pit cross-section — stripping ratio vs break-even stripping ratio |
 | `u5-dragline` | U5 | done-v2 | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
 | `u5-match` | U5 | unsure: pin 4 Match factor (150,24) sits over empty stage | exact (min, default, objective-met) | Truck–shovel match factor and queueing |
-| `u5-haul` | U5 | unsure: pin Total resistance (260,22) in the top inset | exact (min, default, objective-met) | Haul road physics — resistance, rimpull, speed and super-elevation |
-| `u5-dump` | U5 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Multi-deck waste dump — overall slope and stability |
-| `u10-roles` | U10 | unsure: pins 1 (290,22) and 4 (385,150) outside the inset | exact (min, default, objective-met) | Statutory architecture & duty explorer |
+| `u5-haul` | U5 | done-v2 | exact (min, default, objective-met) | Haul road physics — resistance, rimpull, speed and super-elevation |
+| `u5-dump` | U5 | done-v2 | exact (min, default, objective-met) | Multi-deck waste dump — overall slope and stability |
+| `u10-roles` | U10 | done-v2 | exact (min, default, objective-met) | Statutory architecture & duty explorer |
 | `u10-gassy` | U10 | done-v2 | exact (min, default, objective-met) | Degree of gassiness classifier (coal seams) |
-| `u10-risk` | U10 | unsure: pin Hierarchy of controls (388,143) outside the inset | exact (min, default, objective-met) | Risk matrix — hazard rating and hierarchy of controls |
-| `u10-fta` | U10 | unsure: pin top event (290,20) above the inset; golden objective-met state not found (pre-existing) | exact (min, default, objective-met) | Fault tree — firedamp explosion |
-| `u10-scba` | U10 | unsure: pin Turn-around pressure (380,170) outside the inset | exact (min, default, objective-met) | Rescue mission planner — closed-circuit oxygen breathing apparatus |
-| `u4-drill` | U4 | unsure: pin 1 Top-hammer (92,19) above the inset | exact (min, default, objective-met) | Rock drilling — percussive, DTH and rotary penetration |
-| `u4-explosive` | U4 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
-| `u4-kuzram` | U4 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Kuz-Ram blast optimiser — bench round fragmentation |
+| `u10-risk` | U10 | done-v2 | exact (min, default, objective-met) | Risk matrix — hazard rating and hierarchy of controls |
+| `u10-fta` | U10 | done-v2 | exact (min, default, objective-met) | Fault tree — firedamp explosion |
+| `u10-scba` | U10 | done-v2 | exact (min, default, objective-met) | Rescue mission planner — closed-circuit oxygen breathing apparatus |
+| `u4-drill` | U4 | done-v2 | exact (min, default, objective-met) | Rock drilling — percussive, DTH and rotary penetration |
+| `u4-explosive` | U4 | done-v2 | exact (min, default, objective-met) | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
+| `u4-kuzram` | U4 | done-v2 | exact (min, default, objective-met) | Kuz-Ram blast optimiser — bench round fragmentation |
 | `u4-delay` | U4 | todo | — | NONEL firing-wave visualiser — spot the cut-offs |
 | `u4-vibe` | U4 | todo | — | Scaled distance — PPV, DGMS limits and airblast |
-| `u3-kirsch` | U3 | unsure: redrawn, but the agent hit the 5-hour rate limit before its self-review; needs a visual check | exact (min, default, objective-met) | Kirsch solution — boundary stress around an opening |
+| `u3-kirsch` | U3 | done-v2 | exact (min, default, objective-met) | Kirsch solution — boundary stress around an opening |
 | `u3-failure` | U3 | todo | — | Failure envelopes — Mohr–Coulomb vs Hoek–Brown (σ1–σ3 space) |
 | `u3-rmr` | U3 | todo | — | RMR (Bieniawski 1989) scorer with Q and GSI |
 | `u3-bolt` | U3 | todo | — | Roof bolting — suspension and beam-building |
