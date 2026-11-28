@@ -376,7 +376,7 @@ export const haulSim: SimDef = {
   caption: "Speed from P·η / F (η = 0.85), capped at 50 km/h; downgrade speed held at 40 km/h by retarder. e = v²/(127R) − f with side friction f = 0.15.",
   animated: true,
   // §5.6 redraw (v3e): ramp drawn with 2.6× vertical exaggeration; plan-view curve panel at right.
-  v3: { viewH: 250, formula: () => "F = GVW\\,g\\,(RR + GR)\\qquad e + f = \\dfrac{v^2}{127R}" },
+  v3: { viewH: 250, formula: () => "F = GVW\\,g\\,(RR + GR)" },
   handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [HW.x0 + HW.L * Math.cos(a), HW.y0 - HW.L * Math.sin(a) * HW.k]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((HW.y0 - y) / (HW.L * HW.k), -0.99, 0.99))) }],
   render: (p, o, t) => {
     const ang = Math.atan(p.gr / 100);
@@ -388,7 +388,7 @@ export const haulSim: SimDef = {
     const a3 = deg(Math.atan2(y1 - y0, x1 - x0));
     const steep = Math.abs(p.gr) > 6.25;
     // plan-view curve: radius drawn from Rc (24..76 units)
-    const r = 24 + ((p.Rc - 30) / 270) * 52;
+    const r = 20 + ((p.Rc - 30) / 270) * 32;
     const cx0 = 290;
     const cy0 = 214;
     const ex = cx0 + r;
@@ -439,7 +439,7 @@ export const haulSim: SimDef = {
         <path d={arc} fill="none" style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="4 5" />
         <line x1={cx0} y1={cy0 - r} x2={cx0} y2={cy0} style={{ stroke: INK3 }} strokeWidth={1.5} />
         <line x1={cx0} y1={cy0 - r} x2={ex} y2={cy0 - r} style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <SvgTex x={cx0 + 6} y={cy0 - r - 6} tex="R" size={LBL} anchor="start" color="#141414" />
+        <SvgTex x={cx0 - 10} y={cy0 - r / 2 + 6} tex="R" size={LBL} anchor="end" color="#141414" />
       </g>
     );
   },

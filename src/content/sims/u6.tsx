@@ -352,7 +352,7 @@ export const caveSim: SimDef = {
           <rect x={12} y={12} width={376} height={248} rx={12} />
         </clipPath>
         <clipPath id="u6-cave-col">
-          <rect x={0} y={56} width={400} height={base - 56} />
+          <rect x={24} y={56} width={352} height={base - 56} />
         </clipPath>
         <g clipPath="url(#u6-cave-scene)">
           {/* caved ore column, overlying waste, extraction level */}

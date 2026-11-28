@@ -48,15 +48,15 @@ export const rolesSim: SimDef = {
           const y = 28 + i * 22;
           return (
             <g key={l}>
-              <T x={24} y={y + 6} fill={ON_LIGHT}>
+              <T x={28} y={y + 6} fill={ON_LIGHT}>
                 {l}
               </T>
               <rect x={200} y={y - 8} width={100 + i * 15 + 60} height={16} rx={4} fill={[U.deep, U.deep, U.mid, U.mid, GREYS.mid][i]} />
             </g>
           );
         })}
-        <rect x={24} y={cy} width={352} height={H - 24 - cy} rx={12} fill="var(--surface)" stroke={INK3} strokeWidth={1.5} />
-        <rect x={24} y={cy} width={6} height={H - 24 - cy} rx={3} fill={U.deep} />
+        <rect x={26} y={cy} width={348} height={H - 26 - cy} rx={12} fill="var(--surface)" stroke={INK3} strokeWidth={1.5} />
+        <rect x={26} y={cy} width={6} height={H - 26 - cy} rx={3} fill={U.deep} />
         <T x={40} y={cy + 28} fill={INK}>
           {`Duty · level ${r.tier + 1} of 5`}
         </T>

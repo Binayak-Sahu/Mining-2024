@@ -654,7 +654,7 @@ export const pumpSim: SimDef = {
   animated: true,
   // v3.2 redraw: sump, pump, rising main and the NPSH column keep their lesson-pin places.
   v3: { viewH: 240 },
-  handles: [{ key: "lift", axis: "y", at: (p) => [100, 163 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (163 - y) / 8 }],
+  handles: [{ key: "lift", axis: "y", at: (p) => [108, 163 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (163 - y) / 8 }],
   render: (p, o, t) => {
     const cav = o.margin < 0;
     const off = clamp(p.lift * 8, -20, 70);
@@ -672,10 +672,10 @@ export const pumpSim: SimDef = {
           <rect x={0} y={208} width={400} height={32} style={{ fill: GREYS.light }} />
         </g>
         <rect x={24} y={168} width={96} height={40} rx={6} style={{ fill: U.light, stroke: INK3 }} strokeWidth={1.5} />
-        <T x={32} y={194} fill={ON_LIGHT} weight={700}>
+        <T x={50} y={194} fill={ON_LIGHT} weight={700}>
           Sump
         </T>
-        <path d={`M100 190 L100 ${cy} L132 ${cy}`} fill="none" stroke={GREYS.deep} strokeWidth={6} strokeLinejoin="round" />
+        <path d={`M108 190 L108 ${cy} L132 ${cy}`} fill="none" stroke={GREYS.deep} strokeWidth={6} strokeLinejoin="round" />
         <path d={`M212 ${cy} L240 ${cy} L240 28`} fill="none" stroke={GREYS.deep} strokeWidth={8} strokeLinejoin="round" />
         <path d={`M212 ${cy} L240 ${cy} L240 28`} fill="none" style={{ stroke: U.light }} strokeWidth={2.5} strokeDasharray="6 10" strokeDashoffset={-((t * (cav ? 6 : 30)) % 16)} strokeLinejoin="round" />
         <rect x={132} y={cy - 25} width={80} height={50} rx={8} data-state={state} style={{ fill: cav ? BAD_LIGHT : U.deep, stroke: INK }} strokeWidth={2.5} />
