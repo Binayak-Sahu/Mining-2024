@@ -371,3 +371,12 @@ Run `npm run audit:svg` after any diagram change.
 - **Top bar / avatar menu:** phone bar = streak, XP, sound, avatar (logo + nav from md). `ProfileMenu` gained the Inspector key row (hidden on phones while off, as before), "Report this screen" (Inspector Mode only) and the theme switch (sm+); the avatar is neutral and shows an `energy` dot while Inspector Mode is on.
 - **Typography:** `nbh()` / `NBHY` in `src/lib/typo.ts` (U+2011), applied to unit and lesson titles on Home and Path.
 - **Unchanged:** progress logic and keys, lesson/stage order, sims, content other than `shortTitle`, the service worker. No new dependencies.
+
+## Phase 15.5-v3f — unit gameboard (2026-11-28)
+- **Spec:** DESIGN.md §5.8 (new); the old §5.8–5.14 are now §5.9–5.15. Never List allows the two board glows.
+- **Route:** `src/app/unit/[unitId]/board/page.tsx` → `UnitBoard` (`src/components/pages/UnitBoard.tsx`). `TopBar` hides on the board (`isBoardPath`); `StreakPill` and `XpPill` were split out of `TopBar` and are shared.
+- **Pedestal:** `src/components/pages/Pedestal.tsx`, a 120×84 SVG (locked greys #9A/#5E/#3A, open, current with a 6 px face ring, done with a text-on check).
+- **Board:** one section per derived level (`unitLevels`), each with a sticky `.board-head` card and an `<ol>` of 150 px rows. Offsets −96/−32/+96/+32 cycle across the board; the warmup node follows each level and the boss is always last (trophy token). Node states use Path's rules (`currentLessonId`, `lessonUnlocked`, `bossUnlocked`, Inspector "inspect"). The node sheet is a Radix Dialog with framer `feedbackSheet`. The scroll-to-current button uses an IntersectionObserver. The current node is centred once on load. Back goes one step back in history, or to Path when the board was the first page loaded.
+- **Entry points:** the Home title and LEVEL n (one block link, same geometry); the Path hero title and illustration; tapping the selected unit tab again.
+- **CSS:** `.board-*` block at the end of `globals.css` (bob keyframes off under reduced motion; dark-only fixed `.board-glow`).
+- **Unchanged:** progress logic and keys, lesson/stage order, sims, content, the service worker. No new dependencies or stores.
