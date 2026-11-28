@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, ON_DEEP as V3ON_DEEP, DimLine as V3DimLine, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve, DimLine as V3DimLine } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, ON_DEEP as V3ON_DEEP, DimLine as V3DimLine, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 import { OK_LIGHT as V3OK_LIGHT, pts as v3pts, textW as v3textW } from "@/components/sim/v3";
 
@@ -759,15 +759,9 @@ export const subsidenceSim: SimDef = {
         <V3T x={Math.min(Math.max(limR, 110), 304)} y={38} anchor="middle">
           Limit of draw
         </V3T>
-        <V3T x={28} y={96} fill={V3ON_LIGHT}>
-          Overburden
-        </V3T>
-        <V3T x={28} y={148} fill={V3ON_LIGHT}>
-          Shale
-        </V3T>
-        <V3T x={28} y={192} fill={V3ON_LIGHT}>
-          Sandstone
-        </V3T>
+        <BandLabel y={96} halo={V3GREYS.light}>Overburden</BandLabel>
+        <BandLabel y={148} halo={V3U.light}>Shale</BandLabel>
+        <BandLabel y={192} halo={V3GREYS.light}>Sandstone</BandLabel>
         <V3T x={200} y={242} anchor="middle" fill={V3ON_LIGHT}>
           Extracted panel (W)
         </V3T>
@@ -775,6 +769,15 @@ export const subsidenceSim: SimDef = {
     );
   },
 };
+
+/** Band label with a halo in the band colour, so a draw line crossing it never cuts the text. */
+function BandLabel({ y, halo, children }: { y: number; halo: string; children: string }) {
+  return (
+    <text x={28} y={y} fontSize={LBL} fontWeight={600} style={{ fill: V3ON_LIGHT, stroke: halo }} strokeWidth={5} strokeLinejoin="round" paintOrder="stroke">
+      {children}
+    </text>
+  );
+}
 
 function DimLineV({ x, y1, y2 }: { x: number; y1: number; y2: number }) {
   return <V3DimLine x1={x} y1={y1} x2={x} y2={y2} />;

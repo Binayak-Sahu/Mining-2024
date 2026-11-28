@@ -43,7 +43,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u3-rmr` | U3 | done-v2 | exact (min, default, objective-met) | RMR (Bieniawski 1989) scorer with Q and GSI |
 | `u3-bolt` | U3 | done-v2 | exact (min, default, objective-met) | Roof bolting — suspension and beam-building |
 | `u3-pillar` | U3 | done-v2 | exact (min, default, objective-met) | Bord & pillar — tributary-area stress vs pillar strength |
-| `u3-slope` | U3 | todo | — | Plane failure — limit equilibrium of a sliding block |
+| `u3-slope` | U3 | done-v2 | exact (min, default, objective-met) | Plane failure — limit equilibrium of a sliding block |
 | `u3-subsidence` | U3 | todo | — | Subsidence trough — sub-critical, critical, super-critical |
 | `u3-slope-modes` | U3 | todo | — | Slope failure modes — plane, wedge, circular (Bishop) and toppling |
 | `u2-access` | U2 | todo | — | Access trade-off — adit, incline or shaft |
