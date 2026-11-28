@@ -8,6 +8,8 @@ import { InspectorKit } from "@/components/shell/InspectorKit";
 import { Providers } from "@/components/shell/Providers";
 import { SvgDefs } from "@/components/sim/defs";
 import { THEME_BOOT } from "@/lib/prefs";
+import { FAMILY_BOOT } from "@/lib/family";
+import { FamilyScope } from "@/components/shell/FamilyScope";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#121212",
+  themeColor: "#141414",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -35,7 +37,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen" suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: FAMILY_BOOT }} />
         <Providers>
+        <FamilyScope />
         <SvgDefs />
         <TopBar />
         <main>{children}</main>

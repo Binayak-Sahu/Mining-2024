@@ -4,6 +4,7 @@ import type { Unit } from "@/lib/types";
 import { unitIcon } from "@/content/unitIcons";
 import { unitCounts } from "@/lib/questions";
 import { stratumFor } from "./strata";
+import { familyOf } from "@/lib/family";
 
 /** §5.11 unit icon tile: --surface-2 face, card border, radius 20, icon in --text at 45 % of the tile size. */
 export function UnitIconTile({ Icon, size = 88 }: { Icon: LucideIcon; size?: 88 | 112 }) {
@@ -19,7 +20,7 @@ export function ProgressBar({ f, label }: { f: number; label: string }) {
   const pct = Math.round(f * 100);
   return (
     <div className="h-[6px] rounded-full overflow-hidden bg-surface-2" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label={label}>
-      <div className="h-full rounded-full bg-success" style={{ width: `${pct}%` }} />
+      <div className="h-full rounded-full bg-progress" style={{ width: `${pct}%` }} />
     </div>
   );
 }
@@ -28,7 +29,7 @@ export function ProgressBar({ f, label }: { f: number; label: string }) {
 export function CourseCard({ unit, progress, badge }: { unit: Unit; progress: number; badge?: "Next" | "New" }) {
   const st = stratumFor(unit.n);
   return (
-    <Link href={`/unit/${unit.id}`} className="card course-card relative flex items-center gap-4 p-5 sm:p-6">
+    <Link href={`/unit/${unit.id}`} data-family={familyOf(unit.id)} className="card course-card relative flex items-center gap-4 p-5 sm:p-6">
       <UnitIconTile Icon={unitIcon(unit.id)} />
       <div className={`min-w-0 flex-1 ${badge ? "pr-16" : ""}`}>
         <div className="t-eyebrow">

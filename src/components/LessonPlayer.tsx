@@ -289,7 +289,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         <div className="flex-1 max-w-[640px] w-full mx-auto px-5 sm:px-6 pt-12 pb-8 flex flex-col items-center text-center">
           <motion.div initial={reduce ? { opacity: 0 } : { scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={reduce ? fadeQuick : { ...feedbackSheet, delay: 0.1 }} className="relative w-[120px] h-[130px]" aria-hidden>
             <span className={`absolute left-0 top-[10px] w-[120px] h-[120px] rounded-full ${boss ? "bg-[var(--energy-ledge)]" : "bg-[var(--success-ledge)]"}`} />
-            <span className={`absolute left-0 top-0 w-[120px] h-[120px] rounded-full flex items-center justify-center ${boss ? "bg-energy text-energy-on" : "bg-success text-white"}`}>
+            <span className={`absolute left-0 top-0 w-[120px] h-[120px] rounded-full flex items-center justify-center ${boss ? "bg-energy text-energy-on" : "bg-success text-[var(--success-on)]"}`}>
               {boss ? <Crown size={56} strokeWidth={2.2} /> : <Trophy size={54} strokeWidth={2.2} />}
             </span>
           </motion.div>
@@ -414,7 +414,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         {burst && (
           <motion.div key={burst.id} className="pointer-events-none fixed left-1/2 top-24 z-40 -translate-x-1/2" initial={{ opacity: 0, y: 20, scale: 0.6 }} animate={{ opacity: [0, 1, 1, 0], y: [20, 0, -10, -40], scale: [0.6, 1.15, 1, 0.9] }} transition={{ duration: 1.1, times: [0, 0.2, 0.7, 1] }}>
             <div className="relative rounded-full px-4 py-2 bg-energy text-energy-on font-extrabold readout text-lg flex items-center gap-1.5" style={{ boxShadow: "0 4px 0 var(--energy-ledge)" }}>
-              <Zap size={18} className="fill-current" /> +{burst.xp} XP
+              <Zap size={18} className="fill-current" /> +{burst.xp} XP
               {Array.from({ length: 10 }).map((_, i) => {
                 const a = (i / 10) * Math.PI * 2;
                 return <motion.span key={i} className="absolute left-1/2 top-1/2 w-1.5 h-1.5 rounded-full" style={{ background: CONFETTI[i % CONFETTI.length] }} initial={{ x: 0, y: 0, opacity: 1 }} animate={{ x: Math.cos(a) * 70, y: Math.sin(a) * 40, opacity: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} />;

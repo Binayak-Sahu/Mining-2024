@@ -22,6 +22,7 @@ import { kuzRam } from "@/content/sims/u4";
 import { pump } from "@/content/sims/u7";
 import { threePoint } from "@/content/sims/phase6";
 import { minPillarCentres } from "@/content/statutes";
+import { NNBSP, minus, tx } from "@/lib/typo";
 
 type Inputs = Record<string, number>;
 
@@ -325,8 +326,8 @@ export function Tools() {
               <div key={o.label} className="ds-readout-row last:border-b-0">
                 <span className="t-label text-fg-2 min-w-0">{o.label}</span>
                 <motion.span key={String(o.value)} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }} transition={fadeQuick} className={`t-readout text-right shrink-0 max-w-[60%] ${toneText(o.tone)}`}>
-                  {typeof o.value === "number" ? fmt(o.value, o.digits ?? 2) : o.value}
-                  {typeof o.value === "number" && o.unit ? <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span> : null}
+                  {typeof o.value === "number" ? minus(fmt(o.value, o.digits ?? 2)) : typeof o.value === "string" ? tx(o.value) : o.value}
+                  {typeof o.value === "number" && o.unit ? <span className="text-fg-2" style={{ fontWeight: 400 }}>{NNBSP}{o.unit}</span> : null}
                 </motion.span>
               </div>
             ))}

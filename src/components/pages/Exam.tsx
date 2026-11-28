@@ -182,7 +182,7 @@ export function Exam() {
             <div className="flex-1 min-w-[200px]">
               <div className="t-heading text-fg">{pct >= 75 ? "First-class standard" : pct >= 60 ? "Pass standard — keep sharpening" : "Below pass standard"}</div>
               <div className="t-label text-fg-2 readout" style={{ fontWeight: 400 }}>
-                {Math.round(done.used / 60)} min used · +{done.score * 8} XP
+                {Math.round(done.used / 60)} min used · +{done.score * 8} XP
               </div>
             </div>
           </div>

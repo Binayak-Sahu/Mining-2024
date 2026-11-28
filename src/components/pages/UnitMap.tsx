@@ -12,6 +12,7 @@ import type { Lesson } from "@/lib/types";
 import { ExpeditionPath } from "./ExpeditionPath";
 import { LevelHeader, UnitHeader } from "./course";
 import { stratumFor } from "./strata";
+import { familyOf } from "@/lib/family";
 
 /** §5.12 stage kinds: neutral 16 px icons in --text-3, no per-kind colour. */
 function StageIcons({ lesson }: { lesson: Lesson }) {
@@ -44,6 +45,7 @@ export function UnitMap({ unitId }: { unitId: string }) {
   const all = [...unit.lessons.map((l, i) => ({ l, i, boss: false })), { l: unit.boss, i: unit.lessons.length, boss: true }];
 
   return (
+    <div className="page-glow" data-family={familyOf(unit.id)}>
     <div className="max-w-6xl mx-auto px-5 sm:px-6 pt-2 pb-8 sm:pb-10">
       <Link href="/" className="t-label inline-flex items-center gap-2 min-h-[44px] text-fg-2 hover:text-fg">
         <ArrowLeft size={20} aria-hidden /> Expedition
@@ -117,6 +119,7 @@ export function UnitMap({ unitId }: { unitId: string }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

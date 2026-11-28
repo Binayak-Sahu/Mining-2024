@@ -1,7 +1,7 @@
 # STRATA — DESIGN.md (v3)
 
 **Changelog**
-- **v3 (2026-11-28, Phase 15.5-v3a):** the Brilliant system. Colour per unit family (5 families), illustrations, thick visible ledges, minimal diagram language, KaTeX maths, no monospace in chrome. Merged from `DESIGN_v3.md`; v3 won every conflict. Bink approved 4 contrast fixes the same day (§2.2b). The 15.5f (v2.1) values are superseded (Appendix A). **Rollout:** v3 is live only in the `/design-system` sandbox (`.ds3` scope). Production screens keep the v2 values until a rollout slice moves v3 to `:root`.
+- **v3 (2026-11-28, Phase 15.5-v3a):** the Brilliant system. Colour per unit family (5 families), illustrations, thick visible ledges, minimal diagram language, KaTeX maths, no monospace in chrome. Merged from `DESIGN_v3.md`; v3 won every conflict. Bink approved 4 contrast fixes the same day (§2.2b). The 15.5f (v2.1) values are superseded (Appendix A). **Rollout:** 15.5-v3b moved the chrome to `:root` (font, neutrals, edges and 6 px ledges, buttons, cards, tiles, stat pills, course-tab style, tab bar, unit-family plumbing, KaTeX formulas, number typography). Home/Path layout (v3c), sims, illustrations and lesson content still follow the v2 layout.
 - v2.1 (2026-11-27, Phase 15.5f): dark depth tokens, `--ledge`, stratum colours, the two-theme sim plate. Superseded by v3 (Appendix A).
 - v2 (2026-11-26, Phase 15.5a–e): neutral canvas, ledged controls, feedback sheet, node path.
 
@@ -124,7 +124,7 @@ The illustration `mid` tones keep the draft values (they are never text).
 ## 3. Typography
 
 **UI font:** chosen by a bake-off in `/design-system` among **Figtree**, **Onest** and the current Plus Jakarta Sans. All three are OFL, installed from `@fontsource-variable/*`, bundled and work offline. Pick the one closest to Brilliant at weight 700–800. No commercial fonts.
-- **Winner: pending Bink's phone check.** The sandbox recommends Figtree (see the ROADMAP 15.5-v3a log). Record the final pick here.
+- **Winner: Figtree** (the v3a recommendation; applied app-wide in 15.5-v3b). It is one token, `--font-sans` in `globals.css`, so changing the pick is a one-line edit. Onest and Plus Jakarta Sans remain only for the sandbox bake-off.
 
 **Maths:** KaTeX (MIT), bundled locally (`katex` npm package and its CSS/fonts, no CDN). All formulas (`σv = ρgH`, `tan α = tan δ · sin β`) render as typeset maths, never as monospace strings.
 

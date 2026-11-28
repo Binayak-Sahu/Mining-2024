@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { animate, useReducedMotion } from "framer-motion";
 import { fmt } from "@/lib/calc";
 import { stageSlide } from "@/lib/motion";
+import { minus } from "@/lib/typo";
 
 /** A live physics number that springs from its previous value to the new one (exact value at rest). */
 export function AnimatedNumber({ value, digits }: { value: number; digits: number }) {
@@ -16,12 +17,12 @@ export function AnimatedNumber({ value, digits }: { value: number; digits: numbe
     const el = ref.current;
     if (!el) return;
     if (reduce || !Number.isFinite(value) || !Number.isFinite(from) || from === value) {
-      el.textContent = fmt(value, digits);
+      el.textContent = minus(fmt(value, digits));
       return;
     }
-    const c = animate(from, value, { ...stageSlide, onUpdate: (v) => (el.textContent = fmt(v, digits)), onComplete: () => (el.textContent = fmt(value, digits)) });
+    const c = animate(from, value, { ...stageSlide, onUpdate: (v) => (el.textContent = minus(fmt(v, digits))), onComplete: () => (el.textContent = minus(fmt(value, digits))) });
     return () => c.stop();
   }, [value, digits, reduce]);
-  return <span ref={ref}>{fmt(value, digits)}</span>;
+  return <span ref={ref}>{minus(fmt(value, digits))}</span>;
 }
 

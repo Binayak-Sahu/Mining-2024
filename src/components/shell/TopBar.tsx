@@ -125,7 +125,7 @@ function StreakFlame({ n }: { n: number }) {
   }, [n, controls]);
   return (
     <motion.span animate={controls} className="inline-flex">
-      <Flame size={18} className={n > 0 ? "fill-energy" : ""} />
+      <Flame size={22} className={n > 0 ? "fill-energy" : ""} />
     </motion.span>
   );
 }
@@ -141,8 +141,8 @@ export function TopBar() {
   const st = hydrated ? liveStreak(streak, last) : 0;
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-canvas pt-[env(safe-area-inset-top)]">
-      <div className="max-w-6xl mx-auto px-3 sm:px-5 h-16 flex items-center gap-2 sm:gap-4">
+    <header className="sticky top-0 z-30 bg-canvas pt-[env(safe-area-inset-top)]">
+      <div className="max-w-6xl mx-auto px-3 sm:px-5 h-14 flex items-center gap-1 sm:gap-4">
         <Link href="/" className="flex items-center shrink-0 min-h-[44px] min-w-[44px]" aria-label="STRATA home">
           <Logo />
         </Link>
@@ -158,12 +158,12 @@ export function TopBar() {
             );
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-energy-tint-text font-extrabold readout text-sm" title="Daily streak">
-            <StreakFlame n={st} /> {st}
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
+          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Daily streak" aria-label={`Daily streak ${st}`}>
+            <span className="text-energy-tint-text inline-flex"><StreakFlame n={st} /></span> {st}
           </span>
-          <span className="flex items-center gap-1 rounded-xl px-2 py-1.5 text-action-tint-text font-extrabold readout text-sm" title="Experience points">
-            <Zap size={18} className="fill-action-tint" /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
+          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Experience points" aria-label={`Experience points ${hydrated ? xp : 0}`}>
+            <Zap size={20} className="text-unit-ink fill-unit-ink" aria-hidden /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
           <InspectorBadge />
           <ReportFlag />

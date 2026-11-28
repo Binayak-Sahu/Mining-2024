@@ -11,6 +11,7 @@ import { sfx } from "@/lib/sfx";
 import { Slider } from "@/components/ui/Slider";
 import { toneText } from "@/components/ui/tone";
 import { tactilePress, fadeQuick } from "@/lib/motion";
+import { NNBSP, tx, withUnit } from "@/lib/typo";
 
 export function defaults(def: SimDef, overrides?: Vals): Vals {
   const v: Vals = {};
@@ -300,12 +301,13 @@ function ReadoutRow({ o, out, values, ghost }: { o: SimDef["outputs"][number]; o
   const words = !!o.format && /[A-Za-z]{3,}/.test(ghost ?? "");
   const stacked = words && (ghost?.length ?? 0) > 18;
   const valueCls = `${words ? "t-readout !font-sans" : "t-readout"} ${toneText(tone)}`;
+  const formatted = o.format ? o.format(v, out, values) : null;
   const value = o.format ? (
-    o.format(v, out, values)
+    typeof formatted === "string" ? tx(formatted) : formatted
   ) : (
     <span className="whitespace-nowrap">
       <AnimatedNumber value={v} digits={o.digits ?? 2} />
-      {o.unit && <span className="text-fg-2" style={{ fontWeight: 400 }}> {o.unit}</span>}
+      {o.unit && <span className="text-fg-2" style={{ fontWeight: 400 }}>{NNBSP}{o.unit}</span>}
     </span>
   );
   // An invisible copy of the longest value shares the value's grid cell, so the row is always as tall as its tallest
@@ -369,7 +371,7 @@ export function Controls({ def, values, onChange, disabled, only }: { def: SimDe
         if (only && !only.includes(p.key)) return null;
         const display = p.options
           ? (p.options.find((o) => o.value === values[p.key])?.label ?? "")
-          : `${fmt(values[p.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0)}${p.unit ? ` ${p.unit}` : ""}`;
+          : withUnit(fmt(values[p.key], p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0), p.unit);
         return (
           <div key={p.key}>
             <div className="flex items-baseline justify-between gap-3 mb-1">

@@ -10,6 +10,7 @@ import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { useStrata } from "@/lib/store";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs } from "@/lib/prefs";
+import { Formula } from "@/components/ui/Formula";
 
 export function CodexLibrary() {
   const hydrated = useHydrated();
@@ -50,7 +51,7 @@ export function CodexLibrary() {
     { t: "formulas" as const, label: "Formulas", Icon: Sigma },
     { t: "statutes" as const, label: "Statutes", Icon: Scale },
   ];
-  const chip = "tile-3d shrink-0 min-h-[44px] px-4 t-label text-fg data-[on=true]:text-action-tint-text inline-flex items-center gap-2 whitespace-nowrap";
+  const chip = "tile-3d shrink-0 min-h-[44px] px-4 t-label text-fg data-[on=true]:text-unit-ink inline-flex items-center gap-2 whitespace-nowrap";
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8">
@@ -153,7 +154,7 @@ export function CodexLibrary() {
                   <div className="mt-4 space-y-2">
                     {entry.formulas.map((f, i) => (
                       <div key={i} className="rounded-[12px] bg-surface-2 px-4 py-3">
-                        <div className="t-readout text-fg">{f.expr}</div>
+                        <div className="t-readout text-fg"><Formula expr={f.expr} /></div>
                         <div className="t-label text-fg-2 mt-1" style={{ fontWeight: 400 }}>{f.meaning}</div>
                         {f.vars && <div className="readout t-label text-fg-2 mt-1" style={{ fontWeight: 400 }}>{f.vars}</div>}
                       </div>
@@ -229,7 +230,7 @@ export function CodexLibrary() {
                 <div className="t-eyebrow flex items-center gap-2">
                   <Sigma size={16} aria-hidden /> U{f.unit.n} · {f.lesson.title}
                 </div>
-                <div className="t-readout text-fg mt-3 rounded-[12px] bg-surface-2 px-4 py-2 break-words">{f.formula.expr}</div>
+                <div className="t-readout text-fg mt-3 rounded-[12px] bg-surface-2 px-4 py-2 break-words"><Formula expr={f.formula.expr} /></div>
                 <div className="t-label text-fg-2 mt-2" style={{ fontWeight: 400 }}>{f.formula.meaning}</div>
                 {f.formula.vars && <div className="readout t-label text-fg-2 mt-1" style={{ fontWeight: 400 }}>{f.formula.vars}</div>}
               </div>

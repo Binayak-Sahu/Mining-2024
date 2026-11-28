@@ -84,7 +84,7 @@ export function Campaign() {
             </span>
             <span className="min-w-0">
               <span className="block t-label text-fg truncate" style={{ fontWeight: 700 }}>{rank.title}</span>
-              <span className="block t-label text-fg-2 readout" style={{ fontWeight: 400 }}>{xp} XP</span>
+              <span className="block t-label text-fg-2 readout" style={{ fontWeight: 400 }}>{xp} XP</span>
             </span>
           </Link>
         </div>
@@ -124,7 +124,7 @@ export function Campaign() {
           </div>
           <div className="t-label readout text-fg-2 mt-2 flex justify-between" style={{ fontWeight: 400 }}>
             <span className="flex items-center gap-1">
-              <Zap size={14} aria-hidden /> {xp} XP
+              <Zap size={14} aria-hidden /> {xp} XP
             </span>
             <span>{next ? `${next.min} → ${next.badge}` : "Max rank"}</span>
           </div>

@@ -6,6 +6,7 @@ import { fadeQuick, tactilePress } from "@/lib/motion";
 import { Delete } from "lucide-react";
 import type { EquationStage } from "@/lib/types";
 import { CardFrame, Feedback, PrimaryButton, type CardProps } from "./ui";
+import { Formula } from "@/components/ui/Formula";
 
 interface Tile {
   id: number;
@@ -182,7 +183,7 @@ export function EquationForgeCard({ stage, onMistake, onDone }: CardProps<Equati
           </span>
         ))}
       </Feedback>
-      <Feedback show={status === "right"} ok title={stage.formula.expr}>
+      <Feedback show={status === "right"} ok title={<Formula expr={stage.formula.expr} />}>
         {stage.formula.meaning}
         {stage.formula.vars && <span className="block mt-1 t-label text-fg-2 readout">{stage.formula.vars}</span>}
       </Feedback>

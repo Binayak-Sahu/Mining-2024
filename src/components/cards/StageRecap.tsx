@@ -3,6 +3,8 @@
 import type { ReactNode } from "react";
 import type { Stage } from "@/lib/types";
 import { fmt } from "@/lib/calc";
+import { withUnit } from "@/lib/typo";
+import { Formula } from "@/components/ui/Formula";
 import { STAGE_META } from "./ui";
 
 /** Read-only recap of a completed stage: the facts, answers and explanations, with nothing to score. */
@@ -90,7 +92,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
             <P key={k}>{l}</P>
           ))}
           <P>
-            <b className="readout">{stage.formula.expr}</b> — {stage.formula.meaning}
+            <b className="readout"><Formula expr={stage.formula.expr} /></b> — {stage.formula.meaning}
           </P>
         </>
       );
@@ -101,7 +103,7 @@ export function StageRecap({ stage }: { stage: Stage }) {
           <P>{stage.problem}</P>
           {stage.steps.map((s, k) => (
             <P key={k}>
-              {k + 1}. {s.prompt} <b className="readout">→ {fmt(s.answer, 3)} {s.unit}</b>. {s.explain}
+              {k + 1}. {s.prompt} <b className="readout">→ {withUnit(fmt(s.answer, 3), s.unit)}</b>. {s.explain}
             </P>
           ))}
         </>

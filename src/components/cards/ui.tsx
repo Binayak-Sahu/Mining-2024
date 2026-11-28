@@ -183,7 +183,7 @@ function useVerdictSound(show: boolean, ok: boolean) {
  * §5.7 row 1: the verdict word (`title` 800, tint text) with a ghost "Why?" pill that opens the existing
  * explanation inside the sheet. Correct verdicts scale 0.9 → 1.
  */
-function VerdictRow({ ok, title, why }: { ok: boolean; title: string; why?: ReactNode }) {
+function VerdictRow({ ok, title, why }: { ok: boolean; title: ReactNode; why?: ReactNode }) {
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   return (
@@ -213,7 +213,7 @@ function VerdictRow({ ok, title, why }: { ok: boolean; title: string; why?: Reac
  * Verdict from inside a stage's content: portalled into the footer above its button, turning the footer into the
  * feedback sheet. The reason sits behind "Why?".
  */
-export function Feedback({ show, ok, title, children }: { show: boolean; ok: boolean; title: string; children?: ReactNode; compact?: boolean }) {
+export function Feedback({ show, ok, title, children }: { show: boolean; ok: boolean; title: ReactNode; children?: ReactNode; compact?: boolean }) {
   const ctx = useContext(FeedbackSlot);
   useVerdictSound(show, ok);
   useVerdictTone(show, ok);
@@ -229,12 +229,12 @@ export function optionClass(state: OptionState): string {
   if (state === "right") return `${base} !border-success !bg-success-tint text-fg`;
   if (state === "wrong") return `${base} !border-danger !bg-danger-tint text-fg`;
   if (state === "dim") return `${base} !border-line text-fg-2`;
-  if (state === "selected") return `${base} !border-action !bg-action-tint text-fg`;
+  if (state === "selected") return `${base} !border-unit-ink !bg-unit-tint text-fg`;
   return `${base} text-fg`;
 }
 
 export function OptionKey({ i, state }: { i: number; state: OptionState }) {
-  const c = state === "right" ? "bg-success text-white border-success" : state === "wrong" ? "bg-danger text-white border-danger" : state === "selected" ? "bg-action text-white border-action" : "text-fg-2 border-line-strong";
+  const c = state === "right" ? "bg-success text-[var(--success-on)] border-success" : state === "wrong" ? "bg-danger text-[var(--danger-on)] border-danger" : state === "selected" ? "bg-action text-[var(--action-on)] border-action" : "text-fg-2 border-line-strong";
   return <span className={`readout mr-3 inline-flex w-8 h-8 shrink-0 items-center justify-center rounded-lg border-2 text-[14px] font-extrabold align-middle ${c}`}>{String.fromCharCode(65 + i)}</span>;
 }
 

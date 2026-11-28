@@ -1,7 +1,7 @@
 "use client";
 
 import katex from "katex";
-import "./katex-woff2.css";
+import "@/components/ui/katex-woff2.css";
 import { useMemo } from "react";
 
 /** KaTeX maths (DESIGN.md §3), bundled locally: no CDN. MathML is emitted alongside the HTML for screen readers. */

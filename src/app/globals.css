@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "@fontsource-variable/plus-jakarta-sans/wght.css";
+@import "@fontsource-variable/figtree/wght.css";
+/* JetBrains Mono stays loaded only because the sims' SVG text still names it (svg.tsx MONO); chrome never uses it (DESIGN §3). */
 @import "@fontsource-variable/jetbrains-mono/wght.css";
 
 /*
@@ -13,15 +14,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-sans: "Figtree Variable", "Figtree", ui-sans-serif, system-ui, sans-serif;
+  /* v3: no monospace in chrome. `font-mono` and `.readout` now give tabular figures of the UI font. */
+  --font-mono: "Figtree Variable", "Figtree", ui-sans-serif, system-ui, sans-serif;
 
   --color-canvas: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-ink: var(--n-900);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
+  --color-line: var(--edge);
+  --color-line-strong: var(--edge-strong);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
+  --color-progress: var(--progress);
+  --color-unit-ink: var(--u-ink);
+  --color-unit-tint: var(--u-tint);
   --color-fg: var(--text);
   --color-fg-2: var(--text-2);
   --color-fg-3: var(--text-3);
@@ -105,17 +112,20 @@
   /* §2.1 neutrals */
   --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f5f5f5;
-  --line: #e5e5e5;
-  --line-strong: #d4d4d4;
+  --surface-2: #f4f4f4;
+  /* v3 §2.1: --edge is the border AND the ledge. --line / --line-strong stay as aliases for existing classes. */
+  --edge: #e3e3e3;
+  --edge-strong: #d0d0d0;
+  --line: var(--edge);
+  --line-strong: var(--edge-strong);
   --text: #141414;
   --text-2: #5c5c5c;
-  --text-3: #6b6b6b;
+  --text-3: #6f6f6f;
   --n-50: #fafafa;
-  --n-100: #f5f5f5;
-  --n-200: #e5e5e5;
-  --n-300: #d4d4d4;
-  --n-400: #6b6b6b;
+  --n-100: #f4f4f4;
+  --n-200: #e3e3e3;
+  --n-300: #d0d0d0;
+  --n-400: #6f6f6f;
   --n-500: #5c5c5c;
   --n-600: #525252;
   --n-700: #404040;
@@ -123,19 +133,23 @@
   --n-900: #141414;
   --n-950: #0a0a0a;
   /* §2.2 accents: face / ledge / text-on / tint bg / tint text */
-  --action: #3b5bf6;
-  --action-ledge: #2a43c2;
-  --action-on: #ffffff;
-  --action-tint: #eef1ff;
-  --action-tint-text: #2a43c2;
-  --success: #15803d;
-  --success-ledge: #0f5e2c;
-  --success-on: #ffffff;
+  /* v3 §2.2: "action" is now the current unit's family (--u-*, set by [data-family], default blue). Face = fills,
+   * tint-text = text and rings (the family's `ink` tone, contrast-fixed in §2.2b). */
+  --action: var(--u-face);
+  --action-ledge: var(--u-ledge);
+  --action-on: var(--u-on);
+  --action-tint: var(--u-tint);
+  --action-tint-text: var(--u-ink);
+  /* §2.3 + §2.2b: success/danger faces are the bright tones with dark text; the light progress fill is the ledge green. */
+  --success: #22c55e;
+  --success-ledge: #15803d;
+  --success-on: #141414;
+  --progress: #15803d;
   --success-tint: #dcfce7;
   --success-tint-text: #15803d;
-  --danger: #dc2626;
-  --danger-ledge: #991b1b;
-  --danger-on: #ffffff;
+  --danger: #ef4444;
+  --danger-ledge: #b91c1c;
+  --danger-on: #141414;
   --danger-tint: #fee2e2;
   --danger-tint-text: #b91c1c;
   --energy: #f5b417;
@@ -172,13 +186,14 @@
   --am-600: #b47f06;
   --am-700: #92600a;
   --am-800: #7a5008;
-  --bl-50: #eef1ff;
-  --bl-100: #dde3ff;
-  --bl-300: #9daeff;
-  --bl-600: #3b5bf6;
-  --bl-700: #2a43c2;
-  --bl-800: #22369c;
-  --bl-900: #1a2a78;
+  /* The old blue ramp now follows the unit family (one stray text-blue-600 uses it). */
+  --bl-50: var(--u-tint);
+  --bl-100: var(--u-tint);
+  --bl-300: var(--u-light);
+  --bl-600: var(--u-ink);
+  --bl-700: var(--u-ink);
+  --bl-800: var(--u-deep);
+  --bl-900: var(--u-deep);
 
   /* Older names still read by some components; they now point at v2 tokens. */
   --bg-deep: var(--surface-2);
@@ -197,38 +212,30 @@
 :root.dark,
 .ds2-dark {
   color-scheme: dark;
-  --bg: #121212;
-  --surface: #1c1c1c;
-  --surface-2: #242424;
-  --line: #2e2e2e;
-  --line-strong: #3a3a3a;
+  --bg: #141414;
+  --surface: #1e1e1e;
+  --surface-2: #262626;
+  --edge: #333333;
+  --edge-strong: #3d3d3d;
   --text: #f5f5f5;
-  --text-2: #a3a3a3;
-  --text-3: #949494;
-  --n-50: #1c1c1c;
-  --n-100: #242424;
-  --n-200: #2e2e2e;
-  --n-300: #3a3a3a;
-  --n-400: #949494;
-  --n-500: #a3a3a3;
+  --text-2: #a6a6a6;
+  --text-3: #8c8c8c;
+  --n-50: #1e1e1e;
+  --n-100: #262626;
+  --n-200: #333333;
+  --n-300: #3d3d3d;
+  --n-400: #8c8c8c;
+  --n-500: #a6a6a6;
   --n-600: #bdbdbd;
   --n-700: #d4d4d4;
   --n-800: #e5e5e5;
   --n-900: #f5f5f5;
   --n-950: #ffffff;
-  --action: #3b5bf6;
-  --action-ledge: #2a43c2;
-  --action-on: #ffffff;
-  --action-tint: #1a2040;
-  --action-tint-text: #9daeff;
-  --success: #15803d;
-  --success-ledge: #0f5e2c;
-  --success-on: #ffffff;
+  --progress: #22c55e;
+  --success-ledge: #15803d;
   --success-tint: #0f2e1a;
   --success-tint-text: #4ade80;
-  --danger: #dc2626;
-  --danger-ledge: #8f1d1d;
-  --danger-on: #ffffff;
+  --danger-ledge: #b91c1c;
   --danger-tint: #3a1215;
   --danger-tint-text: #f87171;
   --energy: #f5b417;
@@ -263,13 +270,6 @@
   --am-600: #f5c84a;
   --am-700: #f7d26b;
   --am-800: #fae19a;
-  --bl-50: #1a2040;
-  --bl-100: #212a52;
-  --bl-300: #3b4fa8;
-  --bl-600: #9daeff;
-  --bl-700: #bcc8ff;
-  --bl-800: #d6ddff;
-  --bl-900: #eef1ff;
 
   --bg-deep: var(--bg);
   --hairline: var(--line);
@@ -280,6 +280,62 @@
   --shadow-pop: var(--sheet-shadow);
   --plate: #eef0ea;
   --plate-line: rgba(20, 20, 20, 0.06);
+}
+
+
+/* ---------- v3 §2.2 unit hue families ----------
+ * Five families. Default (no data-family anywhere) is blue. Every element with data-family="<family>" re-declares the
+ * --u-* tones and the --action* aliases that read them (a var() is resolved where it is declared, so a nested scope
+ * must restate the aliases). <html> gets its data-family from the route (src/lib/family.ts); a card can carry its own.
+ *   face = fills · ledge = button bottom edge · on = text on face · ink = unit-hue text and rings (§2.2b)
+ *   deep / mid / light = illustration tones · glow = dark page-top atmosphere · tint = selected-tile / tab background */
+:root {
+  --u-face: #4568f5; --u-ledge: #3451c9; --u-on: #ffffff; --u-ink: #2e46c2;
+  --u-deep: #2e46c2; --u-mid: #4c6ef5; --u-light: #aab9ff; --u-glow: #0d1a45; --u-tint: #eef1ff;
+}
+:root.dark { --u-ink: #6b87f7; --u-tint: #0e1636; }
+[data-family="blue"] {
+  --u-face: #4568f5; --u-ledge: #3451c9; --u-on: #ffffff; --u-ink: #2e46c2;
+  --u-deep: #2e46c2; --u-mid: #4c6ef5; --u-light: #aab9ff; --u-glow: #0d1a45; --u-tint: #eef1ff;
+}
+.dark[data-family="blue"], .dark [data-family="blue"] { --u-ink: #6b87f7; --u-tint: #0e1636; }
+[data-family="yellow"] {
+  --u-face: #f6c22c; --u-ledge: #c7960c; --u-on: #3a2c00; --u-ink: #8e6a08;
+  --u-deep: #b88a0a; --u-mid: #f6c22c; --u-light: #fce38a; --u-glow: #2e2306; --u-tint: #fff7da;
+}
+.dark[data-family="yellow"], .dark [data-family="yellow"] { --u-ink: #f6c22c; --u-tint: #2b2205; }
+[data-family="purple"] {
+  --u-face: #8e49ff; --u-ledge: #7136d9; --u-on: #ffffff; --u-ink: #6a3fd0;
+  --u-deep: #6a3fd0; --u-mid: #9a5cff; --u-light: #cdb6ff; --u-glow: #231340; --u-tint: #f3edff;
+}
+.dark[data-family="purple"], .dark [data-family="purple"] { --u-ink: #a770ff; --u-tint: #1f1236; }
+[data-family="orange"] {
+  --u-face: #f28a2e; --u-ledge: #c2621a; --u-on: #2e1600; --u-ink: #ae5410;
+  --u-deep: #c25e12; --u-mid: #f28a2e; --u-light: #ffc08a; --u-glow: #2e1708; --u-tint: #fff1e6;
+}
+.dark[data-family="orange"], .dark [data-family="orange"] { --u-ink: #f28a2e; --u-tint: #2a1508; }
+[data-family="teal"] {
+  --u-face: #1fb5a3; --u-ledge: #13877a; --u-on: #002b26; --u-ink: #0e7c6f;
+  --u-deep: #0e7c6f; --u-mid: #1fb5a3; --u-light: #8fe3d8; --u-glow: #06261f; --u-tint: #e6f8f5;
+}
+.dark[data-family="teal"], .dark [data-family="teal"] { --u-ink: #1fb5a3; --u-tint: #062521; }
+[data-family] {
+  --action: var(--u-face);
+  --action-ledge: var(--u-ledge);
+  --action-on: var(--u-on);
+  --action-tint: var(--u-tint);
+  --action-tint-text: var(--u-ink);
+  --bl-50: var(--u-tint);
+  --bl-100: var(--u-tint);
+  --bl-300: var(--u-light);
+  --bl-600: var(--u-ink);
+  --bl-700: var(--u-ink);
+  --bl-800: var(--u-deep);
+  --bl-900: var(--u-deep);
+}
+/* §4 page glow (dark only): the unit's glow tone fading to --bg over 280 px behind the top of unit pages. */
+.dark .page-glow {
+  background: linear-gradient(to bottom, var(--u-glow) 0, var(--bg) 280px);
 }
 
 html,
@@ -298,7 +354,7 @@ body {
   transition: background-color 240ms ease;
 }
 ::selection {
-  background: color-mix(in srgb, var(--action) 25%, transparent);
+  background: color-mix(in srgb, var(--u-ink) 25%, transparent);
 }
 .ds2,
 .ds2-light,
@@ -365,8 +421,8 @@ body {
 .t-eyebrow {
   font-size: 14px;
   line-height: 18px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -377,38 +433,41 @@ body {
   letter-spacing: 0;
 }
 .t-tab {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 16px;
   font-weight: 600;
   letter-spacing: 0;
 }
 .t-readout {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 17px;
   line-height: 24px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- §5.3 card: 2 px border, 5 px bottom ledge, radius 20, no shadow ---------- */
+/* ---------- v3 §4 card: 2 px --edge border, 6 px --edge bottom ledge, radius 28, no shadow ---------- */
 .card {
   background: var(--surface);
   color: var(--text);
-  border: 2px solid var(--line);
-  border-bottom-width: 5px;
-  border-radius: 20px;
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 28px;
   box-shadow: none;
 }
 .card-pop {
   box-shadow: none;
 }
 
+/* v3 §3: numbers are tabular figures of the UI font, never monospace. */
 .readout,
 .font-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "zero" 0;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- §5.1 buttons ----------
@@ -428,7 +487,7 @@ body {
   border-radius: 9999px;
   background: var(--c);
   color: var(--t);
-  box-shadow: 0 4px 0 var(--e);
+  box-shadow: 0 5px 0 var(--e);
   transform: translateY(0);
   transition:
     transform 70ms ease,
@@ -441,7 +500,7 @@ body {
 }
 .btn-3d:active:not(:disabled),
 .btn-3d[data-pressed="true"] {
-  transform: translateY(4px);
+  transform: translateY(5px);
   box-shadow: 0 0 0 var(--e);
 }
 .btn-3d:disabled {
@@ -454,7 +513,7 @@ body {
 .btn-3d:focus-visible,
 .tile-3d:focus-visible,
 .ds-focus:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--u-ink) 60%, transparent);
   outline-offset: 3px;
 }
 .tone-ink {
@@ -485,9 +544,9 @@ body {
 }
 .tone-ghost {
   --c: var(--surface);
-  --e: var(--line-strong);
+  --e: var(--edge-strong);
   --t: var(--text);
-  border: 2px solid var(--line-strong);
+  border: 2px solid var(--edge-strong);
 }
 /* Small secondary pill ("Why?", "Hint", "All readouts (n)", compact page actions) */
 .btn-3d.btn-sm {
@@ -502,9 +561,9 @@ body {
 .tile-3d {
   background: var(--surface);
   color: var(--text);
-  border: 2px solid var(--line-strong);
+  border: 2px solid var(--edge-strong);
   border-bottom-width: 4px;
-  border-radius: 12px;
+  border-radius: 18px;
   box-shadow: none;
   transition:
     transform 70ms ease,
@@ -516,8 +575,8 @@ body {
 }
 .tile-3d[data-on="true"],
 .tile-3d[data-state="selected"] {
-  border-color: var(--action);
-  background: var(--action-tint);
+  border-color: var(--u-ink);
+  background: var(--u-tint);
 }
 .tile-3d[data-state="correct"] {
   border-color: var(--success);
@@ -668,7 +727,7 @@ body {
   cursor: grabbing;
 }
 .slider input:focus-visible ~ .slider-thumb {
-  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--u-ink) 60%, transparent);
   outline-offset: 2px;
 }
 
@@ -816,7 +875,7 @@ svg[role="img"] {
  * The ds-* classes below were built for the /design-system sandbox in 15.5a. The tab bar and the sheet/popover face
  * are used app-wide since 15.5b; the rest wait for 15.5c–e. */
 .tile-3d.tile-chip {
-  color: var(--action-tint-text);
+  color: var(--u-ink);
   text-align: center;
 }
 /* Sandbox reference size for answer tiles and word chips (§5.2 body-lg 600, 12×20); the lesson player adopts it in 15.5c. */
@@ -833,7 +892,7 @@ svg[role="img"] {
 /* Word-bank well and the blank slot inside a sentence */
 .ds-well {
   background: var(--surface-2);
-  border-radius: 20px;
+  border-radius: 28px;
   padding: 24px;
   display: flex;
   flex-wrap: wrap;
@@ -911,7 +970,7 @@ svg[role="img"] {
   width: 94px;
   height: 94px;
   border-radius: 9999px;
-  border: 3px solid var(--action);
+  border: 3px solid var(--u-ink);
   pointer-events: none;
   animation: ds-node-pulse 2s ease-in-out infinite;
 }
@@ -952,19 +1011,19 @@ svg[role="img"] {
   align-self: center;
   width: 4px;
   height: 32px;
-  background: var(--line);
+  background: var(--edge);
 }
 
 /* §5.7 sheets and popovers: --surface-2 face, 2 px --line border, the one allowed shadow */
 .ds-pop {
   background: var(--surface-2);
   color: var(--text);
-  border: 2px solid var(--line);
-  border-radius: 20px;
+  border: 2px solid var(--edge);
+  border-radius: 28px;
   box-shadow: var(--sheet-shadow);
 }
 .ds-sheet {
-  border-radius: 24px 24px 0 0;
+  border-radius: 28px 28px 0 0;
   padding: 20px 24px calc(16px + env(safe-area-inset-bottom));
 }
 .ds-sheet[data-ok="true"] {
@@ -985,7 +1044,7 @@ svg[role="img"] {
 .ds-progress-fill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: var(--success);
+  background: var(--progress);
   border-radius: 9999px;
 }
 .ds-progress-notch {
@@ -1000,7 +1059,7 @@ svg[role="img"] {
 /* §5.8 bottom tab bar */
 .ds-tabbar {
   background: var(--bg);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--edge);
   height: calc(64px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   display: grid;
@@ -1011,13 +1070,13 @@ svg[role="img"] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 0;
   color: var(--text-3);
   min-height: 44px;
 }
 .ds-tab-icon {
-  width: 56px;
-  height: 32px;
+  width: 64px;
+  height: 40px;
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -1030,7 +1089,7 @@ svg[role="img"] {
   background: var(--surface-2);
 }
 .ds-tab[aria-current="page"] .t-tab {
-  font-weight: 700;
+  font-weight: 800;
 }
 
 /* §5.9 sim readout rows */
@@ -1051,9 +1110,9 @@ svg[role="img"] {
 .sheet-face {
   background: var(--surface-2);
   color: var(--text);
-  border: 2px solid var(--line);
+  border: 2px solid var(--edge);
   border-bottom: 0;
-  border-radius: 24px 24px 0 0;
+  border-radius: 28px 28px 0 0;
   box-shadow: var(--sheet-shadow);
 }
 
@@ -1074,22 +1133,28 @@ svg[role="img"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 18px;
   background: var(--surface-2);
-  border: 2px solid var(--line);
-  border-bottom-width: 5px;
+  border: 2px solid var(--edge);
+  border-bottom-width: 4px;
   color: var(--text);
 }
 /* §5.3 course card: pressing sinks the card into its ledge */
+/* v3 §4 pressable card: the face moves down 4 px and the ledge shrinks 6 → 2 px, with the lost 4 px given back as
+ * padding so the outer box keeps its height and nothing below moves. */
 .course-card {
-  transition: transform 120ms ease-out;
+  transition:
+    transform 120ms ease-out,
+    border-bottom-width 120ms ease-out;
 }
 .course-card:active {
-  transform: translateY(2px);
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+  padding-bottom: calc(1.25rem + 4px);
 }
 .course-card:focus-visible,
 .path-node:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--action) 60%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--u-ink) 60%, transparent);
   outline-offset: 3px;
 }
 .course-badge[data-badge="Next"] {
@@ -1102,7 +1167,7 @@ svg[role="img"] {
 }
 /* §5.3 level header card: 2 px action border, 5 px action ledge */
 .level-card {
-  border-color: var(--action);
+  border-color: var(--u-ink);
 }
 /* §5.5 path node button: the .ds-node pedestal plus the 44 px+ hit area it already has (72×82) */
 .path-node {
@@ -1164,7 +1229,7 @@ svg[role="img"] {
   min-height: 48px;
   padding: 10px 14px;
   border-radius: 12px;
-  border: 2px solid var(--line-strong);
+  border: 2px solid var(--edge-strong);
   background: var(--surface);
   color: var(--text);
   font-size: 16px;
@@ -1174,7 +1239,7 @@ svg[role="img"] {
 }
 .field-input:focus-visible,
 .field-input:focus {
-  border-color: var(--action);
+  border-color: var(--u-ink);
 }
 .field-input::placeholder {
   color: var(--text-3);
@@ -1207,98 +1272,51 @@ svg[role="img"] {
   border: 2px solid #d4d4d4;
 }
 
-/* ---------- DESIGN.md v2.1 preview (Phase 15.5f) — /design-system sandbox only ----------
- * `.ds21-light` / `.ds21-dark` sit on top of `.ds2-light` / `.ds2-dark` and carry the v2.1 values: dark depth
- * (§2.1), `--ledge`, the dark card top highlight, stratum colours (§2.4) and the plate tokens (§2.3b).
- * Production does not use these classes yet. */
-.ds21-light,
-.ds21-dark {
-  --stratum-0: #3c87ac;
-  --stratum-1: #977c44;
-  --stratum-2: #8a812e;
-  --stratum-3: #8678a8;
-  --stratum-4: #748544;
-  --stratum-5: #bc6a2c;
-  --stratum-6: #9174a2;
-  --stratum-7: #368c80;
-  --stratum-8: #5f8a4a;
-  --stratum-9: #bd5e91;
-  --stratum-10: #ac65aa;
-}
-.ds21-light {
-  --ledge: #d4d4d4;
-  --card-hi: none;
-  --stratum-alpha: 12%;
-  --plate-bg: #f7f6f2;
-  --plate-grid: rgba(0, 0, 0, 0.06);
-  --plate-ink: #1f1f1f;
-  --plate-ink-2: #5c5c5c;
-  --plate-line: #cfcfcf;
-}
-.ds21-dark {
-  --surface: #1e1e1e;
-  --surface-2: #282828;
-  --line: #333333;
-  --n-50: #1e1e1e;
-  --n-100: #282828;
-  --n-200: #333333;
-  --ledge: #3a3a3a;
-  --card-hi: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --stratum-alpha: 14%;
-  --plate-bg: #181a1d;
-  --plate-grid: rgba(255, 255, 255, 0.06);
-  --plate-ink: #ececec;
-  --plate-ink-2: #a3a3a3;
-  --plate-line: #3a3a3a;
-}
-/* §5.3 v2.1 card: --ledge bottom, dark top highlight. Pressed state is animated in JS (tactilePress). */
-.ds21-card {
+/* ---------- v3 §5.1b stat pill (top bar streak and XP), §5.3 course tab ---------- */
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--edge);
+  border-radius: 9999px;
   background: var(--surface);
-  color: var(--text);
-  border: 2px solid var(--line);
-  border-bottom: 5px solid var(--ledge);
-  border-radius: 20px;
-  box-shadow: var(--card-hi);
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
-/* §2.4 / §5.11 v2.1 unit icon tile: stratum tint face, icon in the stratum colour */
-.ds21-tile {
+/* Course tab: a §4 tile (radius 18, 2 px edge, 4 px ledge). Selected = 3 px unit-ink border, tab-tint face and a 4×56
+ * unit-ink bar under the label. Used by the Path unit scroller (v3c); the Codex and Lab tab rows use the same selected look. */
+.course-tab {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
-  background: color-mix(in srgb, var(--s) var(--stratum-alpha), var(--surface));
-  border: 2px solid var(--line);
-  border-bottom: 5px solid var(--ledge);
-  box-shadow: var(--card-hi);
-  color: var(--s);
+  gap: 4px;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--edge);
+  border-bottom-width: 4px;
+  border-radius: 18px;
 }
-.ds21-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: var(--s);
+.course-tab[aria-selected="true"],
+.course-tab[data-on="true"] {
+  background: var(--u-tint);
+  border: 3px solid var(--u-ink);
+  border-bottom-width: 4px;
 }
-.ds21-band {
-  background: color-mix(in srgb, var(--s) var(--stratum-alpha), var(--surface));
-  border-radius: 20px;
-  padding: 24px;
-}
-/* §2.3b v2.1 plate (pilot): follows the theme, grid in --plate-grid, 2 px --line inner ring */
-.ds21-plate {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  background:
-    linear-gradient(var(--plate-grid) 1px, transparent 1px) 0 0 / 20px 20px,
-    linear-gradient(90deg, var(--plate-grid) 1px, transparent 1px) 0 0 / 20px 20px,
-    var(--plate-bg);
-}
-.ds21-plate::after {
+.course-tab[aria-selected="true"]::after,
+.course-tab[data-on="true"]::after {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 2px var(--line);
-  pointer-events: none;
+  left: 50%;
+  bottom: 6px;
+  width: 56px;
+  height: 4px;
+  margin-left: -28px;
+  border-radius: 9999px;
+  background: var(--u-ink);
 }

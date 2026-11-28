@@ -22,7 +22,7 @@ export function ProfileMenu({ badge, rankTitle }: { badge: string; rankTitle: st
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button type="button" title={`Profile · ${rankTitle}`} aria-label={`Profile menu, rank ${rankTitle}`} className="ds-focus ml-0.5 flex items-center justify-center w-11 h-11 rounded-full bg-action text-white text-[14px] font-extrabold readout">
+        <button type="button" title={`Profile · ${rankTitle}`} aria-label={`Profile menu, rank ${rankTitle}`} className="ds-focus ml-0.5 flex items-center justify-center w-11 h-11 rounded-full bg-action text-[var(--action-on)] text-[14px] font-extrabold readout">
           {badge}
         </button>
       </Dialog.Trigger>

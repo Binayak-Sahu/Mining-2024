@@ -64,7 +64,7 @@ export function Profile() {
             <div className="ds-progress mt-3" aria-hidden>
               <motion.div className="ds-progress-fill" initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={stageSlide} />
             </div>
-            <div className="readout t-label text-fg-2 mt-2" style={{ fontWeight: 400 }}>{next ? `${s.xp} / ${next.min} XP → ${next.title}` : `${s.xp} XP · maximum rank`}</div>
+            <div className="readout t-label text-fg-2 mt-2" style={{ fontWeight: 400 }}>{next ? `${s.xp} / ${next.min} XP → ${next.title}` : `${s.xp} XP · maximum rank`}</div>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ export function Profile() {
               <li key={r.title} className={`flex items-center gap-3 rounded-[12px] px-3 py-2 t-label ${i === index ? "bg-ink text-canvas" : i < index ? "bg-success-tint text-success-tint-text" : "bg-surface-2 text-fg-3"}`} aria-current={i === index ? "step" : undefined}>
                 <span className="readout w-8" style={{ fontWeight: 800 }}>{r.badge}</span>
                 <span className="flex-1" style={{ fontWeight: 700 }}>{r.title}</span>
-                <span className="readout" style={{ fontWeight: 400 }}>{r.min} XP</span>
+                <span className="readout" style={{ fontWeight: 400 }}>{r.min} XP</span>
               </li>
             ))}
           </ol>

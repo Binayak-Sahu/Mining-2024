@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Calculator, Check, CornerDownLeft } from "lucide-react";
 import type { NumericStage } from "@/lib/types";
 import { closeEnough, evaluate, fmt } from "@/lib/calc";
+import { withUnit } from "@/lib/typo";
 import { getSim } from "@/content";
 import { SimCanvas, defaults } from "@/components/sim/SimView";
 import { CardFrame, Feedback, PrimaryButton, type CardProps } from "./ui";
@@ -128,14 +129,14 @@ export function NumericWorkbenchCard({ stage, onMistake, onDone }: CardProps<Num
               title={g.label}
             >
               <span className="readout text-[14px] font-bold text-action-tint-text">{g.sym}</span>
-              <span className="readout text-[14px] text-fg"> = {g.value} {g.unit}</span>
+              <span className="readout text-[14px] text-fg"> = {withUnit(String(g.value), g.unit)}</span>
               <span className="block text-[14px] text-fg-2 leading-tight">{g.label}</span>
             </button>
           ))}
           {results.map((r, i) => (
             <button key={i} type="button" onClick={() => setExpr((e) => e + `s${i + 1}`)} className="tile-3d !border-success !bg-success-tint px-3 py-2">
               <span className="readout text-[14px] font-bold text-success-tint-text">s{i + 1}</span>
-              <span className="readout text-[14px] text-fg"> = {fmt(r, 4)} {stage.steps[i].unit}</span>
+              <span className="readout text-[14px] text-fg"> = {withUnit(fmt(r, 4), stage.steps[i].unit)}</span>
             </button>
           ))}
         </div>
