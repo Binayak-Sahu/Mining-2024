@@ -402,8 +402,8 @@ export const longwallCycleSim: SimDef = {
     { key: "weighting", label: "Weighting events per day", digits: 2 },
   ],
   caption: "Shields 15 % of face length behind the trailing drum lower–advance–set; the AFC is snaked over behind them. Leg pressure spikes each time cumulative advance crosses the periodic-weighting interval.",
-  // §5.6 redraw (v3e): plan view on top, shield section and leg pressure below.
-  v3: { viewH: 304 },
+  // §5.6d redraw (v3.2): plan view on top, shield section and leg pressure below; 24-unit inset, scene fills clipped.
+  v3: { viewH: 320 },
   render: (p, _o, t) => {
     const T8 = 8;
     const u = (t % T8) / T8;
@@ -411,72 +411,80 @@ export const longwallCycleSim: SimDef = {
     const cum = shearNo * p.web + u * p.web;
     const weighting = cum > p.wi * 0.5 && cum % p.wi < p.web * 1.5;
     const n = 22;
-    const x0 = 20;
-    const W = 360;
+    const x0 = 50;
+    const W = 300;
     const fx = (f: number) => x0 + f * W;
     const lag = 0.15;
     const shX = u;
     const shields = [];
-    let afc = `M ${fx(0)} 100`;
+    let afc = `M 24 84 L ${fx(0)} 84`;
     for (let i = 0; i < n; i++) {
       const f = (i + 0.5) / n;
       const behind = shX - f;
       const state = behind > lag + 0.06 ? 2 : behind > lag ? 1 : 0; // 0 old, 1 advancing, 2 advanced
       const dy = state === 2 ? -8 : state === 1 ? -4 : 0;
-      shields.push(<rect key={i} x={fx(f) - 6} y={106 + dy} width={12} height={22} rx={2} style={{ fill: state === 1 ? U.deep : U.light }} />);
-      afc += ` L ${fx(f)} ${100 + (state >= 1 ? -8 : 0) * (state === 1 ? 0.5 : 1)}`;
+      shields.push(<rect key={i} x={fx(f) - 5} y={92 + dy} width={10} height={22} rx={2} style={{ fill: state === 1 ? U.deep : U.light }} />);
+      afc += ` L ${fx(f)} ${84 + (state >= 1 ? -8 : 0) * (state === 1 ? 0.5 : 1)}`;
     }
-    afc += ` L ${fx(1)} 100`;
-    const sec = Math.floor(u * 3) % 3;
+    afc += ` L ${fx(1)} 84 L 376 84`;
     const midBehind = shX - 0.5;
     const midState = midBehind > lag + 0.06 ? 2 : midBehind > lag ? 1 : 0;
     const pressure = weighting ? 100 : midState === 1 ? 5 : 55 + 25 * clamp(midBehind < 0 ? u : 1 - u, 0, 1);
     const sx = midState === 2 ? 14 : midState === 1 ? 7 : 0;
-    const cy = midState === 1 ? 214 : 206;
+    const cy = midState === 1 ? 234 : 226;
+    const cb = 68 - 8 * u;
+    const state = weighting ? "unsafe" : pressure < 20 ? undefined : "safe";
     return (
       <g>
-        <T x={20} y={20} weight={700}>
-          Plan · coal face ↑ goaf ↓
-        </T>
-        <rect x={x0} y={28} width={W} height={56 - 8 * u} fill={GREYS.deep} />
-        <rect x={x0} y={84 - 8 * u} width={fx(shX) - x0} height={8 * u + 6} fill={GREYS.mid} />
+        <defs>
+          <clipPath id="lwc-clip">
+            <rect x={12} y={12} width={376} height={296} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#lwc-clip)">
+          <rect x={0} y={0} width={400} height={cb} fill={GREYS.deep} />
+          <rect x={0} y={cb} width={fx(shX)} height={8 * u + 6} fill={GREYS.mid} />
+          <rect x={0} y={120} width={400} height={48} fill={GREYS.mid} />
+          <rect x={0} y={204} width={212} height={16} fill={GREYS.light} />
+          <rect x={0} y={278} width={212} height={40} fill={GREYS.light} />
+        </g>
         <path d={afc} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
         {shields}
-        <rect x={x0} y={134} width={W} height={22} fill={GREYS.mid} />
-        <T x={x0 + 8} y={151} fill={ON_LIGHT} weight={700}>
-          Goaf (caving)
-        </T>
         {/* DERD shearer: body and two drums */}
-        <rect x={fx(shX) - 16} y={88} width={32} height={10} rx={3} style={{ fill: U.mid }} />
-        <circle cx={fx(shX) - 18} cy={86} r={7} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} />
-        <circle cx={fx(shX) + 18} cy={82} r={7} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} />
-        <T x={clamp(fx(shX), 44, 356)} y={52} anchor="middle" fill={ON_DEEP} weight={700}>
+        <rect x={fx(shX) - 14} y={72} width={28} height={10} rx={3} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+        <circle cx={fx(shX) - 16} cy={68} r={6} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2.5} />
+        <circle cx={fx(shX) + 16} cy={64} r={6} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2.5} />
+        <T x={clamp(fx(shX), 74, 326)} y={44} anchor="middle" fill={ON_DEEP} weight={700}>
           DERD
         </T>
-        <T x={20} y={184} weight={700}>
+        <T x={32} y={150} fill={ON_LIGHT} weight={700}>
+          Goaf (caving)
+        </T>
+        <T x={368} y={150} anchor="end" fill={ON_LIGHT} weight={700}>
+          {`Advance ${num(cum, 1, "m")}`}
+        </T>
+        <T x={24} y={196} weight={700}>
           {`Shield: ${["set against roof", "lower → advance", "set (new web)"][midState]}`}
         </T>
         {/* section of the middle shield */}
-        <rect x={20} y={192} width={190} height={8} fill={GREYS.light} />
-        <rect x={20} y={258} width={190} height={8} fill={GREYS.light} />
         <g transform={`translate(${sx} 0)`}>
           <rect x={70} y={cy} width={80} height={7} rx={2} style={{ fill: U.mid }} />
-          <line x1={95} y1={cy + 7} x2={100} y2={250} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-          <line x1={125} y1={cy + 7} x2={120} y2={250} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-          <rect x={80} y={250} width={60} height={8} rx={2} fill={GREYS.deep} />
-          <line x1={70} y1={cy + 3} x2={45} y2={244} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+          <line x1={95} y1={cy + 7} x2={100} y2={270} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+          <line x1={125} y1={cy + 7} x2={120} y2={270} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
+          <rect x={80} y={270} width={60} height={8} rx={2} fill={GREYS.deep} />
+          <line x1={70} y1={cy + 3} x2={48} y2={262} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
         </g>
-        <rect x={160} y={240} width={24} height={18} rx={2} style={{ fill: U.deep }} />
-        <T x={230} y={206} fill={INK} weight={700}>
+        <rect x={160} y={260} width={24} height={18} rx={2} style={{ fill: U.deep }} />
+        <T x={232} y={240} fill={INK} weight={700}>
           Leg pressure
         </T>
-        <rect x={230} y={214} width={150} height={14} rx={7} fill={GREYS.light} />
-        <rect x={230} y={214} width={1.5 * pressure} height={14} rx={7} style={{ fill: pressure >= 100 ? BAD : pressure < 20 ? U.mid : OK }} />
-        <T x={230} y={250} fill={weighting ? BAD_TEXT : INK} weight={700}>
-          {weighting ? "Weighting: yield!" : `${num(pressure, 0, "%")} of yield`}
-        </T>
-        <T x={230} y={274}>{`Advance ${num(cum, 1, "m")}`}</T>
-        <T x={230} y={296}>{`Sweep ${sec + 1}`}</T>
+        <rect x={232} y={250} width={144} height={14} rx={7} fill={GREYS.light} />
+        <rect x={232} y={250} width={Math.max(14, 1.44 * pressure)} height={14} rx={7} data-state={state} style={{ fill: pressure >= 100 ? BAD : pressure < 20 ? U.mid : OK }} />
+        <g data-state={weighting ? "unsafe" : "safe"}>
+          <T x={232} y={290} fill={weighting ? BAD_TEXT : INK} weight={700}>
+            {weighting ? "Weighting: yield!" : `${num(pressure, 0, "%")} of yield`}
+          </T>
+        </g>
       </g>
     );
   },

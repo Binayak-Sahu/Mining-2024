@@ -1,7 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_TEXT, BAD_TEXT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
 
@@ -39,11 +40,12 @@ export const pitSim: SimDef = {
     { key: "tonnes", label: "Coal per m of strike", unit: "t", digits: 0 },
   ],
   animated: true,
-  // §5.6 redraw (v3e): same scale and frame as the legacy section (surface y 40, centre x 200), so hotspots stay put.
-  v3: { viewH: 240 },
+  // §5.6d redraw (v3.2): same origin and default scale as the legacy section (surface y 40, centre x 200), so hotspots stay put.
+  primary: ["sr", "besr"],
+  v3: { viewH: 250 },
   render: (p, _o, t) => {
     const r = pitSection(p);
-    const k = Math.min(360 / r.Ws, 170 / (p.H + p.t));
+    const k = Math.min(340 / r.Ws, 150 / (p.H + p.t));
     const cx = 200;
     const top = 40;
     const yC = top + p.H * k;
@@ -54,33 +56,46 @@ export const pitSim: SimDef = {
     const xb = cx - (r.Ws * k) / 2;
     const tx = xa + (xb - xa) * u;
     const ty = yF + (top - yF) * u;
+    const wedgeH = yC - top;
+    const wx = cx + (r.Ws * k) / 2 - ((r.Ws - r.Wc) * k) / 4; // right wall at mid-depth
+    const ly = 218;
     return (
       <g>
-        <rect x={0} y={top} width={400} height={yC - top} style={{ fill: U.light }} />
-        <rect x={0} y={yC} width={400} height={yF - yC} fill={GREYS.deep} />
-        <rect x={0} y={yF} width={400} height={240 - yF} fill={GREYS.light} />
-        {/* waste to strip and coal to win */}
-        <polygon points={pts([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} style={{ fill: ok ? U.mid : BAD_LIGHT, stroke: ON_LIGHT }} strokeWidth={2} strokeLinejoin="round" />
-        <polygon points={pts([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={GREYS.deep} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
-        <line x1={0} x2={400} y1={top} y2={top} style={{ stroke: INK }} strokeWidth={2.5} />
+        <clipPath id="u5-pit-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5-pit-clip)">
+          {/* host rock: overburden, coal seam, floor rock, full width */}
+          <rect x={0} y={top} width={400} height={wedgeH} style={{ fill: U.light }} />
+          <rect x={0} y={yC} width={400} height={yF - yC} fill={GREYS.mid} />
+          <rect x={0} y={yF} width={400} height={250 - yF} fill={GREYS.light} />
+        </g>
+        {/* waste to strip (state) and coal to win */}
+        <polygon data-state={ok ? "met" : "unmet"} points={pts([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} style={{ fill: ok ? OK_LIGHT : BAD_LIGHT, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <polygon points={pts([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={GREYS.deep} style={{ stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <line x1={0} x2={400} y1={top} y2={top} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
         {/* haul truck climbing the left wall */}
         <g transform={`translate(${tx.toFixed(1)} ${ty.toFixed(1)})`}>
           <rect x={-9} y={-10} width={18} height={9} rx={2} style={{ fill: U.deep }} />
           <circle cx={-5} cy={0} r={2.5} fill={ON_LIGHT} />
           <circle cx={5} cy={0} r={2.5} fill={ON_LIGHT} />
         </g>
-        <T x={cx} y={(top + yC) / 2 + 6} anchor="middle" fill={ON_LIGHT} weight={700}>
-          {`Waste ${num(r.wasteA, 0, "m³/m")}`}
-        </T>
-        <T x={cx + (r.Ws * k) / 2 - 22} y={top + 20} anchor="end" fill={ON_LIGHT}>
-          {`${p.beta}°`}
-        </T>
-        <T x={cx} y={yF + 22} anchor="middle" fill={ON_LIGHT} weight={600}>
-          {`Coal ${num(r.tonnes, 0, "t/m")} · floor ${num(p.Wf, 0, "m")}`}
-        </T>
-        <T x={8} y={24} fill={ok ? OK_TEXT : BAD_TEXT} weight={800}>
-          {`SR ${num(r.sr, 2)} ${ok ? "≤" : ">"} BESR ${num(r.besr, 2, "m³/t")}`}
-        </T>
+        {wedgeH >= 44 && (
+          <T x={cx} y={top + wedgeH / 2 + 6} anchor="middle" fill={ON_LIGHT} weight={700}>
+            Waste
+          </T>
+        )}
+        {wedgeH >= 44 && wx - 36 > cx + 40 && (
+          <SvgTex x={wx - 10} y={top + wedgeH / 2 + 6} tex={"\\beta"} size={18} anchor="end" color={ON_LIGHT} />
+        )}
+        {/* legend: what the two fills are, and whether the pit pays */}
+        <rect x={24} y={ly - 14} width={16} height={16} rx={3} fill={ok ? OK_LIGHT : BAD_LIGHT} data-state={ok ? "met" : "unmet"} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={46} y={ly} fill={ON_LIGHT}>Waste</T>
+        <rect x={116} y={ly - 14} width={16} height={16} rx={3} fill={GREYS.deep} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+        <T x={138} y={ly} fill={ON_LIGHT}>Coal</T>
+        <g data-state={ok ? "met" : "unmet"}>
+          <SvgTex x={376} y={ly} tex={ok ? "\\mathrm{SR}\\le\\mathrm{BESR}" : "\\mathrm{SR}>\\mathrm{BESR}"} size={18} anchor="end" color={ok ? OK_TEXT : BAD_TEXT} />
+        </g>
       </g>
     );
   },

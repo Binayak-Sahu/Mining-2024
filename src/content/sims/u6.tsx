@@ -31,7 +31,7 @@ export const goafSim: SimDef = {
     { key: "state", label: "Roof state", format: (v) => ["Immediate roof caving normally", "Main roof HANGING — energy building", "MAIN FALL — air blast risk"][v], tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
   caption: "Fixed-end beam (main fall) and cantilever (periodic) spans from beam theory; bulking factor k = 1.3; γ = 25 kN/m³.",
-  // §5.6 redraw (v3e): goaf edge x 330 and seam y 175 are the legacy ones (lesson hotspots).
+  // §5.6d redraw (v3.2): goaf edge x 330 and seam y 175 are the legacy ones (lesson hotspots).
   v3: { viewH: 240 },
   handles: [{ key: "x", axis: "x", at: (p) => [330 - p.x * 2.4, 168], toValue: (x) => (330 - x) / 2.4 }],
   render: (p, o) => {
@@ -43,59 +43,68 @@ export const goafSim: SimDef = {
     const imm = clamp(o.hc * 4, 6, 50);
     const roofY = seamY - sh - imm - 6;
     const sag = o.state === 2 ? 30 : o.ratio * 14;
-    const tt = clamp(p.t * 2.2, 10, 60);
+    // main-roof thickness drawn 14 + 1.6 t, capped so the label above it stays inside the 24-unit inset
+    const tt = clamp(14 + p.t * 1.6, 14, 42);
     const rubbleTop = seamY - imm;
     const roofFill = o.state === 2 ? BAD_LIGHT : o.state === 1 ? U.mid : U.light;
     return (
       <g>
-        <T x={8} y={22}>
-          Overlying strata
+        <defs>
+          <clipPath id="u6-goaf-clip">
+            <rect x={0} y={0} width={400} height={240} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u6-goaf-clip)">
+          {/* floor */}
+          <rect x={0} y={seamY} width={400} height={65} fill={GREYS.light} />
+          {/* old goaf: rubble with fallen main-roof blocks */}
+          {Array.from({ length: Math.max(0, Math.ceil(gx / 12)) }).map((_, i) => (
+            <polygon key={`o${i}`} points={`${i * 12},${seamY} ${i * 12 + 6},${rubbleTop} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
+          ))}
+          {gx > 20 &&
+            [0, 1, 2].map((i) => {
+              const bw = Math.min(gx / 3, 60);
+              const x = gx - (i + 1) * bw;
+              return x > -bw ? <rect key={`b${i}`} x={x} y={rubbleTop - tt} width={bw - 4} height={tt} rx={3} style={{ fill: U.light }} transform={`rotate(${i % 2 ? 6 : -5} ${x + bw / 2} ${rubbleTop - tt / 2})`} /> : null;
+            })}
+          {/* the current span: immediate roof caved onto the floor */}
+          {Array.from({ length: Math.ceil((edge - gx) / 12) }).map((_, i) => (
+            <polygon key={i} points={`${gx + i * 12},${seamY} ${gx + i * 12 + 6},${rubbleTop} ${Math.min(gx + i * 12 + 12, edge)},${seamY}`} fill={GREYS.deep} />
+          ))}
+          {/* solid side: seam, immediate roof, main roof */}
+          <rect x={edge} y={seamY - sh} width={400 - edge} height={sh} fill={GREYS.deep} />
+          <rect x={edge} y={roofY} width={400 - edge} height={seamY - sh - roofY} fill={GREYS.light} />
+          <rect x={edge} y={roofY - tt} width={400 - edge} height={tt} style={{ fill: U.light }} />
+          {/* main roof hanging over the span (cantilever), or falling */}
+          <path
+            className={o.state === 2 ? "shake" : undefined}
+            data-state={o.state === 2 ? "unsafe" : "safe"}
+            d={`M ${edge} ${roofY} Q ${(edge + gx) / 2} ${roofY + sag} ${gx} ${roofY + sag * 0.5} L ${gx} ${roofY - tt + sag * 0.5} L ${edge} ${roofY - tt} Z`}
+            style={{ fill: roofFill, stroke: INK }}
+            strokeWidth={2.5}
+            strokeLinejoin="round"
+          />
+          {/* goaf-edge supports */}
+          <rect x={edge - 6} y={seamY - sh} width={6} height={sh} rx={2} style={{ fill: INK }} />
+          {o.state === 2 && (
+            <g data-state="unsafe">
+              {[0, 1].map((i) => (
+                <Arrow key={i} x1={edge - 44} y1={seamY - 6 - i * 12} x2={edge + 38} y2={seamY - 6 - i * 12} color={BAD} />
+              ))}
+            </g>
+          )}
+        </g>
+        <T x={376} y={Math.max(roofY - tt - 12, 40)} anchor="end">
+          Main roof
         </T>
-        {/* floor */}
-        <rect x={0} y={seamY} width={400} height={65} fill={GREYS.light} />
-        {/* old goaf: rubble with fallen main-roof blocks */}
-        {Array.from({ length: Math.max(0, Math.ceil(gx / 12)) }).map((_, i) => (
-          <polygon key={`o${i}`} points={`${i * 12},${seamY} ${i * 12 + 6},${rubbleTop} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
-        ))}
-        {gx > 20 &&
-          [0, 1, 2].map((i) => {
-            const bw = Math.min(gx / 3, 60);
-            const x = gx - (i + 1) * bw;
-            return x > -bw ? <rect key={`b${i}`} x={x} y={rubbleTop - tt} width={bw - 4} height={tt} rx={3} style={{ fill: U.light }} transform={`rotate(${i % 2 ? 6 : -5} ${x + bw / 2} ${rubbleTop - tt / 2})`} /> : null;
-          })}
-        {/* the current span: immediate roof caved onto the floor */}
-        {Array.from({ length: Math.ceil((edge - gx) / 12) }).map((_, i) => (
-          <polygon key={i} points={`${gx + i * 12},${seamY} ${gx + i * 12 + 6},${rubbleTop} ${Math.min(gx + i * 12 + 12, edge)},${seamY}`} fill={GREYS.deep} />
-        ))}
-        {/* solid side: seam, immediate roof, main roof */}
-        <rect x={edge} y={seamY - sh} width={400 - edge} height={sh} fill={GREYS.deep} />
-        <rect x={edge} y={roofY} width={400 - edge} height={seamY - sh - roofY} fill={GREYS.light} />
-        <rect x={edge} y={roofY - tt} width={400 - edge} height={tt} style={{ fill: U.light }} />
-        {/* main roof hanging over the span (cantilever), or falling */}
-        <path
-          className={o.state === 2 ? "shake" : undefined}
-          d={`M ${edge} ${roofY} Q ${(edge + gx) / 2} ${roofY + sag} ${gx} ${roofY + sag * 0.5} L ${gx} ${roofY - tt + sag * 0.5} L ${edge} ${roofY - tt} Z`}
-          style={{ fill: roofFill, stroke: INK }}
-          strokeWidth={2.5}
-          strokeLinejoin="round"
-        />
-        <T x={8} y={Math.max(roofY - tt - 10, 44)} fill={INK} weight={700}>
-          {`Main roof ${num(p.t, 0, "m")}`}
+        <T x={24} y={208} fill={ON_LIGHT} weight={700}>
+          {o.state === 2 ? "Goaf: air blast" : "Goaf"}
         </T>
-        {/* goaf-edge supports */}
-        <line x1={edge - 3} x2={edge - 3} y1={seamY - sh} y2={seamY} style={{ stroke: INK }} strokeWidth={5} strokeLinecap="round" />
-        <T x={365} y={seamY + 24} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <T x={322} y={208} anchor="end" fill={ON_LIGHT} weight={700}>
+          Props
+        </T>
+        <T x={376} y={208} anchor="end" fill={ON_LIGHT} weight={700}>
           Solid
-        </T>
-        {o.state === 2 &&
-          [0, 1].map((i) => <Arrow key={i} x1={edge - 30} y1={seamY - 6 - i * 12} x2={edge + 56} y2={seamY - 6 - i * 12} color={BAD} />)}
-        {o.state === 2 && (
-          <T x={edge - 14} y={seamY + 24} anchor="end" fill={ON_LIGHT} weight={800}>
-            Air blast into workings
-          </T>
-        )}
-        <T x={8} y={230} fill={ON_LIGHT} weight={700}>
-          {`Span ${num(p.x, 0, "m")} · main fall at ${num(o.Lm, 0, "m")}`}
         </T>
       </g>
     );

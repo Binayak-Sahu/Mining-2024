@@ -3,7 +3,7 @@ import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, OK_TEXT, BAD_
 import { SvgTex } from "@/components/sim/Tex";
 
 /** §5.6 frames (v3e) = the legacy plot frames, so lesson hotspots and grips keep their coordinates. */
-const CW = { x0: 40, x1: 380, y0: 14, y1: 204, sx: scale(0, 30, 40, 380), sy: scale(22, 10, 14, 204) };
+const CW = { x0: 40, x1: 376, y0: 14, y1: 204, sx: scale(0, 30, 40, 376), sy: scale(22, 10, 14, 204) };
 const FN = { x0: 44, x1: 380, y0: 14, y1: 204, sx: scale(0, 160, 44, 380), sy: scale(0, 3500, 204, 14) };
 const PS = { base: 186, ax: 190, ty: (t: number) => 186 - clamp(((t - 15) / 30) * 150, 5, 150) };
 /** Second hue family of the gas-ratio scale (heating classes). */
@@ -62,8 +62,8 @@ export const cowardSim: SimDef = {
     { key: "def", label: "O₂ below air-dilution line (inert/consumed)", unit: "%", digits: 1 },
   ],
   caption: "LEL 5 %, UEL 15 %, nose ≈ 5.9 % CH₄ / 12.2 % O₂. Air-dilution line: O₂ = 20.93 − 0.2093·CH₄.",
-  // §5.6 redraw (v3e): the legacy plot frame (x 40–380, y 14–204) is kept, so the hotspots and grips stay put.
-  v3: { viewH: 244 },
+  // §5.6 redraw (v3e): the legacy plot frame (y 14–204) is kept, so the hotspots and grips stay put; x1 trimmed to 376 for the inset.
+  v3: { viewH: 260 },
   handles: [
     { key: "ch4", axis: "x", at: (p) => [CW.sx(p.ch4), CW.y1], toValue: (x) => ((x - CW.x0) / (CW.x1 - CW.x0)) * 30 },
     // O₂ axis is cropped to 10–22 % (where the triangle lives); readings below 10 % pin to the bottom edge.
@@ -77,14 +77,26 @@ export const cowardSim: SimDef = {
     const dot = o.zone === 1 ? BAD : o.zone === 0 ? OK : o.zone === 3 ? INK3 : INK;
     return (
       <g>
-        <Axes x={CW.x0} y={CW.y0} w={CW.x1 - CW.x0} h={CW.y1 - CW.y0} />
-        <T x={CW.x0} y={236} anchor="middle">0</T>
-        <T x={CW.x1} y={236} anchor="end">30</T>
-        <SvgTex x={(CW.x0 + CW.x1) / 2} y={236} tex="\mathrm{CH_4}\ \%" size={LBL} anchor="middle" color="var(--text-2)" />
-        <T x={20} y={CW.y0 + 8} anchor="end">22</T>
-        <T x={20} y={CW.y1} anchor="end">10</T>
-        <SvgTex x={20} y={(CW.y0 + CW.y1) / 2} tex="\mathrm{O_2}" size={LBL} anchor="end" color="var(--text-2)" />
-        <polygon points={tri} fill={o.zone === 1 ? BAD_LIGHT : BAD_PALE} style={{ stroke: BAD }} strokeWidth={2.5} strokeLinejoin="round" />
+        {/* axes stay inside the 24-unit inset: no arrowheads past the plot, ticks inside */}
+        <line x1={CW.x0} y1={CW.y1} x2={CW.x1} y2={CW.y1} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        <line x1={CW.x0} y1={CW.y1} x2={CW.x0} y2={26} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        {[0, 10, 20, 30].map((v) => (
+          <g key={v}>
+            <line x1={sx(v)} x2={sx(v)} y1={CW.y1} y2={CW.y1 + 5} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <T x={sx(v)} y={230} anchor={v === 30 ? "end" : "middle"}>
+              {String(v)}
+            </T>
+          </g>
+        ))}
+        <SvgTex x={318} y={226} tex="\mathrm{CH_4}\ \%" size={LBL} anchor="middle" color="var(--text-2)" />
+        <T x={CW.x0 + 10} y={sy(15) + 6}>
+          15
+        </T>
+        <T x={CW.x0 + 10} y={CW.y1 - 8}>
+          10
+        </T>
+        <SvgTex x={CW.x0 + 10} y={166} tex="\mathrm{O_2}\ \%" size={LBL} anchor="start" color="var(--text-2)" />
+        <polygon points={tri} data-state={o.zone === 1 ? "unsafe" : "safe"} fill={o.zone === 1 ? BAD_LIGHT : U.light} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
         <T x={sx(6.2)} y={sy(17.2) + 4} fill={ON_LIGHT} weight={800}>
           Explosive
         </T>
@@ -94,7 +106,7 @@ export const cowardSim: SimDef = {
         <T x={sx(15) + 6} y={sy(17.9) + 24}>
           UEL
         </T>
-        <T x={sx(5.9) + 12} y={sy(12.2) + 18}>
+        <T x={sx(5.9) + 14} y={sy(12.2) + 6}>
           Nose
         </T>
         {/* air-dilution line O₂ = 20.93 − 0.2093·CH₄ */}
@@ -104,13 +116,15 @@ export const cowardSim: SimDef = {
         </T>
         <line x1={px0} x2={px0} y1={CW.y1} y2={py0} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
         <line x1={CW.x0} x2={px0} y1={py0} y2={py0} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
-        {o.zone === 2 && <line x1={px0} y1={py0} x2={sx(0)} y2={sy(20.93)} style={{ stroke: BAD }} strokeWidth={2.5} strokeDasharray="7 5" strokeLinecap="round" />}
+        {o.zone === 2 && <line x1={px0} y1={py0} x2={sx(0)} y2={sy(20.93)} data-state="unsafe" style={{ stroke: BAD }} strokeWidth={2.5} strokeDasharray="7 5" strokeLinecap="round" />}
         {p.o2 < O2_MIN && (
-          <T x={Math.max(px0 + 12, 176)} y={CW.y1 - 10} fill={INK}>
+          <T x={CW.x1} y={CW.y1 - 10} anchor="end" fill={INK}>
             {`O₂ ${num(p.o2, 1, "%")} ↓`}
           </T>
         )}
-        <Dot x={px0} y={py0} ring fill={dot} />
+        <g data-state={o.zone === 1 ? "unsafe" : o.zone === 0 ? "safe" : undefined}>
+          <Dot x={px0} y={py0} ring fill={dot} />
+        </g>
       </g>
     );
   },

@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, ON_LIGHT, GREYS, U, LBL, HeatRamp, num } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, LBL, HeatRamp, num } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Coalification & rank ---------------- */
@@ -18,9 +18,9 @@ const RANKS = [
 ];
 
 /** Ladder names short enough for 14 px labels (the readout keeps the full name). */
-const SHORT = ["Peat", "Lignite", "Sub-bituminous", "HV bituminous", "MV bituminous", "LV bituminous", "Semi-anthracite", "Anthracite"];
-/** §5.6 frame: legacy column x 20–110 and depth scale y 30–210, ladder x 190 (lesson hotspots). */
-const CR = { top: 30, bottom: 210, x0: 20, x1: 110, lx: 196, lw: 30, bandH: 180 / 8 };
+const SHORT = ["Peat", "Lignite", "Sub-bituminous", "HV bituminous", "MV bituminous", "LV bituminous", "Semi-anthr.", "Anthracite"];
+/** §5.6d frame: burial column x 32–88 (lesson pins 1 and 2 sit on it), depth scale y 30–210, ladder x 186 (pin 3 on Anthracite). */
+const CR = { top: 30, bottom: 210, x0: 32, x1: 88, lx: 186, lw: 26, bandH: 180 / 8 };
 const crY = (D: number) => CR.top + (D / 8) * (CR.bottom - CR.top);
 const bandTop = (i: number) => CR.bottom - (i + 1) * CR.bandH;
 
@@ -53,7 +53,7 @@ export const coalRank: SimDef = {
     { key: "gcv", label: "GCV (daf)", unit: "kcal/kg", digits: 0 },
   ],
   // §5.6 redraw (v3e): burial column and rank ladder keep their legacy places, so the lesson hotspots still land on them.
-  v3: { viewH: 240 },
+  v3: { viewH: 250 },
   handles: [{ key: "D", axis: "y", at: (p) => [CR.x1, crY(p.D)], toValue: (y) => ((y - CR.top) / (CR.bottom - CR.top)) * 8 }],
   render: (p, o) => {
     const y = crY(p.D);
@@ -62,29 +62,38 @@ export const coalRank: SimDef = {
     const hi = Math.min(RANKS[k].max, 5);
     const frac = clamp((Math.log(o.ro) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)), 0, 1);
     const py = bandTop(k) + CR.bandH - frac * CR.bandH;
-    const ly = py - 14 < CR.top + 24 ? py + 26 : py - 12; // Ro label above the pointer, below it near the top
-    const free = (yy: number) => Math.abs(y - yy) > 26 && Math.abs(ly - yy) > 24;
+    const sy = y + 6; // seam label baseline
+    const ly = [py - 12, py + 26].find((c) => c > CR.top + 14 && Math.abs(c - sy) >= 24) ?? py + 26; // Ro label clear of the seam label
+    const free = (yy: number) => Math.abs(y - yy) > 26;
     return (
       <g>
         <defs>
           {/* heat ramp: burial temperature is the data here (§5.6) */}
           <HeatRamp id="u1-coal-heat" stops={[[0, "var(--u-light)"], [0.5, "var(--u-mid)"], [1, "var(--u-deep)"]]} />
+          <clipPath id="u1-coal-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
         </defs>
-        <rect x={CR.x0} y={CR.top} width={CR.x1 - CR.x0} height={CR.bottom - CR.top} rx={8} fill="url(#u1-coal-heat)" />
+        {/* host rock beside the burial column, edge to edge, clipped to the stage radius */}
+        <g clipPath="url(#u1-coal-clip)">
+          <rect x={0} y={0} width={106} height={250} style={{ fill: GREYS.light }} />
+        </g>
+        <rect x={CR.x0} y={CR.top} width={CR.x1 - CR.x0} height={CR.bottom - CR.top} rx={8} fill="url(#u1-coal-heat)" style={{ stroke: INK }} strokeWidth={2.5} />
         {free(CR.top + 7) && (
-          <T x={CR.x1 + 8} y={CR.top + 13}>
+          <T x={CR.x1 + 24} y={CR.top + 13}>
             {num(0, 0, "km")}
           </T>
         )}
         {free(CR.bottom - 6) && (
-          <T x={CR.x1 + 8} y={CR.bottom}>
+          <T x={CR.x1 + 24} y={CR.bottom}>
             {num(8, 0, "km")}
           </T>
         )}
         {/* the seam at maximum burial */}
         <rect x={CR.x0} y={y - 10} width={CR.x1 - CR.x0} height={20} rx={5} fill={GREYS.deep} />
-        <T x={CR.x1 + 22} y={y + 6} fill={INK} weight={800}>
-          {num(o.T, 0, "°C")}
+        <line x1={CR.x1 + 6} y1={y} x2={CR.x1 + 20} y2={y} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={CR.x1 + 24} y={sy} fill={INK} weight={700}>
+          Seam
         </T>
         {/* rank ladder: equal bands, Ro placed on a log scale inside its band */}
         {RANKS.map((r, i) => {
@@ -92,15 +101,15 @@ export const coalRank: SimDef = {
           return (
             <g key={r.name}>
               <rect x={CR.lx} y={bandTop(i) + 1.5} width={CR.lw} height={CR.bandH - 3} rx={4} style={{ fill: on ? U.mid : GREYS.light }} />
-              {on && <rect x={CR.lx - 4} y={bandTop(i) - 2.5} width={CR.lw + 8} height={CR.bandH + 5} rx={7} fill="none" style={{ stroke: U.ink }} strokeWidth={3} />}
-              <T x={CR.lx + CR.lw + 10} y={bandTop(i) + CR.bandH / 2 + 6} fill={on ? INK : INK2} weight={on ? 800 : 500}>
-                {SHORT[i]}
+              {on && <rect x={CR.lx - 4} y={bandTop(i) - 2.5} width={CR.lw + 8} height={CR.bandH + 5} rx={7} fill="none" style={{ stroke: U.ink }} strokeWidth={2.5} />}
+              <T x={CR.lx + CR.lw + 10} y={bandTop(i) + CR.bandH / 2 + 6} fill={on ? INK : INK2} weight={on ? 700 : 500}>
+                {`${SHORT[i]} ${i + 1}`}
               </T>
             </g>
           );
         })}
         <path d={`M${CR.lx - 6} ${py} l-13 -8 v16 z`} style={{ fill: INK }} strokeLinejoin="round" />
-        <SvgTex x={CR.lx - 22} y={ly} tex={`R_o\\ ${o.ro.toFixed(2)}\\,\\%`} size={LBL} anchor="end" color="var(--text)" />
+        <SvgTex x={CR.lx - 22} y={ly} tex="R_o" size={LBL} anchor="end" color="var(--text)" />
       </g>
     );
   },
