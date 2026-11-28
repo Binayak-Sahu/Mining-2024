@@ -53,6 +53,7 @@ export const coalRank: SimDef = {
     { key: "gcv", label: "GCV (daf)", unit: "kcal/kg", digits: 0 },
   ],
   // §5.6 redraw (v3e): burial column and rank ladder keep their legacy places, so the lesson hotspots still land on them.
+  primary: ["ro", "rank"],
   v3: { viewH: 250 },
   handles: [{ key: "D", axis: "y", at: (p) => [CR.x1, crY(p.D)], toValue: (y) => ((y - CR.top) / (CR.bottom - CR.top)) * 8 }],
   render: (p, o) => {
