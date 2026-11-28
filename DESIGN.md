@@ -330,6 +330,14 @@ The Brilliant diagram language:
 - **Stage padding 12, not 24.** At 390 px wide the stage is 342 px. 24 px padding would leave 290 px for the diagram, and 14 px labels would then need 19 viewBox units in a 400-wide sim. 12 px leaves 314 px.
 - **viewBox per sim.** Redrawn sims may use their own viewBox (the pilots use 400 wide and 260–300 tall) instead of the fixed 400×240. The production `SimDef.render` contract changes only when a sim is converted.
 
+### 5.6c Production rollout (v3e)
+- **Frame.** A redrawn sim sets `SimDef.v3.viewH` and draws in `0 0 400 viewH`. The origin and the 400 × 240 box are the legacy frame, so lesson hotspot pins (lesson content) and focus masks still land on what they explain; extra height only adds room below. Features a hotspot names stay under its pin.
+- **Stage and grips** are drawn by `SimStage` (`src/components/sim/SimStage.tsx`); legacy sims keep the old plate until converted. The stage carries `data-family` from the sim's own unit, so a sim shown in another unit keeps its colours.
+- **Primitives** in `src/components/sim/v3.tsx` (`T` labels ≥ 18 units = 14 px, `Arrow`, `Axes`, `Dot`, `DimLine`, `HeatRamp` with `data-heat`, state fills `OK_LIGHT` / `BAD_LIGHT` / `BAD_PALE`). KaTeX labels use `SvgTex` (`src/components/sim/Tex.tsx`).
+- **Formula line.** Working that will not fit as a 14 px label goes in `v3.formula` (KaTeX, centred under the stage, hidden in thumbnails and while predicting).
+- **Sim stage titles** use `display` when they fit in 2 lines and `title` otherwise (measured at the current width).
+- **Checks.** `npm run audit:sim` (grid paper, ungated gradients and filters, text < 14 px, > 2 hue families, missing golden values, tracker drift), `npm run test:golden` (readouts unchanged), `audit:svg` (per-sim viewBox). Tracker: `docs/sim-redraw.md`.
+
 ### 5.7 Lesson top bar (kept from v2)
 - **Bar:** height 56, bg `--bg`, no border, no blur.
 - **Left:** `X` (lucide, 24 px, 44 px target, `--text-2`).

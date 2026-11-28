@@ -109,7 +109,6 @@ export function SimStage({
   return (
     <div>
       <div className="sim-stage relative" data-family={familyOf(def.id)} data-met={met} data-sim={def.id} {...(thumb ? { "data-thumb": "" } : {})}>
-        {corner && <div className="absolute right-3 top-3 z-[2]">{corner}</div>}
         <svg
           ref={svg}
           viewBox={`0 0 400 ${viewH}`}
@@ -201,6 +200,8 @@ export function SimStage({
           <Hand size={16} aria-hidden /> Drag the grips on the diagram
         </motion.p>
       )}
+      {/* corner controls (e.g. reset) sit under the stage, never over the drawing's labels */}
+      {corner && <div className="flex justify-end mt-2">{corner}</div>}
       {!thumb && formula && (
         <div className="mt-3 text-center overflow-x-auto t-body text-fg" data-sim-formula="">
           <Tex tex={formula} />

@@ -591,7 +591,7 @@ export const pumpSim: SimDef = {
   animated: true,
   // §5.6 redraw (v3e): sump, pump, rising main and the NPSH column keep their legacy places (lesson hotspots).
   v3: { viewH: 240 },
-  handles: [{ key: "lift", axis: "y", at: (p) => [214, 164 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (164 - y) / 8 }],
+  handles: [{ key: "lift", axis: "y", at: (p) => [118, 163 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (163 - y) / 8 }],
   render: (p, o, t) => {
     const cav = o.margin < 0;
     const off = clamp(p.lift * 8, -20, 70);
