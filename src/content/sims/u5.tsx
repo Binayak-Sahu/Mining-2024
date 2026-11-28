@@ -1,7 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_TEXT, BAD_TEXT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
+import { T, LBL, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, OK, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
 
@@ -39,11 +40,12 @@ export const pitSim: SimDef = {
     { key: "tonnes", label: "Coal per m of strike", unit: "t", digits: 0 },
   ],
   animated: true,
-  // §5.6 redraw (v3e): same scale and frame as the legacy section (surface y 40, centre x 200), so hotspots stay put.
-  v3: { viewH: 240 },
+  // §5.6d redraw (v3.2): same origin and default scale as the legacy section (surface y 40, centre x 200), so hotspots stay put.
+  primary: ["sr", "besr"],
+  v3: { viewH: 250 },
   render: (p, _o, t) => {
     const r = pitSection(p);
-    const k = Math.min(360 / r.Ws, 170 / (p.H + p.t));
+    const k = Math.min(340 / r.Ws, 150 / (p.H + p.t));
     const cx = 200;
     const top = 40;
     const yC = top + p.H * k;
@@ -54,33 +56,47 @@ export const pitSim: SimDef = {
     const xb = cx - (r.Ws * k) / 2;
     const tx = xa + (xb - xa) * u;
     const ty = yF + (top - yF) * u;
+    const wedgeH = yC - top;
+    const wx = cx + (r.Ws * k) / 2 - ((r.Ws - r.Wc) * k) / 4; // right wall at mid-depth
+    const ly = 218;
     return (
       <g>
-        <rect x={0} y={top} width={400} height={yC - top} style={{ fill: U.light }} />
-        <rect x={0} y={yC} width={400} height={yF - yC} fill={GREYS.deep} />
-        <rect x={0} y={yF} width={400} height={240 - yF} fill={GREYS.light} />
-        {/* waste to strip and coal to win */}
-        <polygon points={pts([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} style={{ fill: ok ? U.mid : BAD_LIGHT, stroke: ON_LIGHT }} strokeWidth={2} strokeLinejoin="round" />
-        <polygon points={pts([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={GREYS.deep} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
-        <line x1={0} x2={400} y1={top} y2={top} style={{ stroke: INK }} strokeWidth={2.5} />
+        <clipPath id="u5-pit-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5-pit-clip)">
+          {/* host rock: overburden, coal seam, floor rock, full width */}
+          <rect x={0} y={top} width={400} height={wedgeH} style={{ fill: U.light }} />
+          <rect x={0} y={yC} width={400} height={yF - yC} fill={GREYS.mid} />
+          <rect x={0} y={yF} width={400} height={250 - yF} fill={GREYS.light} />
+        </g>
+        {/* waste to strip (state) and coal to win */}
+        <polygon data-state={ok ? "met" : "unmet"} points={pts([[cx - (r.Ws * k) / 2, top], [cx + (r.Ws * k) / 2, top], [cx + (r.Wc * k) / 2, yC], [cx - (r.Wc * k) / 2, yC]])} style={{ fill: ok ? OK_LIGHT : BAD_LIGHT, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <polygon points={pts([[cx - (r.Wc * k) / 2, yC], [cx + (r.Wc * k) / 2, yC], [cx + (p.Wf * k) / 2, yF], [cx - (p.Wf * k) / 2, yF]])} fill={GREYS.deep} style={{ stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <line x1={0} x2={400} y1={top} y2={top} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
         {/* haul truck climbing the left wall */}
         <g transform={`translate(${tx.toFixed(1)} ${ty.toFixed(1)})`}>
           <rect x={-9} y={-10} width={18} height={9} rx={2} style={{ fill: U.deep }} />
           <circle cx={-5} cy={0} r={2.5} fill={ON_LIGHT} />
           <circle cx={5} cy={0} r={2.5} fill={ON_LIGHT} />
         </g>
-        <T x={cx} y={(top + yC) / 2 + 6} anchor="middle" fill={ON_LIGHT} weight={700}>
-          {`Waste ${num(r.wasteA, 0, "m³/m")}`}
-        </T>
-        <T x={cx + (r.Ws * k) / 2 - 22} y={top + 20} anchor="end" fill={ON_LIGHT}>
-          {`${p.beta}°`}
-        </T>
-        <T x={cx} y={yF + 22} anchor="middle" fill={ON_LIGHT} weight={600}>
-          {`Coal ${num(r.tonnes, 0, "t/m")} · floor ${num(p.Wf, 0, "m")}`}
-        </T>
-        <T x={8} y={24} fill={ok ? OK_TEXT : BAD_TEXT} weight={800}>
-          {`SR ${num(r.sr, 2)} ${ok ? "≤" : ">"} BESR ${num(r.besr, 2, "m³/t")}`}
-        </T>
+        {wedgeH >= 44 && (
+          <T x={cx} y={top + wedgeH / 2 + 6} anchor="middle" fill={ON_LIGHT} weight={700}>
+            Waste
+          </T>
+        )}
+        {wedgeH >= 44 && wx - 36 > cx + 40 && (
+          <SvgTex x={wx - 10} y={top + wedgeH / 2 + 6} tex={"\\beta"} size={18} anchor="end" color={ON_LIGHT} />
+        )}
+        {/* legend: what the two fills are, and whether the pit pays */}
+        <rect x={24} y={ly - 14} width={16} height={16} rx={3} fill={ok ? OK_LIGHT : BAD_LIGHT} data-state={ok ? "met" : "unmet"} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={46} y={ly} fill={ON_LIGHT}>Waste</T>
+        <rect x={116} y={ly - 14} width={16} height={16} rx={3} fill={GREYS.deep} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
+        <T x={138} y={ly} fill={ON_LIGHT}>Coal</T>
+        <g data-state={ok ? "met" : "unmet"}>
+          <rect x={246} y={ly - 22} width={130} height={32} rx={16} style={{ fill: ok ? OK_LIGHT : BAD_LIGHT }} />
+          <SvgTex x={361} y={ly - 1} tex={ok ? "\\mathrm{SR}\\le\\mathrm{BESR}" : "\\mathrm{SR}>\\mathrm{BESR}"} size={18} anchor="end" color={ON_LIGHT} />
+        </g>
       </g>
     );
   },
@@ -136,7 +152,7 @@ export const draglineSim: SimDef = {
     const surf = 70;
     const coalTop = surf + p.H * k;
     const coalBot = coalTop + 6;
-    const tip = Math.max(10, coalBot - d.h * k - 18);
+    const tip = Math.max(58, coalBot - d.h * k - 18);
     const peakX = X(p.W + d.e - Math.min(p.R, d.Rreq));
     const sp = -d.c - d.b / 2 + d.d;
     const hp = d.h * k;
@@ -146,20 +162,28 @@ export const draglineSim: SimDef = {
     const by = Math.min(coalTop - 8, coalBot - hp - 10) * uu + (coalTop - 8) * (1 - uu) - 18 * Math.sin(uu * Math.PI);
     return (
       <g>
-        {/* bench: overburden and seam beyond the cut, floor under everything */}
-        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={coalTop - surf} style={{ fill: U.light }} />
-        <rect x={0} y={coalTop} width={400} height={6} fill={GREYS.deep} />
-        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={GREYS.light} />
-        {/* ground surface (a path: the lesson's dragline pin sits on it by design) */}
-        <path d={`M${X(p.W)} ${surf} H400`} style={{ stroke: INK }} strokeWidth={2.5} />
+        <defs>
+          <clipPath id="u5dl-clip">
+            <rect x={12} y={12} width={376} height={216} rx={12} />
+          </clipPath>
+        </defs>
+        {/* bench: overburden and seam beyond the cut, floor under everything (scene fills run edge to edge, clipped) */}
+        <g clipPath="url(#u5dl-clip)">
+          <rect x={0} y={0} width={400} height={240} fill={GREYS.light} opacity={0.35} />
+          <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={coalTop - surf} style={{ fill: U.light }} />
+          <rect x={0} y={coalTop} width={400} height={6} fill={GREYS.deep} />
+          <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={GREYS.light} />
+          {/* ground surface (a path: the lesson's dragline pin sits on it by design) */}
+          <path d={`M${X(p.W)} ${surf} H400`} style={{ stroke: INK }} strokeWidth={2.5} />
+        </g>
         {/* the cut (removed) */}
         <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 5" />
         {/* spoil pile */}
-        <polygon points={pts([[X(sp - d.b / 2), coalBot], [X(sp), coalBot - hp], [X(sp + d.b / 2), coalBot]])} fill={d.reh > 0 ? BAD_LIGHT : GREYS.mid} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
-        <T x={X(sp)} y={coalBot + 22} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <polygon points={pts([[X(sp - d.b / 2), coalBot], [X(sp), coalBot - hp], [X(sp + d.b / 2), coalBot]])} data-state={d.reh > 0 ? "unsafe" : "safe"} fill={d.reh > 0 ? BAD_LIGHT : GREYS.mid} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
+        <T x={Math.max(Math.min(X(sp), (X(0) + X(p.W)) / 2 - 56), 24 + textW("Spoil") / 2)} y={coalBot + 22} anchor="middle" fill={ON_LIGHT} weight={700}>
           Spoil
         </T>
-        <T x={(X(0) + X(p.W)) / 2} y={surf + 20} anchor="middle">
+        <T x={(X(0) + X(p.W)) / 2} y={coalBot + 22} anchor="middle" fill={ON_LIGHT}>
           Cut
         </T>
         {/* dragline: house, tub, boom, rope and bucket */}
@@ -168,12 +192,15 @@ export const draglineSim: SimDef = {
         <path d={`M${mx} ${surf - 10} L${peakX} ${tip}`} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
         <line x1={peakX} y1={tip} x2={bx} y2={by} style={{ stroke: INK3 }} strokeWidth={1.5} />
         <path d={`M${bx - 7} ${by} h14 l-2 7 h-10 z`} fill={GREYS.deep} />
-        <DimLine x1={mx} y1={surf - 34} x2={peakX} y2={surf - 34} />
-        <T x={(mx + peakX) / 2} y={surf - 42} anchor="middle" fill={INK} weight={700}>
+        <DimLine x1={mx} y1={surf - 26} x2={peakX} y2={surf - 26} />
+        <T x={clamp((mx + peakX) / 2, 24 + textW("R 120 m") / 2, 376 - textW("R 120 m") / 2)} y={surf - 33} anchor="middle" fill={INK} weight={700}>
           {`R ${num(p.R, 0, "m")}`}
         </T>
+        <T x={376} y={coalBot + 22} anchor="end" fill={ON_LIGHT}>
+          Coal
+        </T>
         {d.reh > 0 && (
-          <T x={8} y={232} fill={ON_LIGHT} weight={800}>
+          <T x={24} y={208} fill={ON_LIGHT} weight={800}>
             Spoil on coal → rehandle
           </T>
         )}
@@ -222,56 +249,86 @@ export const matchSim: SimDef = {
     { key: "idle", label: "Shovel idle / truck queue", format: (v, o) => `${v.toFixed(0)}% / ${o.queue.toFixed(0)}%`, tone: (v, o) => (v > 10 || o.queue > 10 ? "warn" : "ok") },
   ],
   caption: "Loaded 20 km/h, empty 35 km/h, dump + spot 1.5 min; bucket fill 0.9, loose density 1.8 t/m³. MF = N·t_load / t_cycle (one shovel).",
-  render: (p, o, t) => {
+  // §5.6d redraw (v3.2): same loop geometry as legacy (lanes y 90 / 150, shovel left, dump right) so the four pins stay put.
+  v3: { viewH: 250 },
+  render: (p, _o, t) => {
     const r = truckShovel(p);
-    const loop = (u: number): [number, number] => {
-      // rounded rectangle loop: shovel left (60,120), dump right (340,120)
-      const per = u % 1;
-      if (per < 0.5) return [60 + per * 2 * 280, 90];
-      return [340 - (per - 0.5) * 2 * 280, 150];
+    const R = 30;
+    const straight = 240;
+    const arc = Math.PI * R;
+    const total = 2 * straight + 2 * arc;
+    // position + heading (deg) at fraction u of the loop; loaded on the top lane and the dump arc
+    const loop = (u: number): { x: number; y: number; a: number; loaded: boolean } => {
+      const s = (((u % 1) + 1) % 1) * total;
+      if (s < straight) return { x: 80 + s, y: 90, a: 0, loaded: true };
+      if (s < straight + arc) {
+        const th = -Math.PI / 2 + (s - straight) / R;
+        return { x: 320 + R * Math.cos(th), y: 120 + R * Math.sin(th), a: deg(th) + 90, loaded: true };
+      }
+      if (s < 2 * straight + arc) return { x: 320 - (s - straight - arc), y: 150, a: 180, loaded: false };
+      const th = Math.PI / 2 + (s - 2 * straight - arc) / R;
+      return { x: 80 + R * Math.cos(th), y: 120 + R * Math.sin(th), a: deg(th) + 90, loaded: false };
     };
-    const trucks = [];
     const speed = 1 / (r.tCycle * 0.6);
     const waiting = Math.max(0, Math.round(p.N - r.tCycle / r.tLoad));
+    const moving = Math.max(p.N - waiting, 1);
+    const balanced = Math.abs(r.mf - 1) <= 0.05;
+    const status = r.mf < 0.95 ? "Shovel waits for trucks" : r.mf > 1.05 ? "Trucks queue at shovel" : "Balanced fleet";
+    const trucks = [];
     for (let i = 0; i < p.N; i++) {
       if (i < waiting) {
-        trucks.push(<rect key={i} x={20 - i * 4} y={112 + (i % 3) * 3} width={14} height={9} rx={2} fill={C.hazard} stroke={C.ink} />);
+        trucks.push(
+          <rect key={i} x={100 + i * 13} y={115} width={11} height={10} rx={2} data-state="unsafe" fill={BAD_LIGHT} style={{ stroke: INK3 }} strokeWidth={1.5} />,
+        );
         continue;
       }
-      const [x, y] = loop(t * speed + i / Math.max(p.N - waiting, 1));
-      trucks.push(<rect key={i} x={x - 7} y={y - 5} width={14} height={9} rx={2} fill={y < 120 ? C.coal : C.hazard} stroke={C.ink} />);
+      const q = loop(t * speed + (i - waiting) / moving);
+      trucks.push(
+        <g key={i} transform={`translate(${q.x} ${q.y}) rotate(${q.a})`}>
+          <rect x={-8} y={-5} width={16} height={10} rx={2} fill={q.loaded ? U.deep : GREYS.light} style={{ stroke: q.loaded ? ON_LIGHT : INK3 }} strokeWidth={1.5} />
+        </g>,
+      );
     }
+    const pillW = textW(status) + 20;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.5} />
-        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#78716C" strokeWidth={20} />
-        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#F8FAFC" strokeWidth={1} strokeDasharray="6 6" opacity={0.7} />
-        <circle cx={55} cy={120} r={17} fill={MAT.steel} stroke="#0F172A" />
-        <circle cx={55} cy={120} r={13} fill={C.tech} />
-        <Txt x={55} y={124} size={8} anchor="middle" fill="white" weight={800}>
-          SHOVEL
-        </Txt>
-        <path d="M331 138 L345 102 L361 102 L375 138 Z" fill={MAT.goaf} stroke="#57534E" />
-        <Txt x={353} y={124} size={7} anchor="middle" fill="white" weight={800}>
-          DUMP
-        </Txt>
+        <defs>
+          <clipPath id="u5match-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        {/* host ground, edge to edge, clipped */}
+        <g clipPath="url(#u5match-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} opacity={0.35} />
+          <rect x={80} y={90} width={240} height={60} rx={30} fill="none" stroke={GREYS.mid} strokeWidth={24} />
+          <rect x={80} y={90} width={240} height={60} rx={30} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="6 6" />
+        </g>
+        {/* shovel (loading unit) */}
+        <rect x={30} y={138} width={46} height={16} rx={4} fill={GREYS.deep} />
+        <rect x={34} y={106} width={38} height={34} rx={5} style={{ fill: U.deep, stroke: INK }} strokeWidth={2.5} />
+        <path d="M72 116 L96 100" style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        {/* dump bay */}
+        <polygon points="338,96 372,96 364,128 344,128" fill={GREYS.deep} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" />
         {trucks}
-        <Txt x={200} y={76} size={8} anchor="middle" fill={C.slate}>
-          loaded →
-        </Txt>
-        <Txt x={200} y={176} size={8} anchor="middle" fill={C.slate}>
-          ← empty return
-        </Txt>
-        <Txt x={20} y={30} size={18} weight={900} mono fill={Math.abs(r.mf - 1) <= 0.05 ? C.safe : C.hazard}>
-          {`MF ${r.mf.toFixed(2)}`}
-        </Txt>
-        <Txt x={20} y={210} size={9} fill={C.ink}>
-          {r.mf < 0.95 ? "Under-trucked: shovel waits for trucks" : r.mf > 1.05 ? "Over-trucked: trucks queue at shovel" : "Balanced fleet"}
-        </Txt>
-        <Txt x={20} y={226} size={9} mono fill={C.slate}>
-          {`${p.N} trucks · ${r.passes} passes · cycle ${r.tCycle.toFixed(1)} min`}
-        </Txt>
+        {/* labels */}
+        <line x1={50} y1={68} x2={50} y2={104} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={24} y={62} fill={INK}>
+          Shovel
+        </T>
+        <line x1={354} y1={68} x2={354} y2={94} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={376} y={62} anchor="end" fill={INK}>
+          Dump
+        </T>
+        <T x={200} y={66} anchor="middle">
+          Loaded →
+        </T>
+        <T x={200} y={192} anchor="middle">
+          ← Empty return
+        </T>
+        <rect x={200 - pillW / 2} y={198} width={pillW} height={26} rx={13} data-state={balanced ? "met" : "unmet"} fill={balanced ? OK_LIGHT : BAD_LIGHT} />
+        <T x={200} y={217} anchor="middle" fill={ON_LIGHT} weight={700}>
+          {status}
+        </T>
       </g>
     );
   },
@@ -292,6 +349,8 @@ export function haul(p: Record<string, number>) {
   const e = Math.max(0, (v * v) / (127 * p.Rc) - 0.15) * 100;
   return { tr, F, v, retard, e };
 }
+
+const HW = { x0: 36, y0: 150, L: 210, k: 2.6 };
 
 export const haulSim: SimDef = {
   id: "u5-haul",
@@ -316,54 +375,71 @@ export const haulSim: SimDef = {
   ],
   caption: "Speed from P·η / F (η = 0.85), capped at 50 km/h; downgrade speed held at 40 km/h by retarder. e = v²/(127R) − f with side friction f = 0.15.",
   animated: true,
-  handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [30 + 220 * Math.cos(a), 160 - 220 * Math.sin(a) * 3]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((160 - y) / 660, -0.99, 0.99))), color: "#F59E0B" }],
+  // §5.6 redraw (v3e): ramp drawn with 2.6× vertical exaggeration; plan-view curve panel at right.
+  v3: { viewH: 250, formula: () => "F = GVW\\,g\\,(RR + GR)" },
+  handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [HW.x0 + HW.L * Math.cos(a), HW.y0 - HW.L * Math.sin(a) * HW.k]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((HW.y0 - y) / (HW.L * HW.k), -0.99, 0.99))) }],
   render: (p, o, t) => {
     const ang = Math.atan(p.gr / 100);
-    const x0 = 30;
-    const y0 = 160;
-    const L = 220;
+    const { x0, y0, L, k } = HW;
     const x1 = x0 + L * Math.cos(ang);
-    const y1 = y0 - L * Math.sin(ang) * 3;
+    const y1 = y0 - L * Math.sin(ang) * k;
     const tx = (x0 + x1) / 2;
     const ty = (y0 + y1) / 2;
     const a3 = deg(Math.atan2(y1 - y0, x1 - x0));
+    const steep = Math.abs(p.gr) > 6.25;
+    // plan-view curve: radius drawn from Rc (24..76 units)
+    const r = 20 + ((p.Rc - 30) / 270) * 32;
+    const cx0 = 290;
+    const cy0 = 214;
+    const ex = cx0 + r;
+    const ey = cy0 - r;
+    const arc = `M ${cx0} ${cy0 + 8} L ${cx0} ${cy0} A ${r} ${r} 0 0 1 ${ex} ${ey} L ${ex + 8} ${ey}`;
+    const wheelRot = ((t * o.v * 25) % 360).toFixed(0);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.sand} />
-        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.rockShade} />
-        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#57534E" strokeWidth={5} />
-        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#E7E5E4" strokeWidth={1} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
+        <clipPath id="u5haul-clip">
+          <rect x={12} y={12} width={376} height={226} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5haul-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} opacity={0.35} />
+          <polygon points={pts([[0, y0], [x0, y0], [x1, y1], [x1 + 8, y1], [x1 + 8, 250], [0, 250]])} fill={GREYS.light} />
+          <rect x={256} y={120} width={150} height={140} fill={U.light} />
+        </g>
+        {/* ramp: road surface + moving centre-line dashes */}
+        <polyline points={pts([[x0 - 12, y0], [x0, y0], [x1, y1], [x1 + 8, y1]])} fill="none" data-state={steep ? "unsafe" : "safe"} style={{ stroke: steep ? BAD : GREYS.deep }} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
+        <line x1={x0} y1={y0} x2={x1} y2={y1} style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
+        <T x={tx} y={Math.min(ty + 40, 212)} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Haul ramp
+        </T>
+        {/* truck */}
         <g transform={`translate(${tx},${ty}) rotate(${a3})`}>
-          <rect x={-22} y={-22} width={44} height={18} rx={3} fill={C.hazard} stroke="#92400E" />
-          <rect x={-20} y={-21} width={40} height={6} rx={2} fill={MAT.glass} />
-          <rect x={10} y={-30} width={12} height={9} rx={2} fill="#FBBF24" stroke="#92400E" />
-          {[-12, 12].map((wx) => (
-            <g key={wx} transform={`rotate(${((t * o.v * 25) % 360).toFixed(0)} ${wx} -2)`}>
-              <circle cx={wx} cy={-2} r={6} fill={C.ink} />
-              <line x1={wx - 4} y1={-2} x2={wx + 4} y2={-2} stroke="#94A3B8" strokeWidth={1.4} />
-              <line x1={wx} y1={-6} x2={wx} y2={2} stroke="#94A3B8" strokeWidth={1.4} />
+          <path d="M -32 -17 L -32 -40 L 8 -40 L 14 -17 Z" fill={U.mid} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+          <rect x={10} y={-38} width={22} height={21} rx={3} fill={U.light} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+          {[-18, 20].map((wx) => (
+            <g key={wx}>
+              <circle cx={wx} cy={-11} r={11} fill={GREYS.deep} style={{ stroke: INK }} strokeWidth={2.5} />
+              <g transform={`rotate(${wheelRot} ${wx} -11)`}>
+                <line x1={wx - 6} y1={-11} x2={wx + 6} y2={-11} stroke="#FFFFFF" strokeWidth={2} />
+                <line x1={wx} y1={-17} x2={wx} y2={-5} stroke="#FFFFFF" strokeWidth={2} />
+              </g>
             </g>
           ))}
-          {o.tr > 0 ? <Arrow x1={0} y1={-30} x2={36} y2={-30} color={C.safe} width={3} /> : <Arrow x1={0} y1={-30} x2={-36} y2={-30} color={C.crit} width={3} />}
         </g>
-        <Txt x={20} y={24} size={11} weight={800}>
-          {`TR = ${p.rr}% + ${p.gr}% = ${o.tr.toFixed(2)}%`}
-        </Txt>
-        <Txt x={20} y={40} size={9} mono>
-          {`F = GVW·g·TR = ${o.F.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={20} y={56} size={14} weight={900} mono fill={o.v >= 15 ? C.safe : C.hazard}>
-          {`${o.v.toFixed(1)} km/h`}
-        </Txt>
-        <Txt x={285} y={60} size={9} weight={700} fill={C.slate}>
-          CURVE (plan)
-        </Txt>
-        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#57534E" strokeWidth={10} strokeLinecap="round" />
-        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#E7E5E4" strokeWidth={1} strokeDasharray="4 5" />
-        <Txt x={285} y={222} size={9} mono>
-          {`R ${p.Rc} m · e ${o.e.toFixed(1)}%`}
-        </Txt>
+        {/* rimpull direction: rotates with the ramp, outside the truck group so the label stays level */}
+        <g transform={`translate(${tx},${ty}) rotate(${a3})`}>{o.tr > 0 ? <V3Arrow x1={-30} y1={-56} x2={30} y2={-56} color={U.deep} /> : <V3Arrow x1={30} y1={-56} x2={-30} y2={-56} color={U.deep} />}</g>
+        <T x={tx} y={ty - 74} anchor="middle" fill={INK}>
+          {o.tr > 0 ? "Rimpull" : "Retarder"}
+        </T>
+        {/* plan view of the curve */}
+        <rect x={262} y={128} width={114} height={98} rx={8} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={274} y={150} fill={ON_LIGHT} weight={700}>
+          Plan view
+        </T>
+        <path d={arc} fill="none" style={{ stroke: GREYS.deep }} strokeWidth={10} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={arc} fill="none" style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="4 5" />
+        <line x1={cx0} y1={cy0 - r} x2={cx0} y2={cy0} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={cx0} y1={cy0 - r} x2={ex} y2={cy0 - r} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <SvgTex x={cx0 - 10} y={cy0 - r / 2 + 6} tex="R" size={LBL} anchor="end" color="#141414" />
       </g>
     );
   },
@@ -402,44 +478,70 @@ export const dumpSim: SimDef = {
     { key: "fos", label: "FOS (infinite slope at z = H/2)", digits: 2, tone: (v) => (v >= 1.2 ? "ok" : v >= 1 ? "warn" : "crit") },
   ],
   caption: "Simplified effective-stress infinite-slope check of the overall dump profile (γ = 18 kN/m³). Detailed design uses limit-equilibrium circular/non-circular analyses including the foundation.",
+  // §5.6d redraw (v3.2): same toe (40, 215) and scale as the legacy section, so hotspots stay put.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const k = Math.min(300 / (o.horiz + 20), 170 / (o.Ht + 5));
     const toeX = 40;
     const base = 215;
-    const pts: [number, number][] = [[toeX, base]];
+    const pp: [number, number][] = [[toeX, base]];
     let x = toeX;
     let y = base;
     for (let i = 0; i < p.n; i++) {
       x += (p.h / Math.tan(rad(p.a))) * k;
       y -= p.h * k;
-      pts.push([x, y]);
+      pp.push([x, y]);
       if (i < p.n - 1) {
         x += p.b * k;
-        pts.push([x, y]);
+        pp.push([x, y]);
       }
     }
-    pts.push([390, y], [390, base]);
-    const col = o.fos >= 1.2 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
+    const crest = pp[pp.length - 1];
+    const safe = o.fos >= 1.2;
+    const col = safe ? OK : BAD;
+    const poly = [...pp, [400, y], [400, base]] as [number, number][];
+    // labels on the left, with 1.5 px leaders to the part they name
+    const faceT: [number, number] = [(pp[0][0] + pp[1][0]) / 2, (pp[0][1] + pp[1][1]) / 2];
+    const bermT: [number, number] = p.n > 1 ? [(pp[1][0] + pp[2][0]) / 2, pp[1][1]] : [(crest[0] + 376) / 2, crest[1]];
+    const ovT: [number, number] = [(toeX + crest[0]) / 2, (base + crest[1]) / 2];
+    const lead = (lx: number, ly: number, t: [number, number]) => (
+      <line x1={lx} y1={ly} x2={t[0]} y2={t[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+    );
+    // water label on the top deck, above the line when it fits
+    const wx = (crest[0] + 376) / 2;
+    const wLine = base - o.Ht * k * p.ru * 1.6 * ((wx - toeX) / (390 - toeX));
+    const wAbove = wLine - 8 - 18 - 8 >= crest[1];
+    const wY = wAbove ? wLine - 8 : wLine + 26;
+    const showW = p.ru > 0 && 376 - crest[0] >= textW("Water") + 12 && wY <= base - 8;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <rect x={0} y={base} width={400} height={25} fill={MAT.soil} />
-        <g className={o.fos < 1 ? "shake" : undefined}>
-          <polygon points={polyline(pts)} fill={MAT.goaf} stroke={C.ink} />
-          <polygon points={polyline(pts)} fill={MAT.rockShade} />
+        <clipPath id="u5-dump-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5-dump-clip)">
+          <rect x={0} y={base} width={400} height={35} fill={GREYS.light} />
+          <g className={o.fos < 1 ? "shake" : undefined}>
+            <polygon points={pts(poly)} style={{ fill: U.light, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+          </g>
+          {o.fos < 1 && (
+            <g data-state="unsafe">
+              <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: crest[0] - 10, y: crest[1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + crest[0]) / 2, y: (base + crest[1]) / 2, len: 30, angle: 150, seed: 7 }]} color={ON_LIGHT} width={2} />
+            </g>
+          )}
+          <line data-state={safe ? "safe" : "unsafe"} x1={toeX} y1={base} x2={crest[0]} y2={crest[1]} style={{ stroke: col }} strokeWidth={2.5} strokeDasharray="6 4" strokeLinecap="round" />
+          {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color="var(--u-ink)" width={2} speed={0.3} />}
         </g>
-        {o.fos < 1 && <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: pts[pts.length - 3][0] - 10, y: pts[pts.length - 3][1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + pts[pts.length - 3][0]) / 2, y: (base + pts[pts.length - 3][1]) / 2, len: 30, angle: 150, seed: 7 }]} color="#7F1D1D" width={2} />}
-        <line x1={toeX} y1={base} x2={pts[pts.length - 3][0]} y2={pts[pts.length - 3][1]} stroke={col} strokeWidth={2} strokeDasharray="6 4" />
-        <Txt x={toeX + 30} y={base - 6} size={9} weight={800} fill={col}>
-          {`overall ${o.bo.toFixed(1)}°`}
-        </Txt>
-        <Txt x={20} y={26} size={16} weight={900} mono fill={col}>
-          {`FOS ${o.fos.toFixed(2)}`}
-        </Txt>
-        <Txt x={20} y={42} size={9} mono>
-          {`${p.n} × ${p.h} m decks · berms ${p.b} m`}
-        </Txt>
-        {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color={C.tech} width={2} speed={0.3} />}
+        {showW && (
+          <T x={wx} y={wY} anchor="middle" fill={ON_LIGHT}>
+            Water
+          </T>
+        )}
+        <T x={24} y={44}>Overall slope</T>
+        {lead(24 + textW("Overall slope") + 6, 38, ovT)}
+        <T x={24} y={74}>Berm</T>
+        {lead(24 + textW("Berm") + 6, 68, bermT)}
+        <T x={24} y={104}>Deck face</T>
+        {lead(24 + textW("Deck face") + 6, 98, faceT)}
       </g>
     );
   },

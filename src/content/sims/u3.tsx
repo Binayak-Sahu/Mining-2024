@@ -1,6 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
 export function erf(x: number): number {
@@ -39,97 +41,91 @@ export const kirschSim: SimDef = {
     { key: "sideFail", label: "Sidewalls", format: (v) => ["Stable", "Spalling onset", "Crushing / slabbing"][v], tone: (v) => (["ok", "warn", "crit"] as const)[v] },
     { key: "roofFail", label: "Roof", format: (v, o) => (v === 0 ? "Stable" : o.roof < 0 ? (v === 2 ? "Tensile failure" : "In tension") : v === 2 ? "Shear / guttering" : "High compression"), tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
+  // §5.6d redraw (v3e): legacy 0..400 × 0..240 box kept, so the lesson pins still land on the crown, wall, far-field arrows and legend.
+  v3: { viewH: 250, formula: () => "\\sigma_\\theta = p\\,[(1+K) + 2(1-K)\\cos 2\\theta]" },
   render: (p, o) => {
-    const cx = 130;
-    const cy = 122;
-    const R = 52;
+    const cx = 140;
+    const cy = 136;
+    const R = 56;
+    const AC = v3hue("orange");
     const segs = [];
     for (let i = 0; i < 72; i++) {
       const a1 = (i / 72) * 2 * Math.PI;
-      const a2 = ((i + 1) / 72) * 2 * Math.PI;
+      const a2 = ((i + 1.04) / 72) * 2 * Math.PI;
       const th = (a1 + a2) / 2;
       const s = o.p * (1 + p.K + 2 * (1 - p.K) * Math.cos(2 * th));
-      const col = s < 0 ? (s <= -p.T ? "#1d4ed8" : "#60a5fa") : s >= p.ucs ? C.crit : s >= 0.5 * p.ucs ? C.hazard : C.safe;
+      const crush = s >= p.ucs;
+      const col = s < 0 ? (s <= -p.T ? AC.deep : AC.light) : crush ? V3BAD_LIGHT : s >= 0.5 * p.ucs ? V3U.mid : V3U.light;
       segs.push(
-        <line key={i} x1={+(cx + R * Math.cos(a1)).toFixed(2)} y1={+(cy + R * Math.sin(a1)).toFixed(2)} x2={+(cx + R * Math.cos(a2)).toFixed(2)} y2={+(cy + R * Math.sin(a2)).toFixed(2)} stroke={col} strokeWidth={9} />,
+        <path
+          key={i}
+          d={`M${(cx + R * Math.cos(a1)).toFixed(2)} ${(cy + R * Math.sin(a1)).toFixed(2)}A${R} ${R} 0 0 1 ${(cx + R * Math.cos(a2)).toFixed(2)} ${(cy + R * Math.sin(a2)).toFixed(2)}`}
+          fill="none"
+          stroke={col}
+          strokeWidth={12}
+          data-state={crush ? "unsafe" : undefined}
+        />,
       );
     }
-    const vl = clamp(10 + o.p * 1.2, 10, 40);
-    const hl = clamp(10 + o.p * p.K * 1.2, 6, 40);
-    // Full Kirsch field σθ(r, θ) sampled on a grid → stress heatmap around the opening
-    const cells = [];
-    const G = 11;
-    for (let gx = 20; gx < 240; gx += G)
-      for (let gy = 12; gy < 232; gy += G) {
-        const dx = gx + G / 2 - cx;
-        const dy = gy + G / 2 - cy;
-        const r = Math.hypot(dx, dy);
-        if (r < R) continue;
-        const th = Math.atan2(dy, dx);
-        const a2 = (R * R) / (r * r);
-        const s = (o.p / 2) * ((1 + p.K) * (1 + a2) + (1 - p.K) * (1 + 3 * a2 * a2) * Math.cos(2 * th));
-        const col = s < 0 ? (s <= -p.T ? "#1d4ed8" : "#60a5fa") : heatColor(0.35 + 0.65 * clamp(s / p.ucs, 0, 1));
-        cells.push(<rect key={`${gx}-${gy}`} x={gx} y={gy} width={G} height={G} fill={col} opacity={0.5} />);
-      }
-    const cracks = [];
-    if (o.sideFail === 2) cracks.push({ x: cx - R, y: cy - 6, len: 30, angle: 200, seed: 3 }, { x: cx - R, y: cy + 8, len: 26, angle: 160, seed: 5 }, { x: cx + R, y: cy - 6, len: 30, angle: -20, seed: 7 }, { x: cx + R, y: cy + 8, len: 26, angle: 20, seed: 9 });
-    if (o.roofFail === 2) cracks.push({ x: cx - 6, y: cy - R, len: 28, angle: -100, seed: 11 }, { x: cx + 8, y: cy - R, len: 24, angle: -70, seed: 13 }, { x: cx, y: cy + R, len: 24, angle: 90, seed: 15 });
+    const vl = clamp(10 + o.p * 1.0, 10, 24);
+    const hl = clamp(10 + o.p * p.K * 1.0, 8, 24);
+    // radial crack ticks where the boundary has crushed (sidewalls) or failed (roof / floor)
+    const ticks: [number, number][] = [];
+    if (o.sideFail === 2) for (const a of [-14, 14, 166, 194]) ticks.push([a, 0]);
+    if (o.roofFail === 2) for (const a of [-104, -76, 76, 104]) ticks.push([a, 0]);
+    const tx = [26, 262];
     return (
       <g>
-        <rect x={20} y={12} width={220} height={220} fill={MAT.rock} />
-        <g clipPath="url(#kirsch-clip)">{cells}</g>
         <clipPath id="kirsch-clip">
-          <rect x={20} y={12} width={220} height={220} rx={6} />
+          <rect x={0} y={0} width={400} height={250} rx={12} />
         </clipPath>
+        <g clipPath="url(#kirsch-clip)">
+          <rect x={0} y={0} width={254} height={250} fill={V3GREYS.light} />
+        </g>
         {segs}
-        <circle cx={cx} cy={cy} r={R - 4.5} fill="#0F172A" />
-        <circle cx={cx} cy={cy + 6} r={R - 10} fill="url(#grad-lamp)" opacity={0.35} />
-        <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={800} fill="#F8FAFC">
-          OPENING
-        </Txt>
-        {cracks.length > 0 && <Cracks key={`${o.sideFail}${o.roofFail}`} cracks={cracks} color="#7F1D1D" width={2} />}
-        <Arrow x1={cx} y1={14} x2={cx} y2={14 + vl} color={C.ink} width={3} />
-        <Arrow x1={cx} y1={230} x2={cx} y2={230 - vl} color={C.ink} width={3} />
-        <Txt x={cx + 6} y={26} size={9} weight={700} mono>
-          p
-        </Txt>
-        <Arrow x1={22} y1={cy} x2={22 + hl} y2={cy} color={C.tech} width={3} />
-        <Arrow x1={238} y1={cy} x2={238 - hl} y2={cy} color={C.tech} width={3} />
-        <Txt x={26} y={cy - 8} size={9} weight={700} mono fill={C.tech}>
-          Kp
-        </Txt>
-        <Txt x={250} y={30} size={9} weight={700} fill={C.slate}>
-          BOUNDARY σθ
-        </Txt>
-        {[
-          { c: "#1d4ed8", t: "tension ≥ T (fails)" },
-          { c: "#60a5fa", t: "tension" },
-          { c: C.safe, t: "< 0.5 UCS" },
-          { c: C.hazard, t: "0.5–1.0 UCS" },
-          { c: C.crit, t: "≥ UCS" },
-        ].map((l, i) => (
-          <g key={l.t}>
-            <rect x={250} y={40 + i * 15} width={10} height={10} fill={l.c} />
-            <Txt x={265} y={49 + i * 15} size={8}>
-              {l.t}
-            </Txt>
+        <circle cx={cx} cy={cy} r={R - 6} fill={V3SURFACE} style={{ stroke: V3INK }} strokeWidth={2.5} />
+        <V3T x={cx} y={cy + 6} anchor="middle">
+          Opening
+        </V3T>
+        {ticks.map(([a], i) => (
+          <line key={i} data-state="unsafe" x1={cx + (R + 6) * Math.cos(rad(a))} y1={cy + (R + 6) * Math.sin(rad(a))} x2={cx + (R + 24) * Math.cos(rad(a))} y2={cy + (R + 24) * Math.sin(rad(a))} style={{ stroke: V3BAD }} strokeWidth={2.5} strokeLinecap="round" />
+        ))}
+        {/* far-field stresses: p (vertical, dark) and Kp (horizontal, blue) */}
+        {[cx - 40, cx + 40].map((x) => (
+          <g key={x}>
+            <V3Arrow x1={x} y1={26} x2={x} y2={26 + vl} color={V3ON_LIGHT} />
+            <V3Arrow x1={x} y1={224} x2={x} y2={224 - vl} color={V3ON_LIGHT} />
           </g>
         ))}
-        <Txt x={250} y={140} size={9} mono>
-          roof  = {o.roof.toFixed(1)} MPa
-        </Txt>
-        <Txt x={250} y={156} size={9} mono>
-          side  = {o.side.toFixed(1)} MPa
-        </Txt>
-        <Txt x={250} y={172} size={9} mono>
-          K = {p.K.toFixed(2)}
-        </Txt>
-        <Txt x={250} y={200} size={8} fill={C.slate}>
-          K = 1 ⇒ uniform 2p
-        </Txt>
-        <Txt x={250} y={213} size={8} fill={C.slate}>
-          K &lt; ⅓ ⇒ roof in tension
-        </Txt>
+        <SvgTex x={cx} y={46} tex="p" size={LBL} anchor="middle" color={V3ON_LIGHT} />
+        {[cy - 36, cy + 36].map((y) => (
+          <g key={y}>
+            <V3Arrow x1={tx[0]} y1={y} x2={tx[0] + hl} y2={y} color={V3U.deep} />
+            <V3Arrow x1={248} y1={y} x2={248 - hl} y2={y} color={V3U.deep} />
+          </g>
+        ))}
+        <SvgTex x={tx[0]} y={cy + 6} tex="Kp" size={LBL} anchor="start" color={V3U.deep} />
+        <V3T x={244} y={222} anchor="end" fill={V3ON_LIGHT}>
+          Rock
+        </V3T>
+        {/* legend: boundary tangential stress vs strength */}
+        <SvgTex x={tx[1]} y={44} tex="\sigma_\theta\ \text{at the boundary}" size={LBL} anchor="start" color="var(--text-2)" />
+        {[
+          { c: AC.deep, t: "Fails (T)" },
+          { c: AC.light, t: "Tension" },
+          { c: V3U.light, t: "< ½ UCS" },
+          { c: V3U.mid, t: "½–1 UCS" },
+          { c: V3BAD_LIGHT, t: "≥ UCS", bad: true },
+        ].map((l, i) => (
+          <g key={l.t}>
+            <rect x={tx[1]} y={60 + i * 24} width={14} height={14} rx={3} fill={l.c} data-state={l.bad ? "unsafe" : undefined} />
+            <V3T x={tx[1] + 22} y={73 + i * 24}>
+              {l.t}
+            </V3T>
+          </g>
+        ))}
+        <SvgTex x={tx[1]} y={198} tex="K=1:\ 2p" size={LBL} anchor="start" color="var(--text-2)" />
+        <SvgTex x={tx[1]} y={222} tex="K<\tfrac13:\ \text{tension}" size={LBL} anchor="start" color="var(--text-2)" />
       </g>
     );
   },

@@ -1,9 +1,8 @@
 import type { SimDef } from "@/lib/types";
-import { T, INK, SURFACE, ON_LIGHT, GREYS, U, BAD, BAD_TEXT, DimLine, num, clamp } from "@/components/sim/v3";
-import { SvgTex } from "@/components/sim/Tex";
+import { T, INK, INK3, SURFACE, ON_LIGHT, GREYS, U, BAD, DimLine, num, clamp } from "@/components/sim/v3";
 
-/** Column frame: legacy x 56–200 and the 0–1200 m depth scale give the gallery y = 70 at 300 m (lesson hotspot). */
-const OB = { top: 20, bottom: 220, x0: 56, x1: 200 };
+/** Column frame: x 56–250; the 0–1200 m depth scale gives the gallery y ≈ 73 at 300 m (lesson hotspots at 70,32 / 150,45 / 175,70 stay on strata, load path, seam). */
+const OB = { top: 26, bottom: 214, x0: 56, x1: 250 };
 const obY = (H: number) => OB.top + ((OB.bottom - OB.top) * H) / 1200;
 
 export const overburden: SimDef = {
@@ -27,6 +26,7 @@ export const overburden: SimDef = {
       tone: (v) => (v >= 20 ? "crit" : v > 10 ? "warn" : "ok"),
     },
   ],
+  primary: ["sv", "grad"],
   caption: "Rule of thumb: ≈ 0.025 MPa per metre (2.5 t/m³ rock). Pillars, roof bolts and shaft linings all start here.",
   // §5.6 redraw (v3e). Column, gallery and load path keep their legacy places so the lesson hotspots still land on them.
   v3: {
@@ -39,37 +39,50 @@ export const overburden: SimDef = {
     const y = obY(p.H);
     const crit = o.sv > 20;
     const top = y - 9 - clamp(o.sv * 5, 22, Math.max(22, y - 9 - OB.top - 4));
-    const beds = [0.2, 0.4, 0.6, 0.8];
+    const h = OB.bottom - OB.top;
+    const lx = 276;
+    const b1 = clamp(y + 6, OB.top + 44, 188);
     return (
       <g>
-        <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={OB.bottom - OB.top} rx={8} fill={GREYS.light} />
-        {beds.map((f) => (
-          <line key={f} x1={OB.x0} x2={OB.x1} y1={OB.top + f * (OB.bottom - OB.top)} y2={OB.top + f * (OB.bottom - OB.top)} stroke={GREYS.mid} strokeWidth={1.5} />
-        ))}
+        <defs>
+          <clipPath id="u0ob-clip">
+            <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={h} rx={8} />
+          </clipPath>
+        </defs>
+        {/* host rock: three flat bands of overburden */}
+        <g clipPath="url(#u0ob-clip)">
+          <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={h} fill={GREYS.light} />
+          <rect x={OB.x0} y={OB.top + h * 0.34} width={OB.x1 - OB.x0} height={h * 0.33} style={{ fill: U.light }} />
+          {/* the seam with the gallery */}
+          <rect x={OB.x0} y={y - 8} width={OB.x1 - OB.x0} height={16} fill={GREYS.deep} />
+        </g>
+        <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={h} rx={8} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
         <line x1={OB.x0 - 8} x2={OB.x1 + 8} y1={OB.top} y2={OB.top} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
-        <T x={OB.x1 + 40} y={OB.top + 6}>
+        <T x={lx} y={OB.top + 18}>
           Surface
         </T>
-        {/* the seam with the gallery */}
-        <rect x={OB.x0} y={y - 8} width={OB.x1 - OB.x0} height={16} fill={GREYS.deep} />
         <rect x={132} y={y - 8} width={36} height={16} rx={3} style={{ fill: SURFACE }} />
-        <T x={OB.x0 + 8} y={y < 170 ? y + 30 : y - 16} fill={ON_LIGHT} weight={700}>
+        {y >= OB.top + 84 && (
+          <T x={OB.x0 + 8} y={OB.top + 68} fill={ON_LIGHT}>
+            Strata
+          </T>
+        )}
+        {/* load path onto the gallery */}
+        <path
+          data-state={crit ? "unsafe" : "safe"}
+          d={`M146 ${top} h8 v${y - 9 - top - 14} h7 l-11 14 l-11 -14 h7 z`}
+          style={{ fill: crit ? BAD : U.mid, stroke: INK3 }}
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+        />
+        {/* depth */}
+        <DimLine x1={OB.x1 + 14} y1={OB.top} x2={OB.x1 + 14} y2={y} />
+        <line x1={OB.x1} x2={lx - 6} y1={y} y2={b1 - 6} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={lx} y={b1} fill={INK} weight={700}>
           Gallery
         </T>
-        {/* load path onto the gallery */}
-        <path d={`M146 ${top} h8 v${y - 9 - top - 14} h7 l-11 14 l-11 -14 h7 z`} style={{ fill: crit ? BAD : U.mid }} strokeLinejoin="round" />
-        {/* depth */}
-        <DimLine x1={OB.x1 + 30} y1={OB.top} x2={OB.x1 + 30} y2={y} />
-        <T x={OB.x1 + 40} y={clamp(y + 6, OB.top + 42, OB.bottom)} fill={INK} weight={700}>
+        <T x={lx} y={b1 + 22} fill={INK} weight={700}>
           {num(p.H, 0, "m")}
-        </T>
-        {/* result */}
-        <SvgTex x={306} y={112} tex="\sigma_v" size={24} color="var(--text-2)" />
-        <T x={306} y={150} fill={crit ? BAD_TEXT : INK} size={26} weight={800}>
-          {num(o.sv, 2)}
-        </T>
-        <T x={306} y={174}>
-          MPa
         </T>
       </g>
     );

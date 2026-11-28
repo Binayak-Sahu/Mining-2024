@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { T, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U, BAD, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, BAD_PALE, Arrow, pts, num, clamp } from "@/components/sim/v3";
+import { T, textW, OK, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U, BAD, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, BAD_PALE, Arrow, pts, num, clamp, LBL } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Depillaring goaf & main fall ---------------- */
 
@@ -31,7 +32,7 @@ export const goafSim: SimDef = {
     { key: "state", label: "Roof state", format: (v) => ["Immediate roof caving normally", "Main roof HANGING — energy building", "MAIN FALL — air blast risk"][v], tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
   caption: "Fixed-end beam (main fall) and cantilever (periodic) spans from beam theory; bulking factor k = 1.3; γ = 25 kN/m³.",
-  // §5.6 redraw (v3e): goaf edge x 330 and seam y 175 are the legacy ones (lesson hotspots).
+  // §5.6d redraw (v3.2): goaf edge x 330 and seam y 175 are the legacy ones (lesson hotspots).
   v3: { viewH: 240 },
   handles: [{ key: "x", axis: "x", at: (p) => [330 - p.x * 2.4, 168], toValue: (x) => (330 - x) / 2.4 }],
   render: (p, o) => {
@@ -43,59 +44,68 @@ export const goafSim: SimDef = {
     const imm = clamp(o.hc * 4, 6, 50);
     const roofY = seamY - sh - imm - 6;
     const sag = o.state === 2 ? 30 : o.ratio * 14;
-    const tt = clamp(p.t * 2.2, 10, 60);
+    // main-roof thickness drawn 14 + 1.6 t, capped so the label above it stays inside the 24-unit inset
+    const tt = clamp(14 + p.t * 1.6, 14, 42);
     const rubbleTop = seamY - imm;
     const roofFill = o.state === 2 ? BAD_LIGHT : o.state === 1 ? U.mid : U.light;
     return (
       <g>
-        <T x={8} y={22}>
-          Overlying strata
+        <defs>
+          <clipPath id="u6-goaf-clip">
+            <rect x={0} y={0} width={400} height={240} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u6-goaf-clip)">
+          {/* floor */}
+          <rect x={0} y={seamY} width={400} height={65} fill={GREYS.light} />
+          {/* old goaf: rubble with fallen main-roof blocks */}
+          {Array.from({ length: Math.max(0, Math.ceil(gx / 12)) }).map((_, i) => (
+            <polygon key={`o${i}`} points={`${i * 12},${seamY} ${i * 12 + 6},${rubbleTop} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
+          ))}
+          {gx > 20 &&
+            [0, 1, 2].map((i) => {
+              const bw = Math.min(gx / 3, 60);
+              const x = gx - (i + 1) * bw;
+              return x > -bw ? <rect key={`b${i}`} x={x} y={rubbleTop - tt} width={bw - 4} height={tt} rx={3} style={{ fill: U.light }} transform={`rotate(${i % 2 ? 6 : -5} ${x + bw / 2} ${rubbleTop - tt / 2})`} /> : null;
+            })}
+          {/* the current span: immediate roof caved onto the floor */}
+          {Array.from({ length: Math.ceil((edge - gx) / 12) }).map((_, i) => (
+            <polygon key={i} points={`${gx + i * 12},${seamY} ${gx + i * 12 + 6},${rubbleTop} ${Math.min(gx + i * 12 + 12, edge)},${seamY}`} fill={GREYS.deep} />
+          ))}
+          {/* solid side: seam, immediate roof, main roof */}
+          <rect x={edge} y={seamY - sh} width={400 - edge} height={sh} fill={GREYS.deep} />
+          <rect x={edge} y={roofY} width={400 - edge} height={seamY - sh - roofY} fill={GREYS.light} />
+          <rect x={edge} y={roofY - tt} width={400 - edge} height={tt} style={{ fill: U.light }} />
+          {/* main roof hanging over the span (cantilever), or falling */}
+          <path
+            className={o.state === 2 ? "shake" : undefined}
+            data-state={o.state === 2 ? "unsafe" : "safe"}
+            d={`M ${edge} ${roofY} Q ${(edge + gx) / 2} ${roofY + sag} ${gx} ${roofY + sag * 0.5} L ${gx} ${roofY - tt + sag * 0.5} L ${edge} ${roofY - tt} Z`}
+            style={{ fill: roofFill, stroke: INK }}
+            strokeWidth={2.5}
+            strokeLinejoin="round"
+          />
+          {/* goaf-edge supports */}
+          <rect x={edge - 6} y={seamY - sh} width={6} height={sh} rx={2} style={{ fill: INK }} />
+          {o.state === 2 && (
+            <g data-state="unsafe">
+              {[0, 1].map((i) => (
+                <Arrow key={i} x1={edge - 44} y1={seamY - 6 - i * 12} x2={edge + 38} y2={seamY - 6 - i * 12} color={BAD} />
+              ))}
+            </g>
+          )}
+        </g>
+        <T x={376} y={Math.max(roofY - tt - 12, 40)} anchor="end">
+          Main roof
         </T>
-        {/* floor */}
-        <rect x={0} y={seamY} width={400} height={65} fill={GREYS.light} />
-        {/* old goaf: rubble with fallen main-roof blocks */}
-        {Array.from({ length: Math.max(0, Math.ceil(gx / 12)) }).map((_, i) => (
-          <polygon key={`o${i}`} points={`${i * 12},${seamY} ${i * 12 + 6},${rubbleTop} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
-        ))}
-        {gx > 20 &&
-          [0, 1, 2].map((i) => {
-            const bw = Math.min(gx / 3, 60);
-            const x = gx - (i + 1) * bw;
-            return x > -bw ? <rect key={`b${i}`} x={x} y={rubbleTop - tt} width={bw - 4} height={tt} rx={3} style={{ fill: U.light }} transform={`rotate(${i % 2 ? 6 : -5} ${x + bw / 2} ${rubbleTop - tt / 2})`} /> : null;
-          })}
-        {/* the current span: immediate roof caved onto the floor */}
-        {Array.from({ length: Math.ceil((edge - gx) / 12) }).map((_, i) => (
-          <polygon key={i} points={`${gx + i * 12},${seamY} ${gx + i * 12 + 6},${rubbleTop} ${Math.min(gx + i * 12 + 12, edge)},${seamY}`} fill={GREYS.deep} />
-        ))}
-        {/* solid side: seam, immediate roof, main roof */}
-        <rect x={edge} y={seamY - sh} width={400 - edge} height={sh} fill={GREYS.deep} />
-        <rect x={edge} y={roofY} width={400 - edge} height={seamY - sh - roofY} fill={GREYS.light} />
-        <rect x={edge} y={roofY - tt} width={400 - edge} height={tt} style={{ fill: U.light }} />
-        {/* main roof hanging over the span (cantilever), or falling */}
-        <path
-          className={o.state === 2 ? "shake" : undefined}
-          d={`M ${edge} ${roofY} Q ${(edge + gx) / 2} ${roofY + sag} ${gx} ${roofY + sag * 0.5} L ${gx} ${roofY - tt + sag * 0.5} L ${edge} ${roofY - tt} Z`}
-          style={{ fill: roofFill, stroke: INK }}
-          strokeWidth={2.5}
-          strokeLinejoin="round"
-        />
-        <T x={8} y={Math.max(roofY - tt - 10, 44)} fill={INK} weight={700}>
-          {`Main roof ${num(p.t, 0, "m")}`}
+        <T x={24} y={208} fill={ON_LIGHT} weight={700}>
+          {o.state === 2 ? "Goaf: air blast" : "Goaf"}
         </T>
-        {/* goaf-edge supports */}
-        <line x1={edge - 3} x2={edge - 3} y1={seamY - sh} y2={seamY} style={{ stroke: INK }} strokeWidth={5} strokeLinecap="round" />
-        <T x={365} y={seamY + 24} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <T x={322} y={208} anchor="end" fill={ON_LIGHT} weight={700}>
+          Props
+        </T>
+        <T x={376} y={208} anchor="end" fill={ON_LIGHT} weight={700}>
           Solid
-        </T>
-        {o.state === 2 &&
-          [0, 1].map((i) => <Arrow key={i} x1={edge - 30} y1={seamY - 6 - i * 12} x2={edge + 56} y2={seamY - 6 - i * 12} color={BAD} />)}
-        {o.state === 2 && (
-          <T x={edge - 14} y={seamY + 24} anchor="end" fill={ON_LIGHT} weight={800}>
-            Air blast into workings
-          </T>
-        )}
-        <T x={8} y={230} fill={ON_LIGHT} weight={700}>
-          {`Span ${num(p.x, 0, "m")} · main fall at ${num(o.Lm, 0, "m")}`}
         </T>
       </g>
     );
@@ -135,58 +145,77 @@ export const longwallSim: SimDef = {
     { key: "util", label: "Rating utilisation", digits: 2, format: (v) => `${(v * 100).toFixed(0)} %`, tone: (v) => (v > 1 ? "crit" : v > 0.9 ? "warn" : "ok") },
   ],
   animated: true,
-  // §5.6 redraw (v3e): face x 250 and seam y 150 are the legacy ones (lesson hotspots).
+  // §5.6d v3.2 redraw: face x 250 and seam y 150 are the legacy ones (lesson hotspots).
   v3: { viewH: 240 },
   render: (p, o, t) => {
     const seamY = 150;
     const sh = p.m * 12;
     const faceX = 250;
+    // stress profile kept inside the 24-unit inset (peak y ≈ 27)
+    const base = 66;
     const curve: [number, number][] = [];
-    for (let x = 0; x <= 400; x += 5) {
+    for (let x = 24; x <= 376; x += 4) {
       const d = x - faceX;
       const val = d > 0 ? 1 + 1.8 * Math.exp(-Math.pow((d - 8) / 22, 2)) : 0.2 + 0.6 * Math.exp(d / 40) + 1.2 * Math.exp(-Math.pow((d + 60) / 25, 2)) * 0.6;
-      curve.push([x, 70 - val * 22]);
+      curve.push([x, base - val * 14]);
     }
     const over = o.util > 1;
     const dr = Math.min(sh / 2 - 2, 18);
     const x = faceX - 70;
+    const cy = seamY - sh / 2;
     return (
       <g>
-        <T x={8} y={22}>
-          Vertical stress
-        </T>
-        <line x1={0} x2={400} y1={48} y2={48} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="4 5" />
-        <T x={396} y={42} anchor="end">
-          Virgin σv
-        </T>
-        <polygon points={pts([[0, 70], ...curve, [400, 70]])} style={{ fill: U.light }} />
+        <defs>
+          <clipPath id="u6lw-clip">
+            <rect x={0} y={0} width={400} height={240} rx={12} />
+          </clipPath>
+        </defs>
+        {/* strata context: host rock (immediate roof), seam ahead of the face, caved goaf behind, floor */}
+        <g clipPath="url(#u6lw-clip)">
+          <rect x={0} y={base} width={400} height={seamY - sh - base} fill={GREYS.light} />
+          <rect x={0} y={seamY - sh} width={faceX} height={sh} fill={GREYS.light} />
+          <rect x={faceX} y={seamY - sh} width={150} height={sh} fill={GREYS.deep} />
+          <rect x={0} y={seamY} width={400} height={90} fill={GREYS.light} />
+          {Array.from({ length: 15 }).map((_, i) => (
+            <polygon key={i} points={`${i * 12},${seamY} ${i * 12 + 6},${seamY - sh * 0.8} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
+          ))}
+        </g>
+        {/* vertical stress profile */}
+        <polygon points={pts([[24, base], ...curve, [376, base]])} style={{ fill: U.light }} />
         <polyline points={pts(curve)} fill="none" style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinejoin="round" />
-        {/* strata: immediate roof, seam ahead of the face, caved goaf behind, floor */}
-        <rect x={0} y={seamY - sh - 34} width={400} height={34} fill={GREYS.light} />
-        <rect x={faceX} y={seamY - sh} width={150} height={sh} fill={GREYS.deep} />
-        <rect x={0} y={seamY} width={400} height={50} fill={GREYS.light} />
-        {Array.from({ length: 15 }).map((_, i) => (
-          <polygon key={i} points={`${i * 12},${seamY} ${i * 12 + 6},${seamY - sh * 0.8} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
-        ))}
-        {/* powered shield */}
-        <rect x={x} y={seamY - sh} width={62} height={8} rx={2} style={{ fill: over ? BAD : U.mid }} />
-        <line x1={x + 16} y1={seamY - sh + 8} x2={x + 22} y2={seamY - 7} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={x + 44} y1={seamY - sh + 8} x2={x + 38} y2={seamY - 7} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={x} y1={seamY - sh + 4} x2={x - 18} y2={seamY - 10} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <line x1={24} x2={376} y1={base - 14} y2={base - 14} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="4 5" />
+        <SvgTex x={376} y={base - 24} tex="\sigma_v\ \text{virgin}" size={LBL} anchor="end" color="var(--text-2)" />
+        <T x={faceX - 12} y={44} anchor="end">
+          Front abutment
+        </T>
+        {/* powered shield (canopy turns red when the rating is exceeded) */}
+        <g data-state={over ? "unsafe" : "safe"}>
+          <rect x={x} y={seamY - sh} width={62} height={8} rx={2} style={{ fill: over ? BAD : U.mid, stroke: INK }} strokeWidth={2.5} />
+        </g>
+        <line x1={x + 16} y1={seamY - sh + 8} x2={x + 22} y2={seamY - 7} style={{ stroke: ON_LIGHT }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={x + 44} y1={seamY - sh + 8} x2={x + 38} y2={seamY - 7} style={{ stroke: ON_LIGHT }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={x} y1={seamY - sh + 4} x2={x - 18} y2={seamY - 10} style={{ stroke: ON_LIGHT }} strokeWidth={3} strokeLinecap="round" />
         <rect x={x + 4} y={seamY - 7} width={56} height={7} rx={2} fill={GREYS.deep} />
         {/* AFC and shearer drum */}
         <rect x={faceX - 8} y={seamY - 8} width={14} height={8} rx={2} fill={GREYS.deep} />
-        <g transform={`rotate(${((t * 220) % 360).toFixed(0)} ${faceX - 4} ${seamY - sh / 2})`}>
-          <circle cx={faceX - 4} cy={seamY - sh / 2} r={dr} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2} />
+        <g transform={`rotate(${((t * 220) % 360).toFixed(0)} ${faceX - 4} ${cy})`}>
+          <circle cx={faceX - 4} cy={cy} r={dr} fill={GREYS.mid} style={{ stroke: INK3 }} strokeWidth={1.5} />
           {[0, 60, 120, 180, 240, 300].map((a) => (
-            <path key={a} d={`M${faceX - 4} ${seamY - sh / 2 - dr - 4} l3 5 h-6 z`} style={{ fill: INK }} transform={`rotate(${a} ${faceX - 4} ${seamY - sh / 2})`} />
+            <path key={a} d={`M${faceX - 4} ${cy - dr - 4} l3 5 h-6 z`} style={{ fill: INK }} transform={`rotate(${a} ${faceX - 4} ${cy})`} />
           ))}
         </g>
-        <T x={262} y={seamY + 22} fill={ON_LIGHT} weight={700}>
-          Shearer · AFC
+        {/* part labels in the floor band (66 units tall) */}
+        <T x={36} y={184} fill={ON_LIGHT} weight={700}>
+          Goaf
         </T>
-        <T x={8} y={230} fill={over ? BAD_TEXT : INK} weight={800}>
-          {`Needs ${num(o.req, 0, "t")} · shield ${num(p.rating, 0, "t")} · ${num(o.util * 100, 0, "%")}`}
+        <T x={x + 31} y={184} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Shield
+        </T>
+        <T x={faceX + 12} y={184} fill={ON_LIGHT} weight={700}>
+          Shearer
+        </T>
+        <T x={faceX + 12} y={206} fill={ON_LIGHT} weight={700}>
+          and AFC
         </T>
       </g>
     );
@@ -223,43 +252,58 @@ export const stopeSim: SimDef = {
     { key: "ok", label: "Above cut-off?", format: (v) => (v ? "Yes — payable" : "No — stope uneconomic"), tone: (v) => (v ? "ok" : "crit") },
   ],
   caption: "Typical ELOS: open stoping/VCR 0.5–2 m in poor hanging walls; filled methods well under 0.5 m.",
-  // §5.6 redraw (v3e): the vein's centre line through (200, 120) is the legacy one (lesson hotspots).
-  v3: { viewH: 240 },
+  // §5.6 redraw (v3.2): the vein's centre line through (200, 120) is the legacy one (lesson hotspots); the mill-feed bar sits on the (307, 208) pin.
+  primary: ["D", "gd"],
+  v3: { viewH: 250 },
   handles: [{ key: "W", axis: "x", at: (p) => [200 + (p.W * 9) / 2, 120], toValue: (x) => (2 * (x - 200)) / 9 }],
   render: (p, o) => {
     const k = 9;
     const cx = 200;
     const dip = 0.55; // slope of vein (dx per dy)
-    const top = 44;
-    const bot = 200;
+    const top = 36;
+    const bot = 190;
     const half = (p.W * k) / 2;
     const ov = p.elos * k;
     const xAt = (y: number) => cx + (y - 120) * dip;
     const vein = pts([[xAt(top) - half, top], [xAt(top) + half, top], [xAt(bot) + half, bot], [xAt(bot) - half, bot]]);
     const slough = pts([[xAt(top) - half - ov * 0.7, top + 16], [xAt(top) - half, top + 16], [xAt(bot) - half, bot - 16], [xAt(bot) - half - ov * 0.7, bot - 16]]);
     const fw = pts([[xAt(top) + half, top + 16], [xAt(top) + half + ov * 0.3, top + 16], [xAt(bot) + half + ov * 0.3, bot - 16], [xAt(bot) + half, bot - 16]]);
+    const hwFits = xAt(top) - half - ov * 0.7 - 12 - textW("Hanging wall") > 28;
+    const yL = 146;
+    const slL = xAt(yL) - half - ov * 0.7;
+    const barX = 262;
+    const barW = 90;
+    const oreW = barW * (1 - o.D / 100);
+    const st = o.ok ? "met" : "unmet";
     return (
       <g>
-        <polygon points={vein} style={{ fill: U.mid }} strokeLinejoin="round" />
-        <polygon points={slough} fill={BAD_LIGHT} />
-        <polygon points={fw} fill={BAD_PALE} />
-        {p.meth >= 3 &&
-          [0, 1, 2].map((i) => {
-            const y = top + 36 + i * 42;
-            return <line key={i} x1={xAt(y) - half} y1={y} x2={xAt(y) + half} y2={y} stroke={ON_DEEP} strokeWidth={2} strokeDasharray={p.meth === 4 ? "3 3" : undefined} />;
-          })}
-        <T x={8} y={24} weight={700}>
-          Hanging-wall slough
+        <clipPath id="u6-stope-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u6-stope-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
+        </g>
+        <polygon points={slough} fill={GREYS.mid} />
+        <polygon points={fw} fill={GREYS.mid} />
+        <polygon points={vein} style={{ fill: U.mid, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <T x={28} y={hwFits ? 50 : 222} fill={ON_LIGHT}>
+          Hanging wall
         </T>
-        <T x={392} y={24} anchor="end">
-          {METHODS[p.meth]}
+        <T x={266} y={50} fill={ON_LIGHT}>
+          Footwall
         </T>
-        <T x={xAt(top) + half + 12} y={top + 14} fill={INK}>
-          {`Ore ${num(p.W, 1, "m")}`}
+        <line x1={slL - 12} y1={yL - 6} x2={slL + Math.min(4, ov * 0.35)} y2={yL - 6} style={{ stroke: GREYS.deep }} strokeWidth={1.5} strokeLinecap="round" />
+        <T x={slL - 16} y={yL} anchor="end" fill={ON_LIGHT}>
+          ELOS
         </T>
-        <T x={392} y={232} anchor="end" fill={o.ok ? OK_TEXT : BAD_TEXT} weight={800}>
-          {`Dilution ${num(o.D, 0, "%")} → ${num(o.gd, 2, "g/t")}`}
+        <T x={barX - 8} y={217} anchor="end" fill={ON_LIGHT}>
+          Mill feed
         </T>
+        <g data-state={st}>
+          <rect x={barX} y={202} width={barW} height={16} rx={3} fill={GREYS.mid} />
+          <rect x={barX} y={202} width={oreW} height={16} rx={3} style={{ fill: U.mid }} />
+          <rect x={barX} y={202} width={barW} height={16} rx={3} fill="none" style={{ stroke: o.ok ? OK : BAD }} strokeWidth={2.5} />
+        </g>
       </g>
     );
   },
@@ -290,43 +334,57 @@ export const caveSim: SimDef = {
     { key: "vol", label: "Ellipsoid volume / drawpoint", unit: "m³", digits: 0 },
   ],
   animated: true,
-  // §5.6 redraw (v3e): extraction level y 210 and the waste band at the top are the legacy ones (lesson hotspots).
-  v3: { viewH: 240 },
-  handles: [{ key: "h", axis: "y", at: (p) => [200, 210 - p.h * (170 / 300)], toValue: (y) => (210 - y) / (170 / 300) }],
+  primary: ["b", "interact"],
+  // §5.6d redraw (v3.2): extraction level y 204 (drawpoint mouth spans 204-222, pin y 216) and the waste band at the top (pin y 27).
+  v3: { viewH: 272 },
+  handles: [{ key: "h", axis: "y", at: (p) => [200, 204 - p.h * (148 / 300)], toValue: (y) => (204 - y) / (148 / 300) }],
   render: (p, o, t) => {
-    const base = 210;
-    const kh = 170 / 300;
+    const base = 204;
+    const kh = 148 / 300;
     const kx = 4;
-    const n = Math.max(2, Math.min(9, Math.floor(360 / (p.s * kx))));
+    // odd count so a drawpoint always sits at x = 200 (the lesson pin)
+    let n = Math.max(3, Math.min(9, Math.floor(360 / (p.s * kx))));
+    if (n % 2 === 0) n -= 1;
     const start = 200 - ((n - 1) * p.s * kx) / 2;
     return (
       <g>
-        <T x={8} y={15} fill={INK} weight={700}>
-          {`Drawpoints at ${num(p.s, 0, "m")} · IDZ ${num(o.b, 1, "m")}`}
-        </T>
-        {/* caved ore column, overlying waste, extraction level */}
-        <rect x={0} y={40} width={400} height={base - 40} style={{ fill: U.light }} />
-        <rect x={0} y={20} width={400} height={20} fill={GREYS.mid} />
-        <T x={8} y={36} fill={ON_LIGHT} weight={600}>
+        <clipPath id="u6-cave-scene">
+          <rect x={12} y={12} width={376} height={248} rx={12} />
+        </clipPath>
+        <clipPath id="u6-cave-col">
+          <rect x={24} y={56} width={352} height={base - 56} />
+        </clipPath>
+        <g clipPath="url(#u6-cave-scene)">
+          {/* caved ore column, overlying waste, extraction level */}
+          <rect x={0} y={56} width={400} height={base - 56} style={{ fill: U.light }} />
+          <rect x={0} y={0} width={400} height={56} fill={GREYS.mid} />
+          <rect x={0} y={base} width={400} height={80} fill={GREYS.deep} />
+        </g>
+        <T x={36} y={44} fill={ON_LIGHT} weight={600}>
           Overlying waste
         </T>
-        <rect x={0} y={base} width={400} height={30} fill={GREYS.deep} />
-        <clipPath id="u6-cave-col">
-          <rect x={0} y={40} width={400} height={base - 40 + 12} />
-        </clipPath>
+        <T x={36} y={242} fill={ON_DEEP} weight={600}>
+          Extraction level
+        </T>
         {Array.from({ length: n }).map((_, i) => {
           const x = start + i * p.s * kx;
           return (
-            <g key={i} clipPath="url(#u6-cave-col)">
-              <ellipse cx={x} cy={base - (p.h * kh) / 2} rx={(o.b * kx) / 2} ry={(p.h * kh) / 2} style={{ fill: o.interact ? OK_LIGHT : U.mid, stroke: o.interact ? ON_LIGHT : U.deep }} fillOpacity={0.55} strokeWidth={2} />
-              {[0, 1, 2].map((j) => {
-                const u = (t * 0.35 + j / 3 + i * 0.13) % 1;
-                return <circle key={j} cx={x + Math.sin(j * 2 + i) * (o.b * kx) * 0.2 * (1 - u)} cy={base - p.h * kh * (1 - u)} r={2.5} fill={GREYS.deep} />;
-              })}
-              <rect x={x - 6} y={base} width={12} height={12} rx={2} fill="#FFFFFF" />
+            <g key={i}>
+              <g clipPath="url(#u6-cave-col)">
+                <ellipse cx={x} cy={base - (p.h * kh) / 2} rx={(o.b * kx) / 2} ry={(p.h * kh) / 2} data-state={o.interact ? "safe" : "unsafe"} style={{ fill: o.interact ? OK_LIGHT : BAD_LIGHT, stroke: U.deep }} fillOpacity={0.7} strokeWidth={2.5} />
+                {[0, 1, 2].map((j) => {
+                  const u = (t * 0.35 + j / 3 + i * 0.13) % 1;
+                  return <circle key={j} cx={x + Math.sin(j * 2 + i) * (o.b * kx) * 0.2 * (1 - u)} cy={base - p.h * kh * (1 - u)} r={2.5} fill={GREYS.deep} />;
+                })}
+              </g>
+              <rect x={x - 8} y={base} width={16} height={18} rx={2} fill="#FFFFFF" />
             </g>
           );
         })}
+        <circle cx={286} cy={235} r={2.5} fill={ON_DEEP} />
+        <T x={364} y={242} anchor="end" fill={ON_DEEP} weight={600}>
+          Ore flow
+        </T>
       </g>
     );
   },

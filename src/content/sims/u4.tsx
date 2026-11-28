@@ -1,6 +1,9 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, Meter } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { OK_LIGHT, BAD_PALE, LBL, Dot, curve, scale } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
+import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, hue } from "@/components/sim/v3";
 
 /* ---------------- Drilling methods ---------------- */
 
@@ -43,64 +46,88 @@ export const drillSim: SimDef = {
   ],
   caption: "PR = η·P / (A·SE): percussive SE ≈ 1.15·UCS; rotary crushing SE rises faster with strength. Top-hammer loses ~10 % of energy per rod coupling (3.6 m rods).",
   animated: true,
-  handles: [{ key: "depth", axis: "y", at: (p) => [95, 40 + clamp(p.depth * 4.5, 10, 180)], toValue: (y) => (y - 40) / 4.5, color: "#F59E0B" }],
+  v3: { viewH: 250 },
+  handles: [{ key: "depth", axis: "y", at: (p) => [95, 56 + clamp(p.depth * 3.9, 10, 160)], toValue: (y) => (y - 56) / 3.9 }],
   render: (p, o, t) => {
     const bars = [
-      { k: "Top-hammer", v: o.th, c: C.tech },
-      { k: "DTH", v: o.dth, c: C.safe },
-      { k: "Rotary", v: o.rot, c: C.hazard },
+      { k: "Top-hammer", v: o.th },
+      { k: "DTH", v: o.dth },
+      { k: "Rotary", v: o.rot },
     ];
     const max = Math.max(...bars.map((b) => b.v), 0.5);
-    const holeTop = 40;
-    const holeBot = 40 + clamp(p.depth * 4.5, 10, 180);
+    const holeTop = 56;
+    const holeBot = holeTop + clamp(p.depth * 3.9, 10, 160);
+    const rodLen = 3.6 * 3.9;
+    const ORG = hue("orange");
+    const sw = p.m === 2 ? 5 : 3;
     return (
       <g>
-        <rect x={20} y={30} width={150} height={200} fill={MAT.rock} />
-        <rect x={20} y={90} width={150} height={40} fill={MAT.shale} opacity={0.85} />
-        <rect x={20} y={30} width={150} height={200} fill={MAT.rockShade} />
-        <rect x={20} y={20} width={150} height={10} fill={MAT.soil} />
-        <rect x={95 - (p.m === 2 ? 7 : 5)} y={holeTop - 10} width={p.m === 2 ? 14 : 10} height={holeBot - holeTop + 10} fill="#44403C" opacity={0.55} />
-        <rect x={86} y={holeTop - 32} width={18} height={22} rx={3} fill={C.hazard} stroke="#B45309" filter="url(#f-shadow)" />
-        <line x1={95} x2={95} y1={holeTop - 10} y2={holeBot} stroke="#334155" strokeWidth={p.m === 2 ? 8 : 4} />
-        <line x1={95} x2={95} y1={holeTop - 10} y2={holeBot} stroke={MAT.metalH} strokeWidth={p.m === 2 ? 5 : 2} strokeDasharray="3 5" strokeDashoffset={-(t * 40) % 8} />
-        {[0, 1, 2, 3].map((i) => {
-          const a = t * 5 + i * 1.6;
-          return <circle key={i} cx={95 + Math.cos(a) * (10 + i * 3)} cy={holeTop - 4 - ((t * 30 + i * 6) % 18)} r={1.4} fill="#A8A29E" />;
-        })}
+        <clipPath id="u4drill-clip">
+          <rect x={12} y={12} width={376} height={226} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u4drill-clip)">
+          <rect x={0} y={holeTop} width={184} height={200} fill={GREYS.light} />
+        </g>
+        <line x1={24} x2={184} y1={holeTop} y2={holeTop} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={28} y={220} fill={ON_LIGHT}>
+          Rock
+        </T>
+        <rect x={95 - (p.m === 2 ? 8 : 6)} y={holeTop} width={p.m === 2 ? 16 : 12} height={holeBot - holeTop} fill={GREYS.deep} />
+        <rect x={84} y={30} width={22} height={22} rx={4} style={{ fill: U.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={78} y={46} anchor="end">
+          Head
+        </T>
+        <line x1={95} x2={95} y1={52} y2={holeBot} style={{ stroke: INK }} strokeWidth={sw} strokeLinecap="round" />
+        <line x1={95} x2={95} y1={52} y2={holeBot} stroke={GREYS.light} strokeWidth={sw - 1.5} strokeDasharray="3 5" strokeDashoffset={-(t * 40) % 8} />
         {p.m === 0 &&
-          Array.from({ length: o.rods }).map((_, i) => (
-            <rect key={i} x={91} y={holeTop + i * 16.2 - 2} width={8} height={4} fill={C.crit} />
+          Array.from({ length: o.rods - 1 }).map((_, i) => (
+            <rect key={i} x={90} y={holeTop + (i + 1) * rodLen - 3} width={10} height={6} rx={1.5} fill={ORG.mid} />
           ))}
-        {p.m === 1 && <rect x={89} y={holeBot - 22} width={12} height={22} fill={C.safe} />}
+        {p.m === 0 && (
+          <T x={126} y={52}>
+            Joints
+          </T>
+        )}
+        {p.m === 1 && (
+          <g>
+            <rect x={89} y={holeBot - 26} width={12} height={26} rx={2} fill={ORG.mid} />
+            <T x={84} y={holeBot - 6} anchor="end">
+              Hammer
+            </T>
+          </g>
+        )}
         {p.m === 2 ? (
           <g transform={`rotate(${((t * 300) % 360).toFixed(0)} 95 ${holeBot})`}>
-            <circle cx={95} cy={holeBot} r={9} fill={MAT.metal} stroke={C.ink} />
+            <circle cx={95} cy={holeBot} r={10} style={{ fill: GREYS.light, stroke: INK }} strokeWidth={2.5} />
             {[0, 120, 240].map((a) => (
-              <circle key={a} cx={95} cy={holeBot - 5} r={2.2} fill={C.ink} transform={`rotate(${a} 95 ${holeBot})`} />
+              <circle key={a} cx={95} cy={holeBot - 5} r={2.5} style={{ fill: INK }} transform={`rotate(${a} 95 ${holeBot})`} />
             ))}
           </g>
         ) : (
-          <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 8}`} fill={MAT.metal} stroke={C.ink} strokeWidth={0.8} />
+          <polygon points={`88,${holeBot} 102,${holeBot} 95,${holeBot + 9}`} style={{ fill: GREYS.light, stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
         )}
-        <Txt x={112} y={Math.min(holeBot + 3, 210)} size={8} mono weight={700}>
+        <T x={126} y={Math.min(holeBot + 6, 218)} fill={ON_LIGHT}>
           {`${p.depth} m`}
-        </Txt>
-        <Txt x={22} y={226} size={7.5} fill={C.ink}>
-          {p.m === 0 ? "couplings (red) absorb energy" : p.m === 1 ? "hammer sits behind the bit" : "thrust + rotation crush rock"}
-        </Txt>
-        <Txt x={195} y={30} size={9} weight={700} fill={C.slate}>
-          PENETRATION RATE (m/min) at UCS {p.ucs}
-        </Txt>
-        {bars.map((b, i) => (
-          <g key={b.k}>
-            <rect x={195} y={45 + i * 40} width={(180 * b.v) / max} height={24} rx={5} fill={b.c} opacity={i === p.m ? 1 : 0.45} filter={i === p.m ? "url(#f-shadow)" : undefined} />
-            <rect x={195} y={45 + i * 40} width={(180 * b.v) / max} height={9} rx={4} fill={MAT.glass} />
-            <Txt x={(180 * b.v) / max > 110 ? 199 : 199 + (180 * b.v) / max} y={61 + i * 40} size={9} weight={800} fill={(180 * b.v) / max > 110 ? "white" : C.ink}>
-              {`${b.k} ${b.v.toFixed(2)}`}
-            </Txt>
-          </g>
-        ))}
-        <Meter x={195} y={185} w={180} value={o.eta} max={1} color={o.eta < 0.6 ? C.hazard : C.safe} label="energy delivered to bit" />
+        </T>
+        {bars.map((b, i) => {
+          const y0 = 48 + i * 46;
+          return (
+            <g key={b.k}>
+              <T x={196} y={y0 - 6} fill={i === p.m ? INK : INK2} weight={i === p.m ? 800 : 600}>
+                {b.k}
+              </T>
+              <rect x={196} y={y0} width={Math.max(3, (180 * b.v) / max)} height={22} rx={4} style={{ fill: i === p.m ? U.deep : U.mid }} />
+            </g>
+          );
+        })}
+        <T x={376} y={42} anchor="end">
+          m/min
+        </T>
+        <T x={196} y={184}>
+          Energy at bit
+        </T>
+        <rect x={196} y={190} width={180} height={20} rx={4} style={{ fill: GREYS.light }} />
+        <rect x={196} y={190} width={Math.max(3, 180 * o.eta)} height={20} rx={4} style={{ fill: U.deep }} />
       </g>
     );
   },
@@ -144,69 +171,65 @@ export const explosiveSim: SimDef = {
     { key: "pb", label: "Borehole pressure ≈ PD/2", unit: "GPa", digits: 2 },
     { key: "tr", label: "Energy transmission", unit: "%", digits: 0 },
   ],
+  // §5.6 redraw (v3.2): OB bar, borehole, plume and impedance tracks keep the legacy hotspot places.
+  v3: { viewH: 250 },
+  primary: ["ob", "vod"],
   render: (p, o, t) => {
-    const gx = (ob: number) => 30 + ((clamp(ob, -20, 20) + 20) / 40) * 340;
-    const fumeCol = o.fume === 2 ? "#ea580c" : o.fume === 1 ? "#64748b" : "#e2e8f0";
-    const front = o.vod > 0 ? 50 + ((t * 160) % 230) : 50;
+    const gx = (ob: number) => 36 + ((clamp(ob, -20, 20) + 20) / 40) * 328;
+    const AC = hue("orange");
+    const hh = clamp(p.d / 5, 6, 32);
+    const HX0 = 52;
+    const HW = 208;
+    const front = o.vod > 0 ? HX0 + ((t * 160) % HW) : HX0;
+    const fumeCol = o.fume === 2 ? AC.mid : o.fume === 1 ? GREYS.deep : GREYS.light;
+    const fumeTxt = o.fume === 1 ? ON_DEEP : ON_LIGHT;
+    const mx = gx(o.ob);
+    const rock = ROCKS[p.rock];
     return (
       <g>
-        <Txt x={30} y={20} size={9} weight={700} fill={C.slate}>
-          OXYGEN BALANCE (%)
-        </Txt>
-        <defs>
-          <linearGradient id="obg" x1="0" x2="1">
-            <stop offset="0" stopColor="#64748b" />
-            <stop offset="0.45" stopColor="#10b981" />
-            <stop offset="0.55" stopColor="#10b981" />
-            <stop offset="1" stopColor="#ea580c" />
-          </linearGradient>
-        </defs>
-        <rect x={30} y={28} width={340} height={14} rx={7} fill="url(#obg)" />
-        <line x1={gx(0)} x2={gx(0)} y1={24} y2={46} stroke={C.ink} />
-        <polygon points={`${gx(o.ob)},48 ${gx(o.ob) - 6},58 ${gx(o.ob) + 6},58`} fill={C.ink} />
-        <Txt x={30} y={68} size={8} fill={C.slate}>
-          −20 fuel-rich (CO)
-        </Txt>
-        <Txt x={370} y={68} size={8} anchor="end" fill={C.slate}>
-          oxygen-rich (NOx) +20
-        </Txt>
-        <Txt x={30} y={92} size={9} weight={700} fill={C.slate}>
-          BOREHOLE · Ø {p.d} mm
-        </Txt>
-        <rect x={40} y={94} width={240} height={clamp(p.d / 5, 6, 40) + 12} rx={3} fill={MAT.rock} />
-        <rect x={50} y={100} width={220} height={clamp(p.d / 5, 6, 40)} fill="#fde68a" stroke={C.ink} />
-        {o.vod > 0 && <rect x={50} y={100} width={Math.min(front - 50, 220)} height={clamp(p.d / 5, 6, 40)} fill={C.crit} opacity={0.75} />}
-        {o.vod > 0 && front < 270 && (
-          <g>
-            <circle cx={front} cy={100 + clamp(p.d / 5, 6, 40) / 2} r={6 + clamp(p.d / 5, 6, 40) * 0.6} fill="#FDE68A" opacity={0.85} filter="url(#f-glow)" />
-            {[1, 2].map((k) => (
-              <path key={k} d={`M ${front - 4 - k * 9} ${94 - k * 3} Q ${front + 6 + k * 6} ${100 + clamp(p.d / 5, 6, 40) / 2} ${front - 4 - k * 9} ${106 + clamp(p.d / 5, 6, 40) + k * 3}`} fill="none" stroke="#F97316" strokeWidth={1.5} opacity={0.7 / k} />
-            ))}
-          </g>
-        )}
+        {/* oxygen-balance scale: fuel-rich | balanced | oxygen-rich */}
+        <rect x={36} y={26} width={gx(-1) - 36} height={40} fill={GREYS.mid} />
+        <rect x={gx(-1)} y={26} width={gx(1) - gx(-1)} height={40} style={{ fill: U.light }} />
+        <rect x={gx(1)} y={26} width={364 - gx(1)} height={40} fill={AC.light} />
+        <T x={44} y={52} fill={ON_LIGHT}>
+          Fuel-rich
+        </T>
+        <T x={356} y={52} anchor="end" fill={ON_LIGHT}>
+          Oxygen-rich
+        </T>
+        <line x1={mx} x2={mx} y1={26} y2={66} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <polygon points={`${mx},68 ${mx - 7},80 ${mx + 7},80`} style={{ fill: INK }} />
+        {/* borehole in host rock */}
+        <rect x={40} y={90} width={232} height={40} rx={4} fill={GREYS.light} />
+        <rect x={HX0} y={110 - hh / 2} width={HW} height={hh} style={{ fill: U.light, stroke: INK }} strokeWidth={2.5} />
+        {o.vod > 0 && <rect x={HX0} y={110 - hh / 2} width={Math.max(front - HX0, 0)} height={hh} fill={AC.mid} />}
+        {o.vod > 0 && <line x1={front} x2={front} y1={110 - hh / 2 - 4} y2={110 + hh / 2 + 4} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />}
+        <T x={40} y={162}>
+          Borehole
+        </T>
+        {/* post-blast plume */}
         {[0, 1, 2].map((k) => {
           const ph = (t * 0.6 + k / 3) % 1;
-          return <circle key={k} cx={320 + Math.sin(ph * 6 + k) * 8} cy={130 - ph * 30} r={10 + ph * 12} fill={fumeCol} opacity={0.35 * (1 - ph)} />;
+          return <circle key={k} cx={323 + Math.sin(ph * 6 + k) * 8} cy={122 - ph * 12} r={5 + ph * 8} fill={fumeCol} opacity={0.4 * (1 - ph)} />;
         })}
-        <ellipse cx={320} cy={115} rx={40} ry={22} fill={fumeCol} opacity={0.9} />
-        <Txt x={320} y={118} size={8} anchor="middle" weight={700} fill={o.fume === 0 ? C.ink : "white"}>
+        <ellipse cx={323} cy={124} rx={34} ry={20} fill={fumeCol} />
+        <T x={323} y={130} anchor="middle" weight={800} fill={fumeTxt}>
           {o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}
-        </Txt>
-        <Txt x={30} y={170} size={9} weight={700} fill={C.slate}>
-          IMPEDANCE MATCH ρe·VOD vs ρr·Cp ({ROCKS[p.rock].name})
-        </Txt>
-        <rect x={30} y={178} width={clamp(o.ratio * 170, 0, 340)} height={12} rx={3} fill={C.tech} />
-        <rect x={30} y={194} width={170} height={12} rx={3} fill={MAT.rock} />
-        <rect x={30} y={194} width={170} height={12} rx={3} fill="#334155" opacity={0.55} />
-        <Txt x={34} y={188} size={8} fill="white" weight={700}>
-          explosive
-        </Txt>
-        <Txt x={34} y={204} size={8} fill="white" weight={700}>
-          rock
-        </Txt>
-        <Txt x={30} y={226} size={10} weight={800} mono>
-          {`transmitted ${o.tr.toFixed(0)}% · PD ${o.pd.toFixed(2)} GPa`}
-        </Txt>
+        </T>
+        <T x={323} y={166} anchor="middle">
+          Fumes
+        </T>
+        {/* impedance: explosive vs rock, rock = reference length */}
+        <rect x={40} y={180} width={210} height={20} fill={GREYS.light} />
+        <rect x={40} y={180} width={clamp(o.ratio * 105, 4, 210)} height={20} style={{ fill: U.mid }} />
+        <rect x={40} y={206} width={210} height={20} fill={GREYS.light} />
+        <rect x={40} y={206} width={105} height={20} fill={GREYS.deep} />
+        <T x={258} y={196}>
+          Explosive
+        </T>
+        <T x={258} y={222}>
+          {rock.name}
+        </T>
       </g>
     );
   },
@@ -261,53 +284,80 @@ export const kuzRamSim: SimDef = {
     { key: "fines", label: "Fines < 5 cm", unit: "%", digits: 1 },
   ],
   caption: "Stemming 0.8B, sub-drill 0.3B, drilling deviation 0.3 m. X50 = A·K^−0.8·Q^(1/6)·(115/RWS)^(19/20); Rosin–Rammler distribution.",
-  handles: [{ key: "Hb", axis: "y", at: (p) => [34, 40 + p.Hb * 6], toValue: (y) => (y - 40) / 6, color: "#3B82F6" }],
+  // §5.6d redraw: bench section left, size-distribution plot right; hotspot pins keep their legacy features.
+  v3: { viewH: 250 },
+  handles: [{ key: "Hb", axis: "y", at: (p) => [40, 40 + p.Hb * 6], toValue: (y) => (y - 40) / 6, color: "#3B82F6" }],
   render: (p) => {
     const k = kuzRam(p);
-    const sc = 120 / 20;
+    const sc = 6;
     const top = 40;
     const bot = top + p.Hb * sc;
+    const ORANGE = hue("orange");
+    const H = 250;
+    const sx = scale(0, 150, 236, 376);
+    const sy = scale(0, 100, 190, 60);
+    const gap = Math.min(p.B * sc * 1.4, 24);
+    const holes = [0, 1, 2].map((r) => 78 + r * gap);
+    const x50 = clamp(k.x50, 0, 150);
+    const ok = k.over <= 3;
+    const curveD = curve((x) => 100 * k.pass(Math.max(x, 0.01)), 0, 150, 60, sx, sy);
+    const labelRight = sx(x50) < 290;
     return (
       <g>
-        <Txt x={15} y={20} size={9} weight={700} fill={C.slate}>
-          BENCH SECTION
-        </Txt>
-        <polygon points={`15,${bot} 60,${top} 175,${top} 175,${bot + 30} 15,${bot + 30}`} fill={MAT.shale} />
-        <polygon points={`15,${bot} 60,${top} 175,${top} 175,${bot + 30} 15,${bot + 30}`} fill={MAT.rockShade} />
-        <line x1={60} y1={top} x2={175} y2={top} stroke="#57534E" strokeWidth={2} />
-        {Array.from({ length: 7 }).map((_, i) => (
-          <path key={i} d={`M ${10 + i * 7} ${bot + 2} l ${3 + (i % 3) * 2} -${3 + (i % 2) * 3} l ${3 + (i % 2) * 2} ${3 + (i % 3)} z`} fill="#A8A29E" stroke="#57534E" strokeWidth={0.6} />
+        <clipPath id="u4kz-clip">
+          <rect x={12} y={12} width={376} height={H - 24} rx={12} />
+        </clipPath>
+        {/* host rock: bench above the floor, base rock below; flat neutral bands */}
+        <g clipPath="url(#u4kz-clip)">
+          <rect x={0} y={bot} width={220} height={H - bot} fill={GREYS.mid} />
+          <polygon points={`24,${bot} 60,${top} 220,${top} 220,${bot}`} fill={GREYS.light} />
+        </g>
+        <line x1={60} y1={top} x2={220} y2={top} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <line x1={24} y1={bot} x2={60} y2={top} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        {holes.map((x, i) => (
+          <g key={i}>
+            <rect x={x - 5} y={top} width={10} height={k.T * sc} fill={GREYS.deep} />
+            <rect x={x - 5} y={top + k.T * sc} width={10} height={k.L * sc} fill={ORANGE.mid} />
+            <rect x={x - 5} y={top} width={10} height={(k.T + k.L) * sc} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+          </g>
         ))}
-        {[0, 1, 2].map((r) => {
-          const x = 60 + 18 + r * Math.min(p.B * sc * 1.4, 34);
-          return (
-            <g key={r}>
-              <rect x={x - 2.5} y={top} width={5} height={k.T * sc} fill={MAT.sand} stroke="#78716C" strokeWidth={0.6} />
-              <rect x={x - 2.5} y={top + k.T * sc} width={5} height={k.L * sc} fill={C.crit} filter="url(#f-glow)" />
-            </g>
-          );
-        })}
-        <Txt x={180} y={top + 6} size={7} fill={C.slate}>
-          stemming
-        </Txt>
-        <Txt x={180} y={bot - 4} size={7} fill={C.crit}>
-          charge
-        </Txt>
-        <Plot x={215} y={20} w={170} h={160} xmin={0} xmax={150} ymin={0} ymax={100} xlabel="size (cm)" ylabel="% passing">
-          {(sx, sy) => (
-            <g>
-              <polyline points={sample((x) => 100 * k.pass(Math.max(x, 0.01)), 0, 150, 60, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} />
-              <line x1={sx(100)} x2={sx(100)} y1={sy(0)} y2={sy(100)} stroke={C.crit} strokeDasharray="3 3" />
-              <line x1={sx(clamp(k.x50, 0, 150))} x2={sx(clamp(k.x50, 0, 150))} y1={sy(0)} y2={sy(50)} stroke={C.ink} strokeDasharray="2 2" />
-              <Txt x={sx(100) + 2} y={sy(10)} size={7} fill={C.crit}>
-                1 m
-              </Txt>
-            </g>
-          )}
-        </Plot>
-        <Txt x={15} y={225} size={10} weight={800} mono fill={k.over <= 3 ? C.safe : C.crit}>
-          {`oversize ${k.over.toFixed(1)}% · X50 ${k.x50.toFixed(0)} cm`}
-        </Txt>
+        {/* part labels, with leaders to the third hole */}
+        <line x1={holes[2] + 7} y1={top + (k.T * sc) / 2} x2={146} y2={top + 26} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={150} y={top + 30} fill={ON_LIGHT}>
+          Stemming
+        </T>
+        <line x1={holes[2] + 7} y1={top + k.T * sc + (k.L * sc) / 2} x2={146} y2={top + 74} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={150} y={top + 78} fill={ON_LIGHT}>
+          Charge
+        </T>
+        {/* size-distribution plot */}
+        <T x={236} y={46}>
+          % passing
+        </T>
+        <rect x={sx(100)} y={sy(100)} width={sx(150) - sx(100)} height={sy(0) - sy(100)} data-state={ok ? "met" : "unmet"} fill={ok ? OK_LIGHT : BAD_PALE} />
+        <polygon points={`${sx(0)},${sy(0)} ${curveD} ${sx(150)},${sy(0)}`} fill={U.light} opacity={0.6} />
+        <line x1={236} y1={190} x2={376} y2={190} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        <line x1={236} y1={190} x2={236} y2={sy(100)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        {[0, 50, 100].map((v) => (
+          <g key={v}>
+            <line x1={sx(v)} x2={sx(v)} y1={190} y2={195} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <T x={sx(v)} y={216} anchor="middle">
+              {String(v)}
+            </T>
+          </g>
+        ))}
+        <T x={376} y={216} anchor="end">
+          cm
+        </T>
+        <line x1={sx(100)} x2={sx(100)} y1={sy(0)} y2={sy(100)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
+        <T x={sx(100) - 8} y={sy(12)} anchor="end">
+          Oversize
+        </T>
+        <polyline points={curveD} fill="none" style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        <line x1={sx(x50)} x2={sx(x50)} y1={sy(0)} y2={sy(50)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
+        <line x1={236} x2={sx(x50)} y1={sy(50)} y2={sy(50)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
+        <Dot x={sx(x50)} y={sy(50)} ring />
+        <SvgTex x={labelRight ? sx(x50) + 8 : sx(x50) - 8} y={labelRight ? sy(50) + 14 : sy(50) - 38} tex="X_{50}" size={LBL} anchor={labelRight ? "start" : "end"} color="var(--text-2)" />
       </g>
     );
   },

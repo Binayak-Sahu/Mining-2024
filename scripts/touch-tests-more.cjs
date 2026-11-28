@@ -192,7 +192,7 @@ module.exports = async function more(t) {
     await t.gripDiagonal(phone, L);
     // Compact success strip: reach the objective (fuel-rich zone) via the fine-tune sliders.
     await page.evaluate(() => {
-      const set = (i, v) => { const el = document.querySelectorAll('.slider input[type=range]')[i]; const s = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; s.call(el, String(v)); el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true })); };
+      const set = (i, v) => { const el = document.querySelectorAll('.sim-slider input[type=range], .slider input[type=range]')[i]; const s = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; s.call(el, String(v)); el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true })); };
       set(0, 25); set(1, 12);
     });
     await page.waitForTimeout(800);
