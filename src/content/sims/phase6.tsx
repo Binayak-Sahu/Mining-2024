@@ -256,7 +256,7 @@ export const slopeModesSim: SimDef = {
         : p.mode === 1
           ? "k = \\dfrac{\\sin\\beta}{\\sin(\\xi/2)}"
           : p.mode === 2
-            ? "F = \\dfrac{\\sum \\big[cb + (W-ub)\\tan\\varphi\\big]/m_\\alpha}{\\sum W\\sin\\alpha},\\quad m_\\alpha = \\cos\\alpha\\,\\Big(1+\\dfrac{\\tan\\alpha\\tan\\varphi}{F}\\Big)"
+            ? "F = \\dfrac{\\sum \\big[cb + (W-ub)\\tan\\varphi\\big]/m_\\alpha}{\\sum W\\sin\\alpha}"
             : "\\text{topples if } b/h < \\tan\\psi;\\ \\text{slides if } \\psi > \\varphi",
   },
   render: (p, o, t) => {
@@ -281,7 +281,7 @@ export const slopeModesSim: SimDef = {
       <polyline points={pts([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
     );
     const crestLabel = (
-      <T x={crestX > 300 ? 376 : Math.max(crestX - 6, 24)} y={Math.max(topY - 12, 42)} anchor={crestX > 300 ? "end" : "start"}>
+      <T x={crestX > 290 ? 376 : crestX + 10} y={Math.max(topY - 12, 42)} anchor={crestX > 290 ? "end" : "start"} fill={ON_LIGHT_BG}>
         Crest
       </T>
     );
