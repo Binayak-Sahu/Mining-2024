@@ -1,125 +1,194 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Lock, Check, Crown, Play } from "lucide-react";
-import { getUnit } from "@/content";
+import { useEffect, useRef } from "react";
+import { ArrowLeft, BookOpen, Check, CircleHelp, Crown, Lock } from "lucide-react";
+import { UNITS, getUnit } from "@/content";
 import { useStrata } from "@/lib/store";
-import { lessonUnlocked, bossUnlocked } from "@/lib/progress";
+import { bossUnlocked, lessonUnlocked, unitProgress } from "@/lib/progress";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs } from "@/lib/prefs";
-import { STAGE_META } from "@/components/cards/ui";
-import type { Lesson } from "@/lib/types";
-import { ExpeditionPath } from "./ExpeditionPath";
-import { LevelHeader, UnitHeader } from "./course";
-import { stratumFor } from "./strata";
+import { unitCounts } from "@/lib/questions";
 import { familyOf } from "@/lib/family";
+import { currentLessonId, lessonMinutes, unitLevels, type LevelItem } from "@/lib/levels";
+import type { Unit } from "@/lib/types";
+import type { LessonRecord } from "@/lib/store";
+import { ProgressBar } from "./course";
+import { UnitArt } from "./UnitArt";
 
-/** §5.12 stage kinds: neutral 16 px icons in --text-3, no per-kind colour. */
-function StageIcons({ lesson }: { lesson: Lesson }) {
+const NNBSP = " ";
+
+/** §5.3 unit tabs: 140 × 96 course tabs with the 56 px illustration; the selected one scrolls into view (horizontally only). */
+function UnitTabs({ selected }: { selected: string }) {
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    const tab = el?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (el && tab) el.scrollLeft += tab.getBoundingClientRect().left - el.getBoundingClientRect().left - 24;
+  }, [selected]);
   return (
-    <div className="flex flex-wrap gap-2 mt-2 text-fg-3" aria-label={`${lesson.stages.length} stages`}>
-      {lesson.stages.map((s, i) => {
-        const M = STAGE_META[s.kind];
-        return <M.Icon key={i} size={16} strokeWidth={2.2} aria-label={M.label} role="img" />;
-      })}
+    <nav aria-label="Units">
+      <div ref={box} className="unit-scroller px-6 pt-1" style={{ scrollPaddingLeft: 24 }}>
+        {UNITS.map((u) => {
+          const on = u.id === selected;
+          return (
+            <Link
+              key={u.id}
+              href={`/unit/${u.id}`}
+              replace
+              scroll={false}
+              data-family={familyOf(u.id)}
+              aria-current={on ? "page" : undefined}
+              data-on={on}
+              className="course-tab"
+              style={{ width: 140, height: 96, paddingBottom: on ? 12 : 4 }}
+            >
+              <UnitArt unitId={u.id} size={56} />
+              <span className="t-tab" style={{ fontWeight: on ? 800 : 600, color: on ? "var(--text)" : "var(--text-2)" }}>
+                {u.short}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+type CardState = "done" | "current" | "open" | "locked" | "inspect";
+
+/** §5.3 lesson card: number tile (§5.5 until lessons have art), "N STAGES · ~M MIN", title, progress when done. */
+function LessonCard({ unit, item, state }: { unit: Unit; item: LevelItem; state: CardState }) {
+  const { lesson, boss, index } = item;
+  const stages = lesson.stages.length;
+  const meta = `${boss ? "Boss exam · " : ""}${stages}${NNBSP}stage${stages === 1 ? "" : "s"} · ~${lessonMinutes(lesson)}${NNBSP}min`;
+  const open = state !== "locked";
+  const name = boss ? "Boss exam" : `Lesson ${unit.n}.${index + 1}`;
+  const note = state === "done" ? "completed" : state === "locked" ? "locked" : state === "current" ? "next" : state === "inspect" ? "Master: Inspector sandbox, progress not saved" : "";
+  const inner = (
+    <div className="flex items-center gap-4">
+      <span className="lesson-tile" data-state={state === "locked" || state === "inspect" ? "locked" : state === "done" ? "done" : undefined} style={{ width: 96, height: 96, fontSize: 28 }} aria-hidden>
+        {boss ? <Crown size={36} strokeWidth={2.2} /> : state === "locked" ? <Lock size={28} strokeWidth={2.4} /> : `${unit.n}.${index + 1}`}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="t-eyebrow flex items-center gap-2 flex-wrap">
+          <span className="tnum">{meta}</span>
+        </div>
+        <div className={`t-card-title mt-1 ${open ? "text-fg" : "text-fg-2"}`} style={{ overflowWrap: "anywhere", hyphens: "auto" }} lang="en">
+          {lesson.title}
+        </div>
+        {state === "inspect" && (
+          <span className="t-label inline-block mt-2 rounded-full px-3" style={{ fontWeight: 700, background: "var(--u-tint)", color: "var(--u-ink)" }}>
+            Master
+          </span>
+        )}
+        {state === "current" && (
+          <span className="t-label inline-block mt-2 rounded-full px-3 course-badge" data-badge="Next" style={{ fontWeight: 700 }}>
+            Next
+          </span>
+        )}
+        {state === "done" && (
+          <div className="mt-3 flex items-center gap-2">
+            <div className="flex-1">
+              <ProgressBar f={1} label={`${name} complete`} />
+            </div>
+            <Check size={18} strokeWidth={3} color="var(--success-tint-text)" aria-hidden />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+  const label = `${name}: ${lesson.title}${note ? ` (${note})` : ""}`;
+  return open ? (
+    <Link href={`/lesson/${lesson.id}`} className="card press-card block p-5" aria-label={label} data-lesson={lesson.id} data-lesson-state={state}>
+      {inner}
+    </Link>
+  ) : (
+    <div className="card press-card block p-5" data-state="locked" aria-label={label} role="group" data-lesson={lesson.id} data-lesson-state={state}>
+      {inner}
     </div>
   );
 }
 
+/** §5.3 Path for one unit: unit tabs, header (glow, eyebrow, hero, counts, 120 px art), then levels of lesson cards. */
 export function UnitMap({ unitId }: { unitId: string }) {
   const hydrated = useHydrated();
   const unit = getUnit(unitId);
   const s = useStrata();
   const masterPref = usePrefs((p) => p.masterUnlock);
   if (!unit) return <div className="p-6">Unit not found.</div>;
-  const done = hydrated ? s.lessons : {};
+  const done: Record<string, LessonRecord> = hydrated ? s.lessons : {};
   const free = hydrated && s.freeRoam;
   const master = hydrated && masterPref;
-  const st = stratumFor(unit.n);
+  const cur = currentLessonId(unit, done, free);
+  const levels = unitLevels(unit);
+  const counts = unitCounts(unit);
+  const progress = unitProgress(unit, done);
 
-  let currentId: string | null = null;
-  const i0 = unit.lessons.findIndex((l, k) => !done[l.id] && lessonUnlocked(unit, k, done, free));
-  if (i0 >= 0) currentId = unit.lessons[i0].id;
-  else if (!done[unit.boss.id] && bossUnlocked(unit, done, free)) currentId = unit.boss.id;
-
-  const all = [...unit.lessons.map((l, i) => ({ l, i, boss: false })), { l: unit.boss, i: unit.lessons.length, boss: true }];
+  const stateOf = (it: LevelItem): CardState => {
+    if (done[it.lesson.id]) return "done";
+    const genuine = it.boss ? bossUnlocked(unit, done, free) : lessonUnlocked(unit, it.index, done, free);
+    if (!genuine) return master ? "inspect" : "locked";
+    return it.lesson.id === cur ? "current" : "open";
+  };
 
   return (
     <div className="page-glow" data-family={familyOf(unit.id)}>
-    <div className="max-w-6xl mx-auto px-5 sm:px-6 pt-2 pb-8 sm:pb-10">
-      <Link href="/" className="t-label inline-flex items-center gap-2 min-h-[44px] text-fg-2 hover:text-fg">
-        <ArrowLeft size={20} aria-hidden /> Expedition
-      </Link>
-
-      <div className="mt-6 mx-auto max-w-[640px]">
-        <UnitHeader unit={unit} />
-      </div>
-
-      <div className="mt-10 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 items-start">
-        <div className="space-y-10">
-          <div className="mx-auto max-w-md">
-            <LevelHeader
-              eyebrow={
-                <>
-                  Level <span className="readout normal-case tracking-normal">{st.depth}</span>
-                </>
-              }
-              title={st.name}
-            />
-          </div>
-          <ExpeditionPath unit={unit} done={done} freeRoam={free} currentId={currentId} master={master} />
+      <div className="max-w-[640px] mx-auto pt-2 pb-8 sm:pb-10">
+        <div className="px-6">
+          <Link href="/" className="t-label inline-flex items-center gap-2 min-h-[44px] text-fg-2 hover:text-fg">
+            <ArrowLeft size={20} aria-hidden /> Home
+          </Link>
+        </div>
+        <div className="mt-2">
+          <UnitTabs selected={unit.id} />
         </div>
 
-        <div>
-          <h2 className="t-eyebrow px-1">Shift briefings</h2>
-          <div className="mt-4 space-y-4">
-            {all.map(({ l, i, boss }) => {
-              const genuine = boss ? bossUnlocked(unit, done, free) : lessonUnlocked(unit, i, done, free);
-              const open = genuine || master;
-              const inspect = open && !genuine;
-              const complete = !!done[l.id];
-              const state = complete ? "done" : !genuine ? "locked" : boss ? "boss" : "current";
-              const inner = (
-                <div className="flex items-start gap-4">
-                  <span className="brief-chip shrink-0" data-state={state} aria-hidden>
-                    {complete ? <Check size={20} strokeWidth={3} /> : !genuine ? boss ? <Crown size={18} /> : <Lock size={18} /> : boss ? <Crown size={20} /> : <Play size={18} fill="currentColor" strokeWidth={0} />}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="t-eyebrow flex items-center gap-2 flex-wrap">
-                      {boss ? `Boss exam${complete ? " · Cleared" : ""}` : `Lesson ${unit.n}.${i + 1}${complete ? " · Done" : ""}`}
-                      {inspect && (
-                        <span className="t-label rounded-full px-3 normal-case tracking-normal bg-action-tint text-action-tint-text" style={{ fontWeight: 700 }}>
-                          Master
-                        </span>
-                      )}
-                    </div>
-                    <div className={`text-[18px] leading-[24px] font-bold mt-1 ${open ? "text-fg" : "text-fg-3"}`}>{l.title}</div>
-                    <div className="t-label mt-1 text-fg-2" style={{ fontWeight: 400 }}>
-                      {open ? l.subtitle : boss ? "Finish every lesson in this unit first" : "Finish the previous lesson first"}
-                    </div>
-                    {open && <StageIcons lesson={l} />}
+        <header className="px-6 mt-8 flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="t-eyebrow">
+              Unit {unit.n} · {levels.length} level{levels.length === 1 ? "" : "s"}
+            </div>
+            <h1 className="t-hero text-fg mt-2 text-balance" lang="en">
+              {unit.title}
+            </h1>
+            <p className="t-secondary mt-2 flex items-center gap-x-3 gap-y-1 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <BookOpen size={18} aria-hidden /> {counts.lessons}
+                {NNBSP}lesson{counts.lessons === 1 ? "" : "s"}
+              </span>
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <CircleHelp size={18} aria-hidden /> {counts.questions}
+                {NNBSP}questions
+              </span>
+            </p>
+            {progress > 0 && (
+              <div className="mt-3 max-w-[240px]">
+                <ProgressBar f={progress} label={`Unit ${unit.n} progress`} />
+              </div>
+            )}
+          </div>
+          <UnitArt unitId={unit.id} size={120} />
+        </header>
+
+        <div className="px-6 mt-10 space-y-10" style={{ visibility: hydrated ? "visible" : "hidden" }}>
+          {levels.map((lv) => (
+            <section key={lv.n} aria-labelledby={`level-${lv.n}`} data-level={lv.n}>
+              <h2 id={`level-${lv.n}`} className="t-eyebrow mb-4" style={{ color: "var(--u-ink)" }}>
+                Level {lv.n}
+              </h2>
+              <div>
+                {lv.items.map((it, k) => (
+                  <div key={it.lesson.id}>
+                    {k > 0 && <div className="v3-spine" aria-hidden />}
+                    <LessonCard unit={unit} item={it} state={stateOf(it)} />
                   </div>
-                </div>
-              );
-              return open ? (
-                <Link key={l.id} href={`/lesson/${l.id}`} className="card course-card relative block p-5">
-                  {inner}
-                  {l.id === currentId && (
-                    <span className="t-label course-badge absolute top-3 right-3 rounded-full px-3" data-badge="Next" style={{ fontWeight: 700 }}>
-                      Next
-                    </span>
-                  )}
-                </Link>
-              ) : (
-                <div key={l.id} className="card block p-5 bg-surface-2">
-                  {inner}
-                </div>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       </div>
-    </div>
     </div>
   );
 }

@@ -215,6 +215,8 @@ Top to bottom:
 1. The stat bar.
 2. Unit title (`hero`, centred, 32 px below the bar).
 3. `LEVEL n` eyebrow in the unit `ink`, centred, 24 px below. In STRATA a level is a group of 4–6 lessons inside a unit.
+   - **Levels are derived, never stored** (`src/lib/levels.ts`, 15.5-v3c): a unit with n lessons gets ceil(n / 6) levels, as even as possible, bigger first (7 → 4 + 3). The boss exam does not count toward the size and closes the last level. **Exception (Bink, 2026-11-28):** U0 has 1 lesson and stays one short level. 4 + 3 for the 7-lesson units (U3, U7) was also Bink's choice.
+   - Home's LEVEL n is the level of the unit's current lesson (the last level once the unit is complete).
 4. A unit illustration carousel:
    - a 200×200 illustration, with neighbours peeking at ±70 % off-screen;
    - 5 page dots (8 px, active = unit `ink`);
@@ -236,7 +238,7 @@ Top to bottom:
   - the unit illustration, 120 px, on the right.
 - **Lesson cards** (§4 card), joined by the spine:
   - a 96 px illustration on the left;
-  - an eyebrow ("LESSON 4.2 · ~6 MIN") and a `card-title`;
+  - an eyebrow ("LESSON 4.2 · ~6 MIN") and a `card-title`. Time = the lesson's screens × 40 s, rounded to whole minutes (`lessonMinutes`): a concept flow counts its screens + summary, a numeric stage its steps, a crisis its phases, a swipe its cards, any other stage 1;
   - a 6 px progress bar (`success` progress fill, §2.3) when started.
 
 ### 5.4 Answer tiles and word-bank chips (`.tile-3d`)

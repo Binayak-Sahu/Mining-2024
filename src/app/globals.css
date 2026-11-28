@@ -1320,3 +1320,137 @@ svg[role="img"] {
   border-radius: 9999px;
   background: var(--u-ink);
 }
+
+/* ---------- v3c Home (§5.2) and Path (§5.3) ---------- */
+.t-hero {
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+.t-card-title {
+  font-size: 19px;
+  line-height: 25px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+/* §4 pressable card: translateY(4px), ledge 6 → 2 px; the margin keeps the outer box height so nothing below moves. */
+.press-card {
+  transition:
+    transform 120ms ease-out,
+    border-bottom-width 120ms ease-out,
+    margin-bottom 120ms ease-out;
+}
+a.press-card:active {
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+  margin-bottom: 4px;
+}
+.press-card:focus-visible,
+.unit-dot:focus-visible,
+.course-tab:focus-visible,
+.carousel-slot:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--u-ink) 60%, transparent);
+  outline-offset: 3px;
+}
+.press-card[data-state="locked"] {
+  background: var(--surface-2);
+}
+/* §4 spine between stacked Path cards: 4 px --edge, 24 px gap. */
+.v3-spine {
+  width: 4px;
+  height: 24px;
+  margin: 0 auto;
+  background: var(--edge);
+}
+/* §5.5 lesson-number tile (until lessons have art): unit ink on the tab tint. */
+.lesson-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 18px;
+  background: var(--u-tint);
+  border: 2px solid var(--edge);
+  border-bottom-width: 4px;
+  color: var(--u-ink);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.lesson-tile[data-state="locked"] {
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+.lesson-tile[data-state="done"] {
+  background: var(--success-tint, var(--u-tint));
+  color: var(--success-tint-text, var(--u-ink));
+}
+/* §5.2 pedestal: 64 px, --surface disc on a grey ring; current = 4 px unit-ink ring. */
+.pedestal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+}
+.pedestal > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 9999px;
+  background: var(--surface);
+  border-bottom: 4px solid var(--edge);
+}
+.pedestal[data-state="current"] {
+  background: var(--u-ink);
+}
+.pedestal[data-state="current"] > span {
+  width: 56px;
+  height: 56px;
+}
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+}
+.status-dot[data-state="done"] {
+  background: var(--success);
+  color: #141414;
+}
+.v3-bar {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.v3-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--progress);
+}
+.unit-scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.unit-scroller::-webkit-scrollbar {
+  display: none;
+}
+.unit-scroller > * {
+  flex: none;
+}
