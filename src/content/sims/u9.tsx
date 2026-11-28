@@ -188,7 +188,7 @@ export const cutoffSim: SimDef = {
   ],
   caption: "Lognormal grade distribution; each tonne above cut-off is mined and processed. Lane's theory raises the cut-off above break-even when the mill (or mine/market) is the bottleneck and time value matters.",
   handles: [{ key: "c", axis: "x", at: (p) => [40 + (p.c / 5) * 320, 204], toValue: (x) => ((x - 40) / 320) * 5, color: "#0F172A" }],
-  v3: { viewH: 300 },
+  v3: { viewH: 310 },
   render: (p, o) => {
     const sx = v3scale(0, 5, 40, 360);
     const sy = v3scale(0, 10, 204, 14);
