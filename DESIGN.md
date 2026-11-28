@@ -340,7 +340,33 @@ The Brilliant diagram language:
 - **⋯ menu:** Notes, Inspector and Sources live in a `MoreHorizontal` button left of the hearts pill, opening the existing sheets. The Notes badge is an 8 px unit-`ink` dot on the ⋯ icon.
 - **Inspector mode** keeps its banner: an `energy`-tint strip under the top bar, `label` text.
 
-### 5.8 Sheets, popovers, feedback (kept from v2)
+### 5.8 Unit gameboard (v3f, 2026-11-28)
+One unit's lessons as a vertical board of pedestals (route `/unit/<id>/board/`). It opens from the Path header (title or illustration), from tapping the already-selected unit tab on Path, and from the unit title / LEVEL n on Home.
+- **Top bar** (replaces the §5.1b bar on this route; height 56 + safe area, `--bg`, no border, sticky): a back arrow (lucide `ArrowLeft` 24 px, 44 px target, `--text-2`) and the streak pill on the left, the XP pill on the right, the unit illustration at 48 px in the exact centre. The chrome stays neutral (§5.1b); the illustration is the only colour in it.
+- **Level header card**, one per level: a §4 card with a 3 px border and a 6 px ledge in the unit `face` / `ledge`. The `LEVEL n` eyebrow is in the unit hue: `ink`, not `face`, because `face` as text fails 4.5:1 for yellow, orange and teal in light (§2.2b). The level title (`card-title`, `--text`) is centred and reads "Lessons 1.1–1.6" (the level's first and last lesson numbers; no new content field). The card is `position: sticky` directly under the top bar inside its level's section, so it sticks only while that level is on screen (pure CSS, no scroll listener).
+- **Nodes:** a vertical zigzag. x offsets from the column centre cycle −96, −32, +96, +32 px (one cycle across the whole board, not per level), 150 px apart. The label sits on the open side (right of a node left of centre, left of a node right of centre), `card-title`, clamped to 3 lines; locked labels use `--text-2`.
+- **Pedestal** (`Pedestal`, an SVG, 120×84): an ellipse top face (rx 54, ry 24) over a side band 30 px deep.
+
+| State | Top face | Side band | Mark |
+|---|---|---|---|
+| Locked | `#9A9A9A` | `#5E5E5E` | lucide `Lock` in `#3A3A3A` on the top face |
+| Open (free roam, unlocked but not current) | `#FFFFFF`, 2 px `--edge-strong` rim | unit `mid` | none |
+| Current | `#FFFFFF` | unit `mid` | 6 px unit-`face` ring round the top face; the unit illustration (64 px) floats 56 px above the top face over a soft unit-`face` glow (a radial ellipse, 35 % → 0, no blur filter), bobbing 6 px over 2 s ease-in-out (off under reduced motion) |
+| Done | unit `face` | unit `deep` | white lucide `Check` on the top face |
+
+  The pedestal greys and white are fixed in both themes, like illustration greys (§5.5).
+- **Boss exam:** the last node of the last level, a trophy token (a 56 px `energy` disc with an `energy` ledge and a lucide `Trophy` in `energy` text-on; locked: `--surface-2` disc, `--edge-strong` ledge, `--text-3` trophy) floating over a pedestal in the boss's state. When the boss is current, the token takes the place of the floating illustration and bobs.
+- **Warmup node** after every level: a pedestal with a lucide `Dumbbell`. Locked until every lesson of its level is done (free roam: always open); open = Open pedestal; done for today = Done pedestal. It opens `/warmup` (the global review; no per-level warmup is stored).
+- **Bottom glow (dark only):** a `position: fixed` layer behind the content, `linear-gradient(to top, <family glow> 0, transparent 45vh)`. It never scrolls or repaints; it is the board's only gradient besides the current-node glow.
+- **Node sheet:** tapping a node opens a bottom sheet (§5.9 sheet face, Radix Dialog, y 100 % → 0 with `feedbackSheet`):
+  - an eyebrow ("6 STAGES · ~8 MIN"; boss "BOSS EXAM · …"; warmup "SPACED REVIEW · n DUE");
+  - the lesson title in `title`;
+  - one full-width button: `unit` "Start" (current or open), `ink` "Review" (done), or for a locked node a disabled pill "Finish Lesson n.m first" (the lesson that unlocks it; warmup "Finish Level n first"). Inspector Mode keeps Path's rule: a locked node offers `ink` "Inspect (not saved)".
+- **Scroll-to-current:** a 56 px round ghost button (§5.1 `ghost`, lucide `ArrowUp`/`ArrowDown` toward the node) fixed bottom-left, 16 px from the edge and above the tab bar, shown only while the current node is off screen (IntersectionObserver). On load the board scrolls the current node to the centre once.
+- **Levels** are the derived split of §5.2 (`src/lib/levels.ts`); node states use the same `done` / `lessonUnlocked` / `bossUnlocked` / `currentLessonId` rules as Path. No new store.
+- **Check:** for a saved mid-progress state, every node's done / current / open / locked state matches the Path card for the same lesson.
+
+### 5.9 Sheets, popovers, feedback (kept from v2)
 - **Sheets and popovers:**
   - face `--surface-2`, 2 px `--edge` border;
   - radius 28 top on sheets, 28 on popovers;
@@ -351,7 +377,7 @@ The Brilliant diagram language:
   - Row 2: a full-width button (`success` "Continue" / `ink` "Try again").
 - **No layout shift:** the scroll area always reserves bottom padding equal to the tallest footer state (footer + sheet), measured once.
 
-### 5.9 Path nodes (kept from v2 for the unit map; colours from v3)
+### 5.10 Path nodes (v2 node circles; superseded on the unit board by §5.8 pedestals)
 - **Node:** a 72 px circle face with a 10 px rim below it (the ledge).
 - **States:**
 
@@ -366,28 +392,28 @@ The Brilliant diagram language:
   - Boss: `energy` face and ledge, lucide `Crown`.
   - Perfect lesson: an `energy` star badge.
   - Inspector master node: locked-style, with a "Master" pill in the unit tab tint.
-- **Popover:** tap a node to open a popover card (§5.8) with the lesson title and the unit "Start" (or ghost "Review").
+- **Popover:** tap a node to open a popover card (§5.9) with the lesson title and the unit "Start" (or ghost "Review").
 - The Home level card uses the v3 pedestal rows (§5.2) instead.
 
-### 5.10 Bottom tab bar
+### 5.11 Bottom tab bar
 - Height 64 + safe area, bg `--bg`, top border 1 px `--edge`, no blur.
 - Six tabs stay (Path, Warmup, Exam, Lab, Tools, Codex).
 - Each tab: a lucide outline icon (24 px) over its `tab` label.
 - Active: the icon sits in a 64×40 `--surface-2` pill (v2 56×32), with icon and label in `--text`, label 800.
 - Inactive: `--text-3`.
 
-### 5.11 Stage-kind label (kept from v2)
+### 5.12 Stage-kind label (kept from v2)
 - Stage types are not colour-coded.
 - Each shows an `eyebrow` in `--text-3` with a 16 px lucide icon before it.
 - Icons: Field theory `BookOpen`, Intuition lab `FlaskConical`, Equation forge `Sigma`, Workbench `Wrench`, Crisis `Siren`, Boss `Crown`.
 
-### 5.12 Instrument panels follow the theme (kept from v2)
+### 5.13 Instrument panels follow the theme (kept from v2)
 - Tools calculators, the sim telemetry strip and the Exam hero use `--surface`, card border and `readout` type.
 
-### 5.13 Backup & restore (v3)
+### 5.14 Backup & restore (v3)
 These live in the avatar menu as "Backup & restore" rows (Export, Restore, Repair app). Never put them as a link in a screen.
 
-### 5.14 Course / unit header (v2 §5.10, re-coloured)
+### 5.15 Course / unit header (v2 §5.10, re-coloured)
 - Unit pages use the §5.3 header (glow, eyebrow, `hero`, subtitle, illustration).
 - The lesson and question counts stay computed from content by the one `src/lib` helper: lucide `BookOpen` + "N lessons", lucide `CircleHelp` + "N questions".
 
@@ -443,8 +469,8 @@ Already in the app and still approved: `framer-motion`, `@radix-ui/react-dialog`
 - **Colour.**
   - No grey-only screens: every Path/Home screen shows its unit hue in at least the eyebrow, the button and the glow.
   - No hue-tinted neutrals.
-  - No gradients on surfaces, except the dark page glow (§4).
-  - No glows, card drop shadows, glassmorphism or backdrop blur.
+  - No gradients on surfaces, except the dark page glow (§4) and the gameboard's bottom glow and current-node glow (§5.8).
+  - No glows, card drop shadows, glassmorphism or backdrop blur (the two §5.8 board glows are the only exception).
 - **Type.** No monospace in chrome. No text below 14 px (tabs 13).
 - **Chrome.** No text links in app chrome (top bar, tab bar, menus, heroes, cards): actions are buttons or menu rows. Inline links belong only inside lesson prose and Sources.
 - **Sims and illustrations.**
