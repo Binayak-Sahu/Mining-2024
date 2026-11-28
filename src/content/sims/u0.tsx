@@ -57,7 +57,7 @@ export const overburden: SimDef = {
           <rect x={OB.x0} y={y - 8} width={OB.x1 - OB.x0} height={16} fill={GREYS.deep} />
         </g>
         <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={h} rx={8} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <line x1={OB.x0 - 8} x2={OB.x1 + 8} y1={OB.top} y2={OB.top} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <line x1={OB.x0 - 8} x2={OB.x1 + 8} y1={OB.top} y2={OB.top} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
         <T x={lx} y={OB.top + 18}>
           Surface
         </T>

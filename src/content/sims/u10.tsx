@@ -116,7 +116,7 @@ function GassyScene({ p, deg, t }: { p: Record<string, number>; deg: number; t: 
       {bands.map((b) => (
         <g key={b.l}>
           <rect x={gxe(b.a)} y={28} width={gxe(b.b) - gxe(b.a)} height={40} fill={b.fill} />
-          <T x={(gxe(b.a) + gxe(b.b)) / 2} y={54} anchor="middle" fill={b.ink} weight={800}>
+          <T x={b.d === 1 ? gxe(b.b) - 10 : (gxe(b.a) + gxe(b.b)) / 2} y={54} anchor={b.d === 1 ? "end" : "middle"} fill={b.ink} weight={800}>
             {b.l}
           </T>
         </g>
@@ -129,10 +129,10 @@ function GassyScene({ p, deg, t }: { p: Record<string, number>; deg: number; t: 
       <T x={90} y={92} anchor="middle">1</T>
       <T x={250} y={92} anchor="middle">10</T>
       <T x={370} y={92} anchor="end">20 m³/t</T>
-      <line x1={gxe(p.em)} x2={gxe(p.em)} y1={28} y2={68} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+      <line x1={gxe(p.em)} x2={gxe(p.em)} y1={28} y2={68} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
       <rect x={30} y={110} width={340} height={16} rx={8} fill={GREYS.light} />
       <rect x={30} y={110} width={Math.max(clamp(p.gb, 0, 1) * 340, 0)} height={16} rx={8} fill={over ? U.deep : U.mid} />
-      <line x1={64} x2={64} y1={104} y2={132} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+      <line x1={64} x2={64} y1={104} y2={132} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
       <circle cx={gx} cy={118} r={5} fill={INK} />
       <T x={64} y={154} anchor="middle">0.1 %</T>
       <T x={370} y={154} anchor="end">General-body gas</T>

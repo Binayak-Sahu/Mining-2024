@@ -3,7 +3,7 @@ import { C, Txt, Arrow, Plot, sample, clamp, Meter } from "@/components/sim/svg"
 import { MAT } from "@/components/sim/defs";
 import { OK_LIGHT, BAD_PALE, LBL, Dot, curve, scale } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
-import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, hue } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, hue } from "@/components/sim/v3";
 
 /* ---------------- Drilling methods ---------------- */
 
@@ -84,7 +84,7 @@ export const drillSim: SimDef = {
             <rect key={i} x={90} y={holeTop + (i + 1) * rodLen - 3} width={10} height={6} rx={1.5} fill={ORG.mid} />
           ))}
         {p.m === 0 && (
-          <T x={126} y={52}>
+          <T x={136} y={52}>
             Joints
           </T>
         )}
@@ -110,7 +110,7 @@ export const drillSim: SimDef = {
           {`${p.depth} m`}
         </T>
         {bars.map((b, i) => {
-          const y0 = 48 + i * 46;
+          const y0 = 44 + i * 42;
           return (
             <g key={b.k}>
               <T x={196} y={y0 - 6} fill={i === p.m ? INK : INK2} weight={i === p.m ? 800 : 600}>
@@ -123,7 +123,7 @@ export const drillSim: SimDef = {
         <T x={376} y={42} anchor="end">
           m/min
         </T>
-        <T x={196} y={184}>
+        <T x={196} y={176}>
           Energy at bit
         </T>
         <rect x={196} y={190} width={180} height={20} rx={4} style={{ fill: GREYS.light }} />
@@ -182,7 +182,6 @@ export const explosiveSim: SimDef = {
     const HW = 208;
     const front = o.vod > 0 ? HX0 + ((t * 160) % HW) : HX0;
     const fumeCol = o.fume === 2 ? AC.mid : o.fume === 1 ? GREYS.deep : GREYS.light;
-    const fumeTxt = o.fume === 1 ? ON_DEEP : ON_LIGHT;
     const mx = gx(o.ob);
     const rock = ROCKS[p.rock];
     return (
@@ -213,11 +212,8 @@ export const explosiveSim: SimDef = {
           return <circle key={k} cx={323 + Math.sin(ph * 6 + k) * 8} cy={122 - ph * 12} r={5 + ph * 8} fill={fumeCol} opacity={0.4 * (1 - ph)} />;
         })}
         <ellipse cx={323} cy={124} rx={34} ry={20} fill={fumeCol} />
-        <T x={323} y={130} anchor="middle" weight={800} fill={fumeTxt}>
-          {o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}
-        </T>
         <T x={323} y={166} anchor="middle">
-          Fumes
+          {`Fumes: ${o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}`}
         </T>
         {/* impedance: explosive vs rock, rock = reference length */}
         <rect x={40} y={180} width={210} height={20} fill={GREYS.light} />

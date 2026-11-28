@@ -295,6 +295,10 @@ export const fanSim: SimDef = {
     const stall = !!o.stall;
     const R = 376;
     const TOP = 26;
+    // Stall-zone label: low in the zone (clear of the lesson pin at the top-left) when the curve leaves room, else near the top.
+    let lowY = 0;
+    for (let q = 0; q <= o.qPeak; q += 2) lowY = Math.max(lowY, sy(Math.max(0, fanP(q, p.N))));
+    const stallLow = lowY < FN.y1 - 8 - 26 ? FN.y1 - 8 : TOP + 46;
     return (
       <g>
         <clipPath id="u7-fan-plot">
@@ -303,7 +307,7 @@ export const fanSim: SimDef = {
         {/* stall zone: neutral band until the duty point is actually in it */}
         <rect x={FN.x0} y={TOP} width={sx(o.qPeak) - FN.x0} height={FN.y1 - TOP} data-state={stall ? "unsafe" : undefined} style={{ fill: stall ? BAD : INK }} fillOpacity={stall ? 0.2 : 0.08} />
         <g data-state={stall ? "unsafe" : undefined}>
-          <T x={sx(4)} y={TOP + 46} fill={stall ? BAD_TEXT : INK2} weight={700}>
+          <T x={sx(4)} y={stallLow} fill={stall ? BAD_TEXT : INK2} weight={700}>
             Stall zone
           </T>
         </g>
@@ -697,7 +701,7 @@ export const pumpSim: SimDef = {
         </T>
         <rect x={338} y={62} width={36} height={108} rx={4} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
         <rect x={342} y={ny(o.npsha)} width={28} height={170 - ny(o.npsha) - 4} rx={2} data-state={state} style={{ fill: cav ? BAD_LIGHT : OK_LIGHT }} />
-        <line x1={332} y1={ny(p.npshr)} x2={376} y2={ny(p.npshr)} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <line x1={332} y1={ny(p.npshr)} x2={376} y2={ny(p.npshr)} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
         <T x={326} y={ny(p.npshr) + 6} anchor="end" fill={INK}>
           NPSHr
         </T>
