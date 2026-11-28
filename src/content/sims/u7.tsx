@@ -5,7 +5,7 @@ import { SvgTex } from "@/components/sim/Tex";
 /** §5.6 frames (v3e) = the legacy plot frames, so lesson hotspots and grips keep their coordinates. */
 const CW = { x0: 40, x1: 376, y0: 14, y1: 204, sx: scale(0, 30, 40, 376), sy: scale(22, 10, 14, 204) };
 const FN = { x0: 44, x1: 380, y0: 14, y1: 204, sx: scale(0, 160, 44, 380), sy: scale(0, 3500, 204, 14) };
-const PS = { base: 186, ax: 190, ty: (t: number) => 186 - clamp(((t - 15) / 30) * 150, 5, 150) };
+const PS = { base: 198, ax: 190, ty: (t: number) => 198 - clamp(((t - 15) / 30) * 128, 5, 128) };
 /** Second hue family of the gas-ratio scale (heating classes). */
 const ORANGE = hue("orange");
 
@@ -360,24 +360,24 @@ export const psychroSim: SimDef = {
     { key: "status", label: "Statutory status (CMR)", format: (v) => ["Compliant", "Wet bulb > 30.5 °C: needs ≥ 1 m/s air", "Wet bulb > 33.5 °C: no work permitted"][v], tone: (v) => (["ok", "warn", "crit"] as const)[v] },
   ],
   caption: "Sweat evaporation (the body's main cooling) depends on wet-bulb temperature and air speed — dry-bulb alone misleads.",
-  // §5.6 redraw (v3e): thermometers (x 40 and 100) and the air panel keep their legacy places (lesson hotspots).
-  v3: { viewH: 240 },
+  // §5.6d v3.2: thermometers (x 40 and 100) and the airway keep their legacy places (lesson hotspots).
+  v3: { viewH: 280 },
   handles: [
-    { key: "Td", axis: "y", at: (p) => [72, PS.ty(p.Td)], toValue: (y) => 15 + ((PS.base - y) / 150) * 30 },
-    { key: "v", axis: "x", at: (p) => [PS.ax + clamp(p.v * 45, 10, 180), 126], toValue: (x) => (x - PS.ax) / 45 },
+    { key: "Td", axis: "y", at: (p) => [72, PS.ty(p.Td)], toValue: (y) => 15 + ((PS.base - y) / 128) * 30 },
+    { key: "v", axis: "x", at: (p) => [PS.ax + clamp(p.v * 45, 10, 180), 100], toValue: (x) => (x - PS.ax) / 45 },
   ],
   render: (p, o) => {
     const th = (t: number, x: number, label: string, col: string) => {
       const y = PS.ty(t);
       return (
         <g>
-          <rect x={x} y={30} width={18} height={162} rx={9} fill={GREYS.light} />
-          <rect x={x + 4} y={y} width={10} height={PS.base - y + 6} rx={5} style={{ fill: col }} />
-          <circle cx={x + 9} cy={200} r={13} style={{ fill: col }} />
-          <T x={x + 9} y={234} anchor="middle" fill={INK} weight={700}>
+          <rect x={x} y={54} width={18} height={150} rx={9} fill={GREYS.light} />
+          <rect x={x + 4} y={y} width={10} height={PS.base - y + 10} rx={5} style={{ fill: col }} />
+          <circle cx={x + 9} cy={214} r={12} style={{ fill: col }} />
+          <T x={x + 9} y={248} anchor="middle" fill={INK} weight={700}>
             {label}
           </T>
-          <T x={x + 9} y={20} anchor="middle" fill={INK} weight={700}>
+          <T x={x + 9} y={44} anchor="middle" fill={INK} weight={700}>
             {`${num(t, 1)}°`}
           </T>
         </g>
@@ -386,26 +386,43 @@ export const psychroSim: SimDef = {
     const y305 = PS.ty(30.5);
     const y335 = PS.ty(33.5);
     const len = clamp(p.v * 45, 10, 180);
-    const status = ["Compliant", "Increase air velocity", "Stop work"][o.status];
+    const status = ["Within limits", "Raise air speed", "Stop work"][o.status];
+    const pillState = ["safe", "unmet", "unsafe"][o.status];
+    const pillFill = [OK_LIGHT, BAD_PALE, BAD_LIGHT][o.status];
     return (
       <g>
-        {/* statutory wet-bulb lines */}
-        <line x1={92} x2={134} y1={y305} y2={y305} style={{ stroke: INK }} strokeWidth={2} strokeDasharray="5 4" />
-        <line x1={92} x2={134} y1={y335} y2={y335} style={{ stroke: BAD }} strokeWidth={2} />
-        <T x={138} y={y305 + 16}>30.5</T>
-        <T x={138} y={y335 + 13} fill={BAD_TEXT}>33.5</T>
-        {th(p.Td, 40, "Dry", U.deep)}
-        {th(o.tw, 100, "Wet", U.mid)}
-        <T x={PS.ax} y={46} fill={INK} weight={700}>
+        <defs>
+          <clipPath id="u7-psychro-clip">
+            <rect x={0} y={0} width={400} height={280} rx={12} />
+          </clipPath>
+        </defs>
+        {/* host rock around the airway (scene fill, clipped to the stage) */}
+        <g clipPath="url(#u7-psychro-clip)">
+          <rect x={178} y={0} width={222} height={280} fill={GREYS.light} />
+        </g>
+        <rect x={186} y={46} width={190} height={84} fill="var(--surface)" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={196} y={72} fill={INK} weight={700}>
           Air velocity
         </T>
         {[0, 1, 2].map((i) => (
-          <Arrow key={i} x1={PS.ax} y1={66 + i * 16} x2={PS.ax + len} y2={66 + i * 16} color={p.v >= 1 ? OK : INK3} width={2} head={10} />
+          <g key={i} data-state={p.v >= 1 ? "safe" : undefined}>
+            <Arrow x1={PS.ax} y1={86 + i * 14} x2={PS.ax + len} y2={86 + i * 14} color={p.v >= 1 ? OK : INK3} width={2} head={10} />
+          </g>
         ))}
-        <T x={PS.ax} y={170}>{`v ${num(p.v, 1, "m/s")} · RH ${num(o.rh, 0, "%")}`}</T>
-        <T x={PS.ax} y={204} fill={o.status === 0 ? OK_TEXT : o.status === 2 ? BAD_TEXT : INK} weight={800} size={20}>
+        <rect x={186} y={150} width={190} height={42} rx={12} fill={pillFill} data-state={pillState} />
+        <T x={281} y={177} anchor="middle" fill={ON_LIGHT} weight={800}>
           {status}
         </T>
+        <T x={196} y={226} fill={ON_LIGHT}>
+          Rock
+        </T>
+        {/* statutory wet-bulb limits */}
+        <line x1={92} x2={122} y1={y305} y2={y305} style={{ stroke: INK }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <line x1={92} x2={122} y1={y335} y2={y335} style={{ stroke: INK }} strokeWidth={1.5} />
+        <T x={126} y={y305 + 18}>30.5</T>
+        <T x={126} y={y335 - 5}>33.5</T>
+        {th(p.Td, 40, "Dry", U.deep)}
+        {th(o.tw, 100, "Wet", U.mid)}
       </g>
     );
   },

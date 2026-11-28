@@ -184,7 +184,7 @@ export const longwallSim: SimDef = {
         <polygon points={pts([[24, base], ...curve, [376, base]])} style={{ fill: U.light }} />
         <polyline points={pts(curve)} fill="none" style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinejoin="round" />
         <line x1={24} x2={376} y1={base - 14} y2={base - 14} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="4 5" />
-        <SvgTex x={376} y={base - 20} tex="\sigma_v\ \text{virgin}" size={LBL} anchor="end" color="var(--text-2)" />
+        <SvgTex x={376} y={base - 24} tex="\sigma_v\ \text{virgin}" size={LBL} anchor="end" color="var(--text-2)" />
         <T x={faceX - 12} y={44} anchor="end">
           Front abutment
         </T>
@@ -268,7 +268,7 @@ export const stopeSim: SimDef = {
     const vein = pts([[xAt(top) - half, top], [xAt(top) + half, top], [xAt(bot) + half, bot], [xAt(bot) - half, bot]]);
     const slough = pts([[xAt(top) - half - ov * 0.7, top + 16], [xAt(top) - half, top + 16], [xAt(bot) - half, bot - 16], [xAt(bot) - half - ov * 0.7, bot - 16]]);
     const fw = pts([[xAt(top) + half, top + 16], [xAt(top) + half + ov * 0.3, top + 16], [xAt(bot) + half + ov * 0.3, bot - 16], [xAt(bot) + half, bot - 16]]);
-    const hwFits = xAt(top) - half - ov * 0.7 - 12 - textW("Hanging wall") > 24;
+    const hwFits = xAt(top) - half - ov * 0.7 - 12 - textW("Hanging wall") > 28;
     const yL = 146;
     const slL = xAt(yL) - half - ov * 0.7;
     const barX = 262;
@@ -285,18 +285,18 @@ export const stopeSim: SimDef = {
         </g>
         <polygon points={slough} fill={GREYS.mid} />
         <polygon points={fw} fill={GREYS.mid} />
-        <polygon points={vein} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
-        <T x={24} y={hwFits ? 50 : 224} fill={INK}>
+        <polygon points={vein} style={{ fill: U.mid, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <T x={28} y={hwFits ? 50 : 222} fill={ON_LIGHT}>
           Hanging wall
         </T>
-        <T x={266} y={50} fill={INK}>
+        <T x={266} y={50} fill={ON_LIGHT}>
           Footwall
         </T>
-        <line x1={slL - 12} y1={yL - 6} x2={slL + Math.min(4, ov * 0.35)} y2={yL - 6} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
-        <T x={slL - 16} y={yL} anchor="end">
+        <line x1={slL - 12} y1={yL - 6} x2={slL + Math.min(4, ov * 0.35)} y2={yL - 6} style={{ stroke: GREYS.deep }} strokeWidth={1.5} strokeLinecap="round" />
+        <T x={slL - 16} y={yL} anchor="end" fill={ON_LIGHT}>
           ELOS
         </T>
-        <T x={barX - 8} y={217} anchor="end">
+        <T x={barX - 8} y={217} anchor="end" fill={ON_LIGHT}>
           Mill feed
         </T>
         <g data-state={st}>
