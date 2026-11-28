@@ -1480,7 +1480,7 @@ a.press-card:active {
   grid-area: 1 / 1;
   min-width: 0;
   opacity: 0;
-  transition: opacity 160ms ease-out;
+  transition: opacity 120ms ease-out;
 }
 .xfade-stack > [data-on] {
   opacity: 1;
@@ -1490,7 +1490,7 @@ a.press-card:active {
     opacity: 0;
   }
 }
-/* Glow = the stacked layers of the first stack, behind everything; they crossfade over 240 ms. */
+/* Glow = the stacked layers of the first stack, behind everything; they crossfade over 200 ms. */
 .home > .xfade-stack:first-child {
   position: absolute;
   inset: 0 0 auto 0;
@@ -1499,7 +1499,7 @@ a.press-card:active {
   pointer-events: none;
 }
 .home > .xfade-stack:first-child > * {
-  transition-duration: 240ms;
+  transition-duration: 200ms;
 }
 .home-glow {
   height: 280px;

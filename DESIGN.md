@@ -227,6 +227,7 @@ Top to bottom:
    - the title is `card-title` when current, `secondary` when locked;
    - a 32 px grey status dot sits on the right.
 6. The full-width Start button in the unit `face`.
+7. Under the card, one row of two ghost pills (`btn-sm`, same height, so nothing moves): "Board" (lucide `Map`, opens §5.8) and "All lessons" (opens §5.3).
 
 **No mascot.** The current node shows the unit icon on its pedestal instead of Koji.
 
@@ -238,8 +239,8 @@ Top to bottom:
    - Every image has a fixed width and height. The illustration is a square that flexes 140–200 px with the viewport height (`--home-art`), so at 390×844 the Start button is fully visible above the tab bar without scrolling. It is set by the viewport, never animated.
 3. **Carousel.**
    - Native scroll-snap (`x mandatory`, `scroll-snap-stop: always`), so the art tracks the finger. Only the illustration track moves.
-   - On settle (`scrollend`, or 120 ms after the last scroll event), the title, LEVEL, level card and "All lessons" crossfade: opacity only, 160 ms.
-   - The glow is two stacked layers crossfading over 240 ms.
+   - **Live, not on settle (v3f.1, Bink 2026-11-28: waiting for the snap felt slow on Android):** the shown unit is the slot nearest the track centre, read on every scroll frame (rAF). As soon as the track passes halfway to a neighbour, the title, LEVEL, level card and the button row crossfade: opacity only, 120 ms. `scrollend` (or 120 ms after the last scroll event) only confirms the final slot.
+   - The glow is two stacked layers crossfading over 200 ms.
    - Animate only `transform` and `opacity`, never size or position. Page dots are keyed by slot, so no dot moves; only the active colour changes.
    - Reduced motion: dot and neighbour taps jump the track instantly; the text still crossfades.
    - Neighbour units (±1) are mounted ahead of time (opacity 0, inert) and every illustration loads eagerly, so nothing loads after a swipe.
@@ -341,7 +342,7 @@ The Brilliant diagram language:
 - **Inspector mode** keeps its banner: an `energy`-tint strip under the top bar, `label` text.
 
 ### 5.8 Unit gameboard (v3f, 2026-11-28)
-One unit's lessons as a vertical board of pedestals (route `/unit/<id>/board/`). It opens from the Path header (title or illustration), from tapping the already-selected unit tab on Path, and from the unit title / LEVEL n on Home.
+One unit's lessons as a vertical board of pedestals (route `/unit/<id>/board/`). It opens from a visible ghost pill "Board" (lucide `Map`) on Home (next to "All lessons") and in the Path header (under the counts), and also from the Path title or illustration, tapping the already-selected unit tab, and the Home title / LEVEL n (v3f.1: the hidden taps alone were not discoverable).
 - **Top bar** (replaces the §5.1b bar on this route; height 56 + safe area, `--bg`, no border, sticky): a back arrow (lucide `ArrowLeft` 24 px, 44 px target, `--text-2`) and the streak pill on the left, the XP pill on the right, the unit illustration at 48 px in the exact centre. The chrome stays neutral (§5.1b); the illustration is the only colour in it.
 - **Level header card**, one per level: a §4 card with a 3 px border and a 6 px ledge in the unit `face` / `ledge`. The `LEVEL n` eyebrow is in the unit hue: `ink`, not `face`, because `face` as text fails 4.5:1 for yellow, orange and teal in light (§2.2b). The level title (`card-title`, `--text`) is centred and reads "Lessons 1.1–1.6" (the level's first and last lesson numbers; no new content field). The card is `position: sticky` directly under the top bar inside its level's section, so it sticks only while that level is on screen (pure CSS, no scroll listener).
 - **Nodes:** a vertical zigzag. x offsets from the column centre cycle −96, −32, +96, +32 px (one cycle across the whole board, not per level), 150 px apart. The label sits on the open side (right of a node left of centre, left of a node right of centre), `card-title`, clamped to 4 lines and centred 6 px above the pedestal middle; locked labels use `--text-2`.
@@ -433,7 +434,7 @@ export const fadeQuick     = { duration: 0.16, ease: "easeOut" } as const;      
 - **Screen change:** the outgoing screen moves x 0 → −24 and fades out. The incoming one moves x 24 → 0 and fades in, with `stageSlide`.
 - **Feedback sheet:** y 100 % → 0 with `feedbackSheet`. A correct answer also scales the verdict word 0.9 → 1.
 - **Word chip to blank:** a shared `layoutId` fly with `tactilePress`.
-- **Carousel:** native scroll-snap follows the finger; on settle the text crossfades (opacity, 160 ms) and the glow crossfades (240 ms). See §5.2 rules.
+- **Carousel:** native scroll-snap follows the finger; the text crossfades (opacity, 120 ms) the moment the nearest unit changes, and the glow crossfades (200 ms). See §5.2 rules.
 - **Reduced motion:** `MotionConfig reducedMotion="user"` already exists. Under it, every transition becomes `fadeQuick`, the node pulse stops and confetti stays off.
 
 ---

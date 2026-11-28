@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { ArrowLeft, BookOpen, Check, CircleHelp, Crown, Lock } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, CircleHelp, Crown, Lock, Map as MapIcon } from "lucide-react";
 import { UNITS, getUnit } from "@/content";
 import { useStrata } from "@/lib/store";
 import { bossUnlocked, lessonUnlocked, unitProgress } from "@/lib/progress";
@@ -170,6 +170,9 @@ export function UnitMap({ unitId }: { unitId: string }) {
                 {NNBSP}questions
               </span>
             </p>
+            <Link href={`/unit/${unit.id}/board`} className="btn-3d tone-ghost btn-sm px-5 mt-4 inline-flex items-center gap-2" data-testid="path-board">
+              <MapIcon size={18} aria-hidden /> Board
+            </Link>
             {progress > 0 && (
               <div className="mt-3 max-w-[240px]">
                 <ProgressBar f={progress} label={`Unit ${unit.n} progress`} />

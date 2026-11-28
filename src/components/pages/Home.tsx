@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { Check, ChevronRight, Dumbbell, BookMarked, Flame, GraduationCap, Lock, Play, Zap } from "lucide-react";
+import { Check, ChevronRight, Dumbbell, BookMarked, Flame, GraduationCap, Lock, Map as MapIcon, Play, Zap } from "lucide-react";
 import { UNITS, allCodex } from "@/content";
 import { useStrata, liveStreak, type LessonRecord } from "@/lib/store";
 import { rankFor, RANKS } from "@/lib/ranks";
@@ -108,7 +108,7 @@ function Layers({ keep, index, className, children }: { keep: number[]; index: n
 /**
  * §5.2 carousel: a native scroll-snap track (x mandatory), so the illustrations follow the finger and the browser does
  * the snap. Only the track moves. Slot pitch = 50 % + 40 px of the column, so a neighbour peeks in ~30 % from each edge.
- * The settled slot is read on scrollend (or 120 ms after the last scroll event where scrollend is missing).
+ * The shown slot is the nearest one, read every scroll frame (v3f.1); scrollend (or a 120 ms timeout) confirms it.
  */
 function Carousel({ index, onSettle, onPick, go }: { index: number; onSettle: (i: number) => void; onPick: (i: number) => void; go: { i: number; n: number } | null }) {
   const reduce = useReducedMotion();
@@ -130,11 +130,20 @@ function Carousel({ index, onSettle, onPick, go }: { index: number; onSettle: (i
     const el = track.current;
     if (!el) return;
     let t = 0;
+    let raf = 0;
+    const nearest = () => Math.max(0, Math.min(ORDER.length - 1, Math.round(el.scrollLeft / pitch())));
     const settle = () => {
       window.clearTimeout(t);
-      onSettle(Math.max(0, Math.min(ORDER.length - 1, Math.round(el.scrollLeft / pitch()))));
+      onSettle(nearest());
     };
+    // v3f.1: follow the finger. The nearest slot is read once per frame, so the text changes the moment the track
+    // passes halfway to a neighbour instead of after the snap settles; scrollend only confirms.
     const onScroll = () => {
+      if (!raf)
+        raf = window.requestAnimationFrame(() => {
+          raf = 0;
+          onSettle(nearest());
+        });
       window.clearTimeout(t);
       t = window.setTimeout(settle, 120);
     };
@@ -143,6 +152,7 @@ function Carousel({ index, onSettle, onPick, go }: { index: number; onSettle: (i
     if (hasEnd) el.addEventListener("scrollend", settle);
     return () => {
       window.clearTimeout(t);
+      window.cancelAnimationFrame(raf);
       el.removeEventListener("scroll", onScroll);
       if (hasEnd) el.removeEventListener("scrollend", settle);
     };
@@ -261,7 +271,10 @@ export function Home() {
               {(i, live) => (
                 <>
                   <LevelCard unit={UNITS[i]} done={done} free={free} allDone={start < 0} live={live} />
-                  <div className="flex justify-center mt-6">
+                  <div className="flex justify-center gap-3 mt-6">
+                    <Link href={`/unit/${UNITS[i].id}/board`} className="btn-3d tone-ghost btn-sm px-5 inline-flex items-center gap-2" data-testid={live ? "home-board" : undefined}>
+                      <MapIcon size={18} aria-hidden /> Board
+                    </Link>
                     <Link href={`/unit/${UNITS[i].id}`} className="btn-3d tone-ghost btn-sm px-5 inline-flex items-center gap-1">
                       All lessons <ChevronRight size={18} aria-hidden />
                     </Link>
