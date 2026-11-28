@@ -1,8 +1,9 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, ON_DEEP as V3ON_DEEP, DimLine as V3DimLine, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, ON_DEEP as V3ON_DEEP, DimLine as V3DimLine, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve, DimLine as V3DimLine } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
+import { OK_LIGHT as V3OK_LIGHT, pts as v3pts, textW as v3textW } from "@/components/sim/v3";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
 export function erf(x: number): number {
@@ -485,53 +486,60 @@ export const pillarSim: SimDef = {
     { key: "wh", label: "w/h ratio", digits: 1, tone: (v) => (v >= 4 ? "ok" : "warn") },
   ],
   handles: [{ key: "w", axis: "x", at: (p) => [115 + (30 * p.w) / (p.w + p.B), 115], toValue: (x, p) => { const pw = clamp(2 * (x - 115), 2, 58); return (pw * p.B) / (60 - pw); }, color: "#F59E0B" }],
+  // §5.6d redraw (v3e): legacy origin kept (plan at 25,25, pitch 60), so the pins land on the centre pillar, a gallery, the strength bar and the stress bar.
+  v3: { viewH: 250, formula: (p) => `\\begin{gathered}\\sigma_p=\\gamma H\\,\\frac{(w+B)^2}{w^2}\\\\ S=${p.f ? "0.27\\sigma_c h^{-0.36}\\\\ \\qquad{}+\\left(\\frac{H}{250}+1\\right)\\left(\\frac{w}{h}-1\\right)" : "7.176\\,h^{-0.66}w^{0.46}"}\\end{gathered}` },
   render: (p, o) => {
     const pitch = 60;
     const pw = (pitch * p.w) / (p.w + p.B);
-    const col = o.fos >= 1.5 ? C.safe : o.fos >= 1.2 ? C.hazard : C.crit;
+    const AC = v3hue("orange");
+    const st = o.fos >= 1.5 ? "safe" : o.fos < 1.2 ? "unsafe" : undefined;
+    const sFill = o.fos >= 1.5 ? V3OK_LIGHT : o.fos < 1.2 ? V3BAD_LIGHT : AC.light;
+    const mx = Math.max(o.S, o.sp);
+    const tl = 126;
+    const tx0 = 230;
     const cells = [];
     for (let i = 0; i < 3; i++)
-      for (let j = 0; j < 3; j++)
-        cells.push(<rect key={`${i}${j}`} x={25 + i * pitch + (pitch - pw) / 2} y={25 + j * pitch + (pitch - pw) / 2} width={pw} height={pw} rx={2} fill={MAT.coal} stroke={col} strokeWidth={3} className={o.fos < 1 && i === 1 && j === 1 ? "shake" : undefined} />);
+      for (let j = 0; j < 3; j++) {
+        const centre = i === 1 && j === 1;
+        const px0 = 25 + i * pitch + (pitch - pw) / 2;
+        const py0 = 25 + j * pitch + (pitch - pw) / 2;
+        cells.push(
+          <g key={`${i}${j}`} className={o.fos < 1 && centre ? "shake" : undefined}>
+            <rect x={px0} y={py0} width={pw} height={pw} rx={2} fill={V3GREYS.deep} style={centre ? { stroke: V3INK } : undefined} strokeWidth={centre ? 2.5 : 0} />
+            {o.fos < 1 && <line data-state="unsafe" x1={px0 + pw * 0.3} y1={py0 + 4} x2={px0 + pw * 0.55} y2={py0 + pw - 4} style={{ stroke: V3BAD_LIGHT }} strokeWidth={1.5} strokeLinecap="round" />}
+          </g>,
+        );
+      }
+    const legend: { c: string; t: string; line?: boolean }[] = [
+      { c: V3GREYS.deep, t: "Pillar" },
+      { c: V3U.light, t: "Tributary" },
+      { c: V3SURFACE, t: "Gallery", line: true },
+      { c: V3GREYS.light, t: "Solid coal" },
+    ];
     return (
       <g>
-        <rect x={25} y={25} width={180} height={180} rx={4} fill="#E9E5DA" />
-        <rect x={25} y={25} width={180} height={180} rx={4} fill={MAT.hatch} opacity={0.25} />
+        <clipPath id="pillar-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#pillar-clip)">
+          <rect x={0} y={0} width={218} height={250} fill={V3GREYS.light} />
+        </g>
+        <rect x={25} y={25} width={180} height={180} rx={4} fill={V3SURFACE} style={{ stroke: V3INK3 }} strokeWidth={1.5} />
+        <rect x={25 + pitch} y={25 + pitch} width={pitch} height={pitch} fill={V3U.light} />
         {cells}
-        {o.fos < 1 && (
-          <Cracks
-            key={`f${Math.round(o.fos * 10)}`}
-            cracks={[0, 1, 2].flatMap((i) => [0, 1, 2].map((j) => ({ x: 25 + i * pitch + pitch / 2 - pw / 4, y: 25 + j * pitch + (pitch - pw) / 2 + 2, len: pw * 0.8, angle: 70 + ((i + j) % 2) * 30, seed: i * 3 + j + 1 })))}
-            color="#FCA5A5"
-            width={1.4}
-          />
-        )}
-        <rect x={25 + pitch + (pitch - pw) / 2} y={25 + pitch + (pitch - pw) / 2} width={pw} height={pw} fill="none" stroke={C.tech} strokeWidth={1.5} strokeDasharray="4 3" />
-        <rect x={25 + pitch} y={25 + pitch} width={pitch} height={pitch} fill={C.tech} opacity={0.12} />
-        <Txt x={115} y={222} size={8} anchor="middle" fill={C.slate}>
-          shaded = tributary area (w + B)² carried by one pillar
-        </Txt>
-        <Txt x={225} y={40} size={10} weight={800}>
-          Tributary area
-        </Txt>
-        <Txt x={225} y={54} size={8} mono>
-          σp = γH (w+B)² / w²
-        </Txt>
-        <Txt x={225} y={78} size={10} weight={800}>
-          {p.f ? "CMRI (Sheorey)" : "Salamon–Munro"}
-        </Txt>
-        <Txt x={225} y={92} size={7.5} mono>
-          {p.f ? "S = 0.27σc·h^-0.36 + (H/250+1)(w/h−1)" : "S = 7.176·h^-0.66·w^0.46"}
-        </Txt>
-        <Txt x={225} y={130} size={22} weight={900} mono fill={col}>
-          FOS {o.fos.toFixed(2)}
-        </Txt>
-        <Txt x={225} y={150} size={8} fill={C.slate}>
-          {o.fos >= 1.5 ? "meets common development target" : o.fos >= 1.2 ? "marginal — creep & spalling" : "pillar failure likely"}
-        </Txt>
-        <Txt x={225} y={176} size={9} mono>
-          {`σp ${o.sp.toFixed(1)} vs S ${o.S.toFixed(1)} MPa`}
-        </Txt>
+        {/* strength S vs stress on the pillar: bars share one scale */}
+        <V3T x={tx0} y={68}>{p.f ? "CMRI (Sheorey)" : "Salamon–Munro"}</V3T>
+        <rect x={tx0} y={tl - 46} width={136} height={10} rx={5} fill={V3GREYS.light} />
+        <rect x={tx0} y={tl - 46} width={Math.max(10, (136 * o.S) / mx)} height={10} rx={5} fill={sFill} data-state={st} style={{ stroke: V3INK3 }} strokeWidth={1.5} />
+        <SvgTex x={tx0} y={110} tex="\text{Stress } \sigma_p" size={LBL} anchor="start" color="var(--text-2)" />
+        <rect x={tx0} y={tl - 5} width={136} height={10} rx={5} fill={V3GREYS.light} />
+        <rect x={tx0} y={tl - 5} width={Math.max(10, (136 * o.sp) / mx)} height={10} rx={5} fill={V3U.mid} style={{ stroke: V3INK3 }} strokeWidth={1.5} />
+        {legend.map((l, i) => (
+          <g key={l.t}>
+            <rect x={tx0} y={143 + i * 22} width={14} height={14} rx={3} fill={l.c} style={l.line ? { stroke: V3INK3 } : undefined} strokeWidth={l.line ? 1.5 : 0} />
+            <V3T x={tx0 + 22} y={156 + i * 22}>{l.t}</V3T>
+          </g>
+        ))}
       </g>
     );
   },
@@ -571,54 +579,75 @@ export const slopeSim: SimDef = {
   ],
   caption: "FOS = [cA + W cosψp (1 − ru) tanφ] / (W sinψp), γ = 25 kN/m³, no tension crack.",
   handles: [{ key: "pf", axis: "x", at: (p) => [120 + (p.H * 2.4) / Math.tan(rad(p.pf)), 205 - p.H * 2.4], toValue: (x, p) => deg(Math.atan((p.H * 2.4) / Math.max(1, x - 120))), color: "#8B5CF6" }],
+  // §5.6d redraw (v3.2): same toe (120, 205), scale k = 2.4 and handle as the legacy section, so hotspots stay put.
+  v3: { viewH: 270, formula: () => "FOS = \\dfrac{cA + W\\cos\\psi_p\\,(1-r_u)\\tan\\varphi}{W\\sin\\psi_p}" },
   render: (p, o) => {
     const k = 2.4;
     const toeX = 120;
     const toeY = 205;
+    const VH = 270;
     const Hp = p.H * k;
     const crestX = toeX + Hp / Math.tan(rad(p.pf));
     const topY = toeY - Hp;
     const planeX = toeX + Hp / Math.tan(rad(p.pp));
-    const col = !o.daylight ? C.safe : o.fos >= 1.3 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
+    const fits = planeX <= 400;
+    const endX = fits ? planeX : 400;
+    const endY = fits ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp));
+    const state = !o.daylight || o.fos >= 1.3 ? "safe" : o.fos < 1 ? "unsafe" : undefined;
+    const blockFill = state === "safe" ? V3OK_LIGHT : state === "unsafe" ? V3BAD_LIGHT : V3U.light;
+    const rock = [[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, VH], [0, VH]] as [number, number][];
+    // block centroid for the leader
+    const blk: [number, number][] = fits ? [[toeX, toeY], [crestX, topY], [planeX, topY]] : [[toeX, toeY], [crestX, topY], [400, topY], [400, endY]];
+    const bc: [number, number] = [blk.reduce((s, q) => s + q[0], 0) / blk.length, blk.reduce((s, q) => s + q[1], 0) / blk.length];
+    // failure-plane label: below the plane, inside the rock
+    const t = 0.5;
+    const mx = toeX + (endX - toeX) * t;
+    const my = toeY + (endY - toeY) * t;
+    const wLabW = v3textW("Failure plane");
+    const px0 = o.daylight ? Math.min(mx + 12, 376 - wLabW) : Math.max(24, mx - 12 - wLabW);
+    let py0 = o.daylight ? Math.min(my + 28, toeY + 22) : my - 8;
+    if (p.ru > 0 && o.daylight) {
+      const wAt = (x: number) => toeY - 4 + ((topY + (1 - p.ru * 2) * Hp * 0.8 - (toeY - 4)) * (x - toeX)) / (400 - toeX);
+      const yl = wAt(px0 + wLabW / 2);
+      const yr = wAt(px0 + wLabW);
+      const yy = wAt(px0);
+      if (Math.min(yl, yr, yy) - 6 < py0 && Math.max(yl, yr, yy) + 6 > py0 - 18) py0 = Math.min(Math.max(yl, yr, yy) + 26, 214);
+    }
+    // crest label above the crest
+    const cAnchor = crestX > 300 ? "end" : "start";
+    const cx = cAnchor === "end" ? Math.min(crestX + 6, 376) : Math.max(crestX - 6, 24);
+    const wy = topY + (1 - p.ru * 2) * Hp * 0.8;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.shale} />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.rockShade} />
-        <polyline points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" stroke="#57534E" strokeWidth={2} strokeLinejoin="round" />
-        {o.daylight ? (
-          <polygon
-            points={polyline(
-              planeX <= 400
-                ? [[toeX, toeY], [crestX, topY], [planeX, topY]]
-                : [[toeX, toeY], [crestX, topY], [400, topY], [400, toeY - (400 - toeX) * Math.tan(rad(p.pp))]],
-            )}
-            fill={col}
-            opacity={0.55}
-            className={o.fos < 1 ? "shake" : undefined}
-          />
-        ) : null}
-        {o.daylight && o.fos < 1 && (
-          <Cracks key={`s${Math.round(o.fos * 20)}`} cracks={[{ x: Math.min(planeX, 396) - 4, y: topY, len: 26, angle: 100, seed: 4 }, { x: toeX + 30, y: toeY - 30 * Math.tan(rad(p.pp)), len: 40, angle: -p.pp, seed: 8 }]} color="#7F1D1D" width={2} />
-        )}
-        <line x1={toeX} y1={toeY} x2={Math.min(planeX, 400)} y2={planeX <= 400 ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp))} stroke={C.ink} strokeWidth={1.5} strokeDasharray="6 4" />
-        {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={topY + (1 - p.ru * 2) * Hp * 0.8} stroke={C.tech} strokeWidth={2} strokeDasharray="8 4" />}
-        <Txt x={toeX + 70} y={toeY - 70 * Math.tan(rad(p.pp)) + 14} size={8} fill={C.ink}>
-          {`plane ψp ${p.pp}°`}
-        </Txt>
-        <Txt x={10} y={toeY - 6} size={8} weight={700} fill={C.slate}>
-          PIT FLOOR
-        </Txt>
-        <Txt x={crestX + 6} y={topY - 6} size={8} weight={700} fill={C.slate}>
-          {`CREST · face ${p.pf}°`}
-        </Txt>
-        <Txt x={20} y={30} size={20} weight={900} mono fill={col}>
-          {Number.isFinite(o.fos) ? `FOS ${o.fos.toFixed(2)}` : "NO DAYLIGHT"}
-        </Txt>
+        <clipPath id="u3-slope-clip">
+          <rect x={0} y={0} width={400} height={VH} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u3-slope-clip)">
+          <polygon points={v3pts(rock)} style={{ fill: V3GREYS.light }} />
+          {o.daylight ? (
+            <g className={o.fos < 1 ? "shake" : undefined}>
+              <polygon data-state={state} points={v3pts(blk)} style={{ fill: blockFill }} />
+            </g>
+          ) : null}
+          {o.daylight && o.fos < 1 && (
+            <g data-state="unsafe">
+              <Cracks key={`s${Math.round(o.fos * 20)}`} cracks={[{ x: Math.min(planeX, 396) - 4, y: topY, len: 26, angle: 100, seed: 4 }, { x: toeX + 30, y: toeY - 30 * Math.tan(rad(p.pp)), len: 40, angle: -p.pp, seed: 8 }]} color={V3ON_LIGHT} width={2} />
+            </g>
+          )}
+          <line x1={toeX} y1={toeY} x2={endX} y2={endY} style={{ stroke: V3ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+          {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={wy} style={{ stroke: V3U.ink }} strokeWidth={2} strokeDasharray="8 4" />}
+          <polyline points={v3pts([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" style={{ stroke: V3INK }} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        </g>
+        <V3T x={24} y={44}>Sliding block</V3T>
+        <line x1={24 + v3textW("Sliding block") + 6} y1={38} x2={bc[0]} y2={bc[1]} style={{ stroke: V3INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        <V3T x={px0} y={py0} fill={o.daylight ? V3ON_LIGHT : V3INK3}>Failure plane</V3T>
+        <V3T x={cx} y={Math.max(topY - 30, 44 + 28)} anchor={cAnchor}>Crest</V3T>
+        <V3T x={24} y={238} fill={V3ON_LIGHT}>Pit floor</V3T>
+        <V3T x={376} y={238} anchor="end" fill={V3ON_LIGHT}>Rock mass</V3T>
         {p.ru > 0 && (
-          <Txt x={20} y={48} size={9} fill={C.tech} weight={700}>
-            {`water: ru = ${p.ru.toFixed(2)}`}
-          </Txt>
+          <V3T x={376} y={Math.min(wy + 26, 214)} anchor="end" fill={V3ON_LIGHT}>
+            Water
+          </V3T>
         )}
       </g>
     );
@@ -664,59 +693,91 @@ export const subsidenceSim: SimDef = {
       color: "#F59E0B",
     },
   ],
+  // §5.6d redraw (v3e): legacy frame kept (surface y 60, panel y 205), so the pins land on the panel, trough, draw line and Smax.
+  v3: { viewH: 270 },
   render: (p, o) => {
     const span = p.W / 2 + 1.4 * o.r;
     const kx = 185 / span;
     const sx = (x: number) => 200 + x * kx;
     const surfY = 60;
     const ky = 12;
+    const panelY = 205;
     const S = (x: number) => ((o.a * p.m) / 2) * (erf((Math.sqrt(Math.PI) * (x + p.W / 2)) / o.r) - erf((Math.sqrt(Math.PI) * (x - p.W / 2)) / o.r));
     const pts: [number, number][] = [];
     for (let i = 0; i <= 120; i++) {
       const x = -span + (2 * span * i) / 120;
       pts.push([sx(x), surfY + S(x) * ky]);
     }
-    const panelY = 205;
+    const ground = polyline([[0, surfY], ...pts, [400, surfY], [400, 270], [0, 270]]);
+    const xl = sx(-p.W / 2);
+    const xr = sx(p.W / 2);
+    const bottomY = surfY + S(0) * ky;
+    const edgeY = surfY + S(p.W / 2) * ky;
+    const limL = sx(-p.W / 2 - o.r);
+    const limR = sx(p.W / 2 + o.r);
+    const houses = [-0.9, -0.6, 0.2, 0.55].map((f) => {
+      const x = f * span * 0.9;
+      const y = surfY + S(x) * ky;
+      const slope = (Math.atan2((S(x + 1) - S(x - 1)) * ky, 2 * kx) * 180) / Math.PI;
+      return { f, x: sx(x), y, rot: slope * 4 };
+    });
     return (
       <g>
-        <rect x={0} y={0} width={400} height={surfY} fill={MAT.sky} />
-        <polygon points={polyline([[0, surfY], ...pts, [400, surfY], [400, 240], [0, 240]])} fill={MAT.sand} />
-        <rect x={0} y={surfY + 60} width={400} height={40} fill={MAT.shale} opacity={0.8} />
-        <rect x={0} y={surfY + 110} width={400} height={30} fill={MAT.sand} opacity={0.7} />
-        <polyline points={polyline(pts)} fill="none" stroke="#65A30D" strokeWidth={4} />
-        {[-0.9, -0.45, 0, 0.45, 0.9].map((f) => {
-          const x = f * span * 0.9;
-          const y = surfY + S(x) * ky;
-          const slope = ((S(x + 1) - S(x - 1)) / 2) * ky * kx === 0 ? 0 : (Math.atan2((S(x + 1) - S(x - 1)) * ky, 2 * kx) * 180) / Math.PI;
-          return (
-            <g key={f} transform={`translate(${sx(x).toFixed(1)} ${y.toFixed(1)}) rotate(${(slope * 4).toFixed(1)})`}>
-              <rect x={-6} y={-10} width={12} height={10} fill="#F8FAFC" stroke="#475569" strokeWidth={0.8} />
-              <path d="M-8 -10 L0 -16 L8 -10 Z" fill="#B91C1C" />
-            </g>
-          );
-        })}
-        <line x1={0} x2={400} y1={surfY} y2={surfY} stroke={C.slate} strokeDasharray="3 3" />
-        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={2.5} />
-        <rect x={sx(-p.W / 2)} y={panelY} width={p.W * kx} height={8} fill={p.meth ? C.sand : MAT.goaf} stroke={C.ink} />
-        <rect x={0} y={panelY} width={sx(-p.W / 2)} height={8} fill={MAT.coal} />
-        <rect x={sx(p.W / 2)} y={panelY} width={400 - sx(p.W / 2)} height={8} fill={MAT.coal} />
-        <line x1={sx(-p.W / 2)} y1={panelY} x2={sx(-p.W / 2 - o.r)} y2={surfY} stroke={C.tech} strokeDasharray="4 3" />
-        <line x1={sx(p.W / 2)} y1={panelY} x2={sx(p.W / 2 + o.r)} y2={surfY} stroke={C.tech} strokeDasharray="4 3" />
-        <Txt x={Math.min(sx(p.W / 2 + o.r) + 4, 396)} y={surfY - 6} size={8} fill={C.tech} anchor={sx(p.W / 2 + o.r) + 54 > 396 ? "end" : "start"}>
-          limit of draw
-        </Txt>
-        <Txt x={200} y={panelY + 22} size={8} anchor="middle" weight={700}>
-          {`PANEL W = ${p.W} m at ${p.H} m (depth schematic)`}
-        </Txt>
-        <Txt x={10} y={20} size={11} weight={900} mono fill={C.crit}>
-          {`Smax = ${o.S0.toFixed(2)} m`}
-        </Txt>
-        <Txt x={10} y={36} size={9} mono>
-          {`a·m = ${(o.a * p.m).toFixed(2)} m`}
-        </Txt>
+        <clipPath id="subs-clip">
+          <rect x={0} y={0} width={400} height={270} rx={12} />
+        </clipPath>
+        <clipPath id="subs-ground">
+          <polygon points={ground} />
+        </clipPath>
+        <g clipPath="url(#subs-clip)">
+          <g clipPath="url(#subs-ground)">
+            <rect x={0} y={0} width={400} height={270} fill={V3GREYS.light} />
+            <rect x={0} y={120} width={400} height={45} fill={V3U.light} />
+            <rect x={0} y={213} width={400} height={57} fill={V3GREYS.mid} />
+            <rect x={0} y={panelY} width={400} height={8} fill={V3GREYS.deep} />
+          </g>
+        </g>
+        <line x1={0} x2={400} y1={surfY} y2={surfY} style={{ stroke: V3INK3 }} strokeWidth={1.5} strokeDasharray="4 4" />
+        {houses.map((h) => (
+          <g key={h.f} transform={`translate(${h.x.toFixed(1)} ${h.y.toFixed(1)}) rotate(${h.rot.toFixed(1)})`}>
+            <rect x={-7} y={-10} width={14} height={10} fill={V3GREYS.light} style={{ stroke: V3GREYS.deep }} strokeWidth={1.5} />
+            <path d="M-9 -10 L0 -16 L9 -10 Z" fill={V3GREYS.deep} />
+          </g>
+        ))}
+        <polyline points={polyline(pts)} fill="none" style={{ stroke: V3INK }} strokeWidth={2} strokeLinejoin="round" />
+        <rect x={xl} y={panelY} width={xr - xl} height={8} fill={p.meth ? V3U.light : V3U.mid} stroke={V3ON_LIGHT} strokeWidth={2} />
+        <line x1={xl} y1={panelY} x2={limL} y2={surfY} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+        <line x1={xr} y1={panelY} x2={limR} y2={surfY} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+        <line x1={xr} y1={panelY} x2={xr} y2={edgeY} style={{ stroke: V3GREYS.deep }} strokeWidth={1.5} strokeDasharray="2 4" />
+        <V3T x={Math.min(xr - 6, 376)} y={panelY - 22} anchor="end" fill={V3ON_LIGHT}>
+          δ
+        </V3T>
+        {/* Smax: from the original surface down to the trough bottom */}
+        <DimLineV x={200} y1={surfY} y2={Math.max(bottomY, surfY + 6)} />
+        <line x1={162} y1={40} x2={196} y2={58} style={{ stroke: V3INK3 }} strokeWidth={1.5} />
+        <SvgTex x={140} y={42} tex="S_{\\max}" size={LBL} anchor="middle" color="var(--text-2)" />
+        <V3T x={Math.min(Math.max(limR, 110), 304)} y={38} anchor="middle">
+          Limit of draw
+        </V3T>
+        <V3T x={28} y={96} fill={V3ON_LIGHT}>
+          Overburden
+        </V3T>
+        <V3T x={28} y={148} fill={V3ON_LIGHT}>
+          Shale
+        </V3T>
+        <V3T x={28} y={192} fill={V3ON_LIGHT}>
+          Sandstone
+        </V3T>
+        <V3T x={200} y={242} anchor="middle" fill={V3ON_LIGHT}>
+          Extracted panel (W)
+        </V3T>
       </g>
     );
   },
 };
+
+function DimLineV({ x, y1, y2 }: { x: number; y1: number; y2: number }) {
+  return <V3DimLine x1={x} y1={y1} x2={x} y2={y2} />;
+}
 
 export const U3_SIMS = [kirschSim, failureSim, rmrSim, boltSim, pillarSim, slopeSim, subsidenceSim];
