@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, DimLine, pts, num, textW } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
@@ -320,6 +320,8 @@ export function haul(p: Record<string, number>) {
   return { tr, F, v, retard, e };
 }
 
+const HW = { x0: 36, y0: 150, L: 210, k: 2.6 };
+
 export const haulSim: SimDef = {
   id: "u5-haul",
   // §5.9: the objective's variables come first in the readout rows.
@@ -343,54 +345,71 @@ export const haulSim: SimDef = {
   ],
   caption: "Speed from P·η / F (η = 0.85), capped at 50 km/h; downgrade speed held at 40 km/h by retarder. e = v²/(127R) − f with side friction f = 0.15.",
   animated: true,
-  handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [30 + 220 * Math.cos(a), 160 - 220 * Math.sin(a) * 3]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((160 - y) / 660, -0.99, 0.99))), color: "#F59E0B" }],
+  // §5.6 redraw (v3e): ramp drawn with 2.6× vertical exaggeration; plan-view curve panel at right.
+  v3: { viewH: 250, formula: "F = GVW\\,g\\,(RR + GR)\\qquad e + f = \\dfrac{v^2}{127R}" },
+  handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [HW.x0 + HW.L * Math.cos(a), HW.y0 - HW.L * Math.sin(a) * HW.k]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((HW.y0 - y) / (HW.L * HW.k), -0.99, 0.99))) }],
   render: (p, o, t) => {
     const ang = Math.atan(p.gr / 100);
-    const x0 = 30;
-    const y0 = 160;
-    const L = 220;
+    const { x0, y0, L, k } = HW;
     const x1 = x0 + L * Math.cos(ang);
-    const y1 = y0 - L * Math.sin(ang) * 3;
+    const y1 = y0 - L * Math.sin(ang) * k;
     const tx = (x0 + x1) / 2;
     const ty = (y0 + y1) / 2;
     const a3 = deg(Math.atan2(y1 - y0, x1 - x0));
+    const steep = Math.abs(p.gr) > 6.25;
+    // plan-view curve: radius drawn from Rc (24..76 units)
+    const r = 24 + ((p.Rc - 30) / 270) * 52;
+    const cx0 = 290;
+    const cy0 = 214;
+    const ex = cx0 + r;
+    const ey = cy0 - r;
+    const arc = `M ${cx0} ${cy0 + 8} L ${cx0} ${cy0} A ${r} ${r} 0 0 1 ${ex} ${ey} L ${ex + 8} ${ey}`;
+    const wheelRot = ((t * o.v * 25) % 360).toFixed(0);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.sand} />
-        <polygon points={polyline([[x0, y0], [x1, y1], [x1, 230], [x0, 230]])} fill={MAT.rockShade} />
-        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#57534E" strokeWidth={5} />
-        <line x1={x0} y1={y0} x2={x1} y2={y1} stroke="#E7E5E4" strokeWidth={1} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
+        <clipPath id="u5haul-clip">
+          <rect x={12} y={12} width={376} height={226} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u5haul-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} opacity={0.35} />
+          <polygon points={pts([[0, y0], [x0, y0], [x1, y1], [x1 + 8, y1], [x1 + 8, 250], [0, 250]])} fill={GREYS.light} />
+          <rect x={256} y={120} width={150} height={140} fill={U.light} />
+        </g>
+        {/* ramp: road surface + moving centre-line dashes */}
+        <polyline points={pts([[x0 - 12, y0], [x0, y0], [x1, y1], [x1 + 8, y1]])} fill="none" data-state={steep ? "unsafe" : "safe"} style={{ stroke: steep ? BAD : GREYS.deep }} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
+        <line x1={x0} y1={y0} x2={x1} y2={y1} style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
+        <T x={tx} y={ty + 48} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Haul ramp
+        </T>
+        {/* truck */}
         <g transform={`translate(${tx},${ty}) rotate(${a3})`}>
-          <rect x={-22} y={-22} width={44} height={18} rx={3} fill={C.hazard} stroke="#92400E" />
-          <rect x={-20} y={-21} width={40} height={6} rx={2} fill={MAT.glass} />
-          <rect x={10} y={-30} width={12} height={9} rx={2} fill="#FBBF24" stroke="#92400E" />
-          {[-12, 12].map((wx) => (
-            <g key={wx} transform={`rotate(${((t * o.v * 25) % 360).toFixed(0)} ${wx} -2)`}>
-              <circle cx={wx} cy={-2} r={6} fill={C.ink} />
-              <line x1={wx - 4} y1={-2} x2={wx + 4} y2={-2} stroke="#94A3B8" strokeWidth={1.4} />
-              <line x1={wx} y1={-6} x2={wx} y2={2} stroke="#94A3B8" strokeWidth={1.4} />
+          <path d="M -32 -17 L -32 -40 L 8 -40 L 14 -17 Z" fill={U.mid} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+          <rect x={10} y={-38} width={22} height={21} rx={3} fill={U.light} style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+          {[-18, 20].map((wx) => (
+            <g key={wx}>
+              <circle cx={wx} cy={-11} r={11} fill={GREYS.deep} style={{ stroke: INK }} strokeWidth={2.5} />
+              <g transform={`rotate(${wheelRot} ${wx} -11)`}>
+                <line x1={wx - 6} y1={-11} x2={wx + 6} y2={-11} stroke="#FFFFFF" strokeWidth={2} />
+                <line x1={wx} y1={-17} x2={wx} y2={-5} stroke="#FFFFFF" strokeWidth={2} />
+              </g>
             </g>
           ))}
-          {o.tr > 0 ? <Arrow x1={0} y1={-30} x2={36} y2={-30} color={C.safe} width={3} /> : <Arrow x1={0} y1={-30} x2={-36} y2={-30} color={C.crit} width={3} />}
         </g>
-        <Txt x={20} y={24} size={11} weight={800}>
-          {`TR = ${p.rr}% + ${p.gr}% = ${o.tr.toFixed(2)}%`}
-        </Txt>
-        <Txt x={20} y={40} size={9} mono>
-          {`F = GVW·g·TR = ${o.F.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={20} y={56} size={14} weight={900} mono fill={o.v >= 15 ? C.safe : C.hazard}>
-          {`${o.v.toFixed(1)} km/h`}
-        </Txt>
-        <Txt x={285} y={60} size={9} weight={700} fill={C.slate}>
-          CURVE (plan)
-        </Txt>
-        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#57534E" strokeWidth={10} strokeLinecap="round" />
-        <path d={`M 290 200 A ${clamp(p.Rc / 3, 15, 90)} ${clamp(p.Rc / 3, 15, 90)} 0 0 1 ${290 + clamp(p.Rc / 3, 15, 90)} ${200 - clamp(p.Rc / 3, 15, 90)}`} fill="none" stroke="#E7E5E4" strokeWidth={1} strokeDasharray="4 5" />
-        <Txt x={285} y={222} size={9} mono>
-          {`R ${p.Rc} m · e ${o.e.toFixed(1)}%`}
-        </Txt>
+        {/* rimpull direction: rotates with the ramp, outside the truck group so the label stays level */}
+        <g transform={`translate(${tx},${ty}) rotate(${a3})`}>{o.tr > 0 ? <V3Arrow x1={-30} y1={-56} x2={30} y2={-56} color={U.deep} /> : <V3Arrow x1={30} y1={-56} x2={-30} y2={-56} color={U.deep} />}</g>
+        <T x={tx} y={ty - 74} anchor="middle" fill={INK}>
+          {o.tr > 0 ? "Rimpull" : "Retarder"}
+        </T>
+        {/* plan view of the curve */}
+        <rect x={262} y={128} width={114} height={98} rx={8} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={274} y={150} fill={ON_LIGHT} weight={700}>
+          Plan view
+        </T>
+        <path d={arc} fill="none" style={{ stroke: GREYS.deep }} strokeWidth={10} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={arc} fill="none" style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="4 5" />
+        <line x1={cx0} y1={cy0 - r} x2={cx0} y2={cy0} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={cx0} y1={cy0 - r} x2={ex} y2={cy0 - r} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <SvgTex x={cx0 + 6} y={cy0 - r - 6} tex="R" size={LBL} anchor="start" color="#141414" />
       </g>
     );
   },

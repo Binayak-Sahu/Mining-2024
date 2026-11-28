@@ -463,73 +463,81 @@ export const sponcomSim: SimDef = {
   ],
   caption: "Ratios use oxygen deficiency so dilution by fresh air cancels out. Trend them over time — a rising Graham's ratio matters more than one value.",
   animated: true,
-  // §5.6 redraw (v3e): Graham's scale on top, composition bars below, ratio line at the bottom (lesson hotspots).
-  v3: { viewH: 240 },
+  // §5.6 redraw (v3.2): Graham's scale on top, composition bars, Jones-Trickett validity strip at the bottom (lesson hotspots).
+  v3: { viewH: 280 },
   render: (p, o) => {
     // equal bands for the 4 classes; the value sits linearly inside its band
     const B = [0, 0.5, 1, 2, 3];
-    const bw = 80;
+    const bw = 88;
+    const X0 = 24;
     const gx = (v: number) => {
       const c = clamp(v, 0, 3);
       const i = Math.min(3, B.findIndex((b, j) => c < B[j + 1]) === -1 ? 3 : B.findIndex((b, j) => c < B[j + 1]));
-      return 40 + i * bw + ((c - B[i]) / (B[i + 1] - B[i])) * bw;
+      return X0 + i * bw + ((c - B[i]) / (B[i + 1] - B[i])) * bw;
     };
     const zones = [
-      { t: "Normal", c: OK_LIGHT },
-      { t: "Heating", c: ORANGE.light },
-      { t: "Serious", c: ORANGE.mid },
-      { t: "Fire", c: BAD_LIGHT },
+      { t: "Normal", c: U.light, ink: ON_LIGHT },
+      { t: "Heating", c: ORANGE.light, ink: ON_LIGHT },
+      { t: "Serious", c: ORANGE.mid, ink: ON_LIGHT },
+      { t: "Fire", c: ORANGE.deep, ink: ON_DEEP },
     ];
     const bars = [
-      { k: "N₂", v: o.n2, txt: num(o.n2, 2, "%"), c: GREYS.light },
-      { k: "O₂", v: p.o2, txt: num(p.o2, 2, "%"), c: U.light },
+      { k: "N₂", v: o.n2, txt: num(o.n2, 1, "%"), c: GREYS.light },
+      { k: "O₂", v: p.o2, txt: num(p.o2, 1, "%"), c: U.light },
       { k: "CO₂ ×10", v: p.co2 * 10, txt: num(p.co2, 2, "%"), c: GREYS.mid },
-      { k: "CO ×100", v: (p.co / 1e4) * 100, txt: num(p.co, 0, "ppm"), c: BAD_LIGHT },
+      { k: "CO ×100", v: (p.co / 1e4) * 100, txt: num(p.co, 0, "ppm"), c: ORANGE.light },
     ];
+    const jx = (v: number) => X0 + (clamp(v, 0, 2) / 2) * 352;
     return (
       <g>
-        <T x={40} y={22} fill={INK} weight={700}>
-          Graham’s ratio
-        </T>
         {zones.map((z, i) => (
           <g key={z.t}>
-            <rect x={40 + i * bw + 1} y={32} width={bw - 2} height={28} rx={6} fill={z.c} />
-            <T x={40 + i * bw + bw / 2} y={52} anchor="middle" fill={ON_LIGHT} weight={700}>
+            <rect x={X0 + i * bw + 1} y={36} width={bw - 2} height={40} rx={6} fill={z.c} style={i === o.grc ? { stroke: INK } : undefined} strokeWidth={i === o.grc ? 2.5 : 0} />
+            <T x={X0 + i * bw + bw / 2} y={62} anchor="middle" fill={z.ink} weight={700}>
               {z.t}
             </T>
           </g>
         ))}
         {[0.5, 1, 2].map((v, i) => (
-          <T key={v} x={40 + (i + 1) * bw} y={82} anchor="middle">
+          <T key={v} x={X0 + (i + 1) * bw} y={102} anchor="middle">
             {String(v)}
           </T>
         ))}
         {Number.isFinite(o.gr) && (
           <g>
-            <line x1={gx(o.gr)} x2={gx(o.gr)} y1={26} y2={66} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
-            <circle cx={gx(o.gr)} cy={26} r={px(4)} style={{ fill: INK }} />
+            <line x1={gx(o.gr)} x2={gx(o.gr)} y1={30} y2={36} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+            <circle cx={gx(o.gr)} cy={30} r={px(4)} style={{ fill: INK }} />
           </g>
         )}
-        <T x={40} y={106} fill={INK} weight={700}>
-          Sample composition
-        </T>
         {bars.map((g, i) => {
-          const w = clamp(g.v * 3.6, 2, 320);
-          const label = `${g.k} ${g.txt}`;
-          const inside = w > textW(label) + 16;
-          const y = 116 + i * 26;
+          const w = clamp(g.v * 2.4, 2, 230);
+          const y = 114 + i * 24;
           return (
             <g key={g.k}>
-              <rect x={40} y={y} width={w} height={22} rx={5} fill={g.c} />
-              <T x={inside ? 48 : 48 + w} y={y + 17} fill={inside ? ON_LIGHT : INK2} weight={600}>
-                {label}
+              <rect x={X0} y={y} width={w} height={18} rx={4} fill={g.c} />
+              <T x={X0 + w + 8} y={y + 15} fill={INK2} weight={600}>
+                {`${g.k} ${g.txt}`}
               </T>
             </g>
           );
         })}
-        <T x={40} y={232} fill={o.grc >= 2 ? BAD_TEXT : INK} weight={800}>
-          {Number.isFinite(o.gr) ? `GR ${num(o.gr, 2)} · JTR ${num(o.jtr, 2)}` : "No O₂ deficiency"}
+        <rect x={X0} y={214} width={352} height={16} rx={5} fill={GREYS.light} />
+        <rect x={jx(0.4)} y={214} width={jx(1.6) - jx(0.4)} height={16} rx={3} fill={U.light} />
+        <T x={jx(0.4)} y={252} anchor="middle">
+          0.4
         </T>
+        <T x={jx(1)} y={252} anchor="middle">
+          valid sample
+        </T>
+        <T x={jx(1.6)} y={252} anchor="middle">
+          1.6
+        </T>
+        {Number.isFinite(o.jtr) && (
+          <g>
+            <line x1={jx(o.jtr)} x2={jx(o.jtr)} y1={208} y2={232} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+            <circle cx={jx(o.jtr)} cy={222} r={px(4)} style={{ fill: INK }} />
+          </g>
+        )}
       </g>
     );
   },
@@ -566,26 +574,38 @@ export const dustSim: SimDef = {
   ],
   caption: "Teaching targets: ≥ 75 % incombustible generally, higher (85 %) where firedamp is present. Coal dust clouds above roughly 50 g/m³ can propagate explosions.",
   animated: true,
-  // §5.6 redraw (v3e): the roadway arch, floor dust band and cloud keep their legacy places (lesson hotspots).
-  v3: { viewH: 240 },
+  // §5.6d redraw (v3.2): arch, floor dust band and cloud keep their legacy y places (lesson hotspots); the 3rd pin (380,212) sits outside the inset.
+  v3: { viewH: 250 },
+  primary: ["inc", "MsReq"],
   render: (p, o, t) => {
     const frac = clamp(o.inc / 100, 0, 1);
-    const ok = o.inc >= o.req;
     return (
       <g>
-        <path d="M 30 200 L 30 90 Q 200 20 370 90 L 370 200 Z" style={{ fill: U.light, stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
-        <T x={200} y={86} anchor="middle" fill={ON_LIGHT} weight={700}>
-          Roadway dust sample
+        <clipPath id="u7dust-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u7dust-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
+        </g>
+        <path d="M 60 204 L 60 100 Q 200 30 340 100 L 340 204 Z" style={{ fill: U.light, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+        <T x={200} y={98} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Roadway
         </T>
         {/* settled dust on the floor: stone dust share (white) vs coal dust */}
-        <rect x={30} y={188} width={340} height={12} fill={GREYS.deep} />
-        <rect x={30} y={188} width={340 * frac} height={12} fill="#FFFFFF" stroke={GREYS.deep} strokeWidth={1.5} />
+        <rect x={60} y={186} width={280} height={18} fill={GREYS.deep} />
+        <rect x={60} y={186} width={280 * frac} height={18} fill="#FFFFFF" />
         {/* raised cloud */}
         {Array.from({ length: 36 }).map((_, i) => (
-          <circle key={i} cx={44 + ((i * 37 + t * (8 + (i % 5) * 3)) % 312)} cy={118 + ((i * 23) % 56) + Math.sin(t + i) * 3} r={3} fill={i / 36 < frac ? "#FFFFFF" : GREYS.deep} stroke={i / 36 < frac ? GREYS.mid : "none"} strokeWidth={1} />
+          <circle key={i} cx={80 + ((i * 37 + t * (8 + (i % 5) * 3)) % 232)} cy={118 + ((i * 23) % 56) + Math.sin(t + i) * 3} r={3} fill={i / 36 < frac ? "#FFFFFF" : GREYS.deep} stroke={i / 36 < frac ? GREYS.mid : "none"} strokeWidth={1} />
         ))}
-        <T x={200} y={230} anchor="middle" fill={ok ? OK_TEXT : BAD_TEXT} weight={800}>
-          {`${num(o.inc, 1, "%")} incombustible (target ${num(o.req, 0, "%")})`}
+        {/* legend: floor band and cloud dots */}
+        <rect x={60} y={208} width={12} height={12} fill="#FFFFFF" stroke={GREYS.deep} strokeWidth={1.5} />
+        <T x={80} y={220} fill={ON_LIGHT}>
+          Stone dust
+        </T>
+        <rect x={200} y={208} width={12} height={12} fill={GREYS.deep} />
+        <T x={220} y={220} fill={ON_LIGHT}>
+          Coal dust
         </T>
       </g>
     );

@@ -334,43 +334,57 @@ export const caveSim: SimDef = {
     { key: "vol", label: "Ellipsoid volume / drawpoint", unit: "m³", digits: 0 },
   ],
   animated: true,
-  // §5.6 redraw (v3e): extraction level y 210 and the waste band at the top are the legacy ones (lesson hotspots).
-  v3: { viewH: 240 },
-  handles: [{ key: "h", axis: "y", at: (p) => [200, 210 - p.h * (170 / 300)], toValue: (y) => (210 - y) / (170 / 300) }],
+  primary: ["b", "interact"],
+  // §5.6d redraw (v3.2): extraction level y 204 (drawpoint mouth spans 204-222, pin y 216) and the waste band at the top (pin y 27).
+  v3: { viewH: 264 },
+  handles: [{ key: "h", axis: "y", at: (p) => [200, 204 - p.h * (148 / 300)], toValue: (y) => (204 - y) / (148 / 300) }],
   render: (p, o, t) => {
-    const base = 210;
-    const kh = 170 / 300;
+    const base = 204;
+    const kh = 148 / 300;
     const kx = 4;
-    const n = Math.max(2, Math.min(9, Math.floor(360 / (p.s * kx))));
+    // odd count so a drawpoint always sits at x = 200 (the lesson pin)
+    let n = Math.max(3, Math.min(9, Math.floor(360 / (p.s * kx))));
+    if (n % 2 === 0) n -= 1;
     const start = 200 - ((n - 1) * p.s * kx) / 2;
     return (
       <g>
-        <T x={8} y={15} fill={INK} weight={700}>
-          {`Drawpoints at ${num(p.s, 0, "m")} · IDZ ${num(o.b, 1, "m")}`}
-        </T>
-        {/* caved ore column, overlying waste, extraction level */}
-        <rect x={0} y={40} width={400} height={base - 40} style={{ fill: U.light }} />
-        <rect x={0} y={20} width={400} height={20} fill={GREYS.mid} />
-        <T x={8} y={36} fill={ON_LIGHT} weight={600}>
+        <clipPath id="u6-cave-scene">
+          <rect x={12} y={12} width={376} height={240} rx={12} />
+        </clipPath>
+        <clipPath id="u6-cave-col">
+          <rect x={0} y={56} width={400} height={base - 56} />
+        </clipPath>
+        <g clipPath="url(#u6-cave-scene)">
+          {/* caved ore column, overlying waste, extraction level */}
+          <rect x={0} y={56} width={400} height={base - 56} style={{ fill: U.light }} />
+          <rect x={0} y={0} width={400} height={56} fill={GREYS.mid} />
+          <rect x={0} y={base} width={400} height={80} fill={GREYS.deep} />
+        </g>
+        <T x={36} y={44} fill={ON_LIGHT} weight={600}>
           Overlying waste
         </T>
-        <rect x={0} y={base} width={400} height={30} fill={GREYS.deep} />
-        <clipPath id="u6-cave-col">
-          <rect x={0} y={40} width={400} height={base - 40 + 12} />
-        </clipPath>
+        <T x={36} y={240} fill={ON_DEEP} weight={600}>
+          Extraction level
+        </T>
         {Array.from({ length: n }).map((_, i) => {
           const x = start + i * p.s * kx;
           return (
-            <g key={i} clipPath="url(#u6-cave-col)">
-              <ellipse cx={x} cy={base - (p.h * kh) / 2} rx={(o.b * kx) / 2} ry={(p.h * kh) / 2} style={{ fill: o.interact ? OK_LIGHT : U.mid, stroke: o.interact ? ON_LIGHT : U.deep }} fillOpacity={0.55} strokeWidth={2} />
-              {[0, 1, 2].map((j) => {
-                const u = (t * 0.35 + j / 3 + i * 0.13) % 1;
-                return <circle key={j} cx={x + Math.sin(j * 2 + i) * (o.b * kx) * 0.2 * (1 - u)} cy={base - p.h * kh * (1 - u)} r={2.5} fill={GREYS.deep} />;
-              })}
-              <rect x={x - 6} y={base} width={12} height={12} rx={2} fill="#FFFFFF" />
+            <g key={i}>
+              <g clipPath="url(#u6-cave-col)">
+                <ellipse cx={x} cy={base - (p.h * kh) / 2} rx={(o.b * kx) / 2} ry={(p.h * kh) / 2} data-state={o.interact ? "safe" : "unsafe"} style={{ fill: o.interact ? OK_LIGHT : BAD_LIGHT, stroke: U.deep }} fillOpacity={0.7} strokeWidth={2.5} />
+                {[0, 1, 2].map((j) => {
+                  const u = (t * 0.35 + j / 3 + i * 0.13) % 1;
+                  return <circle key={j} cx={x + Math.sin(j * 2 + i) * (o.b * kx) * 0.2 * (1 - u)} cy={base - p.h * kh * (1 - u)} r={2.5} fill={GREYS.deep} />;
+                })}
+              </g>
+              <rect x={x - 8} y={base} width={16} height={18} rx={2} fill="#FFFFFF" />
             </g>
           );
         })}
+        <circle cx={286} cy={233} r={2.5} fill={ON_DEEP} />
+        <T x={364} y={240} anchor="end" fill={ON_DEEP} weight={600}>
+          Ore flow
+        </T>
       </g>
     );
   },

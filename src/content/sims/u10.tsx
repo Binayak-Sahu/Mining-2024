@@ -1,6 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, clamp, SANS, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U } from "@/components/sim/v3";
 
 /* ---------------- Statutory hierarchy & duties explorer ---------------- */
 
@@ -64,6 +65,61 @@ export function gassiness(p: Record<string, number>) {
   return p.em > 10 ? 3 : p.em > 1 || p.gb > 0.1 ? 2 : 1;
 }
 
+
+/** Piecewise emission scale: 0–1 (I), 1–10 (II), 10–20 (III) m³/t. */
+function gxe(e: number): number {
+  const v = clamp(e, 0, 20);
+  return v <= 1 ? 30 + v * 60 : v <= 10 ? 90 + ((v - 1) / 9) * 160 : 250 + ((v - 10) / 10) * 120;
+}
+function gxeInv(x: number): number {
+  const c = clamp(x, 30, 370);
+  return c <= 90 ? (c - 30) / 60 : c <= 250 ? 1 + ((c - 90) / 160) * 9 : 10 + ((c - 250) / 120) * 10;
+}
+
+function GassyScene({ p, deg, t }: { p: Record<string, number>; deg: number; t: number }) {
+  const gx = 30 + clamp(p.gb, 0, 1) * 340;
+  const over = p.gb > 0.1;
+  const bands: { a: number; b: number; fill: string; ink: string; l: string; d: number }[] = [
+    { a: 0, b: 1, fill: U.light, ink: ON_LIGHT, l: "I", d: 1 },
+    { a: 1, b: 10, fill: U.mid, ink: ON_LIGHT, l: "II", d: 2 },
+    { a: 10, b: 20, fill: U.deep, ink: ON_DEEP, l: "III", d: 3 },
+  ];
+  return (
+    <g>
+      {bands.map((b) => (
+        <g key={b.l}>
+          <rect x={gxe(b.a)} y={28} width={gxe(b.b) - gxe(b.a)} height={40} fill={b.fill} />
+          <T x={(gxe(b.a) + gxe(b.b)) / 2} y={54} anchor="middle" fill={b.ink} weight={800}>
+            {b.l}
+          </T>
+        </g>
+      ))}
+      <rect x={30} y={28} width={340} height={40} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+      {bands.filter((b) => b.d === deg).map((b) => (
+        <rect key={b.l} x={gxe(b.a)} y={28} width={gxe(b.b) - gxe(b.a)} height={40} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+      ))}
+      <T x={30} y={92} anchor="middle">0</T>
+      <T x={90} y={92} anchor="middle">1</T>
+      <T x={250} y={92} anchor="middle">10</T>
+      <T x={370} y={92} anchor="end">20 m³/t</T>
+      <line x1={gxe(p.em)} x2={gxe(p.em)} y1={28} y2={68} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+      <rect x={30} y={110} width={340} height={16} rx={8} fill={GREYS.light} />
+      <rect x={30} y={110} width={Math.max(clamp(p.gb, 0, 1) * 340, 0)} height={16} rx={8} fill={over ? U.deep : U.mid} />
+      <line x1={64} x2={64} y1={104} y2={132} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+      <circle cx={gx} cy={118} r={5} fill={INK} />
+      <T x={64} y={154} anchor="middle">0.1 %</T>
+      <T x={370} y={154} anchor="end">General-body gas</T>
+      <rect x={30} y={178} width={340} height={48} rx={12} fill={GREYS.deep} />
+      <circle cx={46} cy={202} r={5} fill="#FFFFFF" />
+      <T x={58} y={208} fill={ON_DEEP}>CH₄</T>
+      {[0, 1, 2, 3, 4].map((k) => {
+        const ph = (t * (0.2 + deg * 0.15) + k / 5) % 1;
+        return <circle key={k} cx={130 + k * 52} cy={218 - ph * 36} r={4} fill="#FFFFFF" opacity={0.9 * (1 - ph * 0.5)} />;
+      })}
+    </g>
+  );
+}
+
 export const gassySim: SimDef = {
   id: "u10-gassy",
   title: "Degree of gassiness classifier (coal seams)",
@@ -78,55 +134,14 @@ export const gassySim: SimDef = {
   ],
   caption: "Degree I: ≤ 0.1 % inflammable gas in general body AND emission ≤ 1 m³/t. Degree II: > 0.1 % or > 1 m³/t up to 10 m³/t. Degree III: > 10 m³/t.",
   animated: true,
+  primary: ["deg"],
+  // §5.6 redraw (v3e): the emission scale is piecewise (I | II | III each get room); pins sit on I, II, III and the 0.1 % mark.
+  v3: { viewH: 250 },
   handles: [
-    { key: "em", axis: "x", at: (p) => [30 + (clamp(p.em, 0, 20) / 20) * 340, 72], toValue: (x) => ((x - 30) / 340) * 20, color: "#0F172A" },
-    { key: "gb", axis: "x", at: (p) => [30 + clamp(p.gb, 0, 1) * 340, 115], toValue: (x) => (x - 30) / 340, color: "#F59E0B" },
+    { key: "em", axis: "x", at: (p) => [gxe(p.em), 48], toValue: (x) => gxeInv(x), color: "#0F172A" },
+    { key: "gb", axis: "x", at: (p) => [30 + clamp(p.gb, 0, 1) * 340, 118], toValue: (x) => (x - 30) / 340, color: "#F59E0B" },
   ],
-  render: (p, o, t) => {
-    const ex = (e: number) => 30 + (clamp(e, 0, 20) / 20) * 340;
-    return (
-      <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <Txt x={30} y={24} size={9} weight={700} fill={C.slate}>
-          METHANE EMISSION (m³ per tonne of coal produced)
-        </Txt>
-        <rect x={ex(0)} y={32} width={ex(1) - ex(0)} height={30} fill={C.safe} />
-        <rect x={ex(1)} y={32} width={ex(10) - ex(1)} height={30} fill={C.hazard} />
-        <rect x={ex(10)} y={32} width={ex(20) - ex(10)} height={30} fill={C.crit} />
-        <rect x={ex(0)} y={32} width={ex(20) - ex(0)} height={11} fill={MAT.glass} />
-        <Txt x={ex(0.5)} y={51} size={8} anchor="middle" fill="white" weight={800}>
-          I
-        </Txt>
-        <Txt x={ex(5.5)} y={51} size={9} anchor="middle" fill="white" weight={800}>
-          II
-        </Txt>
-        <Txt x={ex(15)} y={51} size={9} anchor="middle" fill="white" weight={800}>
-          III
-        </Txt>
-        <polygon points={`${ex(p.em)},66 ${ex(p.em) - 6},78 ${ex(p.em) + 6},78`} fill={C.ink} />
-        <Txt x={30} y={100} size={9} weight={700} fill={C.slate}>
-          GENERAL BODY INFLAMMABLE GAS (%)
-        </Txt>
-        <rect x={30} y={108} width={340} height={14} rx={7} fill="#e2e8f0" />
-        <rect x={30} y={108} width={clamp(p.gb, 0, 1) * 340} height={14} rx={7} fill={p.gb > 0.1 ? C.hazard : C.safe} opacity={0.35} />
-        <rect x={30} y={108} width={34} height={14} fill={C.safe} />
-        <line x1={64} x2={64} y1={104} y2={126} stroke={C.ink} />
-        <Txt x={66} y={136} size={8} mono>
-          0.1 %
-        </Txt>
-        <circle cx={30 + clamp(p.gb, 0, 1) * 340} cy={115} r={6} fill={p.gb > 0.1 ? C.hazard : C.safe} stroke="white" strokeWidth={2} />
-        <rect x={30} y={160} width={340} height={56} rx={12} fill={o.deg === 1 ? C.safe : o.deg === 2 ? C.hazard : C.crit} filter="url(#f-shadow)" />
-        <rect x={30} y={160} width={340} height={18} rx={10} fill={MAT.glass} />
-        {[0, 1, 2, 3, 4].map((k) => {
-          const ph = (t * (0.2 + o.deg * 0.15) + k / 5) % 1;
-          return <circle key={k} cx={56 + k * 70 + Math.sin(ph * 6 + k) * 6} cy={212 - ph * 48} r={2 + ph * 3} fill="white" opacity={0.45 * (1 - ph)} />;
-        })}
-        <Txt x={200} y={196} size={22} anchor="middle" weight={900} fill="white">
-          {`DEGREE ${["", "I", "II", "III"][o.deg]}`}
-        </Txt>
-      </g>
-    );
-  },
+  render: (p, o, t) => <GassyScene p={p} deg={o.deg} t={t} />,
 };
 
 /* ---------------- Risk matrix (SMP / HIRA / WRAC) ---------------- */
