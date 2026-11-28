@@ -32,3 +32,6 @@ First line exactly one of: `RESULT: done-v2` · `RESULT: unsure: <reason>` · `B
 
 ## Parallel work in the same file
 Other agents edit OTHER sims in the same file at the same time. Use small `Edit` calls scoped to your own sim's code; if an Edit fails with "file changed", re-Read the file and retry. Never rewrite the whole file or reformat. A `tsc` / audit / golden failure that names another sim is theirs: ignore it (re-run in a minute if it blocks you).
+
+## Legacy (todo) sims
+If your sim has no `v3` yet: add `v3: { viewH: 250 }` (or taller) and replace the legacy `render` with a v3.2 drawing in `0 0 400 viewH` (the legacy frame was `-24 -24 448 288`; its drawing lived in the 0..400 × 0..240 box). Use the v3 primitives, drop legacy defs (`url(#grad-*)`, `pat-*`, `f-shadow`, plate textures). Keep legacy handle keys/axes. Keep the same hotspots landing on the same features where the 24-unit inset allows (otherwise `unsure`). Look at redrawn sims in the same file for style.
