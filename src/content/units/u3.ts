@@ -8,6 +8,7 @@ export const U3: Unit = {
   n: 3,
   title: "Rock Mechanics & Ground Control",
   short: "Geomechanics",
+  shortTitle: "Rock Mechanics",
   blurb: "Stress around openings, failure criteria, rock-mass classification, bolting, pillar design, slope stability and subsidence.",
   lessons: [
     /* ------------------------------------------------------------ 3.1 */

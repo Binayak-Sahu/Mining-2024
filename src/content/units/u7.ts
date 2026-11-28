@@ -7,6 +7,7 @@ export const U7: Unit = {
   n: 7,
   title: "Mine Ventilation, Thermodynamics & Subsurface Hazards",
   short: "Ventilation",
+  shortTitle: "Mine Ventilation",
   blurb: "Mine gases and Coward's triangle, Atkinson networks, fans and NVP, heat stress, spontaneous combustion, coal-dust explosions and mine pumping.",
   lessons: [
     /* ------------------------------------------------------------ 7.1 */

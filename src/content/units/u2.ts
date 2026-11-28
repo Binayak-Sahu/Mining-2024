@@ -7,6 +7,7 @@ export const U2: Unit = {
   n: 2,
   title: "Mine Development: Access, Shaft Sinking & Drivage",
   short: "Development",
+  shortTitle: "Mine Development",
   blurb: "Choosing adit, incline or shaft; sinking cycles and Galloway stages; freezing and cementation; burn cuts; roadheaders, CMs and TBMs.",
   lessons: [
     /* ------------------------------------------------------------ 2.1 */

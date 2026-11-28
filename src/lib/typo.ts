@@ -19,3 +19,9 @@ export function tx(s: string): string {
 export function withUnit(value: string, unit?: string): string {
   return unit ? `${minus(value)}${NNBSP}${unit}` : minus(value);
 }
+
+/** §5.2 titles as drawn: every ASCII hyphen becomes a non-breaking hyphen (U+2011), so "Room-and-pillar" never splits. */
+export const NBHY = "‑";
+export function nbh(s: string): string {
+  return s.replace(/-/g, NBHY);
+}

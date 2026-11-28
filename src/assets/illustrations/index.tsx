@@ -19,8 +19,8 @@ import u10 from "./u10.svg";
 export const UNIT_ILLUSTRATIONS: Record<string, StaticImageData> = { u0, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 };
 
 /** A unit's illustration at `size` px (decorative unless `title` is given). Same art in both themes. */
-export function UnitIllustration({ unitId, size = 160, title }: { unitId: string; size?: number; title?: string }) {
+export function UnitIllustration({ unitId, size = 160, title, eager = false }: { unitId: string; size?: number; title?: string; eager?: boolean }) {
   const src = UNIT_ILLUSTRATIONS[unitId];
   if (!src) return null;
-  return <Image src={src} width={size} height={size} alt={title ?? ""} aria-hidden={title ? undefined : true} unoptimized draggable={false} className="shrink-0 select-none" />;
+  return <Image src={src} width={size} height={size} alt={title ?? ""} aria-hidden={title ? undefined : true} unoptimized draggable={false} loading={eager ? "eager" : undefined} className="shrink-0 select-none" />;
 }

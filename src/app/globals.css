@@ -1414,6 +1414,7 @@ a.press-card:active {
   width: 56px;
   height: 56px;
 }
+/* §5.2 status dot: fixed greys (light #D0D0D0, dark #4A4A4A); done = the success disc with a check. */
 .status-dot {
   display: inline-flex;
   align-items: center;
@@ -1422,7 +1423,10 @@ a.press-card:active {
   width: 32px;
   height: 32px;
   border-radius: 9999px;
-  background: var(--surface-2);
+  background: #d0d0d0;
+}
+.dark .status-dot {
+  background: #4a4a4a;
 }
 .status-dot[data-state="done"] {
   background: var(--success);
@@ -1453,4 +1457,120 @@ a.press-card:active {
 }
 .unit-scroller > * {
   flex: none;
+}
+
+/* ---------- v3c.1 §5.2 Home: fixed geometry, scroll-snap carousel, crossfaded text ----------
+ * --home-art: the illustration square, 140–200 px, sized from the viewport height so Start clears the tab bar at
+ * 390×844. 620 px = everything above the bottom of Start except the art, plus the tab bar and a 4 px gap (md+: no tab bar). */
+.home {
+  position: relative;
+  isolation: isolate;
+  padding-top: 32px;
+  --home-art: clamp(140px, calc(100dvh - 620px), 200px);
+}
+@media (min-width: 768px) {
+  .home {
+    --home-art: clamp(140px, calc(100dvh - 556px), 200px);
+  }
+}
+.xfade-stack {
+  display: grid;
+}
+.xfade-stack > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+.xfade-stack > [data-on] {
+  opacity: 1;
+}
+@starting-style {
+  .xfade-stack > [data-on] {
+    opacity: 0;
+  }
+}
+/* Glow = the stacked layers of the first stack, behind everything; they crossfade over 240 ms. */
+.home > .xfade-stack:first-child {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 280px;
+  z-index: -1;
+  pointer-events: none;
+}
+.home > .xfade-stack:first-child > * {
+  transition-duration: 240ms;
+}
+.home-glow {
+  height: 280px;
+}
+.dark .home-glow {
+  background: linear-gradient(to bottom, var(--u-glow) 0, var(--bg) 280px);
+}
+.home-title {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-wrap: balance;
+}
+.home-carousel {
+  container-type: inline-size;
+  height: var(--home-art);
+}
+.home-track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-inline: calc(25cqw - 20px);
+}
+.home-track::-webkit-scrollbar {
+  display: none;
+}
+.home-slot {
+  flex: none;
+  width: calc(50cqw + 40px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+.home-slot img,
+.home-slot [data-placeholder-art] {
+  width: var(--home-art) !important;
+  height: var(--home-art) !important;
+}
+.home-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 64px;
+}
+.home-row-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* v3c.1 §5.1b chrome never takes the unit hue: the top bar and tab bar restate the hue tokens as neutrals. */
+.chrome {
+  --u-face: var(--text);
+  --u-ledge: var(--text);
+  --u-on: var(--bg);
+  --u-ink: var(--text);
+  --u-tint: var(--surface-2);
+  --action: var(--text);
+  --action-ledge: var(--text);
+  --action-on: var(--bg);
+  --action-tint: var(--surface-2);
+  --action-tint-text: var(--text);
 }

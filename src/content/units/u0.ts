@@ -7,6 +7,7 @@ export const U0: Unit = {
   n: 0,
   title: "Field Orientation: How STRATA Trains You",
   short: "Orientation",
+  shortTitle: "Field Orientation",
   blurb: "One concept — overburden stress — run through all five mastery stages so you learn the controls.",
   lessons: [
     {

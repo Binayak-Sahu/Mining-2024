@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, type PanInfo } from "framer-motion";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { Check, ChevronRight, Dumbbell, BookMarked, Flame, GraduationCap, Lock, Play, Zap } from "lucide-react";
 import { UNITS, allCodex } from "@/content";
 import { useStrata, liveStreak, type LessonRecord } from "@/lib/store";
@@ -13,7 +13,7 @@ import { familyOf } from "@/lib/family";
 import { currentLessonId, levelOf, unitLevels } from "@/lib/levels";
 import { bossUnlocked, lessonUnlocked } from "@/lib/progress";
 import { unitIcon } from "@/content/unitIcons";
-import { stageSlide } from "@/lib/motion";
+import { nbh } from "@/lib/typo";
 import type { Unit } from "@/lib/types";
 import { ProgressBar } from "./course";
 import { UnitArt } from "./UnitArt";
@@ -28,11 +28,15 @@ function startUnitIndex(done: Record<string, LessonRecord>, free: boolean): numb
 
 type RowState = "done" | "current" | "open" | "locked";
 
-/** §5.2 level card: node rows for the current lesson and the one after it, then the unit Start button. */
-function LevelCard({ unit, done, free, allDone }: { unit: Unit; done: Record<string, LessonRecord>; free: boolean; allDone: boolean }) {
+/**
+ * §5.2 level card: always 2 node rows (the current lesson and the one after it; at the end of a unit, the last two),
+ * then the unit Start button. Row titles clamp to 2 lines, so the card has one height for every unit.
+ */
+function LevelCard({ unit, done, free, allDone, live }: { unit: Unit; done: Record<string, LessonRecord>; free: boolean; allDone: boolean; live: boolean }) {
   const cur = currentLessonId(unit, done, free);
   const items = unitLevels(unit).flatMap((l) => l.items);
-  const at = cur ? items.findIndex((it) => it.lesson.id === cur) : Math.max(0, items.length - 2);
+  const found = cur ? items.findIndex((it) => it.lesson.id === cur) : -1;
+  const at = Math.max(0, Math.min(found < 0 ? items.length : found, items.length - 2));
   const rows = items.slice(at, at + 2);
   const Icon = unitIcon(unit.id);
   const stateOf = (it: (typeof items)[number]): RowState => {
@@ -42,13 +46,13 @@ function LevelCard({ unit, done, free, allDone }: { unit: Unit; done: Record<str
   };
   const href = `/lesson/${cur ?? unit.lessons[0]?.id ?? unit.boss.id}`;
   return (
-    <div className="card p-6" data-testid="level-card">
-      <ul className="space-y-4">
+    <div className="card p-6" data-testid={live ? "level-card" : undefined}>
+      <ul className="grid gap-4">
         {rows.map((it) => {
           const s = stateOf(it);
           const label = it.boss ? "Boss exam" : `Lesson ${unit.n}.${it.index + 1}`;
           return (
-            <li key={it.lesson.id} className="flex items-center gap-4" data-lesson={it.lesson.id} data-lesson-state={s}>
+            <li key={it.lesson.id} className="home-row" data-lesson={it.lesson.id} data-lesson-state={s}>
               <span className="pedestal" data-state={s} aria-hidden>
                 <span>
                   {s === "current" ? (
@@ -64,8 +68,8 @@ function LevelCard({ unit, done, free, allDone }: { unit: Unit; done: Record<str
               </span>
               <span className="min-w-0 flex-1">
                 <span className="sr-only">{label}: </span>
-                <span className={`block ${s === "current" ? "t-card-title text-fg" : "t-secondary"}`} style={s === "current" ? undefined : { fontWeight: 500 }} lang="en">
-                  {it.lesson.title}
+                <span className={`home-row-title ${s === "current" ? "t-card-title text-fg" : "t-secondary"}`} style={s === "current" ? undefined : { fontWeight: 500 }} lang="en">
+                  {nbh(it.lesson.title)}
                 </span>
                 <span className="sr-only">{s === "done" ? " (completed)" : s === "locked" ? " (locked)" : s === "current" ? " (next)" : ""}</span>
               </span>
@@ -77,7 +81,7 @@ function LevelCard({ unit, done, free, allDone }: { unit: Unit; done: Record<str
         })}
       </ul>
       {/* Same target as before v3c: the unit's current lesson; with every unit finished, the exam hall. */}
-      <Link href={allDone ? "/exam" : href} className="btn-3d tone-tech w-full mt-6" data-testid="home-start">
+      <Link href={allDone ? "/exam" : href} className="btn-3d tone-tech w-full mt-6" data-testid={live ? "home-start" : undefined}>
         {cur ? "Start" : allDone ? "Open exam hall" : "Review"}
       </Link>
     </div>
@@ -85,77 +89,107 @@ function LevelCard({ unit, done, free, allDone }: { unit: Unit; done: Record<str
 }
 
 /**
- * §5.1/§5.2 Home carousel: one strip holding every unit's art, moved as a whole. Slot pitch = width / 2 + 40, so the
- * centre art is 200 px and each neighbour peeks in from the edge. Drag moves the strip with the finger; release snaps one
- * unit with stageSlide (no animation under reduced motion).
+ * §5.2 crossfade stack: one layer per unit in `keep`, all in the same grid cell, so the box never changes size. Only the
+ * layer for `index` is visible and interactive; the others sit at opacity 0 (inert) and fade in or out on settle
+ * (opacity only, 160 ms; the glow uses 240 ms). Neighbours are mounted ahead of time, so nothing loads after a swipe.
  */
-function Carousel({ index, onChange, jump }: { index: number; onChange: (i: number) => void; jump: boolean }) {
-  const reduce = useReducedMotion();
-  const box = useRef<HTMLDivElement>(null);
-  const [w, setW] = useState(390);
-  useEffect(() => {
-    const el = box.current;
-    if (!el) return;
-    setW(el.clientWidth || 390);
-    const ro = new ResizeObserver(() => setW(el.clientWidth || 390));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  const pitch = w / 2 + 40;
-  const target = w / 2 - 100 - index * pitch;
-  const x = useMotionValue(target);
-  useEffect(() => {
-    if (jump || reduce) {
-      x.set(target);
-      return;
-    }
-    const c = animate(x, target, stageSlide);
-    return () => c.stop();
-  }, [target, x, jump, reduce]);
-  const onEnd = (_: unknown, info: PanInfo) => {
-    const d = info.offset.x < -48 || info.velocity.x < -400 ? 1 : info.offset.x > 48 || info.velocity.x > 400 ? -1 : 0;
-    const next = Math.min(ORDER.length - 1, Math.max(0, index + d));
-    if (next === index) {
-      if (reduce) x.set(target);
-      else animate(x, target, stageSlide);
-    } else onChange(next);
-  };
+function Layers({ keep, index, className, children }: { keep: number[]; index: number; className: string; children: (i: number, live: boolean) => React.ReactNode }) {
   return (
-    <div ref={box} className="relative overflow-hidden" style={{ height: 200 }} aria-roledescription="carousel" aria-label="Units" data-testid="unit-carousel">
-      <motion.div
-        className="absolute top-0 left-0 h-full"
-        style={{ x, width: ORDER.length * pitch, touchAction: "pan-y", cursor: "grab" }}
-        drag="x"
-        dragMomentum={false}
-        dragElastic={0.2}
-        dragConstraints={{ left: w / 2 - 100 - (ORDER.length - 1) * pitch, right: w / 2 - 100 }}
-        onDragEnd={onEnd}
-      >
-        {UNITS.map((u, k) => (
-          <div key={u.id} className="absolute top-0" style={{ left: k * pitch, width: 200, height: 200 }} aria-hidden={k !== index}>
-            {k === index ? (
-              <UnitArt unitId={u.id} size={200} title={`Unit ${u.n}: ${u.short}`} />
-            ) : (
-              <button type="button" tabIndex={-1} className="carousel-slot block" onClick={() => onChange(k)} aria-label={`Unit ${u.n}: ${u.short}`}>
-                <UnitArt unitId={u.id} size={200} />
-              </button>
-            )}
-          </div>
-        ))}
-      </motion.div>
+    <div className="xfade-stack">
+      {keep.map((i) => (
+        <div key={UNITS[i].id} className={className} data-u={UNITS[i].id} data-family={familyOf(UNITS[i].id)} data-on={i === index ? "" : undefined} aria-hidden={i === index ? undefined : true} inert={i !== index}>
+          {children(i, i === index)}
+        </div>
+      ))}
     </div>
   );
 }
 
-/** Five page dots: a window around the current unit (8 px, active = unit ink), each a 44 px target. */
-function Dots({ index, onChange }: { index: number; onChange: (i: number) => void }) {
+/**
+ * §5.2 carousel: a native scroll-snap track (x mandatory), so the illustrations follow the finger and the browser does
+ * the snap. Only the track moves. Slot pitch = 50 % + 40 px of the column, so a neighbour peeks in ~30 % from each edge.
+ * The settled slot is read on scrollend (or 120 ms after the last scroll event where scrollend is missing).
+ */
+function Carousel({ index, onSettle, onPick, go }: { index: number; onSettle: (i: number) => void; onPick: (i: number) => void; go: { i: number; n: number } | null }) {
+  const reduce = useReducedMotion();
+  const track = useRef<HTMLDivElement>(null);
+  const pitch = () => (track.current?.firstElementChild as HTMLElement | null)?.offsetWidth || 1;
+  // Place the track on the start unit before the first visible paint (Home is hidden until the store hydrates).
+  useLayoutEffect(() => {
+    const el = track.current;
+    if (el) el.scrollLeft = index * pitch();
+    // Only on mount and when the start unit is (re)derived; later moves come from the finger or from `go`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    const el = track.current;
+    if (!el || !go) return;
+    el.scrollTo({ left: go.i * pitch(), behavior: reduce ? "auto" : "smooth" });
+  }, [go, reduce]);
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    let t = 0;
+    const settle = () => {
+      window.clearTimeout(t);
+      onSettle(Math.max(0, Math.min(ORDER.length - 1, Math.round(el.scrollLeft / pitch()))));
+    };
+    const onScroll = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(settle, 120);
+    };
+    const hasEnd = "onscrollend" in window;
+    el.addEventListener("scroll", onScroll, { passive: true });
+    if (hasEnd) el.addEventListener("scrollend", settle);
+    return () => {
+      window.clearTimeout(t);
+      el.removeEventListener("scroll", onScroll);
+      if (hasEnd) el.removeEventListener("scrollend", settle);
+    };
+  }, [onSettle]);
+  // A resize changes the pitch: keep the settled unit centred.
+  const at = useRef(index);
+  at.current = index;
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    let w = el.clientWidth;
+    const ro = new ResizeObserver(() => {
+      if (el.clientWidth === w) return;
+      w = el.clientWidth;
+      el.scrollLeft = at.current * pitch();
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return (
+    <div className="home-carousel" aria-roledescription="carousel" aria-label="Units" data-testid="unit-carousel">
+      <div ref={track} className="home-track" data-testid="unit-track">
+        {UNITS.map((u, k) => (
+          <div key={u.id} className="home-slot" aria-hidden={k !== index}>
+            {k === index ? (
+              <UnitArt unitId={u.id} size={200} title={`Unit ${u.n}: ${u.shortTitle}`} eager />
+            ) : (
+              <button type="button" tabIndex={-1} className="carousel-slot block" onClick={() => onPick(k)} aria-label={`Unit ${u.n}: ${u.shortTitle}`}>
+                <UnitArt unitId={u.id} size={200} eager />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Five page dots: a window around the current unit (8 px, active = unit ink), each a 44 px target. Keyed by slot, so no dot ever moves. */
+function Dots({ index, onPick }: { index: number; onPick: (i: number) => void }) {
   const first = Math.min(Math.max(0, index - 2), ORDER.length - 5);
   return (
-    <div className="flex justify-center gap-1" aria-label="Unit pages">
-      {ORDER.slice(first, first + 5).map((id, k) => {
+    <div className="flex justify-center gap-1" aria-label="Unit pages" data-family={familyOf(UNITS[index].id)}>
+      {[0, 1, 2, 3, 4].map((k) => {
         const i = first + k;
         return (
-          <button key={id} type="button" aria-current={i === index ? "true" : undefined} aria-label={`Unit ${UNITS[i].n}: ${UNITS[i].short}`} onClick={() => onChange(i)} className="unit-dot inline-flex items-center justify-center rounded-full" style={{ width: 28, height: 44 }}>
+          <button key={k} type="button" aria-current={i === index ? "true" : undefined} aria-label={`Unit ${UNITS[i].n}: ${UNITS[i].shortTitle}`} onClick={() => onPick(i)} className="unit-dot inline-flex items-center justify-center rounded-full" style={{ width: 28, height: 44 }}>
             <span className="block rounded-full" style={{ width: 8, height: 8, background: i === index ? "var(--u-ink)" : "var(--edge-strong)" }} />
           </button>
         );
@@ -164,42 +198,75 @@ function Dots({ index, onChange }: { index: number; onChange: (i: number) => voi
   );
 }
 
-/** §5.2 Home: the current-unit screen (title, LEVEL n, carousel, level card, Start). Wide screens keep the side panel. */
+/**
+ * §5.2 Home: the current-unit screen (title, LEVEL n, carousel, level card, Start). Fixed geometry: the title box is
+ * 2 lines, the card is 2 rows, the art is a fixed square that flexes 140–200 px with the viewport height (never while
+ * the page is open), so a swipe moves only the illustration track and fades the text. Wide screens keep the side panel.
+ */
 export function Home() {
   const hydrated = useHydrated();
   const s = useStrata();
   const done = hydrated ? s.lessons : {};
   const free = hydrated && s.freeRoam;
   const [picked, setPicked] = useState<number | null>(null);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [go, setGo] = useState<{ i: number; n: number } | null>(null);
   const start = startUnitIndex(done, free);
   const index = picked ?? Math.max(0, start);
+  const settle = useCallback(
+    (i: number) => {
+      if (i === index) return;
+      setPrev(index);
+      setPicked(i);
+    },
+    [index],
+  );
+  // A dot or a peeking neighbour scrolls the track; the text follows when the scroll settles.
+  const pick = (i: number) => setGo((g) => ({ i, n: (g?.n ?? 0) + 1 }));
+  const keep = [...new Set([index - 1, index, index + 1, prev ?? index])].filter((i) => i >= 0 && i < ORDER.length).sort((a, b) => a - b);
   const unit = UNITS[index];
-  const cur = currentLessonId(unit, done, free);
-  const level = levelOf(unit, cur);
 
   return (
     <div className="max-w-6xl mx-auto lg:px-6 pb-8 sm:pb-10 lg:grid lg:grid-cols-[minmax(0,640px)_320px] lg:justify-center lg:gap-12">
-      <section data-family={familyOf(unit.id)} className="page-glow min-w-0 w-full max-w-[640px] mx-auto pt-8" style={{ visibility: hydrated ? "visible" : "hidden" }} aria-label={`Unit ${unit.n}: ${unit.title}`} data-unit={unit.id}>
-        <div className="px-6">
-          <h1 className="t-hero text-fg text-center text-balance" lang="en">
-            {unit.title}
-          </h1>
-          <div className="t-eyebrow text-center mt-6" style={{ color: "var(--u-ink)" }} data-testid="home-level">
-            Level {level}
+      <section className="home min-w-0 w-full max-w-[640px] mx-auto" style={{ visibility: hydrated ? "visible" : "hidden" }} aria-label={`Unit ${unit.n}: ${unit.title}`} data-unit={unit.id} data-family={familyOf(unit.id)}>
+        <Layers keep={keep} index={index} className="home-glow-layer">
+          {() => <div className="home-glow" />}
+        </Layers>
+        <div className="home-body">
+          <div className="px-6">
+            <Layers keep={keep} index={index} className="xfade">
+              {(i, live) => (
+                <>
+                  <h1 className="home-title t-hero text-fg text-center" lang="en" title={UNITS[i].title}>
+                    <span>{nbh(UNITS[i].shortTitle)}</span>
+                  </h1>
+                  <div className="t-eyebrow text-center mt-6" style={{ color: "var(--u-ink)" }} data-testid={live ? "home-level" : undefined}>
+                    Level {levelOf(UNITS[i], currentLessonId(UNITS[i], done, free))}
+                  </div>
+                </>
+              )}
+            </Layers>
           </div>
-        </div>
-        <div className="mt-4">
-          <Carousel index={index} onChange={setPicked} jump={picked === null} />
-        </div>
-        <div className="mt-2">
-          <Dots index={index} onChange={setPicked} />
-        </div>
-        <div className="px-6 mt-4">
-          <LevelCard unit={unit} done={done} free={free} allDone={start < 0} />
-          <div className="flex justify-center mt-6">
-            <Link href={`/unit/${unit.id}`} className="btn-3d tone-ghost btn-sm px-5 inline-flex items-center gap-1">
-              All lessons <ChevronRight size={18} aria-hidden />
-            </Link>
+          <div className="mt-4">
+            {/* key: the carousel remounts once the store is read, so its first scroll position is the start unit. */}
+            <Carousel key={hydrated ? "on" : "off"} index={index} onSettle={settle} onPick={pick} go={go} />
+          </div>
+          <div className="mt-2">
+            <Dots index={index} onPick={pick} />
+          </div>
+          <div className="px-6 mt-4">
+            <Layers keep={keep} index={index} className="xfade">
+              {(i, live) => (
+                <>
+                  <LevelCard unit={UNITS[i]} done={done} free={free} allDone={start < 0} live={live} />
+                  <div className="flex justify-center mt-6">
+                    <Link href={`/unit/${UNITS[i].id}`} className="btn-3d tone-ghost btn-sm px-5 inline-flex items-center gap-1">
+                      All lessons <ChevronRight size={18} aria-hidden />
+                    </Link>
+                  </div>
+                </>
+              )}
+            </Layers>
           </div>
         </div>
       </section>

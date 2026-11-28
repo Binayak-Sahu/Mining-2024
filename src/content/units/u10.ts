@@ -7,6 +7,7 @@ export const U10: Unit = {
   n: 10,
   title: "Indian Mining Legislation, Safety Management & Rescue",
   short: "DGMS Mastery",
+  shortTitle: "Mining Law & Safety",
   blurb: "Statutory architecture and duties, gassiness classification and air standards, SMP/HIRA/WRAC risk, fault trees, and closed-circuit breathing apparatus rescue.",
   lessons: [
     /* ------------------------------------------------------------ 10.1 */

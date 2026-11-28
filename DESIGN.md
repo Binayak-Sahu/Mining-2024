@@ -208,7 +208,8 @@ The draft eyebrow was 13 / 16, but the draft's own Never List bans text under 14
 - Height 56, no border.
 - Left: the streak pill (number + flame icon in `energy`). Right: the XP pill and the hearts pill. Each is a 48 px pill (§4).
 - Icons are lucide, 24 px, filled where Brilliant's are solid.
-- Keep the existing key/flag/sound/avatar controls. All but sound move into the avatar menu.
+- **v3c.1:** the bar holds exactly four things on phones: streak pill, XP pill, sound, avatar. The Inspector key, the report flag (Inspector Mode only) and the theme switch live in the avatar menu with unchanged behaviour; the avatar shows a small `energy` dot while Inspector Mode is on. Desktop (md+) adds the logo and the section nav.
+- **Chrome never takes the unit hue.** Stat pills, the XP icon, the avatar and the tab bar stay neutral (`.chrome` restates the `--u-*` / `--action*` tokens as neutrals). Unit hue appears only below the top bar. The streak flame keeps `energy` (a state colour, not a unit hue).
 
 ### 5.2 Home: "current unit" screen (v3, Brilliant Home)
 Top to bottom:
@@ -228,6 +229,23 @@ Top to bottom:
 6. The full-width Start button in the unit `face`.
 
 **No mascot.** The current node shows the unit icon on its pedestal instead of Koji.
+
+#### 5.2 rules: no layout shift (v3c.1, 2026-11-28)
+1. **Short titles.** Home and the Path header show `unit.shortTitle` (≤ 20 characters, ≤ 2 lines at `hero`). The full `unit.title` is the Path header subtitle (`secondary`, under the hero). `shortTitle` lives in unit metadata only.
+2. **Fixed geometry.**
+   - The title box reserves exactly 2 lines (72 px at `hero`), `text-wrap: balance`, no ellipsis.
+   - The level card always has 2 rows (at the end of a unit, its last two). Each row is 64 px; row titles clamp to 2 lines.
+   - Every image has a fixed width and height. The illustration is a square that flexes 140–200 px with the viewport height (`--home-art`), so at 390×844 the Start button is fully visible above the tab bar without scrolling. It is set by the viewport, never animated.
+3. **Carousel.**
+   - Native scroll-snap (`x mandatory`, `scroll-snap-stop: always`), so the art tracks the finger. Only the illustration track moves.
+   - On settle (`scrollend`, or 120 ms after the last scroll event), the title, LEVEL, level card and "All lessons" crossfade: opacity only, 160 ms.
+   - The glow is two stacked layers crossfading over 240 ms.
+   - Animate only `transform` and `opacity`, never size or position. Page dots are keyed by slot, so no dot moves; only the active colour changes.
+   - Reduced motion: dot and neighbour taps jump the track instantly; the text still crossfades.
+   - Neighbour units (±1) are mounted ahead of time (opacity 0, inert) and every illustration loads eagerly, so nothing loads after a swipe.
+4. **Typography.** Titles are drawn with U+2011 non-breaking hyphens (`nbh()` in `src/lib/typo.ts`); stored content keeps ASCII hyphens.
+5. **Status dots.** 32 px, `#D0D0D0` in light and `#4A4A4A` in dark; done = the `success` disc with a check.
+6. **Check:** a 390×844 trace swiping U0 → U4 must show CLS 0, and no element other than the illustration track and the faded text may move.
 
 ### 5.3 Path: course list (v3, Brilliant Courses)
 - **Unit tabs:** a horizontal scroller of 140×96 tiles (§4 tile), each with a 56 px illustration and a `tab` label under it. Selected: 3 px border in the unit `ink`, background = tab tint, and a 4×56 px indicator bar under the label in the unit `ink`.
@@ -389,7 +407,7 @@ export const fadeQuick     = { duration: 0.16, ease: "easeOut" } as const;      
 - **Screen change:** the outgoing screen moves x 0 → −24 and fades out. The incoming one moves x 24 → 0 and fades in, with `stageSlide`.
 - **Feedback sheet:** y 100 % → 0 with `feedbackSheet`. A correct answer also scales the verdict word 0.9 → 1.
 - **Word chip to blank:** a shared `layoutId` fly with `tactilePress`.
-- **Carousel:** swiping between units uses `stageSlide`.
+- **Carousel:** native scroll-snap follows the finger; on settle the text crossfades (opacity, 160 ms) and the glow crossfades (240 ms). See §5.2 rules.
 - **Reduced motion:** `MotionConfig reducedMotion="user"` already exists. Under it, every transition becomes `fadeQuick`, the node pulse stops and confetti stays off.
 
 ---

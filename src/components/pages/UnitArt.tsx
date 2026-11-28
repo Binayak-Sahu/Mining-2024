@@ -6,8 +6,8 @@ import { familyOf } from "@/lib/family";
  * A unit's §5.5 illustration, or the §5.5 placeholder when a unit has none: a rounded tile (72 % of the box) in the
  * family `light` tone with a `mid` bottom edge, and the unit's lucide icon in `deep`, outline only, stroke scaled with size.
  */
-export function UnitArt({ unitId, size, title }: { unitId: string; size: number; title?: string }) {
-  if (UNIT_ILLUSTRATIONS[unitId]) return <UnitIllustration unitId={unitId} size={size} title={title} />;
+export function UnitArt({ unitId, size, title, eager }: { unitId: string; size: number; title?: string; eager?: boolean }) {
+  if (UNIT_ILLUSTRATIONS[unitId]) return <UnitIllustration unitId={unitId} size={size} title={title} eager={eager} />;
   const Icon = unitIcon(unitId);
   const tile = Math.round(size * 0.72);
   return (

@@ -13,6 +13,7 @@ import { familyOf } from "@/lib/family";
 import { currentLessonId, lessonMinutes, unitLevels, type LevelItem } from "@/lib/levels";
 import type { Unit } from "@/lib/types";
 import type { LessonRecord } from "@/lib/store";
+import { nbh } from "@/lib/typo";
 import { ProgressBar } from "./course";
 import { UnitArt } from "./UnitArt";
 
@@ -75,7 +76,7 @@ function LessonCard({ unit, item, state }: { unit: Unit; item: LevelItem; state:
           <span className="tnum">{meta}</span>
         </div>
         <div className={`t-card-title mt-1 ${open ? "text-fg" : "text-fg-2"}`} style={{ overflowWrap: "anywhere", hyphens: "auto" }} lang="en">
-          {lesson.title}
+          {nbh(lesson.title)}
         </div>
         {state === "inspect" && (
           <span className="t-label inline-block mt-2 rounded-full px-3" style={{ fontWeight: 700, background: "var(--u-tint)", color: "var(--u-ink)" }}>
@@ -150,8 +151,11 @@ export function UnitMap({ unitId }: { unitId: string }) {
               Unit {unit.n} · {levels.length} level{levels.length === 1 ? "" : "s"}
             </div>
             <h1 className="t-hero text-fg mt-2 text-balance" lang="en">
-              {unit.title}
+              {nbh(unit.shortTitle)}
             </h1>
+            <p className="t-secondary mt-2 text-balance" lang="en" data-testid="unit-subtitle">
+              {nbh(unit.title)}
+            </p>
             <p className="t-secondary mt-2 flex items-center gap-x-3 gap-y-1 flex-wrap">
               <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
                 <BookOpen size={18} aria-hidden /> {counts.lessons}

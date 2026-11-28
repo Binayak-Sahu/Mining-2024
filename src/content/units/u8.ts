@@ -6,6 +6,7 @@ export const U8: Unit = {
   n: 8,
   title: "Mine Surveying, Mineral Processing & Mine Electricals",
   short: "Survey·Process·Elec",
+  shortTitle: "Survey & Electricals",
   blurb: "Traverse adjustment and shaft plumbing, comminution and washability, restricted-neutral earthing and FLP/IS, Koepe winding and safety devices.",
   lessons: [
     /* ------------------------------------------------------------ 8.1 */

@@ -6,6 +6,7 @@ export const U9: Unit = {
   n: 9,
   title: "Mine Economics, Planning & Digital Mining",
   short: "Economics",
+  shortTitle: "Mine Economics",
   blurb: "Discounted cash flow with Indian mineral levies, grade–tonnage and cut-off theory, Lerchs–Grossmann pit limits and digital-mine telemetry.",
   lessons: [
     /* ------------------------------------------------------------ 9.1 */

@@ -6,6 +6,7 @@ export const U6: Unit = {
   n: 6,
   title: "Underground Coal & Metalliferous Mining Methods",
   short: "UG Methods",
+  shortTitle: "Underground Methods",
   blurb: "Bord & pillar depillaring and goaf behaviour, longwall abutments and shields, thick-seam methods, stope dilution and block-cave draw.",
   lessons: [
     /* ------------------------------------------------------------ 6.1 */

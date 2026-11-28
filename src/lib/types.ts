@@ -280,6 +280,8 @@ export interface Unit {
   n: number;
   title: string;
   short: string;
+  /** §5.2 hero title on Home and the Path header: ≤ 20 characters, ≤ 2 lines at `hero`. The full `title` is the Path subtitle. */
+  shortTitle: string;
   blurb: string;
   lessons: Lesson[];
   boss: Lesson;

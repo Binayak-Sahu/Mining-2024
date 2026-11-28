@@ -362,3 +362,12 @@ Run `npm run audit:svg` after any diagram change.
 - **Removed:** `Campaign.tsx`, `ExpeditionPath.tsx` and the unused v2 course card/header helpers in `course.tsx` (only `ProgressBar` is left). `strata.ts` is now unused.
 - **CSS:** `.t-hero`, `.t-card-title`, `.press-card`, `.v3-spine`, `.lesson-tile`, `.pedestal`, `.status-dot`, `.v3-bar`, `.unit-scroller` in `globals.css`.
 - **Unchanged:** progress logic and keys, lesson/stage order, sims, content, the service worker.
+
+## Phase 15.5-v3c.1 — no layout shift on Home/Path, neutral chrome (2026-11-28)
+- **Rules:** DESIGN.md §5.2 "rules: no layout shift" and §5.1b (top bar contents, chrome never takes the unit hue); §6 carousel line updated.
+- **Short titles:** `Unit.shortTitle` (types.ts + every `units/u*.ts`, metadata only): Field Orientation · Mining Geology · Mine Development · Rock Mechanics · Drilling & Blasting · Opencast & HEMM · Underground Methods · Mine Ventilation · Survey & Electricals · Mine Economics · Mining Law & Safety. Path header: hero = shortTitle, subtitle = full title.
+- **Home (`Home.tsx`):** `Layers` crossfade stack (every layer in one grid cell, its own `data-family`, inert when hidden; ±1 neighbours and the outgoing unit mounted; `@starting-style` fades fresh layers in). Glow = the first stack, absolutely placed, 240 ms. Carousel = `.home-track` native scroll-snap with container-query pitch (50cqw + 40 px), settle on `scrollend` (120 ms debounce fallback); dots and peeking neighbours `scrollTo` (instant under reduced motion). Dots keyed by slot. Level card always shows 2 rows (clamped to the unit's last two). Illustrations `loading="eager"` (`UnitIllustration`/`UnitArt` `eager` prop).
+- **CSS:** `.home`, `--home-art` (clamp 140–200 px from `100dvh`), `.xfade-stack`, `.home-glow`, `.home-title` (72 px), `.home-track`, `.home-slot`, `.home-row` (64 px), `.home-row-title` (2-line clamp), `.chrome` (neutral hue tokens on the top bar and tab bar), `.status-dot` greys.
+- **Top bar / avatar menu:** phone bar = streak, XP, sound, avatar (logo + nav from md). `ProfileMenu` gained the Inspector key row (hidden on phones while off, as before), "Report this screen" (Inspector Mode only) and the theme switch (sm+); the avatar is neutral and shows an `energy` dot while Inspector Mode is on.
+- **Typography:** `nbh()` / `NBHY` in `src/lib/typo.ts` (U+2011), applied to unit and lesson titles on Home and Path.
+- **Unchanged:** progress logic and keys, lesson/stage order, sims, content other than `shortTitle`, the service worker. No new dependencies.

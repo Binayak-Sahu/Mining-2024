@@ -6,6 +6,7 @@ export const U5: Unit = {
   n: 5,
   title: "Opencast Mining & HEMM Engineering",
   short: "Opencast",
+  shortTitle: "Opencast & HEMM",
   blurb: "Pit geometry and stripping ratios, dragline cut-and-cast, truck-shovel matching, haul-road physics and waste-dump stability.",
   lessons: [
     /* ------------------------------------------------------------ 5.1 */

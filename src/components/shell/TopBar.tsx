@@ -11,7 +11,6 @@ import { rankFor } from "@/lib/ranks";
 import { useHydrated } from "@/lib/useHydrated";
 import { usePrefs, type ThemePref } from "@/lib/prefs";
 import { setInspector } from "@/lib/inspector";
-import { ReportFlag } from "./InspectorKit";
 import { ProfileMenu } from "./ProfileMenu";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import type { ReactNode } from "react";
@@ -141,9 +140,9 @@ export function TopBar() {
   const st = hydrated ? liveStreak(streak, last) : 0;
 
   return (
-    <header className="sticky top-0 z-30 bg-canvas pt-[env(safe-area-inset-top)]">
+    <header className="chrome sticky top-0 z-30 bg-canvas pt-[env(safe-area-inset-top)]">
       <div className="max-w-6xl mx-auto px-3 sm:px-5 h-14 flex items-center gap-1 sm:gap-4">
-        <Link href="/" className="flex items-center shrink-0 min-h-[44px] min-w-[44px]" aria-label="STRATA home">
+        <Link href="/" className="hidden md:flex items-center shrink-0 min-h-[44px] min-w-[44px]" aria-label="STRATA home">
           <Logo />
         </Link>
         <nav className="hidden md:flex items-center gap-0.5 ml-3 rounded-2xl bg-surface-2 p-1">
@@ -158,19 +157,15 @@ export function TopBar() {
             );
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
-          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Daily streak" aria-label={`Daily streak ${st}`}>
-            <span className="text-energy-tint-text inline-flex"><StreakFlame n={st} /></span> {st}
+        {/* §5.1b: streak pill left; XP pill, sound and avatar right. Key, flag and theme live in the avatar menu. */}
+        <span className="stat-pill !px-2.5 !gap-1 text-fg md:ml-auto" title="Daily streak" aria-label={`Daily streak ${st}`} data-testid="stat-streak">
+          <span className="text-energy-tint-text inline-flex"><StreakFlame n={st} /></span> {st}
+        </span>
+        <div className="ml-auto md:ml-0 flex items-center gap-1 sm:gap-1.5">
+          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Experience points" aria-label={`Experience points ${hydrated ? xp : 0}`} data-testid="stat-xp">
+            <Zap size={20} className="text-fg fill-current" aria-hidden /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
           </span>
-          <span className="stat-pill !px-2.5 !gap-1 text-fg" title="Experience points" aria-label={`Experience points ${hydrated ? xp : 0}`}>
-            <Zap size={20} className="text-unit-ink fill-unit-ink" aria-hidden /> <AnimatedNumber value={hydrated ? xp : 0} digits={0} />
-          </span>
-          <InspectorBadge />
-          <ReportFlag />
           <MuteToggle />
-          <span className="hidden sm:inline-flex">
-            <ThemeToggle />
-          </span>
           <ProfileMenu badge={["T", "OM", "AM", "2C", "1C"][index]} rankTitle={rank.title} />
         </div>
       </div>
@@ -185,7 +180,7 @@ export function BottomNav() {
   return (
     <>
       <div className="md:hidden h-[calc(64px+env(safe-area-inset-bottom))]" aria-hidden />
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 ds-tabbar" aria-label="Primary">
+      <nav className="chrome md:hidden fixed bottom-0 inset-x-0 z-30 ds-tabbar" aria-label="Primary">
         {NAV.map(({ href, label, Icon }) => {
           const on = isOn(href, path);
           return (

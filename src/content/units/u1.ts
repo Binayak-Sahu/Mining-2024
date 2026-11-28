@@ -7,6 +7,7 @@ export const U1: Unit = {
   n: 1,
   title: "Mining Geology, Exploration & Deposit Modelling",
   short: "Geology",
+  shortTitle: "Mining Geology",
   blurb: "Coal and ore genesis, structural geometry, core logging and UNFC reserve estimation — the ground truth every plan is built on.",
   lessons: [
     /* ------------------------------------------------------------ 1.1 */

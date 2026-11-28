@@ -6,6 +6,7 @@ export const U4: Unit = {
   n: 4,
   title: "Drilling, Blasting & Rock Fragmentation",
   short: "Blasting",
+  shortTitle: "Drilling & Blasting",
   blurb: "Rock-breakage mechanics of drills, explosive thermochemistry, Kuz-Ram fragmentation, delay timing, misfires, vibration and flyrock.",
   lessons: [
     /* ------------------------------------------------------------ 4.1 */
