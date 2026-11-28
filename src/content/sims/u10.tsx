@@ -30,7 +30,7 @@ export const rolesSim: SimDef = {
     { key: "role", label: "Position", format: (v) => ROLES[v].name },
     { key: "tier", label: "Level", format: (v) => ["Ownership & management", "Statutory management", "Specialist officials", "Supervisory", "Front-line competent persons"][v] },
   ],
-  primary: ["tier"],
+  primary: ["tier", "role"],
   v3: { viewH: 410 },
   render: (p) => {
     const r = ROLES[p.role];
@@ -161,7 +161,7 @@ export const gassySim: SimDef = {
   ],
   caption: "Degree I: ≤ 0.1 % inflammable gas in general body AND emission ≤ 1 m³/t. Degree II: > 0.1 % or > 1 m³/t up to 10 m³/t. Degree III: > 10 m³/t.",
   animated: true,
-  primary: ["deg"],
+  primary: ["deg", "deg"],
   // §5.6 redraw (v3e): the emission scale is piecewise (I | II | III each get room); pins sit on I, II, III and the 0.1 % mark.
   v3: { viewH: 250 },
   handles: [
