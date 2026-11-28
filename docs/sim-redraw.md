@@ -6,7 +6,7 @@ Every sim, redrawn to DESIGN.md §5.6 in batches of 15, in unit order U7, U6, U5
 
 **Frame:** a redrawn sim draws in `0 0 400 viewH`, keeping the legacy origin and the 400 × 240 box, so the lesson hotspot pins (lesson content) still land on what they explain.
 
-Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6d) or `unsure: <reason>` (redrawn, needs a look). Phase 15.5-v3e (all remaining) redoes every `done` row to v3.2 and then every `todo` row; resume from the first row that is not `done-v2` or `unsure`. Golden: the result of `test:golden` after the redraw (`exact` = all 3 states identical).
+Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6d) or `unsure: <reason>` (redrawn, needs a look). Phase 15.5-v3e finished 2026-11-28: every sim is `done-v2` or `unsure` (a pin that cannot land on its feature, or a visual issue). The inset is for text only (DESIGN §5.6d(a)). Golden: the result of `test:golden` after the redraw (`exact` = all 3 states identical).
 
 | Sim | Unit | Status | Golden | Title |
 |---|---|---|---|---|
