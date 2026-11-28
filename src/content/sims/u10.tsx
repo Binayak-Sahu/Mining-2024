@@ -30,12 +30,12 @@ export const rolesSim: SimDef = {
     { key: "tier", label: "Level", format: (v) => ["Ownership & management", "Statutory management", "Specialist officials", "Supervisory", "Front-line competent persons"][v] },
   ],
   primary: ["tier"],
-  v3: { viewH: 400 },
+  v3: { viewH: 410 },
   render: (p) => {
     const r = ROLES[p.role];
-    const H = 400;
+    const H = 410;
     const lines = wrapDuty(r.duty);
-    const cy = 142;
+    const cy = 152;
     return (
       <g>
         <clipPath id="u10roles-clip">
@@ -45,7 +45,7 @@ export const rolesSim: SimDef = {
           <rect x={0} y={0} width={400} height={cy - 8} fill={GREYS.light} />
         </g>
         {ROLE_LAWS.map((l, i) => {
-          const y = 28 + i * 22;
+          const y = 34 + i * 22;
           return (
             <g key={l}>
               <T x={28} y={y + 6} fill={ON_LIGHT}>
