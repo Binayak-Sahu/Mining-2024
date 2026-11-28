@@ -500,83 +500,103 @@ export const cuttingSim: SimDef = {
   caption: "ICR = k·P / SE with energy-transfer ratio k; SE ≈ 0.11 × UCS (kWh/m³) is an indicative linear fit for sedimentary rocks.",
   animated: true,
   handles: [{ key: "ucs", axis: "x", at: (p) => [30 + (p.ucs / 250) * 340, 36], toValue: (x) => ((x - 30) / 340) * 250, color: "#EF4444" }],
+  // §5.6d redraw (v3.2): legacy frame kept (UCS scale x 30..370 at y 36, TBM bar at y 106, machine at y 180..210) so the four pins stay put.
+  v3: { viewH: 250, formula: () => "\\mathrm{ICR}=\\dfrac{k\\,P}{\\mathrm{SE}},\\quad \\mathrm{SE}\\approx 0.11\\,\\mathrm{UCS}" },
   render: (p, o, t) => {
     const sx = (u: number) => 30 + (u / 250) * 340;
     const spin = (t * 240) % 360;
+    const met = !!o.ok;
+    const rate = F3.clamp(Math.log10(Math.max(o.icr, 1)) / 2.6, 0.03, 1);
+    const rateOk = met && o.icr >= 15;
+    const rock = p.ucs >= 120 ? GREYS.mid : GREYS.light;
+    const FACE = 234;
+    const rows = [74, 90, 106];
     return (
       <g>
-        <Txt x={30} y={20} size={9} weight={700} fill={C.slate}>
-          ROCK STRENGTH SCALE (UCS, MPa) & MACHINE ENVELOPES
-        </Txt>
-        <rect x={30} y={30} width={340} height={12} fill="url(#ucsg)" rx={3} />
-        <defs>
-          <linearGradient id="ucsg" x1="0" x2="1">
-            <stop offset="0" stopColor="#1e293b" />
-            <stop offset="0.2" stopColor="#a8a29e" />
-            <stop offset="1" stopColor="#57534e" />
-          </linearGradient>
-        </defs>
+        <clipPath id="u2cut-clip">
+          <rect x={12} y={12} width={376} height={226} rx={12} />
+        </clipPath>
+        {/* UCS scale */}
+        <rect x={30} y={30} width={340} height={12} rx={6} fill={GREYS.light} />
         {[0, 50, 100, 150, 200, 250].map((u) => (
-          <Txt key={u} x={sx(u)} y={54} size={7} anchor="middle" mono fill={C.slate}>
-            {u}
-          </Txt>
+          <line key={u} x1={sx(u)} x2={sx(u)} y1={42} y2={47} style={{ stroke: INK3 }} strokeWidth={1.5} />
         ))}
-        {MACH.map((m, i) => (
-          <g key={m.name}>
-            <rect x={sx(0)} y={64 + i * 18} width={sx(m.max) - sx(0)} height={12} rx={3} fill={i === p.m ? C.tech : "#cbd5e1"} />
-            <Txt x={sx(0) + 4} y={73 + i * 18} size={7.5} weight={700} fill={i === p.m ? "white" : C.ink}>
-              {m.name}
-            </Txt>
-          </g>
-        ))}
-        <line x1={sx(p.ucs)} x2={sx(p.ucs)} y1={26} y2={122} stroke={o.ok ? C.safe : C.crit} strokeWidth={2.5} />
-        <Txt x={sx(p.ucs)} y={132} size={9} anchor="middle" mono weight={800} fill={o.ok ? C.safe : C.crit}>
-          {p.ucs} MPa
-        </Txt>
-        {/* machine schematic */}
-        <rect x={40} y={180} width={110} height={30} rx={5} fill={C.hazard} stroke="#B45309" filter="url(#f-shadow)" />
-        <rect x={44} y={183} width={102} height={8} rx={3} fill={MAT.glass} />
-        <rect x={40} y={208} width={110} height={10} rx={5} fill={MAT.steel} />
-        {[52, 72, 92, 112, 132].map((x) => (
-          <circle key={x} cx={x} cy={213} r={3.5} fill="#94A3B8" />
-        ))}
+        <T x={376} y={132} anchor="end">
+          UCS, MPa
+        </T>
+        {/* machine envelopes */}
+        {MACH.map((m, i) => {
+          const on = i === p.m;
+          const w = sx(m.max) - sx(0);
+          const bar = (
+            <rect x={sx(0)} y={rows[i] - 4} width={w} height={8} rx={4} data-state={on ? (met ? "safe" : "unsafe") : undefined} style={{ fill: on ? (met ? OK_LIGHT : F3.BAD_LIGHT) : GREYS.light }} />
+          );
+          const name = ["Roadheader", "Continuous miner", "Hard-rock TBM"][i];
+          return (
+            <g key={m.name}>
+              {bar}
+              {i < 2 ? (
+                <T x={sx(0) + w + 8} y={rows[i] + 6} fill={on ? INK : F3.INK2} weight={on ? 700 : 600}>
+                  {name}
+                </T>
+              ) : (
+                <T x={30} y={132} fill={on ? INK : F3.INK2} weight={on ? 700 : 600}>
+                  {name}
+                </T>
+              )}
+            </g>
+          );
+        })}
+        {/* host rock: roof, floor and the face ahead, tone follows UCS; the heading is a surface-coloured cut */}
+        <g clipPath="url(#u2cut-clip)">
+          <rect x={0} y={142} width={400} height={108} fill={rock} />
+          <rect x={0} y={174} width={FACE} height={52} style={{ fill: F3.SURFACE }} />
+          <path d={`M0 174 H${FACE} V226 H0`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        </g>
+        <T x={30} y={163} fill={ON_LIGHT}>
+          Rock
+        </T>
+        {/* machine */}
         {p.m === 2 ? (
           <g>
-            <rect x={150} y={160} width={14} height={60} fill={C.ink} />
-            {[0, 1, 2, 3].map((i) => (
-              <circle key={i} cx={166} cy={168 + i * 15} r={4} fill={C.slate} />
+            <rect x={40} y={178} width={166} height={38} rx={8} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+            <rect x={206} y={176} width={14} height={44} rx={4} style={{ fill: GREYS.deep, stroke: INK }} strokeWidth={2.5} />
+            {[184, 196, 208].map((y) => (
+              <circle key={y} cx={226} cy={y} r={4} fill={GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} />
             ))}
           </g>
         ) : (
           <g>
-            <line x1={140} y1={188} x2={p.m === 0 ? 205 : 190} y2={p.m === 0 ? 160 : 190} stroke={C.ink} strokeWidth={8} />
+            <rect x={44} y={210} width={102} height={12} rx={6} fill={GREYS.deep} />
+            <rect x={40} y={180} width={110} height={30} rx={6} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+            <rect x={48} y={186} width={34} height={8} rx={3} fill={GREYS.light} />
             {p.m === 0 ? (
-              <g transform={`rotate(${spin.toFixed(0)} 210 156)`}>
-                <circle cx={210} cy={156} r={12} fill={MAT.metal} stroke={C.ink} strokeWidth={2} />
-                {[0, 60, 120, 180, 240, 300].map((a) => (
-                  <path key={a} d="M210 141 l3 4 h-6 z" fill={C.ink} transform={`rotate(${a} 210 156)`} />
-                ))}
+              <g>
+                <line x1={150} y1={194} x2={200} y2={188} style={{ stroke: INK }} strokeWidth={6} strokeLinecap="round" />
+                <g transform={`rotate(${spin.toFixed(0)} 212 188)`}>
+                  <circle cx={212} cy={188} r={13} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2.5} />
+                  {[0, 60, 120, 180, 240, 300].map((a) => (
+                    <path key={a} d="M212 172 l3 4 h-6 z" fill={ON_LIGHT} transform={`rotate(${a} 212 188)`} />
+                  ))}
+                </g>
               </g>
             ) : (
               <g>
-                <rect x={186} y={168} width={20} height={44} rx={8} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} />
+                <line x1={150} y1={196} x2={196} y2={196} style={{ stroke: INK }} strokeWidth={6} strokeLinecap="round" />
+                <rect x={196} y={180} width={26} height={42} rx={9} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2.5} />
                 {[0, 1, 2, 3].map((i) => (
-                  <line key={i} x1={186} x2={206} y1={172 + ((i * 11 + t * 30) % 40)} y2={176 + ((i * 11 + t * 30) % 40)} stroke={C.ink} strokeWidth={1.5} />
+                  <line key={i} x1={196} x2={222} y1={185 + ((i * 10 + t * 30) % 34)} y2={189 + ((i * 10 + t * 30) % 34)} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
                 ))}
               </g>
             )}
           </g>
         )}
-        <rect x={225} y={150} width={155} height={75} rx={8} fill="#F1F5F9" stroke="#CBD5E1" />
-        <Txt x={232} y={170} size={9} weight={800}>
-          ICR = k·P / SE
-        </Txt>
-        <Txt x={232} y={186} size={8} mono>
-          = {MACH[p.m].k}×{p.P} / {o.se.toFixed(1)}
-        </Txt>
-        <Txt x={232} y={212} size={16} weight={900} mono fill={o.ok ? C.ink : C.crit}>
-          {o.icr.toFixed(1)} m³/h
-        </Txt>
+        {/* cutting-rate gauge (log scale) */}
+        <rect x={262} y={155} width={110} height={20} rx={10} style={{ fill: F3.SURFACE, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={263} y={156} width={Math.max(108 * rate, 18)} height={18} rx={9} data-state={rateOk ? "safe" : "unsafe"} style={{ fill: rateOk ? OK_LIGHT : F3.BAD_LIGHT }} />
+        <T x={266} y={204} fill={ON_LIGHT}>
+          Cut rate
+        </T>
       </g>
     );
   },

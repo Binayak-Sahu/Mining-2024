@@ -51,11 +51,14 @@ export const dipStrikeSim: SimDef = {
     { key: "eA", label: "Seam RL at A / B / C", format: (v, o) => `${v.toFixed(0)} / ${o.eB.toFixed(0)} / ${o.eC.toFixed(0)} m` },
   ],
   caption: "Seam RL = collar RL − depth. The plane through the three seam points gives gradient (a, b); tan θ = √(a² + b²); down-dip azimuth = atan2(−a, −b); apparent dip tan α = tan θ·cos(section az − dip az).",
+  // §5.6d redraw (v3.2): plan (left) and section (right) panels; no hotspot pins on this sim.
+  v3: { viewH: 310, formula: () => "\\tan\\theta=\\sqrt{a^2+b^2},\\quad \\tan\\alpha=\\tan\\theta\\cos(\\psi-\\psi_d)" },
   render: (p) => {
     const r = threePoint(p);
-    const k = 0.4;
-    const X = (E: number) => 20 + (E + 50) * k;
-    const Y = (N: number) => 210 - (N + 50) * k;
+    const k = 0.36;
+    const PX0 = 24, PX1 = 200, PY0 = 48, PY1 = 224;
+    const X = (E: number) => PX0 + (E + 44) * k;
+    const Y = (N: number) => PY1 - (N + 70) * k;
     const cE = (0 + 400 + 150) / 3;
     const cN = (0 + 0 + 350) / 3;
     const dE = Math.sin(rad(r.dipAz));
@@ -63,86 +66,104 @@ export const dipStrikeSim: SimDef = {
     const sE = Math.sin(rad(r.strike));
     const sN = Math.cos(rad(r.strike));
     const zc = r.eA + r.a * cE + r.b * cN;
-    // structure contours every 20 m
     const g = Math.hypot(r.a, r.b);
     const contours = [];
     if (g > 1e-4) {
       for (let lvl = Math.ceil((zc - 120) / 20) * 20; lvl <= zc + 120; lvl += 20) {
-        const t = (zc - lvl) / g; // distance down-dip from centroid
+        const t = (zc - lvl) / g;
+        if (Math.abs(t) > 320) continue;
         const pE = cE + dE * t;
         const pN = cN + dN * t;
-        if (Math.abs(t) > 320) continue;
-        contours.push(
-          <g key={lvl}>
-            <line x1={X(pE - sE * 300)} y1={Y(pN - sN * 300)} x2={X(pE + sE * 300)} y2={Y(pN + sN * 300)} stroke={C.line} strokeWidth={1} />
-            {X(pE + sE * 60) > 26 && X(pE + sE * 60) < 186 && Y(pN + sN * 60) > 40 && Y(pN + sN * 60) < 204 && Object.values(BH).every(([e, n]) => Math.hypot(X(e) - X(pE + sE * 60), Y(n) - Y(pN + sN * 60)) > 26) && (
-              <Txt x={X(pE + sE * 60)} y={Y(pN + sN * 60)} size={6} fill={C.slate} mono>
-                {lvl.toFixed(0)}
-              </Txt>
-            )}
-          </g>,
-        );
+        contours.push(<line key={lvl} x1={X(pE - sE * 300)} y1={Y(pN - sN * 300)} x2={X(pE + sE * 300)} y2={Y(pN + sN * 300)} stroke={GREYS.mid} strokeWidth={1.5} />);
       }
     }
     const secE = Math.sin(rad(p.sec));
     const secN = Math.cos(rad(p.sec));
-    const bh: [string, readonly [number, number], number][] = [
-      ["A", BH.A, r.eA],
-      ["B", BH.B, r.eB],
-      ["C", BH.C, r.eC],
+    const ccx = X(cE);
+    const ccy = Y(cN);
+    const bh: [string, readonly [number, number]][] = [
+      ["A", BH.A],
+      ["B", BH.B],
+      ["C", BH.C],
     ];
-    const alpha = rad(r.app);
+    const SX0 = 216, SX1 = 376, SG = 84, SB = 224, SM = 154;
+    const ty = Math.tan(rad(r.app)) * 80;
+    const hx = ccx + secE * 58;
+    const hy = ccy - secN * 58;
+    const ha = Math.atan2(-secN, secE);
+    const hd = 13;
+    const head = `${hx + 8 * Math.cos(ha)},${hy + 8 * Math.sin(ha)} ${hx - hd * Math.cos(ha - 0.5) + 8 * Math.cos(ha)},${hy - hd * Math.sin(ha - 0.5) + 8 * Math.sin(ha)} ${hx - hd * Math.cos(ha + 0.5) + 8 * Math.cos(ha)},${hy - hd * Math.sin(ha + 0.5) + 8 * Math.sin(ha)}`;
+    const dx2 = X(cE + dE * 120), dy2 = Y(cN + dN * 120);
+    const da = Math.atan2(dy2 - ccy, dx2 - ccx);
+    const dbx = dx2 - 10 * Math.cos(da), dby = dy2 - 10 * Math.sin(da);
+    const dh1 = [dx2 - 13 * Math.cos(da - 0.5), dy2 - 13 * Math.sin(da - 0.5)];
+    const dh2 = [dx2 - 13 * Math.cos(da + 0.5), dy2 - 13 * Math.sin(da + 0.5)];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <defs>
-          <clipPath id="mapclip">
-            <rect x={20} y={30} width={180} height={180} />
-          </clipPath>
-        </defs>
-        <rect x={20} y={30} width={180} height={180} rx={3} fill="#F0FDF4" stroke="#86EFAC" />
-        <g clipPath="url(#mapclip)">
+        <T x={PX0} y={40} weight={700}>
+          Plan
+        </T>
+        <T x={SX0} y={40} weight={700}>
+          Section
+        </T>
+        <clipPath id="u1-dip3-plan">
+          <rect x={PX0} y={PY0} width={PX1 - PX0} height={PY1 - PY0} rx={12} />
+        </clipPath>
+        <rect x={PX0} y={PY0} width={PX1 - PX0} height={PY1 - PY0} rx={12} style={{ fill: U.light }} />
+        <g clipPath="url(#u1-dip3-plan)">
           {contours}
-          <line x1={X(cE - sE * 400)} y1={Y(cN - sN * 400)} x2={X(cE + sE * 400)} y2={Y(cN + sN * 400)} stroke={C.ink} strokeWidth={2.5} />
-          <line x1={X(cE - secE * 400)} y1={Y(cN - secN * 400)} x2={X(cE + secE * 400)} y2={Y(cN + secN * 400)} stroke={C.tech} strokeWidth={1.5} strokeDasharray="5 3" />
+          <line x1={X(cE - sE * 400)} y1={Y(cN - sN * 400)} x2={X(cE + sE * 400)} y2={Y(cN + sN * 400)} stroke={ON_LIGHT} strokeWidth={2.5} strokeLinecap="round" />
+          <line x1={X(cE - secE * 400)} y1={Y(cN - secN * 400)} x2={X(cE + secE * 400)} y2={Y(cN + secN * 400)} stroke={ON_LIGHT} strokeWidth={1.5} strokeDasharray="7 6" strokeLinecap="round" />
+          <polygon points={head} fill={ON_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+          <g>
+            <line x1={ccx} y1={ccy} x2={dbx} y2={dby} stroke={ON_LIGHT} strokeWidth={2} strokeLinecap="round" />
+            <polygon points={`${dx2},${dy2} ${dh1[0]},${dh1[1]} ${dh2[0]},${dh2[1]}`} fill={ON_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+          </g>
         </g>
-        <Arrow x1={X(cE)} y1={Y(cN)} x2={X(cE + dE * 110)} y2={Y(cN + dN * 110)} color={C.crit} width={2.5} />
-        {bh.map(([n, [e, nn], rl]) => (
+        {bh.map(([n, [e, nn]]) => (
           <g key={n}>
-            <circle cx={X(e)} cy={Y(nn)} r={9} fill={C.hazard} opacity={0.2} />
-            <circle cx={X(e)} cy={Y(nn)} r={5} fill={C.hazard} stroke={C.ink} />
-            <Txt x={X(e) + 7} y={Y(nn) - 4} size={8} weight={800}>
+            <circle cx={X(e)} cy={Y(nn)} r={6} fill={ON_LIGHT} />
+            <text x={n === "B" ? X(e) - 11 : X(e) + 11} y={Y(nn) - 8} fontSize={18} fontWeight={700} textAnchor={n === "B" ? "end" : "start"} fill={ON_LIGHT}>
               {n}
-            </Txt>
-            <Txt x={X(e) + 7} y={Y(nn) + 7} size={7} mono fill={C.slate}>
-              {`${rl.toFixed(0)}`}
-            </Txt>
+            </text>
           </g>
         ))}
-        <Txt x={20} y={22} size={8} weight={700} fill={C.slate}>
-          PLAN · N↑ · structure contours (m RL)
-        </Txt>
-        <Txt x={22} y={225} size={8} fill={C.crit} weight={700}>
-          {`dip ${r.dip.toFixed(1)}° → ${r.dipAz.toFixed(0)}°`}
-        </Txt>
-        <Txt x={120} y={225} size={8} fill={C.ink} weight={700}>
-          ━ strike
-        </Txt>
-        <Txt x={215} y={22} size={8} weight={700} fill={C.slate}>
-          {`SECTION along ${p.sec}°`}
-        </Txt>
-        <rect x={215} y={30} width={170} height={30} fill={MAT.sky} />
-        <rect x={215} y={60} width={170} height={120} fill={MAT.sand} />
-        <rect x={215} y={30} width={170} height={150} fill="none" stroke="#A8A29E" />
-        <line x1={215} x2={385} y1={60} y2={60} stroke="#65A30D" strokeWidth={3} />
-        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke="#0F172A" strokeWidth={8} />
-        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke={MAT.coal} strokeWidth={6} />
-        <Txt x={222} y={170} size={11} weight={900} mono fill={C.tech}>
-          {`α = ${r.app.toFixed(2)}°`}
-        </Txt>
-        <Txt x={222} y={198} size={8} fill={C.slate}>
-          + = seam deepens along section direction
-        </Txt>
+        <clipPath id="u1-dip3-sec">
+          <rect x={SX0} y={48} width={SX1 - SX0} height={SB - 48} rx={12} />
+        </clipPath>
+        <clipPath id="u1-dip3-rock">
+          <rect x={SX0} y={SG} width={SX1 - SX0} height={SB - SG} />
+        </clipPath>
+        <g clipPath="url(#u1-dip3-sec)">
+          <rect x={SX0} y={48} width={SX1 - SX0} height={SG - 48} style={{ fill: U.light }} />
+          <rect x={SX0} y={SG} width={SX1 - SX0} height={SB - SG} fill={GREYS.light} />
+          <polygon clipPath="url(#u1-dip3-rock)" points={`${SX0},${SM - ty - 7} ${SX1},${SM + ty - 7} ${SX1},${SM + ty + 7} ${SX0},${SM - ty + 7}`} style={{ fill: U.deep }} />
+        </g>
+        <line x1={SX0} x2={SX1} y1={SG} y2={SG} stroke={ON_LIGHT} strokeWidth={1.5} />
+        <text x={SX0 + 12} y={SG - 12} fontSize={18} fontWeight={600} fill={ON_LIGHT}>
+          Surface
+        </text>
+        {/* legend, off the fills */}
+        <line x1={24} x2={46} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={54} y={262}>
+          Strike
+        </T>
+        <line x1={140} x2={162} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={1.5} strokeDasharray="7 6" strokeLinecap="round" />
+        <T x={170} y={262}>
+          Section →
+        </T>
+        <line x1={296} x2={318} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <T x={326} y={262}>
+          Dip
+        </T>
+        <rect x={24} y={274} width={22} height={12} rx={3} style={{ fill: U.deep }} />
+        <T x={54} y={286}>
+          Seam
+        </T>
+        <circle cx={151} cy={280} r={6} style={{ fill: INK }} />
+        <T x={170} y={286}>
+          Borehole
+        </T>
       </g>
     );
   },
