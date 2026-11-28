@@ -1737,3 +1737,23 @@ a.press-card:active {
     bottom: 24px;
   }
 }
+
+/* ---------- §5.6 sim stage (v3, Phase 15.5-v3e: converted sims only; legacy sims still draw on .plate) ---------- */
+.sim-stage {
+  background: var(--surface);
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 28px;
+  padding: 12px;
+  transition: border-color 0.3s;
+}
+.sim-stage[data-met="true"] { border-color: var(--success); }
+.sim-stage svg { display: block; overflow: visible; }
+.sim-stage svg text { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+.sim-fo { color: var(--text); font-family: var(--font-sans); line-height: 1.1; white-space: nowrap; }
+.sim-fo .katex { font-size: 1em; }
+/* Codex thumbnails: the drawing only, never shrunk labels (§5.6) */
+.sim-stage[data-thumb] text,
+.sim-stage[data-thumb] [data-tex],
+.sim-stage[data-thumb] [data-label] { display: none; }
+.sim-stage[data-thumb] { padding: 8px; border-radius: 18px; border-bottom-width: 4px; }

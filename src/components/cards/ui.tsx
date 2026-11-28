@@ -20,6 +20,45 @@ export const STAGE_META: Record<StageKind, { label: string; short: string; Icon:
 };
 
 /**
+ * Sim stage title (DESIGN §5.6, v3e): `display` when it fits in 2 lines, otherwise `title` size, so a long sim title
+ * never pushes the stage down. Measured at `display` on every width change.
+ */
+function SimTitle({ title }: { title: string }) {
+  const ref = useRef<HTMLHeadingElement>(null);
+  const [small, setSmall] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const probe = document.createElement("h2");
+    probe.className = "t-display text-balance";
+    probe.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;left:0;top:0;margin:0";
+    probe.textContent = title;
+    const measure = () => {
+      const w = el.getBoundingClientRect().width;
+      if (!w) return;
+      probe.style.width = `${w}px`;
+      el.parentElement?.appendChild(probe);
+      const lh = parseFloat(getComputedStyle(probe).lineHeight) || 34;
+      const lines = Math.round(probe.getBoundingClientRect().height / lh);
+      probe.remove();
+      setSmall(lines > 2);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      probe.remove();
+    };
+  }, [title]);
+  return (
+    <h2 ref={ref} className={`${small ? "t-title" : "t-display"} text-fg mt-3 text-balance`} data-sim-title={small ? "title" : "display"}>
+      {title}
+    </h2>
+  );
+}
+
+/**
  * Stage shell (DESIGN.md §1.1, §5.12): the stage sits directly on the canvas — a neutral stage-kind eyebrow with
  * its icon, the stage title (§3 `display`) and the content. The optional footer is lifted into the bottom action
  * bar (§5.1), which turns into the feedback sheet (§5.7) while a verdict is showing.
@@ -49,7 +88,7 @@ export function CardFrame({ kind, title, children, footer, compact = false, foot
           <m.Icon size={16} strokeWidth={2.4} aria-hidden />
           {m.label}
         </div>
-        {compact ? <h2 className="sr-only">{title}</h2> : <h2 className="t-display text-fg mt-3 text-balance">{title}</h2>}
+        {compact ? <h2 className="sr-only">{title}</h2> : kind === "sim" ? <SimTitle title={title} /> : <h2 className="t-display text-fg mt-3 text-balance">{title}</h2>}
         <div className="mt-8 space-y-8">{children}</div>
       </section>
       <ActionBar slotRef={setSlot} force={tone !== null} verdict={tone} reserve={SHEET_RESERVE}>

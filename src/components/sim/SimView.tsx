@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/Slider";
 import { toneText } from "@/components/ui/tone";
 import { tactilePress, fadeQuick } from "@/lib/motion";
 import { NNBSP, tx, withUnit } from "@/lib/typo";
+import { SimStage } from "./SimStage";
 
 export function defaults(def: SimDef, overrides?: Vals): Vals {
   const v: Vals = {};
@@ -78,7 +79,39 @@ export function ObjectiveLine({ objective }: { objective: Objective }) {
 
 /** Daylight "diorama plate" with the sim render, optional overlay and draggable direct-manipulation grips. */
 
-export function SimCanvas({ def, values, overlay, onChange, still = false, objective, focus, corner, noObjectiveLine = false }: { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][]; corner?: ReactNode; noObjectiveLine?: boolean }) {
+type CanvasProps = { def: SimDef; values: Vals; overlay?: ReactNode; onChange?: (v: Vals) => void; still?: boolean; objective?: Objective; focus?: [number, number][]; corner?: ReactNode; noObjectiveLine?: boolean; /** Codex thumbnail: a §5.6 sim hides its labels (data-thumb). */ thumb?: boolean };
+
+/** Sim drawing: redrawn sims (`def.v3`) use the §5.6 stage, the rest the legacy plate. */
+export function SimCanvas(props: CanvasProps) {
+  return props.def.v3 ? <V3Canvas {...props} /> : <LegacyCanvas {...props} />;
+}
+
+function V3Canvas({ def, values, overlay, onChange, still = false, objective, focus, corner, noObjectiveLine = false, thumb = false }: CanvasProps) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(true);
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el || still || !def.animated || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { rootMargin: "120px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [still, def.animated]);
+  const t = useClock(!!def.animated && !still && onScreen);
+  const stage = (
+    <div ref={wrap}>
+      <SimStage def={def} values={values} overlay={overlay} onChange={onChange} still={still} met={!!objective?.met} focus={focus} corner={corner} thumb={thumb} t={t} />
+    </div>
+  );
+  if (!objective || noObjectiveLine) return stage;
+  return (
+    <div className="space-y-3">
+      <ObjectiveLine objective={objective} />
+      {stage}
+    </div>
+  );
+}
+
+function LegacyCanvas({ def, values, overlay, onChange, still = false, objective, focus, corner, noObjectiveLine = false }: CanvasProps) {
   const maskId = `focus-${useId().replace(/:/g, "")}`;
   const out = useMemo(() => def.compute(values), [def, values]);
   const wrap = useRef<HTMLDivElement>(null);

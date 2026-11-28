@@ -73,14 +73,18 @@ const css = `
 @font-face{font-family:"Plus Jakarta Sans Variable";font-weight:200 800;src:url("${font("@fontsource-variable/plus-jakarta-sans", "plus-jakarta-sans-latin-wght-normal.woff2")}") format("woff2")}
 @font-face{font-family:"JetBrains Mono Variable";font-weight:100 800;src:url("${font("@fontsource-variable/jetbrains-mono", "jetbrains-mono-latin-wght-normal.woff2")}") format("woff2")}
 @font-face{font-family:"JetBrains Mono Variable";font-weight:100 800;unicode-range:U+0370-03FF;src:url("${font("@fontsource-variable/jetbrains-mono", "jetbrains-mono-greek-wght-normal.woff2")}") format("woff2")}
-body{margin:0;font-family:"Plus Jakarta Sans Variable"} svg.case{display:block;width:448px;height:288px}`;
+@font-face{font-family:"Figtree Variable";font-weight:300 900;src:url("${font("@fontsource-variable/figtree", "figtree-latin-wght-normal.woff2")}") format("woff2")}
+body{margin:0;font-family:"Plus Jakarta Sans Variable"} svg.case{display:block;width:448px;height:288px;overflow:visible} svg.case[style] text{font-family:"Figtree Variable"}`;
 
 const body = cases
   .map((c, k) => {
     const def = simById.get(c.sim)!;
     const out = def.compute(c.vals);
     const pins = c.pins.map((h, i) => createElement("circle", { key: i, "data-pin": i, cx: h.x, cy: h.y, r: 8, fill: "#3B82F6" }));
-    return renderToStaticMarkup(createElement("svg", { className: "case", "data-k": k, viewBox: "-24 -24 448 288", xmlns: "http://www.w3.org/2000/svg" }, createElement(Fragment, null, def.render(c.vals, out, 0), ...pins)));
+    // Redrawn sims (§5.6, def.v3) draw in 0 0 400 viewH at 1 unit per px; legacy sims in the padded 448 × 288 plate.
+    const vb = def.v3 ? `0 0 400 ${def.v3.viewH}` : "-24 -24 448 288";
+    const style = def.v3 ? { width: "400px", height: `${def.v3.viewH}px` } : undefined;
+    return renderToStaticMarkup(createElement("svg", { className: "case", "data-k": k, viewBox: vb, style, xmlns: "http://www.w3.org/2000/svg" }, createElement(Fragment, null, def.render(c.vals, out, 0), ...pins)));
   })
   .join("\n");
 
@@ -97,8 +101,12 @@ const { chromium } = require("playwright");
   const page = await browser.newPage({ viewport: { width: 460, height: 300 } });
   await page.goto("file://" + join(dir, "svgs.html"));
   await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(300);
   await page.addScriptTag({ path: resolve("scripts/audit-measure.js") });
-  const meta = cases.map((c) => ({ sim: c.sim, ctx: c.ctx, pins: c.pins.map((h) => ({ x: h.x, y: h.y, title: h.title })) }));
+  const meta = cases.map((c) => {
+    const v3 = simById.get(c.sim)!.v3;
+    return { sim: c.sim, ctx: c.ctx, ox: v3 ? 0 : 24, w: 400, h: v3 ? v3.viewH : 240, pins: c.pins.map((h) => ({ x: h.x, y: h.y, title: h.title })) };
+  });
   if (process.env.AUDIT_SUGGEST) {
     const sug = await page.evaluate(`window.suggestPins(${JSON.stringify(meta)})`);
     writeFileSync(join(dir, "pin-suggestions.json"), JSON.stringify(sug, null, 1));

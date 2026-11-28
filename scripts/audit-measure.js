@@ -5,7 +5,8 @@ window.measureSvgs = function (meta) {
   document.querySelectorAll("svg.case").forEach((svg) => {
     const m = meta[Number(svg.dataset.k)];
     const box = svg.getBoundingClientRect();
-    const toUser = (r, t) => ({ x: r.left - box.left - 24, y: r.top - box.top - 24, w: r.width, h: r.height, t });
+    const ox = m.ox ?? 24, W = m.w ?? 400, H = m.h ?? 240;
+    const toUser = (r, t) => ({ x: r.left - box.left - ox, y: r.top - box.top - ox, w: r.width, h: r.height, t });
     const texts = [];
     svg.querySelectorAll("text").forEach((el) => {
       if (el.closest("defs, pattern")) return;
@@ -19,7 +20,7 @@ window.measureSvgs = function (meta) {
     });
     const where = `${m.sim} [${m.ctx}]`;
     for (const a of texts)
-      if (a.x < -1 || a.y < -1 || a.x + a.w > 401 || a.y + a.h > 241) res.push(`clip     ${where}: "${a.t}" at ${a.x.toFixed(0)},${a.y.toFixed(0)} w${a.w.toFixed(0)}`);
+      if (a.x < -1 || a.y < -1 || a.x + a.w > W + 1 || a.y + a.h > H + 1) res.push(`clip     ${where}: "${a.t}" at ${a.x.toFixed(0)},${a.y.toFixed(0)} w${a.w.toFixed(0)}`);
     for (let i = 0; i < texts.length; i++)
       for (let j = i + 1; j < texts.length; j++) {
         const a = texts[i];
@@ -37,7 +38,7 @@ window.measureSvgs = function (meta) {
       const area = t.w * t.h * 0.64;
       for (const sh of all.slice(idx + 1)) {
         if (sh.tagName === "text" || sh.contains(el)) continue;
-        const fill = sh.getAttribute("fill");
+        const fill = sh.getAttribute("fill") || (sh.style && sh.style.fill) || null;
         if (!fill || fill === "none" || fill === "transparent" || fill.startsWith("url(#grad-glass") || fill.startsWith("url(#pat-hatch") || fill.startsWith("url(#grad-rock-shade") || fill.startsWith("url(#grad-lamp")) continue;
         const op = Number(sh.getAttribute("opacity") ?? 1);
         if (op < 0.5) continue;
@@ -78,7 +79,7 @@ window.measureSvgs = function (meta) {
         } else if (inter(pr, h) > 10) res.push(`pin      ${where}: pin ${p.i} covers ${h.t}`);
       }
       for (const q of pins) if (q.i > p.i && Math.hypot(q.x - p.x, q.y - p.y) < 20) res.push(`pin      ${where}: pins ${p.i} and ${q.i} touch`);
-      if (p.x < 10 || p.y < 10 || p.x > 390 || p.y > 230) res.push(`pin      ${where}: pin ${p.i} at the edge`);
+      if (p.x < 10 || p.y < 10 || p.x > W - 10 || p.y > H - 10) res.push(`pin      ${where}: pin ${p.i} at the edge`);
     }
   });
   return res;
@@ -96,7 +97,8 @@ window.suggestPins = function (meta) {
     const m = meta[Number(svg.dataset.k)];
     if (!m.pins || !m.pins.length) return;
     const box = svg.getBoundingClientRect();
-    const toUser = (r) => ({ x: r.left - box.left - 24, y: r.top - box.top - 24, w: r.width, h: r.height });
+    const ox = m.ox ?? 24;
+    const toUser = (r) => ({ x: r.left - box.left - ox, y: r.top - box.top - ox, w: r.width, h: r.height });
     const texts = [];
     svg.querySelectorAll("text").forEach((el) => {
       if (el.closest("defs, pattern") || !(el.textContent || "").trim()) return;

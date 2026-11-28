@@ -137,7 +137,7 @@ export function CodexLibrary() {
                     const def = getSim(sid);
                     return (
                       <Link key={sid} href={`/lab?sim=${sid}`} title={`Open “${def.title}” in the Sim Lab`} aria-label={`Open ${def.title} in the Sim Lab`} className="block rounded-[16px] hover:ring-2 ring-action">
-                        <SimCanvas def={def} values={defaults(def)} />
+                        <SimCanvas def={def} values={defaults(def)} thumb />
                       </Link>
                     );
                   })}
@@ -202,7 +202,7 @@ export function CodexLibrary() {
                   <Link key={entry.id} href={`/unit/${u.id}`} className="card course-card group p-3 flex flex-col gap-2 min-w-0">
                     <div className="relative rounded-[12px] overflow-hidden">
                       <div className="grayscale opacity-45 group-hover:opacity-70 transition-opacity pointer-events-none" aria-hidden>
-                        <SimCanvas def={getSim(sims[0])} values={defaults(getSim(sims[0]))} still />
+                        <SimCanvas def={getSim(sims[0])} values={defaults(getSim(sims[0]))} still thumb />
                       </div>
                       <span className="absolute inset-0 flex items-center justify-center">
                         <span className="w-10 h-10 rounded-full bg-surface border-2 border-line-strong flex items-center justify-center text-fg-3">
