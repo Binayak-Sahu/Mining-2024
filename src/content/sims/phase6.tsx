@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, INK3, textW, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -385,7 +385,9 @@ export const slopeModesSim: SimDef = {
             <polyline points={pts([[0, y0], [x0, y0], [xe, yAt(xe)]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
             {blocks}
           </g>
-          <T x={376} y={44} anchor="end" fill={yAt(376 - textW("Rock columns")) < 40 ? ON_LIGHT : INK2}>Rock columns</T>
+          <T x={p.pp > 45 ? 376 : 24} y={44} anchor={p.pp > 45 ? "end" : "start"} fill={p.pp > 45 ? ON_LIGHT : INK2}>
+            Rock columns
+          </T>
           <T x={376} y={220} anchor="end" fill={ON_LIGHT}>Intact rock</T>
           <T x={24} y={220} fill={ON_LIGHT}>Pit floor</T>
         </g>

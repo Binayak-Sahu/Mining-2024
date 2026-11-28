@@ -99,7 +99,7 @@ export const accessSim: SimDef = {
             <T x={312} y={38} anchor="end" fill={INK}>
               Shaft
             </T>
-            <T x={clamp(xStart, 24, 182)} y={38} fill={INK}>
+            <T x={xStart >= 100 ? xStart - 6 : Math.max(24, xStart + 8)} y={38} anchor={xStart >= 100 ? "end" : "start"} fill={INK}>
               Incline
             </T>
             <T x={262} y={seamY} fill={ON_LIGHT} weight={700}>
