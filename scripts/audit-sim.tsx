@@ -185,13 +185,14 @@ function checkV32(def: SimDef, svg: string, viewH: number, readoutTexts: string[
 const golden: Record<string, Golden> = existsSync(GOLDEN_FILE) ? JSON.parse(readFileSync(GOLDEN_FILE, "utf8")) : {};
 const tracker = resolve("docs/sim-redraw.md");
 const doneInDoc = new Set<string>(); // any redrawn status: done, done-v2, unsure
-const v32 = new Set<string>(); // sims that must pass the v3.2 checks (§5.6d): done-v2 only
+const v32 = new Set<string>(); // sims that must pass the v3.2 checks (§5.6d): done-v2 only (AUDIT_SIM_V32=id,id forces more)
 if (existsSync(tracker))
   for (const m of readFileSync(tracker, "utf8").matchAll(/^\|\s*`([^`]+)`\s*\|[^|]*\|\s*(done-v2|done|unsure[^|]*)\s*\|/gm)) {
     doneInDoc.add(m[1]);
     if (m[2] === "done-v2") v32.add(m[1]);
   }
 
+for (const id of (process.env.AUDIT_SIM_V32 ?? "").split(",").filter(Boolean)) v32.add(id);
 // Self-test: AUDIT_SIM_FORCE=u3-kirsch,u9-npv audits legacy sims as if redrawn (they must fail).
 for (const id of (process.env.AUDIT_SIM_FORCE ?? "").split(",").filter(Boolean)) {
   const d = ALL_SIMS.find((x) => x.id === id);
