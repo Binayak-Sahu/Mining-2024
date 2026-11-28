@@ -556,50 +556,64 @@ export const koepeSim: SimDef = {
   ],
   caption: "Euler–Eytelwein: no slip while T₁/T₂ ≤ e^(μθ). Worst cases: accelerating a loaded skip up, or emergency braking a loaded skip descending.",
   animated: true,
+  // v3.2 redraw: wheel, tight-side rope, loaded skip and tail rope keep their lesson-pin places.
+  v3: { viewH: 262 },
   render: (p, o, t) => {
-    const cx = 200;
-    const cy = 50;
-    const r = 30;
+    const cx = 220;
+    const cy = 64;
+    const r = 45;
     const slip = o.margin < 1;
-    const travel = Math.sin(t * 0.6) * 12;
-    const col = o.margin >= 1.1 ? C.safe : o.margin >= 1 ? C.hazard : C.crit;
+    const tr = Math.sin(t * 0.6) * 8;
+    const lx = cx - r;
+    const rx = cx + r;
+    const yL = 216 + tr;
+    const yR = 186 - tr;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <path d={`M ${cx - 60} 120 L ${cx - 44} 10 L ${cx + 44} 10 L ${cx + 60} 120`} fill="none" stroke="#475569" strokeWidth={3} />
-        <path d={`M ${cx - 52} 65 L ${cx + 52} 65 M ${cx - 48} 38 L ${cx + 48} 38`} stroke="#94A3B8" strokeWidth={1.5} />
-        <rect x={150} y={10} width={100} height={8} rx={2} fill={MAT.steel} />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke={col} strokeWidth={6} filter={slip ? "url(#f-glow)" : undefined} />
+        <clipPath id="koepe-clip">
+          <rect x={0} y={0} width={400} height={262} rx={12} />
+        </clipPath>
+        <g clipPath="url(#koepe-clip)">
+          <rect x={0} y={112} width={400} height={150} style={{ fill: GREYS.light }} />
+          <rect x={120} y={112} width={210} height={138} style={{ fill: "var(--surface)" }} />
+        </g>
+        <path d={`M 130 112 L 195 24 M 300 112 L 245 24`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={lx} y1={cy} x2={lx} y2={170 + tr} style={{ stroke: GREYS.deep }} strokeWidth={2} />
+        <line x1={rx} y1={cy} x2={rx} y2={146 - tr} style={{ stroke: GREYS.deep }} strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={r} style={{ fill: U.light, stroke: U.ink }} strokeWidth={2} />
+        <g data-state={slip ? "unsafe" : "safe"}>
+          <circle cx={cx} cy={cy} r={41} fill="none" style={{ stroke: slip ? W_BAD : W_OK }} strokeWidth={5} />
+        </g>
         <g transform={`rotate(${((t * (slip ? 160 : 60)) % 360).toFixed(0)} ${cx} ${cy})`}>
           {[0, 60, 120].map((a) => (
-            <line key={a} x1={cx - r + 4} y1={cy} x2={cx + r - 4} y2={cy} stroke="#334155" strokeWidth={2.5} transform={`rotate(${a} ${cx} ${cy})`} />
+            <line key={a} x1={cx - 24} y1={cy} x2={cx + 24} y2={cy} style={{ stroke: INK3 }} strokeWidth={1.5} transform={`rotate(${a} ${cx} ${cy})`} />
           ))}
         </g>
-        <circle cx={cx} cy={cy} r={5} fill={MAT.metal} stroke={C.ink} />
-        <line x1={cx - r} y1={cy} x2={cx - r} y2={170 + travel} stroke="#334155" strokeWidth={3} />
-        <line x1={cx + r} y1={cy} x2={cx + r} y2={150 - travel} stroke="#334155" strokeWidth={3} />
-        <rect x={cx - r - 16} y={170 + travel} width={32} height={40} rx={2} fill={MAT.coal} stroke="#0F172A" />
-        <Txt x={cx - r} y={194 + travel} size={8} anchor="middle" fill="white" weight={800}>
-          {`${p.Q} t`}
-        </Txt>
-        <rect x={cx + r - 16} y={150 - travel} width={32} height={34} rx={2} fill={MAT.metal} stroke="#475569" />
-        <path d={`M ${cx - r} ${210 + travel} Q ${cx} 238 ${cx + r} ${184 - travel}`} fill="none" stroke={C.slate} strokeWidth={2} strokeDasharray="5 3" />
-        <Txt x={cx} y={234} size={7} anchor="middle" fill={C.slate}>
-          tail rope
-        </Txt>
-        <Arrow x1={cx - r - 30} y1={120} x2={cx - r - 30} y2={150} color={C.crit} width={2.5} />
-        <Txt x={cx - r - 36} y={116} size={9} anchor="end" weight={800} mono fill={C.crit}>
-          {`T₁ ${o.T1.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={cx + r + 26} y={116} size={9} weight={800} mono fill={C.tech}>
-          {`T₂ ${o.T2.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={20} y={30} size={12} weight={900} mono fill={col}>
-          {`T₁/T₂ ${o.ratio.toFixed(2)} vs e^μθ ${o.lim.toFixed(2)}`}
-        </Txt>
-        <Txt x={280} y={180} size={10} weight={800} fill={col}>
-          {o.margin >= 1 ? "NO SLIP" : "ROPE SLIPS"}
-        </Txt>
+        <circle cx={cx} cy={cy} r={8} style={{ fill: GREYS.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={lx - 22} y={170 + tr} width={44} height={46} rx={3} style={{ fill: U.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={rx - 22} y={146 - tr} width={44} height={40} rx={3} style={{ fill: GREYS.light, stroke: INK3 }} strokeWidth={1.5} />
+        <path d={`M ${lx} ${yL} Q ${(lx + rx) / 2} 226.5 ${rx} ${yR}`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <T x={26} y={132} fill={ON_LIGHT}>
+          T₁
+        </T>
+        <T x={308} y={132} fill={INK}>
+          T₂
+        </T>
+        <T x={278} y={52}>
+          Wheel
+        </T>
+        <T x={26} y={206} fill={ON_LIGHT}>
+          Loaded
+        </T>
+        <T x={308} y={176}>
+          Empty
+        </T>
+        <T x={232} y={232}>
+          Tail rope
+        </T>
+        <T x={26} y={232} fill={ON_LIGHT}>
+          Host rock
+        </T>
       </g>
     );
   },

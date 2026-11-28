@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, INK3, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
+import { Axes, T, INK, INK2, INK3, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, BAD_PALE, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -788,53 +788,73 @@ export const flotationSim: SimDef = {
     { key: "S", label: "Froth stability index", digits: 2 },
   ],
   caption: "Feed: 10 % sphalerite (67 % Zn), 15 % pyrite, 75 % silicates. Indicative kinetic model: collector makes surfaces hydrophobic; CuSO₄ activates sphalerite; lime/cyanide depresses pyrite; frother stabilises froth (excess entrains gangue); air and impeller set bubble flux.",
+  v3: { viewH: 280 },
   render: (p, o, t) => {
+    const cellL = 24;
+    const cellR = 240;
+    const cellTop = 52;
+    const cellBot = 196;
     const frothH = 20 + o.S * 45;
-    const cellTop = 30;
+    const met = o.Rt >= 85 && o.grade >= 50;
     const bub = [];
     for (let i = 0; i < 14; i++) {
-      const x = 40 + ((i * 47) % 170);
-      const phase = ((t * (0.25 + p.air * 0.2) + i * 0.13) % 1);
-      const y = 210 - phase * (210 - cellTop - frothH);
+      const x = 48 + ((i * 47) % 160);
+      const phase = (t * (0.25 + p.air * 0.2) + i * 0.13) % 1;
+      const y = 164 - phase * (164 - cellTop - frothH);
       const loaded = i / 14 < o.Rt / 100;
       bub.push(
         <g key={i}>
-          <circle cx={x} cy={y} r={6} fill="white" stroke={C.air} />
-          {loaded && <circle cx={x + 4} cy={y - 4} r={2.5} fill={C.ore} />}
-          {i % 4 === 0 && o.Rp > 20 && <circle cx={x - 4} cy={y - 3} r={2.2} fill="#facc15" />}
+          <circle cx={x} cy={y} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+          {loaded && <circle cx={x + 4} cy={y - 4} r={3} style={{ fill: U.deep }} />}
+          {i % 4 === 0 && o.Rp > 20 && <circle cx={x - 4} cy={y - 3} r={3} style={{ fill: GREYS.deep }} />}
         </g>,
       );
     }
-    const curve: [number, number][] = [];
+    const curvePts: [number, number][] = [];
     for (let c = 0; c <= 200; c += 10) {
       const r = flotation({ ...p, col: c });
-      curve.push([r.Rt, r.grade]);
+      curvePts.push([r.Rt, r.grade]);
     }
+    const px0 = 282;
+    const py0 = 56;
+    const pw = 88;
+    const ph = 120;
+    const sx = (v: number) => px0 + (v / 100) * pw;
+    const sy = (v: number) => py0 + ph - (v / 67) * ph;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill={MAT.water} stroke={C.ink} strokeWidth={2} />
-        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill="#1E293B" opacity={0.35} />
-        <rect x={25} y={cellTop} width={200} height={frothH} fill="#fef3c7" />
-        <Txt x={30} y={cellTop + 12} size={8} weight={800}>
-          FROTH (concentrate)
-        </Txt>
-        <rect x={110} y={200} width={30} height={6} fill={C.ink} transform={`rotate(${(t * p.rpm) % 360} 125 203)`} />
+        <rect x={cellL} y={cellTop} width={cellR - cellL} height={cellBot - cellTop} rx={4} style={{ fill: U.mid }} />
+        <rect x={cellL} y={cellTop} width={cellR - cellL} height={frothH} style={{ fill: U.light }} />
+        <path d={`M${cellL} ${cellTop} V${cellBot} H${cellR} V${cellTop}`} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        <T x={cellL} y={cellTop - 10} fill={INK2}>
+          Froth
+        </T>
+        <line x1={132} y1={cellTop} x2={132} y2={166} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={112} y={162} width={40} height={8} rx={2} style={{ fill: GREYS.deep }} transform={`rotate(${(t * p.rpm) % 360} 132 166)`} />
         {bub}
-        <Txt x={30} y={234} size={7} fill={C.slate}>
-          ● sphalerite attached ● pyrite attached
-        </Txt>
-        <Plot x={262} y={30} w={125} h={150} xmin={0} xmax={100} ymin={0} ymax={67} xlabel="recovery %" ylabel="% Zn">
-          {(sx, sy) => (
-            <g>
-              <polyline points={polyline(curve.map(([r, g]) => [sx(r), sy(g)]))} fill="none" stroke={C.tech} strokeWidth={2} />
-              <circle cx={sx(o.Rt)} cy={sy(o.grade)} r={5} fill={o.Rt >= 85 && o.grade >= 50 ? C.safe : C.crit} stroke="white" strokeWidth={1.5} />
-            </g>
-          )}
-        </Plot>
-        <Txt x={262} y={210} size={8} fill={C.slate}>
-          curve = collector sweep 0–200 g/t
-        </Txt>
+        <T x={36} y={192} fill={ON_LIGHT} weight={700}>
+          Pulp
+        </T>
+        <T x={cellR - 8} y={192} anchor="end" fill={ON_LIGHT} weight={700}>
+          Impeller
+        </T>
+        <Axes x={px0} y={py0} w={pw} h={ph} xlabel="Recovery" ylabel="Zn grade" />
+        <polyline points={pts(curvePts.map(([r, g]) => [sx(r), sy(g)]))} fill="none" style={{ stroke: U.deep }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={sx(o.Rt)} cy={sy(o.grade)} r={7} data-state={met ? "safe" : "unsafe"} style={{ fill: met ? OK : BAD, stroke: INK }} strokeWidth={1.5} />
+        <circle cx={34} cy={216} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+        <circle cx={38} cy={212} r={3} style={{ fill: U.deep }} />
+        <T x={50} y={222}>
+          Zinc mineral
+        </T>
+        <circle cx={190} cy={216} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+        <circle cx={186} cy={213} r={3} style={{ fill: GREYS.deep }} />
+        <T x={206} y={222}>
+          Pyrite
+        </T>
+        <line x1={24} y1={240} x2={46} y2={240} style={{ stroke: U.deep }} strokeWidth={2} strokeLinecap="round" />
+        <T x={54} y={246}>
+          Collector sweep 0–200 g/t
+        </T>
       </g>
     );
   },
@@ -909,71 +929,77 @@ export const zonesSim: SimDef = {
     { key: "faultA", label: "Earth-fault current", format: (v) => (v < 1 ? `${(v * 1000).toFixed(0)} mA` : `~${v.toFixed(0)} A`), tone: (v) => (v < 1 ? "ok" : "crit") },
   ],
   caption: "Ex d (flameproof): enclosure contains an internal explosion; flame paths quench escaping gas. Ex i (intrinsic safety): energy limited below methane's minimum ignition energy — only for low-power circuits. Teaching model; follow the mine's approved electrical scheme and the applicable regulations.",
+  v3: { viewH: 270 },
   render: (p, o, t) => {
     const z = zones(p);
-    const pos: Record<string, [number, number]> = { sub: [60, 150], intake: [190, 170], face: [330, 120], ret: [190, 60] };
+    const pos: Record<string, [number, number]> = { sub: [92, 200], intake: [200, 200], face: [340, 135], ret: [200, 70] };
     const flash = Math.floor(t * 3) % 2 === 0;
-    const eqCol = (e: number) => (e === 1 ? C.tech : e === 2 ? C.safe : "#94a3b8");
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#F5F5F4" opacity={0.6} />
-        <rect x={30} y={30} width={18} height={190} fill={MAT.metalH} />
-        <Txt x={39} y={26} size={7} anchor="middle" weight={700}>
-          shaft
-        </Txt>
-        <line x1={48} y1={170} x2={350} y2={170} stroke={C.air} strokeWidth={10} opacity={0.5} />
-        <line x1={350} y1={170} x2={350} y2={60} stroke={C.coal} strokeWidth={14} />
-        <line x1={350} y1={60} x2={48} y2={60} stroke="#fca5a5" strokeWidth={10} opacity={0.5} />
-        <Txt x={235} y={190} size={7} fill="#0369a1" weight={700}>
-          INTAKE (fresh air) →
-        </Txt>
-        <Txt x={225} y={46} size={7} fill={C.crit} weight={700}>
-          ← RETURN (may carry firedamp)
-        </Txt>
-        <Txt x={365} y={120} size={7} weight={700} fill={C.ink}>
-          FACE
-        </Txt>
+        <clipPath id="u8z-clip">
+          <rect x={0} y={0} width={400} height={270} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u8z-clip)">
+          <rect x={0} y={0} width={400} height={270} fill={GREYS.light} />
+          <rect x={44} y={55} width={311} height={30} fill={GREYS.mid} />
+          <rect x={44} y={185} width={311} height={30} fill={U.light} />
+          <rect x={325} y={55} width={30} height={160} fill={GREYS.deep} />
+          <rect x={30} y={55} width={28} height={160} fill={GREYS.deep} />
+        </g>
+        <g style={{ fill: "none", stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round">
+          <path d="M44 55 H355 V215 H44" />
+          <path d="M44 85 H325 V185 H44" />
+        </g>
+        <Arrow x1={128} y1={200} x2={162} y2={200} color={ON_LIGHT} width={2} head={10} />
+        <Arrow x1={162} y1={70} x2={128} y2={70} color={ON_LIGHT} width={2} head={10} />
+        <T x={24} y={44} fill={ON_LIGHT}>Shaft</T>
+        <T x={262} y={44} fill={ON_LIGHT}>Return</T>
+        <T x={262} y={240} fill={ON_LIGHT}>Intake</T>
+        {p.ev === 1 && (
+          <g data-state="unsafe">
+            <ellipse cx={340} cy={100} rx={22} ry={10} fill={BAD_PALE} style={{ stroke: BAD }} strokeWidth={1.5} />
+            <T x={304} y={106} anchor="end" fill={ON_LIGHT}>CH₄ layer</T>
+          </g>
+        )}
+        {(["ner", "elr"] as const).map((k, i) => {
+          const on = k === "ner" ? p.rn === 1 : p.elr === 1;
+          return (
+            <g key={k} data-state={on ? "safe" : undefined}>
+              <rect x={100} y={100 + i * 40} width={56} height={32} rx={6} fill={on ? OK_LIGHT : GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray={on ? undefined : "4 3"} />
+              <T x={128} y={122 + i * 40} anchor="middle" fill={ON_LIGHT}>{k === "ner" ? "NER" : "ELR"}</T>
+            </g>
+          );
+        })}
         {LOC.map((l, i) => {
           const [x, y] = pos[l.k];
           const e = p[l.k];
           const st = z.status[i];
+          const fill = e === 0 ? GREYS.light : e === 1 ? U.light : U.deep;
+          const txt = e === 2 ? ON_DEEP : ON_LIGHT;
+          const lab = { sub: "Pit bottom", intake: "Belt drive", face: "Shearer", ret: "CH₄ sensor" }[l.k];
+          const ly = l.k === "ret" ? y - 26 : l.k === "face" ? y + 40 : y + 36;
           return (
             <g key={l.k}>
-              <rect x={x - 22} y={y - 14} width={44} height={28} rx={3} fill={eqCol(e)} stroke={st === 2 ? C.crit : st === 1 ? C.hazard : C.ink} strokeWidth={st ? 3 : 1} />
-              {e === 1 && [0, 1, 2].map((j) => <line key={j} x1={x - 22} x2={x + 22} y1={y - 8 + j * 8} y2={y - 8 + j * 8} stroke="white" strokeWidth={0.8} />)}
-              <Txt x={x} y={y + 3} size={7} anchor="middle" fill="white" weight={800}>
-                {EQ[e]}
-              </Txt>
-              <Txt x={x} y={y + 24} size={6} anchor="middle" fill={C.ink}>
-                {l.name.split(" (")[0].split(" @")[0]}
-              </Txt>
+              <g data-state={st === 2 ? "unsafe" : undefined}>
+                <rect x={x - 28} y={y - 16} width={56} height={32} rx={6} fill={fill} style={{ stroke: st === 2 ? BAD : INK }} strokeWidth={2.5} strokeDasharray={st === 1 ? "5 3" : undefined} />
+                <T x={x} y={y + 6} anchor="middle" fill={txt} weight={700}>{["Ord.", "Ex d", "Ex i"][e]}</T>
+              </g>
+              <T x={x} y={ly} anchor="middle" fill={ON_LIGHT}>{lab}</T>
             </g>
           );
         })}
-        {p.ev === 1 && <ellipse cx={330} cy={98} rx={40} ry={8} fill="#fde68a" opacity={0.8} />}
         {z.ignition > 0 && flash && (() => {
           const [x, y] = z.ignition === 2 ? pos.ret : pos.face;
-          const pts = Array.from({ length: 16 }, (_, i) => {
-            const r = i % 2 ? 14 : 30;
+          const star = Array.from({ length: 16 }, (_, i) => {
+            const r = i % 2 ? 14 : 28;
             const a = (i / 16) * Math.PI * 2;
             return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
           });
-          return <polygon points={polyline(pts)} fill={C.crit} opacity={0.45} stroke="#FDE68A" strokeWidth={2} />;
+          return <polygon data-state="unsafe" points={pts(star)} fill={BAD_LIGHT} fillOpacity={0.7} style={{ stroke: BAD }} strokeWidth={1.5} strokeLinejoin="round" />;
         })()}
-        {p.ev === 2 && <line x1={300} y1={150} x2={330} y2={134} stroke={C.hazard} strokeWidth={3} strokeDasharray="3 2" />}
         {p.ev === 2 && (
-          <Txt x={250} y={215} size={9} weight={900} fill={z.trip ? C.safe : C.crit}>
-            {z.trip ? "ELR TRIPPED — supply isolated" : "FAULT NOT CLEARED"}
-          </Txt>
+          <polyline data-state={z.trip ? "safe" : "unsafe"} points="296,150 304,134 296,134 306,118" fill="none" style={{ stroke: z.trip ? GREYS.deep : BAD }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         )}
-        <rect x={58} y={198} width={70} height={16} rx={3} fill={p.rn ? C.safe : C.slate} />
-        <Txt x={93} y={209} size={7} anchor="middle" fill="white" weight={800}>
-          {p.rn ? "NER 750 mA" : "SOLID N"}
-        </Txt>
-        <Txt x={12} y={16} size={10} weight={900} mono fill={z.score === 6 ? C.safe : C.crit}>
-          {`Degree ${["I", "II", "III"][p.deg - 1]} · ${z.score}/6 checks`}
-        </Txt>
       </g>
     );
   },
