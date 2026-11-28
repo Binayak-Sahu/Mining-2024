@@ -174,14 +174,21 @@ export const networkSim: SimDef = {
       ["M60 120 L120 120", o.Q],
       ["M120 120 L160 60 L300 60 L340 120", o.Q1],
       ["M120 120 L160 180 L300 180 L340 120", o.Q2],
-      ["M340 120 L380 120", o.Q],
+      ["M340 120 L358 120", o.Q],
     ];
     const rot = (t * clamp(o.Q, 0, 200) * 6) % 360;
     const gap = clamp(p.A, 0.5, 20) * 0.6; // regulator opening, drawn
     return (
       <g>
+        {/* host rock: flat neutral band, clipped to the inner rounded rect (v3.2 a) */}
+        <clipPath id="u7net-clip">
+          <rect x={12} y={12} width={376} height={220} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u7net-clip)">
+          <rect x={0} y={0} width={400} height={244} fill={GREYS.light} />
+        </g>
         {ways.map(([d, q], i) => (
-          <path key={`wall${i}`} d={d} fill="none" stroke={GREYS.light} strokeWidth={w(q) + 10} strokeLinejoin="round" strokeLinecap="round" />
+          <path key={`wall${i}`} d={d} fill="none" stroke={GREYS.mid} strokeWidth={w(q) + 8} strokeLinejoin="round" strokeLinecap="round" />
         ))}
         {ways.map(([d, q], i) => (
           <path key={`air${i}`} d={d} fill="none" style={{ stroke: U.mid }} strokeWidth={w(q)} strokeLinejoin="round" strokeLinecap="round" />
@@ -190,35 +197,30 @@ export const networkSim: SimDef = {
         {ways.map(([d, q], i) => (
           <path key={`fl${i}`} d={d} fill="none" stroke={ON_DEEP} strokeWidth={2} strokeDasharray="4 14" strokeDashoffset={-((t * clamp(q, 2, 120)) % 18)} strokeLinecap="round" strokeLinejoin="round" />
         ))}
-        <Arrow x1={372} y1={120} x2={396} y2={120} color={INK} />
         {/* main fan */}
-        <circle cx={40} cy={120} r={22} style={{ fill: U.deep }} />
-        <g transform={`rotate(${rot.toFixed(1)} 40 120)`}>
+        <circle cx={40} cy={120} r={15} style={{ fill: U.deep, stroke: ON_LIGHT }} strokeWidth={2.5} />
+        <g transform={`translate(40 120) rotate(${rot.toFixed(1)}) scale(0.7) translate(-40 -120)`}>
           {[0, 120, 240].map((a) => (
             <path key={a} d="M40 120 C 34 110, 36 103, 40 101 C 45 104, 46 111, 40 120 Z" fill={ON_DEEP} transform={`rotate(${a} 40 120)`} />
           ))}
         </g>
-        <T x={40} y={166} anchor="middle" fill={INK} weight={700}>
+        <T x={40} y={162} anchor="middle" fill={ON_LIGHT} weight={700}>
           Fan
         </T>
         {/* regulator in district 2: two shutters leave an opening ∝ A */}
         <rect x={261} y={162} width={12} height={18 - gap / 2} rx={2} fill={GREYS.deep} />
         <rect x={261} y={180 + gap / 2} width={12} height={18 - gap / 2} rx={2} fill={GREYS.deep} />
-        <T x={267} y={236} anchor="middle">
+        <T x={267} y={146} anchor="middle" fill={ON_LIGHT}>
           Regulator
         </T>
-        <T x={230} y={42} anchor="middle" fill={INK} weight={700}>
-          {`District 1 · ${num(o.Q1, 1, "m³/s")}`}
+        <T x={230} y={40} anchor="middle" fill={ON_LIGHT} weight={700}>
+          District 1
         </T>
-        <T x={188} y={214} anchor="middle" fill={INK} weight={700}>
-          {`District 2 · ${num(o.Q2, 1, "m³/s")}`}
+        <T x={190} y={212} anchor="middle" fill={ON_LIGHT} weight={700}>
+          District 2
         </T>
-        <Dot x={120} y={120} />
-        <Dot x={340} y={120} />
-        <SvgTex x={112} y={150} tex="\sum Q = 0" size={LBL} anchor="end" color="var(--text-2)" />
-        <T x={8} y={20} fill={INK} weight={800}>
-          {`Q = ${num(o.Q, 1, "m³/s")} at ${num(p.Pf, 0, "Pa")}`}
-        </T>
+        <Dot x={120} y={120} fill={ON_LIGHT} />
+        <SvgTex x={106} y={100} tex="\sum Q = 0" size={LBL} anchor="end" color={ON_LIGHT} />
       </g>
     );
   },
@@ -285,35 +287,45 @@ export const fanSim: SimDef = {
   ],
   caption: "Fan laws: Q ∝ N, P ∝ N², power ∝ N³. NVP adds to (assists) or opposes the fan; it shifts the mine curve.",
   animated: true,
-  // §5.6 redraw (v3e): the legacy plot frame (x 44–380, y 14–204) is kept, so the lesson hotspots stay put.
-  v3: { viewH: 252 },
+  // v3.2: the legacy plot frame (x 44–380, y 14–204) is kept so the lesson pins stay put; the plot is clipped to the 24-unit inset.
+  v3: { viewH: 284 },
   render: (p, o) => {
     const { sx, sy } = FN;
     const ok = Number.isFinite(o.Q);
+    const stall = !!o.stall;
+    const R = 376;
+    const TOP = 26;
     return (
       <g>
-        {/* stall zone: a danger wash (theme-relative, so the ink curves stay visible on it in both themes) */}
-        <rect x={FN.x0} y={FN.y0} width={sx(o.qPeak) - FN.x0} height={FN.y1 - FN.y0} style={{ fill: BAD }} fillOpacity={0.16} />
         <clipPath id="u7-fan-plot">
-          <rect x={FN.x0} y={FN.y0 - 4} width={FN.x1 - FN.x0 + 4} height={FN.y1 - FN.y0 + 6} />
+          <rect x={FN.x0} y={TOP} width={R - FN.x0} height={FN.y1 - TOP + 2} />
         </clipPath>
-        <T x={sx(4)} y={FN.y1 - 10} fill={BAD_TEXT} weight={700}>
-          Stall zone
-        </T>
-        <Axes x={FN.x0} y={FN.y0} w={FN.x1 - FN.x0} h={FN.y1 - FN.y0} />
+        {/* stall zone: neutral band until the duty point is actually in it */}
+        <rect x={FN.x0} y={TOP} width={sx(o.qPeak) - FN.x0} height={FN.y1 - TOP} data-state={stall ? "unsafe" : undefined} style={{ fill: stall ? BAD : INK }} fillOpacity={stall ? 0.2 : 0.08} />
+        <g data-state={stall ? "unsafe" : undefined}>
+          <T x={sx(4)} y={TOP + 46} fill={stall ? BAD_TEXT : INK2} weight={700}>
+            Stall zone
+          </T>
+        </g>
+        <line x1={FN.x0} y1={FN.y1} x2={R} y2={FN.y1} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        <line x1={FN.x0} y1={FN.y1} x2={FN.x0} y2={TOP} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
         <T x={FN.x0} y={226} anchor="middle">0</T>
-        <T x={FN.x1} y={226} anchor="end">160</T>
-        <T x={(FN.x0 + FN.x1) / 2} y={226} anchor="middle">Q, m³/s</T>
+        <T x={R} y={226} anchor="end">160</T>
+        <T x={(FN.x0 + R) / 2} y={226} anchor="middle">Q, m³/s</T>
         <T x={38} y={FN.y1} anchor="end">0</T>
-        <T x={FN.x0 + 8} y={FN.y0 + 18}>P, 3500 Pa</T>
+        <T x={FN.x0 + 8} y={TOP + 20}>P, 3500 Pa</T>
         <polyline clipPath="url(#u7-fan-plot)" points={curve((q) => Math.max(0, fanP(q, p.N)), 0, 160, 120, sx, sy)} fill="none" style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
         <polyline clipPath="url(#u7-fan-plot)" points={curve((q) => Math.max(0, p.R * q * q - p.nvp), 0, 160, 80, sx, sy)} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="8 6" strokeLinecap="round" />
-        {ok && <Dot x={sx(o.Q)} y={sy(Math.max(0, o.P))} ring fill={o.stall ? BAD : OK} />}
+        {ok && (
+          <g data-state={stall ? "unsafe" : "safe"}>
+            <Dot x={sx(o.Q)} y={sy(Math.max(0, o.P))} ring fill={stall ? BAD : OK} />
+          </g>
+        )}
         {/* legend */}
-        <line x1={FN.x0} x2={FN.x0 + 22} y1={242} y2={242} style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinecap="round" />
-        <T x={FN.x0 + 30} y={248}>{`Fan at ${num(p.N, 0, "%")}`}</T>
-        <line x1={214} x2={236} y1={242} y2={242} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="8 6" strokeLinecap="round" />
-        <T x={244} y={248}>Mine curve</T>
+        <line x1={FN.x0} x2={FN.x0 + 22} y1={248} y2={248} style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={FN.x0 + 30} y={254}>{`Fan at ${num(p.N, 0, "%")}`}</T>
+        <line x1={214} x2={236} y1={248} y2={248} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="8 6" strokeLinecap="round" />
+        <T x={244} y={254}>Mine curve</T>
       </g>
     );
   },

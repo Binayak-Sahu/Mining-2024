@@ -1,5 +1,6 @@
 import type { SimDef } from "@/lib/types";
-import { T, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U, BAD, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, BAD_PALE, Arrow, pts, num, clamp } from "@/components/sim/v3";
+import { T, textW, OK, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U, BAD, OK_TEXT, BAD_TEXT, OK_LIGHT, BAD_LIGHT, BAD_PALE, Arrow, pts, num, clamp, LBL } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Depillaring goaf & main fall ---------------- */
 
@@ -144,58 +145,77 @@ export const longwallSim: SimDef = {
     { key: "util", label: "Rating utilisation", digits: 2, format: (v) => `${(v * 100).toFixed(0)} %`, tone: (v) => (v > 1 ? "crit" : v > 0.9 ? "warn" : "ok") },
   ],
   animated: true,
-  // §5.6 redraw (v3e): face x 250 and seam y 150 are the legacy ones (lesson hotspots).
+  // §5.6d v3.2 redraw: face x 250 and seam y 150 are the legacy ones (lesson hotspots).
   v3: { viewH: 240 },
   render: (p, o, t) => {
     const seamY = 150;
     const sh = p.m * 12;
     const faceX = 250;
+    // stress profile kept inside the 24-unit inset (peak y ≈ 27)
+    const base = 66;
     const curve: [number, number][] = [];
-    for (let x = 0; x <= 400; x += 5) {
+    for (let x = 24; x <= 376; x += 4) {
       const d = x - faceX;
       const val = d > 0 ? 1 + 1.8 * Math.exp(-Math.pow((d - 8) / 22, 2)) : 0.2 + 0.6 * Math.exp(d / 40) + 1.2 * Math.exp(-Math.pow((d + 60) / 25, 2)) * 0.6;
-      curve.push([x, 70 - val * 22]);
+      curve.push([x, base - val * 14]);
     }
     const over = o.util > 1;
     const dr = Math.min(sh / 2 - 2, 18);
     const x = faceX - 70;
+    const cy = seamY - sh / 2;
     return (
       <g>
-        <T x={8} y={22}>
-          Vertical stress
-        </T>
-        <line x1={0} x2={400} y1={48} y2={48} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="4 5" />
-        <T x={396} y={42} anchor="end">
-          Virgin σv
-        </T>
-        <polygon points={pts([[0, 70], ...curve, [400, 70]])} style={{ fill: U.light }} />
+        <defs>
+          <clipPath id="u6lw-clip">
+            <rect x={0} y={0} width={400} height={240} rx={12} />
+          </clipPath>
+        </defs>
+        {/* strata context: host rock (immediate roof), seam ahead of the face, caved goaf behind, floor */}
+        <g clipPath="url(#u6lw-clip)">
+          <rect x={0} y={base} width={400} height={seamY - sh - base} fill={GREYS.light} />
+          <rect x={0} y={seamY - sh} width={faceX} height={sh} fill={GREYS.light} />
+          <rect x={faceX} y={seamY - sh} width={150} height={sh} fill={GREYS.deep} />
+          <rect x={0} y={seamY} width={400} height={90} fill={GREYS.light} />
+          {Array.from({ length: 15 }).map((_, i) => (
+            <polygon key={i} points={`${i * 12},${seamY} ${i * 12 + 6},${seamY - sh * 0.8} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
+          ))}
+        </g>
+        {/* vertical stress profile */}
+        <polygon points={pts([[24, base], ...curve, [376, base]])} style={{ fill: U.light }} />
         <polyline points={pts(curve)} fill="none" style={{ stroke: U.deep }} strokeWidth={2.5} strokeLinejoin="round" />
-        {/* strata: immediate roof, seam ahead of the face, caved goaf behind, floor */}
-        <rect x={0} y={seamY - sh - 34} width={400} height={34} fill={GREYS.light} />
-        <rect x={faceX} y={seamY - sh} width={150} height={sh} fill={GREYS.deep} />
-        <rect x={0} y={seamY} width={400} height={50} fill={GREYS.light} />
-        {Array.from({ length: 15 }).map((_, i) => (
-          <polygon key={i} points={`${i * 12},${seamY} ${i * 12 + 6},${seamY - sh * 0.8} ${i * 12 + 12},${seamY}`} fill={GREYS.mid} />
-        ))}
-        {/* powered shield */}
-        <rect x={x} y={seamY - sh} width={62} height={8} rx={2} style={{ fill: over ? BAD : U.mid }} />
-        <line x1={x + 16} y1={seamY - sh + 8} x2={x + 22} y2={seamY - 7} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={x + 44} y1={seamY - sh + 8} x2={x + 38} y2={seamY - 7} style={{ stroke: INK }} strokeWidth={4} strokeLinecap="round" />
-        <line x1={x} y1={seamY - sh + 4} x2={x - 18} y2={seamY - 10} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        <line x1={24} x2={376} y1={base - 14} y2={base - 14} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="4 5" />
+        <SvgTex x={376} y={base - 20} tex="\sigma_v\ \text{virgin}" size={LBL} anchor="end" color="var(--text-2)" />
+        <T x={faceX - 12} y={44} anchor="end">
+          Front abutment
+        </T>
+        {/* powered shield (canopy turns red when the rating is exceeded) */}
+        <g data-state={over ? "unsafe" : "safe"}>
+          <rect x={x} y={seamY - sh} width={62} height={8} rx={2} style={{ fill: over ? BAD : U.mid, stroke: INK }} strokeWidth={2.5} />
+        </g>
+        <line x1={x + 16} y1={seamY - sh + 8} x2={x + 22} y2={seamY - 7} style={{ stroke: ON_LIGHT }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={x + 44} y1={seamY - sh + 8} x2={x + 38} y2={seamY - 7} style={{ stroke: ON_LIGHT }} strokeWidth={4} strokeLinecap="round" />
+        <line x1={x} y1={seamY - sh + 4} x2={x - 18} y2={seamY - 10} style={{ stroke: ON_LIGHT }} strokeWidth={3} strokeLinecap="round" />
         <rect x={x + 4} y={seamY - 7} width={56} height={7} rx={2} fill={GREYS.deep} />
         {/* AFC and shearer drum */}
         <rect x={faceX - 8} y={seamY - 8} width={14} height={8} rx={2} fill={GREYS.deep} />
-        <g transform={`rotate(${((t * 220) % 360).toFixed(0)} ${faceX - 4} ${seamY - sh / 2})`}>
-          <circle cx={faceX - 4} cy={seamY - sh / 2} r={dr} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2} />
+        <g transform={`rotate(${((t * 220) % 360).toFixed(0)} ${faceX - 4} ${cy})`}>
+          <circle cx={faceX - 4} cy={cy} r={dr} fill={GREYS.mid} style={{ stroke: INK3 }} strokeWidth={1.5} />
           {[0, 60, 120, 180, 240, 300].map((a) => (
-            <path key={a} d={`M${faceX - 4} ${seamY - sh / 2 - dr - 4} l3 5 h-6 z`} style={{ fill: INK }} transform={`rotate(${a} ${faceX - 4} ${seamY - sh / 2})`} />
+            <path key={a} d={`M${faceX - 4} ${cy - dr - 4} l3 5 h-6 z`} style={{ fill: INK }} transform={`rotate(${a} ${faceX - 4} ${cy})`} />
           ))}
         </g>
-        <T x={262} y={seamY + 22} fill={ON_LIGHT} weight={700}>
-          Shearer · AFC
+        {/* part labels in the floor band (66 units tall) */}
+        <T x={36} y={184} fill={ON_LIGHT} weight={700}>
+          Goaf
         </T>
-        <T x={8} y={230} fill={over ? BAD_TEXT : INK} weight={800}>
-          {`Needs ${num(o.req, 0, "t")} · shield ${num(p.rating, 0, "t")} · ${num(o.util * 100, 0, "%")}`}
+        <T x={x + 31} y={184} anchor="middle" fill={ON_LIGHT} weight={700}>
+          Shield
+        </T>
+        <T x={faceX + 12} y={184} fill={ON_LIGHT} weight={700}>
+          Shearer
+        </T>
+        <T x={faceX + 12} y={206} fill={ON_LIGHT} weight={700}>
+          and AFC
         </T>
       </g>
     );
@@ -232,43 +252,58 @@ export const stopeSim: SimDef = {
     { key: "ok", label: "Above cut-off?", format: (v) => (v ? "Yes — payable" : "No — stope uneconomic"), tone: (v) => (v ? "ok" : "crit") },
   ],
   caption: "Typical ELOS: open stoping/VCR 0.5–2 m in poor hanging walls; filled methods well under 0.5 m.",
-  // §5.6 redraw (v3e): the vein's centre line through (200, 120) is the legacy one (lesson hotspots).
-  v3: { viewH: 240 },
+  // §5.6 redraw (v3.2): the vein's centre line through (200, 120) is the legacy one (lesson hotspots); the mill-feed bar sits on the (307, 208) pin.
+  primary: ["D", "gd"],
+  v3: { viewH: 250 },
   handles: [{ key: "W", axis: "x", at: (p) => [200 + (p.W * 9) / 2, 120], toValue: (x) => (2 * (x - 200)) / 9 }],
   render: (p, o) => {
     const k = 9;
     const cx = 200;
     const dip = 0.55; // slope of vein (dx per dy)
-    const top = 44;
-    const bot = 200;
+    const top = 36;
+    const bot = 190;
     const half = (p.W * k) / 2;
     const ov = p.elos * k;
     const xAt = (y: number) => cx + (y - 120) * dip;
     const vein = pts([[xAt(top) - half, top], [xAt(top) + half, top], [xAt(bot) + half, bot], [xAt(bot) - half, bot]]);
     const slough = pts([[xAt(top) - half - ov * 0.7, top + 16], [xAt(top) - half, top + 16], [xAt(bot) - half, bot - 16], [xAt(bot) - half - ov * 0.7, bot - 16]]);
     const fw = pts([[xAt(top) + half, top + 16], [xAt(top) + half + ov * 0.3, top + 16], [xAt(bot) + half + ov * 0.3, bot - 16], [xAt(bot) + half, bot - 16]]);
+    const hwFits = xAt(top) - half - ov * 0.7 - 12 - textW("Hanging wall") > 24;
+    const yL = 146;
+    const slL = xAt(yL) - half - ov * 0.7;
+    const barX = 262;
+    const barW = 90;
+    const oreW = barW * (1 - o.D / 100);
+    const st = o.ok ? "met" : "unmet";
     return (
       <g>
-        <polygon points={vein} style={{ fill: U.mid }} strokeLinejoin="round" />
-        <polygon points={slough} fill={BAD_LIGHT} />
-        <polygon points={fw} fill={BAD_PALE} />
-        {p.meth >= 3 &&
-          [0, 1, 2].map((i) => {
-            const y = top + 36 + i * 42;
-            return <line key={i} x1={xAt(y) - half} y1={y} x2={xAt(y) + half} y2={y} stroke={ON_DEEP} strokeWidth={2} strokeDasharray={p.meth === 4 ? "3 3" : undefined} />;
-          })}
-        <T x={8} y={24} weight={700}>
-          Hanging-wall slough
+        <clipPath id="u6-stope-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u6-stope-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
+        </g>
+        <polygon points={slough} fill={GREYS.mid} />
+        <polygon points={fw} fill={GREYS.mid} />
+        <polygon points={vein} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} strokeLinejoin="round" />
+        <T x={24} y={hwFits ? 50 : 224} fill={INK}>
+          Hanging wall
         </T>
-        <T x={392} y={24} anchor="end">
-          {METHODS[p.meth]}
+        <T x={266} y={50} fill={INK}>
+          Footwall
         </T>
-        <T x={xAt(top) + half + 12} y={top + 14} fill={INK}>
-          {`Ore ${num(p.W, 1, "m")}`}
+        <line x1={slL - 12} y1={yL - 6} x2={slL + Math.min(4, ov * 0.35)} y2={yL - 6} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+        <T x={slL - 16} y={yL} anchor="end">
+          ELOS
         </T>
-        <T x={392} y={232} anchor="end" fill={o.ok ? OK_TEXT : BAD_TEXT} weight={800}>
-          {`Dilution ${num(o.D, 0, "%")} → ${num(o.gd, 2, "g/t")}`}
+        <T x={barX - 8} y={217} anchor="end">
+          Mill feed
         </T>
+        <g data-state={st}>
+          <rect x={barX} y={202} width={barW} height={16} rx={3} fill={GREYS.mid} />
+          <rect x={barX} y={202} width={oreW} height={16} rx={3} style={{ fill: U.mid }} />
+          <rect x={barX} y={202} width={barW} height={16} rx={3} fill="none" style={{ stroke: o.ok ? OK : BAD }} strokeWidth={2.5} />
+        </g>
       </g>
     );
   },

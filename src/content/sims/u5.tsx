@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, DimLine, pts, num } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, DimLine, pts, num, textW } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
@@ -152,7 +152,7 @@ export const draglineSim: SimDef = {
     const surf = 70;
     const coalTop = surf + p.H * k;
     const coalBot = coalTop + 6;
-    const tip = Math.max(10, coalBot - d.h * k - 18);
+    const tip = Math.max(58, coalBot - d.h * k - 18);
     const peakX = X(p.W + d.e - Math.min(p.R, d.Rreq));
     const sp = -d.c - d.b / 2 + d.d;
     const hp = d.h * k;
@@ -162,20 +162,28 @@ export const draglineSim: SimDef = {
     const by = Math.min(coalTop - 8, coalBot - hp - 10) * uu + (coalTop - 8) * (1 - uu) - 18 * Math.sin(uu * Math.PI);
     return (
       <g>
-        {/* bench: overburden and seam beyond the cut, floor under everything */}
-        <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={coalTop - surf} style={{ fill: U.light }} />
-        <rect x={0} y={coalTop} width={400} height={6} fill={GREYS.deep} />
-        <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={GREYS.light} />
-        {/* ground surface (a path: the lesson's dragline pin sits on it by design) */}
-        <path d={`M${X(p.W)} ${surf} H400`} style={{ stroke: INK }} strokeWidth={2.5} />
+        <defs>
+          <clipPath id="u5dl-clip">
+            <rect x={12} y={12} width={376} height={216} rx={12} />
+          </clipPath>
+        </defs>
+        {/* bench: overburden and seam beyond the cut, floor under everything (scene fills run edge to edge, clipped) */}
+        <g clipPath="url(#u5dl-clip)">
+          <rect x={0} y={0} width={400} height={240} fill={GREYS.light} opacity={0.35} />
+          <rect x={X(p.W)} y={surf} width={400 - X(p.W)} height={coalTop - surf} style={{ fill: U.light }} />
+          <rect x={0} y={coalTop} width={400} height={6} fill={GREYS.deep} />
+          <rect x={0} y={coalBot} width={400} height={240 - coalBot} fill={GREYS.light} />
+          {/* ground surface (a path: the lesson's dragline pin sits on it by design) */}
+          <path d={`M${X(p.W)} ${surf} H400`} style={{ stroke: INK }} strokeWidth={2.5} />
+        </g>
         {/* the cut (removed) */}
         <rect x={X(0)} y={surf} width={X(p.W) - X(0)} height={coalTop - surf} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 5" />
         {/* spoil pile */}
-        <polygon points={pts([[X(sp - d.b / 2), coalBot], [X(sp), coalBot - hp], [X(sp + d.b / 2), coalBot]])} fill={d.reh > 0 ? BAD_LIGHT : GREYS.mid} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
-        <T x={X(sp)} y={coalBot + 22} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <polygon points={pts([[X(sp - d.b / 2), coalBot], [X(sp), coalBot - hp], [X(sp + d.b / 2), coalBot]])} data-state={d.reh > 0 ? "unsafe" : "safe"} fill={d.reh > 0 ? BAD_LIGHT : GREYS.mid} stroke={ON_LIGHT} strokeWidth={2} strokeLinejoin="round" />
+        <T x={Math.max(Math.min(X(sp), (X(0) + X(p.W)) / 2 - 56), 24 + textW("Spoil") / 2)} y={coalBot + 22} anchor="middle" fill={ON_LIGHT} weight={700}>
           Spoil
         </T>
-        <T x={(X(0) + X(p.W)) / 2} y={surf + 20} anchor="middle">
+        <T x={(X(0) + X(p.W)) / 2} y={coalBot + 22} anchor="middle" fill={ON_LIGHT}>
           Cut
         </T>
         {/* dragline: house, tub, boom, rope and bucket */}
@@ -184,12 +192,15 @@ export const draglineSim: SimDef = {
         <path d={`M${mx} ${surf - 10} L${peakX} ${tip}`} style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
         <line x1={peakX} y1={tip} x2={bx} y2={by} style={{ stroke: INK3 }} strokeWidth={1.5} />
         <path d={`M${bx - 7} ${by} h14 l-2 7 h-10 z`} fill={GREYS.deep} />
-        <DimLine x1={mx} y1={surf - 34} x2={peakX} y2={surf - 34} />
-        <T x={(mx + peakX) / 2} y={surf - 42} anchor="middle" fill={INK} weight={700}>
+        <DimLine x1={mx} y1={surf - 26} x2={peakX} y2={surf - 26} />
+        <T x={clamp((mx + peakX) / 2, 24 + textW("R 120 m") / 2, 376 - textW("R 120 m") / 2)} y={surf - 33} anchor="middle" fill={INK} weight={700}>
           {`R ${num(p.R, 0, "m")}`}
         </T>
+        <T x={376} y={coalBot + 22} anchor="end" fill={ON_LIGHT}>
+          Coal
+        </T>
         {d.reh > 0 && (
-          <T x={8} y={232} fill={ON_LIGHT} weight={800}>
+          <T x={24} y={208} fill={ON_LIGHT} weight={800}>
             Spoil on coal → rehandle
           </T>
         )}
