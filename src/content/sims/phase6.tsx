@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
+import { Axes, T, INK, INK2, INK3, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, BAD_PALE, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -51,11 +51,14 @@ export const dipStrikeSim: SimDef = {
     { key: "eA", label: "Seam RL at A / B / C", format: (v, o) => `${v.toFixed(0)} / ${o.eB.toFixed(0)} / ${o.eC.toFixed(0)} m` },
   ],
   caption: "Seam RL = collar RL − depth. The plane through the three seam points gives gradient (a, b); tan θ = √(a² + b²); down-dip azimuth = atan2(−a, −b); apparent dip tan α = tan θ·cos(section az − dip az).",
+  // §5.6d redraw (v3.2): plan (left) and section (right) panels; no hotspot pins on this sim.
+  v3: { viewH: 316, formula: () => "\\tan\\theta=\\sqrt{a^2+b^2},\\quad \\tan\\alpha=\\tan\\theta\\cos(\\psi-\\psi_d)" },
   render: (p) => {
     const r = threePoint(p);
-    const k = 0.4;
-    const X = (E: number) => 20 + (E + 50) * k;
-    const Y = (N: number) => 210 - (N + 50) * k;
+    const k = 0.36;
+    const PX0 = 24, PX1 = 200, PY0 = 48, PY1 = 224;
+    const X = (E: number) => PX0 + (E + 44) * k;
+    const Y = (N: number) => PY1 - (N + 70) * k;
     const cE = (0 + 400 + 150) / 3;
     const cN = (0 + 0 + 350) / 3;
     const dE = Math.sin(rad(r.dipAz));
@@ -63,86 +66,104 @@ export const dipStrikeSim: SimDef = {
     const sE = Math.sin(rad(r.strike));
     const sN = Math.cos(rad(r.strike));
     const zc = r.eA + r.a * cE + r.b * cN;
-    // structure contours every 20 m
     const g = Math.hypot(r.a, r.b);
     const contours = [];
     if (g > 1e-4) {
       for (let lvl = Math.ceil((zc - 120) / 20) * 20; lvl <= zc + 120; lvl += 20) {
-        const t = (zc - lvl) / g; // distance down-dip from centroid
+        const t = (zc - lvl) / g;
+        if (Math.abs(t) > 320) continue;
         const pE = cE + dE * t;
         const pN = cN + dN * t;
-        if (Math.abs(t) > 320) continue;
-        contours.push(
-          <g key={lvl}>
-            <line x1={X(pE - sE * 300)} y1={Y(pN - sN * 300)} x2={X(pE + sE * 300)} y2={Y(pN + sN * 300)} stroke={C.line} strokeWidth={1} />
-            {X(pE + sE * 60) > 26 && X(pE + sE * 60) < 186 && Y(pN + sN * 60) > 40 && Y(pN + sN * 60) < 204 && Object.values(BH).every(([e, n]) => Math.hypot(X(e) - X(pE + sE * 60), Y(n) - Y(pN + sN * 60)) > 26) && (
-              <Txt x={X(pE + sE * 60)} y={Y(pN + sN * 60)} size={6} fill={C.slate} mono>
-                {lvl.toFixed(0)}
-              </Txt>
-            )}
-          </g>,
-        );
+        contours.push(<line key={lvl} x1={X(pE - sE * 300)} y1={Y(pN - sN * 300)} x2={X(pE + sE * 300)} y2={Y(pN + sN * 300)} stroke={GREYS.mid} strokeWidth={1.5} />);
       }
     }
     const secE = Math.sin(rad(p.sec));
     const secN = Math.cos(rad(p.sec));
-    const bh: [string, readonly [number, number], number][] = [
-      ["A", BH.A, r.eA],
-      ["B", BH.B, r.eB],
-      ["C", BH.C, r.eC],
+    const ccx = X(cE);
+    const ccy = Y(cN);
+    const bh: [string, readonly [number, number]][] = [
+      ["A", BH.A],
+      ["B", BH.B],
+      ["C", BH.C],
     ];
-    const alpha = rad(r.app);
+    const SX0 = 216, SX1 = 376, SG = 84, SB = 224, SM = 154;
+    const ty = Math.tan(rad(r.app)) * 80;
+    const hx = ccx + secE * 58;
+    const hy = ccy - secN * 58;
+    const ha = Math.atan2(-secN, secE);
+    const hd = 13;
+    const head = `${hx + 8 * Math.cos(ha)},${hy + 8 * Math.sin(ha)} ${hx - hd * Math.cos(ha - 0.5) + 8 * Math.cos(ha)},${hy - hd * Math.sin(ha - 0.5) + 8 * Math.sin(ha)} ${hx - hd * Math.cos(ha + 0.5) + 8 * Math.cos(ha)},${hy - hd * Math.sin(ha + 0.5) + 8 * Math.sin(ha)}`;
+    const dx2 = X(cE + dE * 120), dy2 = Y(cN + dN * 120);
+    const da = Math.atan2(dy2 - ccy, dx2 - ccx);
+    const dbx = dx2 - 10 * Math.cos(da), dby = dy2 - 10 * Math.sin(da);
+    const dh1 = [dx2 - 13 * Math.cos(da - 0.5), dy2 - 13 * Math.sin(da - 0.5)];
+    const dh2 = [dx2 - 13 * Math.cos(da + 0.5), dy2 - 13 * Math.sin(da + 0.5)];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <defs>
-          <clipPath id="mapclip">
-            <rect x={20} y={30} width={180} height={180} />
-          </clipPath>
-        </defs>
-        <rect x={20} y={30} width={180} height={180} rx={3} fill="#F0FDF4" stroke="#86EFAC" />
-        <g clipPath="url(#mapclip)">
+        <T x={PX0} y={40} weight={700}>
+          Plan
+        </T>
+        <T x={SX0} y={40} weight={700}>
+          Section
+        </T>
+        <clipPath id="u1-dip3-plan">
+          <rect x={PX0} y={PY0} width={PX1 - PX0} height={PY1 - PY0} rx={12} />
+        </clipPath>
+        <rect x={PX0} y={PY0} width={PX1 - PX0} height={PY1 - PY0} rx={12} style={{ fill: U.light }} />
+        <g clipPath="url(#u1-dip3-plan)">
           {contours}
-          <line x1={X(cE - sE * 400)} y1={Y(cN - sN * 400)} x2={X(cE + sE * 400)} y2={Y(cN + sN * 400)} stroke={C.ink} strokeWidth={2.5} />
-          <line x1={X(cE - secE * 400)} y1={Y(cN - secN * 400)} x2={X(cE + secE * 400)} y2={Y(cN + secN * 400)} stroke={C.tech} strokeWidth={1.5} strokeDasharray="5 3" />
+          <line x1={X(cE - sE * 400)} y1={Y(cN - sN * 400)} x2={X(cE + sE * 400)} y2={Y(cN + sN * 400)} stroke={ON_LIGHT} strokeWidth={2.5} strokeLinecap="round" />
+          <line x1={X(cE - secE * 400)} y1={Y(cN - secN * 400)} x2={X(cE + secE * 400)} y2={Y(cN + secN * 400)} stroke={ON_LIGHT} strokeWidth={1.5} strokeDasharray="7 6" strokeLinecap="round" />
+          <polygon points={head} fill={ON_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+          <g>
+            <line x1={ccx} y1={ccy} x2={dbx} y2={dby} stroke={ON_LIGHT} strokeWidth={2} strokeLinecap="round" />
+            <polygon points={`${dx2},${dy2} ${dh1[0]},${dh1[1]} ${dh2[0]},${dh2[1]}`} fill={ON_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+          </g>
         </g>
-        <Arrow x1={X(cE)} y1={Y(cN)} x2={X(cE + dE * 110)} y2={Y(cN + dN * 110)} color={C.crit} width={2.5} />
-        {bh.map(([n, [e, nn], rl]) => (
+        {bh.map(([n, [e, nn]]) => (
           <g key={n}>
-            <circle cx={X(e)} cy={Y(nn)} r={9} fill={C.hazard} opacity={0.2} />
-            <circle cx={X(e)} cy={Y(nn)} r={5} fill={C.hazard} stroke={C.ink} />
-            <Txt x={X(e) + 7} y={Y(nn) - 4} size={8} weight={800}>
+            <circle cx={X(e)} cy={Y(nn)} r={6} fill={ON_LIGHT} />
+            <text x={n === "B" ? X(e) - 11 : X(e) + 11} y={Y(nn) - 8} fontSize={18} fontWeight={700} textAnchor={n === "B" ? "end" : "start"} fill={ON_LIGHT}>
               {n}
-            </Txt>
-            <Txt x={X(e) + 7} y={Y(nn) + 7} size={7} mono fill={C.slate}>
-              {`${rl.toFixed(0)}`}
-            </Txt>
+            </text>
           </g>
         ))}
-        <Txt x={20} y={22} size={8} weight={700} fill={C.slate}>
-          PLAN · N↑ · structure contours (m RL)
-        </Txt>
-        <Txt x={22} y={225} size={8} fill={C.crit} weight={700}>
-          {`dip ${r.dip.toFixed(1)}° → ${r.dipAz.toFixed(0)}°`}
-        </Txt>
-        <Txt x={120} y={225} size={8} fill={C.ink} weight={700}>
-          ━ strike
-        </Txt>
-        <Txt x={215} y={22} size={8} weight={700} fill={C.slate}>
-          {`SECTION along ${p.sec}°`}
-        </Txt>
-        <rect x={215} y={30} width={170} height={30} fill={MAT.sky} />
-        <rect x={215} y={60} width={170} height={120} fill={MAT.sand} />
-        <rect x={215} y={30} width={170} height={150} fill="none" stroke="#A8A29E" />
-        <line x1={215} x2={385} y1={60} y2={60} stroke="#65A30D" strokeWidth={3} />
-        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke="#0F172A" strokeWidth={8} />
-        <line x1={215} y1={105 - 85 * Math.tan(alpha)} x2={385} y2={105 + 85 * Math.tan(alpha)} stroke={MAT.coal} strokeWidth={6} />
-        <Txt x={222} y={170} size={11} weight={900} mono fill={C.tech}>
-          {`α = ${r.app.toFixed(2)}°`}
-        </Txt>
-        <Txt x={222} y={198} size={8} fill={C.slate}>
-          + = seam deepens along section direction
-        </Txt>
+        <clipPath id="u1-dip3-sec">
+          <rect x={SX0} y={48} width={SX1 - SX0} height={SB - 48} rx={12} />
+        </clipPath>
+        <clipPath id="u1-dip3-rock">
+          <rect x={SX0} y={SG} width={SX1 - SX0} height={SB - SG} />
+        </clipPath>
+        <g clipPath="url(#u1-dip3-sec)">
+          <rect x={SX0} y={48} width={SX1 - SX0} height={SG - 48} style={{ fill: U.light }} />
+          <rect x={SX0} y={SG} width={SX1 - SX0} height={SB - SG} fill={GREYS.light} />
+          <polygon clipPath="url(#u1-dip3-rock)" points={`${SX0},${SM - ty - 7} ${SX1},${SM + ty - 7} ${SX1},${SM + ty + 7} ${SX0},${SM - ty + 7}`} style={{ fill: U.deep }} />
+        </g>
+        <line x1={SX0} x2={SX1} y1={SG} y2={SG} stroke={ON_LIGHT} strokeWidth={1.5} />
+        <text x={SX0 + 12} y={SG - 12} fontSize={18} fontWeight={600} fill={ON_LIGHT}>
+          Surface
+        </text>
+        {/* legend, off the fills */}
+        <line x1={24} x2={46} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={54} y={262}>
+          Strike
+        </T>
+        <line x1={140} x2={162} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={1.5} strokeDasharray="7 6" strokeLinecap="round" />
+        <T x={170} y={262}>
+          Section →
+        </T>
+        <line x1={296} x2={318} y1={256} y2={256} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <T x={326} y={262}>
+          Dip
+        </T>
+        <rect x={24} y={274} width={22} height={12} rx={3} style={{ fill: U.deep }} />
+        <T x={54} y={286}>
+          Seam
+        </T>
+        <circle cx={151} cy={280} r={6} style={{ fill: INK }} />
+        <T x={170} y={286}>
+          Borehole
+        </T>
       </g>
     );
   },
@@ -247,44 +268,71 @@ export const slopeModesSim: SimDef = {
     { key: "mech", label: "Toppling check", format: (v, _, p) => (p.mode !== 3 ? "—" : v === 1 ? "Topples first (b/h < tan ψ)" : "Slides first (ψ > φ)") },
   ],
   caption: "Plane: limit equilibrium. Wedge: Hoek & Bray wedge factor k = sinβ/sin(ξ/2) (symmetric wedge, β = 90°) on the line of intersection. Circular: Bishop's simplified method, 49-circle search through the toe (γ = 20 kN/m³). Toppling: b/h vs tan ψ, sliding tanφ/tanψ.",
+  // §5.6d redraw (v3.2): legacy toe (90, 205) and scale kept; one stage per failure mode, mass colour carries the state.
+  v3: {
+    viewH: 250,
+    formula: (p) =>
+      p.mode === 0
+        ? "\\mathrm{FoS} = \\dfrac{cA + W\\cos\\psi_p\\,(1-r_u)\\tan\\varphi}{W\\sin\\psi_p}"
+        : p.mode === 1
+          ? "k = \\dfrac{\\sin\\beta}{\\sin(\\xi/2)}"
+          : p.mode === 2
+            ? "F = \\dfrac{\\sum \\big[cb + (W-ub)\\tan\\varphi\\big]/m_\\alpha}{\\sum W\\sin\\alpha}"
+            : "\\text{topples if } b/h < \\tan\\psi;\\ \\text{slides if } \\psi > \\varphi",
+  },
   render: (p, o, t) => {
+    const VH = 250;
     const fail = o.fos < 1;
     const d = fail ? ((t % 3) / 3) * 22 : 0;
-    const col = o.fos >= 1.3 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
-    const k = 2.6;
+    const state = !Number.isFinite(o.fos) || o.fos >= 1.3 ? "safe" : fail ? "unsafe" : undefined;
+    const massFill = state === "safe" ? OK_LIGHT : state === "unsafe" ? BAD_LIGHT : U.light;
+    const k = 2.4;
     const toeX = 90;
-    const toeY = 205;
+    const toeY = 195;
     const Hp = p.H * k;
     const crestX = toeX + Hp / Math.tan(rad(p.pf));
     const topY = toeY - Hp;
-    const header = (
-      <g>
-        <Txt x={12} y={22} size={15} weight={900} mono fill={col}>
-          {Number.isFinite(o.fos) ? `FoS ${o.fos.toFixed(2)}` : "FoS ∞"}
-        </Txt>
-        <Txt x={12} y={38} size={9} weight={800} fill={C.slate}>
-          {`${MODES[p.mode].toUpperCase()} FAILURE${fail ? " — MOVING" : ""}`}
-        </Txt>
-      </g>
+    const rockPoly = [[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, VH], [0, VH]] as [number, number][];
+    const clip = (
+      <clipPath id="u3-modes-clip">
+        <rect x={0} y={0} width={400} height={VH} rx={12} />
+      </clipPath>
+    );
+    const profile = (
+      <polyline points={pts([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+    );
+    const crestLabel = (
+      <T x={crestX > 290 ? 376 : Math.max(crestX + 10, topY < 66 ? 160 : 0)} y={Math.max(topY - 12, 42)} anchor={crestX > 290 ? "end" : "start"}>
+        Crest
+      </T>
     );
     if (p.mode === 1) {
-      // front view of a face with a wedge between two joint traces
-      const half = clamp(80 * Math.tan(rad(p.xi / 2)), 25, 150);
+      const hW = 110;
+      const faceT = 60;
+      const faceB = 186;
+      const half = clamp(hW * Math.tan(rad(p.xi / 2)), 25, 160);
+      const apexY = faceT + hW;
+      const sl = 160 / half;
+      const wedge: [number, number][] = [[200 - half, faceT], [200 + half, faceT], [200, apexY]];
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <rect x={40} y={50} width={320} height={160} fill={MAT.rock} stroke={C.ink} />
-          <polygon points={polyline([[200 - half, 50], [200 + half, 50], [200, 50 + 150]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(0 ${d})`} />
-          <line x1={200 - half - 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
-          <line x1={200 + half + 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
-          <Arrow x1={200} y1={120} x2={200} y2={175} color={C.crit} width={2} />
-          <Txt x={208} y={170} size={8} fill={C.crit} weight={700}>
-            {`line of intersection plunge ${p.pp}°`}
-          </Txt>
-          <Txt x={60} y={228} size={8} fill={C.slate}>
-            {`face view · included angle ξ = ${p.xi}° · wedge factor k = ${(1 / Math.sin(rad(p.xi / 2))).toFixed(2)}`}
-          </Txt>
-          {header}
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <rect x={0} y={0} width={400} height={VH} style={{ fill: GREYS.light }} />
+            <rect x={0} y={faceT} width={400} height={faceB - faceT} style={{ fill: GREYS.mid }} />
+            <line x1={0} y1={faceT} x2={400} y2={faceT} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <line x1={0} y1={faceB} x2={400} y2={faceB} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <g className={fail ? "shake" : undefined}>
+              <polygon data-state={state} points={pts(wedge)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" transform={`translate(0 ${d})`} />
+            </g>
+            <line x1={200 - half} y1={faceT} x2={200 + (faceB - apexY) / sl} y2={faceB} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+            <line x1={200 + half} y1={faceT} x2={200 - (faceB - apexY) / sl} y2={faceB} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+          </g>
+          <Arrow x1={200} y1={faceT + 36} x2={200} y2={faceB + 14} color={ON_LIGHT} width={2} head={10} />
+          <T x={24} y={44}>Crest</T>
+          <T x={24} y={220} fill={ON_LIGHT}>Pit floor</T>
+          <T x={376} y={44} anchor="end">Face view</T>
+          <T x={376} y={220} anchor="end" fill={ON_LIGHT}>Line of intersection</T>
         </g>
       );
     }
@@ -302,67 +350,125 @@ export const slopeModesSim: SimDef = {
         }
       }
       const mass: [number, number][] = [[S(0), SY(0)], [crestX, topY], [S(b.xe), topY], ...arc.slice().reverse()];
+      const mid = arc.length ? arc[Math.floor(arc.length * 0.6)] : null;
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.goaf} />
-          {arc.length > 0 && (
-            <g transform={`rotate(${deg(ang)} ${S(b.cx)} ${SY(b.cy)})`}>
-              <polygon points={polyline(mass)} fill={col} opacity={0.55} stroke={C.ink} />
-            </g>
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <polygon points={pts(rockPoly)} style={{ fill: GREYS.light }} />
+            {arc.length > 0 && (
+              <g transform={`rotate(${deg(ang)} ${S(b.cx)} ${SY(b.cy)})`}>
+                <polygon data-state={state} points={pts(mass)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+              </g>
+            )}
+            {profile}
+          </g>
+          {crestLabel}
+          <T x={toeX} y={220} anchor="middle" fill={ON_LIGHT}>Toe</T>
+          <T x={376} y={220} anchor="end" fill={ON_LIGHT}>Weak ground</T>
+          {mid && (
+            <>
+              <T x={24} y={44}>Slip circle</T>
+              <line x1={64} y1={52} x2={mid[0]} y2={mid[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+            </>
           )}
-          {arc.length > 0 && <circle cx={S(b.cx)} cy={SY(b.cy)} r={3} fill={C.ink} />}
-          <Txt x={396} y={225} size={7.5} fill={C.slate} anchor="end">
-            critical circle (Bishop, weak overburden/dump)
-          </Txt>
-          {header}
         </g>
       );
     }
     if (p.mode === 3) {
-      const n = 6;
-      const bw = 18;
-      const bhgt = bw / p.bh;
-      const baseAng = p.pp;
+      const bw = 26;
+      const bhgt = Math.min(bw / p.bh, 72);
+      const a = rad(p.pp);
+      const x0 = clamp(24 + bhgt * Math.sin(a), 40, 130);
+      const y0 = 195;
+      const step = bw + 2;
+      const n = Math.max(4, Math.min(9, Math.floor(140 / (step * Math.sin(a)))));
+      const yAt = (x: number) => y0 - (x - x0) * Math.tan(a);
+      const xe = Math.min(400, x0 + y0 / Math.tan(a));
+      const rock: [number, number][] = [[0, y0], [x0, y0], [xe, yAt(xe)], [400, yAt(xe)], [400, VH], [0, VH]];
       const blocks = [];
       for (let i = 0; i < n; i++) {
-        const bx = 120 + i * (bw + 2) * Math.cos(rad(baseAng));
-        const by = 210 - i * (bw + 2) * Math.sin(rad(baseAng));
+        const bx = x0 + i * step * Math.cos(a);
+        const by = y0 - i * step * Math.sin(a);
         const tilt = fail && o.mech === 1 ? Math.min(d * 2, 35) : 0;
         const slide = fail && o.mech === 2 ? d : 0;
         blocks.push(
-          <g key={i} transform={`translate(${-slide * Math.cos(rad(baseAng))} ${slide * Math.sin(rad(baseAng))}) rotate(${-baseAng - tilt} ${bx} ${by})`}>
-            <rect x={bx} y={by - Math.min(bhgt, 140)} width={bw} height={Math.min(bhgt, 140)} fill={col} opacity={0.7} stroke={C.ink} />
+          <g key={i} transform={`translate(${-slide * Math.cos(a)} ${slide * Math.sin(a)}) rotate(${-p.pp - tilt} ${bx} ${by})`}>
+            <rect data-state={state} x={bx} y={by - bhgt} width={bw} height={bhgt} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
           </g>,
         );
       }
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <polygon points={polyline([[60, 215], [380, 215 - 320 * Math.tan(rad(baseAng))], [400, 240], [0, 240]])} fill={MAT.rock} />
-          {blocks}
-          <Txt x={230} y={232} size={8} fill={C.slate}>
-            {`b/h ${p.bh.toFixed(2)} vs tan ψ ${Math.tan(rad(p.pp)).toFixed(2)}`}
-          </Txt>
-          {header}
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <polygon points={pts(rock)} style={{ fill: GREYS.light }} />
+            <polyline points={pts([[0, y0], [x0, y0], [xe, yAt(xe)]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+            {blocks}
+          </g>
+          <T x={p.pp > 45 ? 376 : 24} y={44} anchor={p.pp > 45 ? "end" : "start"} fill={p.pp > 45 ? ON_LIGHT : INK2}>
+            Rock columns
+          </T>
+          <T x={376} y={220} anchor="end" fill={ON_LIGHT}>Intact rock</T>
+          <T x={24} y={220} fill={ON_LIGHT}>Pit floor</T>
         </g>
       );
     }
     // plane
     const planeX = toeX + Hp / Math.tan(rad(p.pp));
+    const fits = planeX <= 400;
+    const endX = fits ? planeX : 400;
+    const endY = fits ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp));
     const dx = d * Math.cos(rad(p.pp));
     const dy = d * Math.sin(rad(p.pp));
+    const blk: [number, number][] = fits ? [[toeX, toeY], [crestX, topY], [planeX, topY]] : [[toeX, toeY], [crestX, topY], [400, topY], [400, endY]];
+    const bc: [number, number] = [blk.reduce((s, q) => s + q[0], 0) / blk.length, blk.reduce((s, q) => s + q[1], 0) / blk.length];
+    const wy = topY + (1 - p.ru * 1.5) * Hp * 0.8;
+    // keep the "Crest" label off the block leader (64,52) -> centroid
+    const yC = Math.max(topY - 12, 42);
+    const lx = 64 + ((bc[0] - 64) * (yC - 52)) / Math.max(bc[1] - 52, 1);
+    const crestHit = o.kin === 1 && lx > crestX - 4 && lx < crestX + 62;
+    const crestEl = (
+      <T x={crestX > 290 ? 376 : crestHit ? crestX + 62 + 8 : Math.max(crestX + 10, topY < 66 ? 160 : 0)} y={yC} anchor={crestX > 290 ? "end" : "start"}>
+        Crest
+      </T>
+    );
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.shale} />
-        {fail && <Cracks key={`m${p.mode}`} cracks={[{ x: crestX + 20, y: topY, len: 34, angle: 100, seed: 5 }, { x: crestX + 46, y: topY, len: 26, angle: 80, seed: 11 }]} color="#7F1D1D" width={2} />}
-        {o.kin === 1 && planeX <= 400 && (
-          <polygon points={polyline([[toeX, toeY], [crestX, topY], [planeX, topY]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(${-dx} ${dy})`} />
+        {clip}
+        <g clipPath="url(#u3-modes-clip)">
+          <polygon points={pts(rockPoly)} style={{ fill: GREYS.light }} />
+          {o.kin === 1 && (
+            <g className={fail ? "shake" : undefined}>
+              <polygon data-state={state} points={pts(blk)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" transform={`translate(${-dx} ${dy})`} />
+            </g>
+          )}
+          {fail && o.kin === 1 && (
+            <g data-state="unsafe">
+              <Cracks key={`m${p.mode}`} cracks={[{ x: Math.min(planeX, 396) + 6, y: topY, len: 30, angle: 100, seed: 5 }]} color={ON_LIGHT} width={2} />
+            </g>
+          )}
+          <line x1={toeX} y1={toeY} x2={endX} y2={endY} style={{ stroke: o.kin === 1 ? ON_LIGHT : INK3 }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+          {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={wy} style={{ stroke: U.ink }} strokeWidth={2} strokeDasharray="8 4" />}
+          {profile}
+        </g>
+        {crestEl}
+        {o.kin === 1 && (
+          <>
+            <T x={24} y={44}>Sliding block</T>
+            <line x1={64} y1={52} x2={bc[0]} y2={bc[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+          </>
         )}
-        <line x1={toeX} y1={toeY} x2={Math.min(planeX, 400)} y2={planeX <= 400 ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp))} stroke={C.ink} strokeDasharray="6 4" />
-        {p.ru > 0 && <line x1={toeX} y1={toeY - 3} x2={400} y2={topY + (1 - p.ru * 1.5) * Hp * 0.8} stroke={C.tech} strokeWidth={2} strokeDasharray="8 4" />}
-        {header}
+        <line x1={24} y1={213} x2={48} y2={213} style={{ stroke: o.kin === 1 ? ON_LIGHT : INK3 }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+        <T x={56} y={220} fill={ON_LIGHT}>Failure plane</T>
+        {p.ru > 0 && (
+          <>
+            <line x1={232} y1={213} x2={256} y2={213} style={{ stroke: U.ink }} strokeWidth={2} strokeDasharray="8 4" />
+            <T x={376} y={220} anchor="end" fill={ON_LIGHT}>
+              Water table
+            </T>
+          </>
+        )}
       </g>
     );
   },
@@ -682,53 +788,73 @@ export const flotationSim: SimDef = {
     { key: "S", label: "Froth stability index", digits: 2 },
   ],
   caption: "Feed: 10 % sphalerite (67 % Zn), 15 % pyrite, 75 % silicates. Indicative kinetic model: collector makes surfaces hydrophobic; CuSO₄ activates sphalerite; lime/cyanide depresses pyrite; frother stabilises froth (excess entrains gangue); air and impeller set bubble flux.",
+  v3: { viewH: 280 },
   render: (p, o, t) => {
+    const cellL = 24;
+    const cellR = 240;
+    const cellTop = 52;
+    const cellBot = 196;
     const frothH = 20 + o.S * 45;
-    const cellTop = 30;
+    const met = o.Rt >= 85 && o.grade >= 50;
     const bub = [];
     for (let i = 0; i < 14; i++) {
-      const x = 40 + ((i * 47) % 170);
-      const phase = ((t * (0.25 + p.air * 0.2) + i * 0.13) % 1);
-      const y = 210 - phase * (210 - cellTop - frothH);
+      const x = 48 + ((i * 47) % 160);
+      const phase = (t * (0.25 + p.air * 0.2) + i * 0.13) % 1;
+      const y = 164 - phase * (164 - cellTop - frothH);
       const loaded = i / 14 < o.Rt / 100;
       bub.push(
         <g key={i}>
-          <circle cx={x} cy={y} r={6} fill="white" stroke={C.air} />
-          {loaded && <circle cx={x + 4} cy={y - 4} r={2.5} fill={C.ore} />}
-          {i % 4 === 0 && o.Rp > 20 && <circle cx={x - 4} cy={y - 3} r={2.2} fill="#facc15" />}
+          <circle cx={x} cy={y} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+          {loaded && <circle cx={x + 4} cy={y - 4} r={3} style={{ fill: U.deep }} />}
+          {i % 4 === 0 && o.Rp > 20 && <circle cx={x - 4} cy={y - 3} r={3} style={{ fill: GREYS.deep }} />}
         </g>,
       );
     }
-    const curve: [number, number][] = [];
+    const curvePts: [number, number][] = [];
     for (let c = 0; c <= 200; c += 10) {
       const r = flotation({ ...p, col: c });
-      curve.push([r.Rt, r.grade]);
+      curvePts.push([r.Rt, r.grade]);
     }
+    const px0 = 282;
+    const py0 = 56;
+    const pw = 88;
+    const ph = 120;
+    const sx = (v: number) => px0 + (v / 100) * pw;
+    const sy = (v: number) => py0 + ph - (v / 67) * ph;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill={MAT.water} stroke={C.ink} strokeWidth={2} />
-        <rect x={25} y={cellTop} width={200} height={190} rx={4} fill="#1E293B" opacity={0.35} />
-        <rect x={25} y={cellTop} width={200} height={frothH} fill="#fef3c7" />
-        <Txt x={30} y={cellTop + 12} size={8} weight={800}>
-          FROTH (concentrate)
-        </Txt>
-        <rect x={110} y={200} width={30} height={6} fill={C.ink} transform={`rotate(${(t * p.rpm) % 360} 125 203)`} />
+        <rect x={cellL} y={cellTop} width={cellR - cellL} height={cellBot - cellTop} rx={4} style={{ fill: U.mid }} />
+        <rect x={cellL} y={cellTop} width={cellR - cellL} height={frothH} style={{ fill: U.light }} />
+        <path d={`M${cellL} ${cellTop} V${cellBot} H${cellR} V${cellTop}`} fill="none" style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        <T x={cellL} y={cellTop - 10} fill={INK2}>
+          Froth
+        </T>
+        <line x1={132} y1={cellTop} x2={132} y2={166} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={112} y={162} width={40} height={8} rx={2} style={{ fill: GREYS.deep }} transform={`rotate(${(t * p.rpm) % 360} 132 166)`} />
         {bub}
-        <Txt x={30} y={234} size={7} fill={C.slate}>
-          ● sphalerite attached ● pyrite attached
-        </Txt>
-        <Plot x={262} y={30} w={125} h={150} xmin={0} xmax={100} ymin={0} ymax={67} xlabel="recovery %" ylabel="% Zn">
-          {(sx, sy) => (
-            <g>
-              <polyline points={polyline(curve.map(([r, g]) => [sx(r), sy(g)]))} fill="none" stroke={C.tech} strokeWidth={2} />
-              <circle cx={sx(o.Rt)} cy={sy(o.grade)} r={5} fill={o.Rt >= 85 && o.grade >= 50 ? C.safe : C.crit} stroke="white" strokeWidth={1.5} />
-            </g>
-          )}
-        </Plot>
-        <Txt x={262} y={210} size={8} fill={C.slate}>
-          curve = collector sweep 0–200 g/t
-        </Txt>
+        <T x={36} y={192} fill={ON_LIGHT} weight={700}>
+          Pulp
+        </T>
+        <T x={cellR - 8} y={192} anchor="end" fill={ON_LIGHT} weight={700}>
+          Impeller
+        </T>
+        <Axes x={px0} y={py0} w={pw} h={ph} xlabel="Recovery" ylabel="Zn grade" />
+        <polyline points={pts(curvePts.map(([r, g]) => [sx(r), sy(g)]))} fill="none" style={{ stroke: U.deep }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={sx(o.Rt)} cy={sy(o.grade)} r={7} data-state={met ? "safe" : "unsafe"} style={{ fill: met ? OK : BAD, stroke: INK }} strokeWidth={1.5} />
+        <circle cx={34} cy={216} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+        <circle cx={38} cy={212} r={3} style={{ fill: U.deep }} />
+        <T x={50} y={222}>
+          Zinc mineral
+        </T>
+        <circle cx={190} cy={216} r={7} fill="#FFFFFF" style={{ stroke: GREYS.deep }} strokeWidth={1.5} />
+        <circle cx={186} cy={213} r={3} style={{ fill: GREYS.deep }} />
+        <T x={206} y={222}>
+          Pyrite
+        </T>
+        <line x1={24} y1={240} x2={46} y2={240} style={{ stroke: U.deep }} strokeWidth={2} strokeLinecap="round" />
+        <T x={54} y={246}>
+          Collector sweep 0–200 g/t
+        </T>
       </g>
     );
   },
@@ -803,71 +929,77 @@ export const zonesSim: SimDef = {
     { key: "faultA", label: "Earth-fault current", format: (v) => (v < 1 ? `${(v * 1000).toFixed(0)} mA` : `~${v.toFixed(0)} A`), tone: (v) => (v < 1 ? "ok" : "crit") },
   ],
   caption: "Ex d (flameproof): enclosure contains an internal explosion; flame paths quench escaping gas. Ex i (intrinsic safety): energy limited below methane's minimum ignition energy — only for low-power circuits. Teaching model; follow the mine's approved electrical scheme and the applicable regulations.",
+  v3: { viewH: 270 },
   render: (p, o, t) => {
     const z = zones(p);
-    const pos: Record<string, [number, number]> = { sub: [60, 150], intake: [190, 170], face: [330, 120], ret: [190, 60] };
+    const pos: Record<string, [number, number]> = { sub: [92, 200], intake: [200, 200], face: [340, 135], ret: [200, 70] };
     const flash = Math.floor(t * 3) % 2 === 0;
-    const eqCol = (e: number) => (e === 1 ? C.tech : e === 2 ? C.safe : "#94a3b8");
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#F5F5F4" opacity={0.6} />
-        <rect x={30} y={30} width={18} height={190} fill={MAT.metalH} />
-        <Txt x={39} y={26} size={7} anchor="middle" weight={700}>
-          shaft
-        </Txt>
-        <line x1={48} y1={170} x2={350} y2={170} stroke={C.air} strokeWidth={10} opacity={0.5} />
-        <line x1={350} y1={170} x2={350} y2={60} stroke={C.coal} strokeWidth={14} />
-        <line x1={350} y1={60} x2={48} y2={60} stroke="#fca5a5" strokeWidth={10} opacity={0.5} />
-        <Txt x={235} y={190} size={7} fill="#0369a1" weight={700}>
-          INTAKE (fresh air) →
-        </Txt>
-        <Txt x={225} y={46} size={7} fill={C.crit} weight={700}>
-          ← RETURN (may carry firedamp)
-        </Txt>
-        <Txt x={365} y={120} size={7} weight={700} fill={C.ink}>
-          FACE
-        </Txt>
+        <clipPath id="u8z-clip">
+          <rect x={0} y={0} width={400} height={270} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u8z-clip)">
+          <rect x={0} y={0} width={400} height={270} fill={GREYS.light} />
+          <rect x={44} y={55} width={311} height={30} fill={GREYS.mid} />
+          <rect x={44} y={185} width={311} height={30} fill={U.light} />
+          <rect x={325} y={55} width={30} height={160} fill={GREYS.deep} />
+          <rect x={30} y={55} width={28} height={160} fill={GREYS.deep} />
+        </g>
+        <g style={{ fill: "none", stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round">
+          <path d="M44 55 H355 V215 H44" />
+          <path d="M44 85 H325 V185 H44" />
+        </g>
+        <Arrow x1={128} y1={200} x2={162} y2={200} color={ON_LIGHT} width={2} head={10} />
+        <Arrow x1={162} y1={70} x2={128} y2={70} color={ON_LIGHT} width={2} head={10} />
+        <T x={24} y={44} fill={ON_LIGHT}>Shaft</T>
+        <T x={292} y={44} fill={ON_LIGHT}>Return</T>
+        <T x={292} y={240} fill={ON_LIGHT}>Intake</T>
+        {p.ev === 1 && (
+          <g data-state="unsafe">
+            <ellipse cx={340} cy={100} rx={22} ry={10} fill={BAD_PALE} style={{ stroke: BAD }} strokeWidth={1.5} />
+            <T x={304} y={106} anchor="end" fill={ON_LIGHT}>CH₄ layer</T>
+          </g>
+        )}
+        {(["ner", "elr"] as const).map((k, i) => {
+          const on = k === "ner" ? p.rn === 1 : p.elr === 1;
+          return (
+            <g key={k} data-state={on ? "safe" : undefined}>
+              <rect x={100} y={100 + i * 40} width={56} height={32} rx={6} fill={on ? OK_LIGHT : GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray={on ? undefined : "4 3"} />
+              <T x={128} y={122 + i * 40} anchor="middle" fill={ON_LIGHT}>{k === "ner" ? "NER" : "ELR"}</T>
+            </g>
+          );
+        })}
+        {z.ignition > 0 && flash && (() => {
+          const [x, y] = z.ignition === 2 ? pos.ret : pos.face;
+          const star = Array.from({ length: 16 }, (_, i) => {
+            const r = i % 2 ? 14 : 28;
+            const a = (i / 16) * Math.PI * 2;
+            return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
+          });
+          return <polygon data-state="unsafe" points={pts(star)} fill={BAD_LIGHT} fillOpacity={0.7} style={{ stroke: BAD }} strokeWidth={1.5} strokeLinejoin="round" />;
+        })()}
         {LOC.map((l, i) => {
           const [x, y] = pos[l.k];
           const e = p[l.k];
           const st = z.status[i];
+          const fill = e === 0 ? GREYS.light : e === 1 ? U.light : U.deep;
+          const txt = e === 2 ? ON_DEEP : ON_LIGHT;
+          const lab = { sub: "Pit bottom", intake: "Belt drive", face: "Shearer", ret: "CH₄ sensor" }[l.k];
+          const ly = l.k === "ret" ? y - 26 : l.k === "face" ? y + 40 : y + 36;
           return (
             <g key={l.k}>
-              <rect x={x - 22} y={y - 14} width={44} height={28} rx={3} fill={eqCol(e)} stroke={st === 2 ? C.crit : st === 1 ? C.hazard : C.ink} strokeWidth={st ? 3 : 1} />
-              {e === 1 && [0, 1, 2].map((j) => <line key={j} x1={x - 22} x2={x + 22} y1={y - 8 + j * 8} y2={y - 8 + j * 8} stroke="white" strokeWidth={0.8} />)}
-              <Txt x={x} y={y + 3} size={7} anchor="middle" fill="white" weight={800}>
-                {EQ[e]}
-              </Txt>
-              <Txt x={x} y={y + 24} size={6} anchor="middle" fill={C.ink}>
-                {l.name.split(" (")[0].split(" @")[0]}
-              </Txt>
+              <g data-state={st === 2 ? "unsafe" : undefined}>
+                <rect x={x - 28} y={y - 16} width={56} height={32} rx={6} fill={fill} style={{ stroke: st === 2 ? BAD : INK }} strokeWidth={2.5} strokeDasharray={st === 1 ? "5 3" : undefined} />
+                <T x={x} y={y + 6} anchor="middle" fill={txt} weight={700}>{["Ord.", "Ex d", "Ex i"][e]}</T>
+              </g>
+              <T x={x} y={ly} anchor="middle" fill={ON_LIGHT}>{lab}</T>
             </g>
           );
         })}
-        {p.ev === 1 && <ellipse cx={330} cy={98} rx={40} ry={8} fill="#fde68a" opacity={0.8} />}
-        {z.ignition > 0 && flash && (() => {
-          const [x, y] = z.ignition === 2 ? pos.ret : pos.face;
-          const pts = Array.from({ length: 16 }, (_, i) => {
-            const r = i % 2 ? 14 : 30;
-            const a = (i / 16) * Math.PI * 2;
-            return [x + r * Math.cos(a), y + r * Math.sin(a)] as [number, number];
-          });
-          return <polygon points={polyline(pts)} fill={C.crit} opacity={0.45} stroke="#FDE68A" strokeWidth={2} />;
-        })()}
-        {p.ev === 2 && <line x1={300} y1={150} x2={330} y2={134} stroke={C.hazard} strokeWidth={3} strokeDasharray="3 2" />}
         {p.ev === 2 && (
-          <Txt x={250} y={215} size={9} weight={900} fill={z.trip ? C.safe : C.crit}>
-            {z.trip ? "ELR TRIPPED — supply isolated" : "FAULT NOT CLEARED"}
-          </Txt>
+          <polyline data-state={z.trip ? "safe" : "unsafe"} points="296,150 304,134 296,134 306,118" fill="none" style={{ stroke: z.trip ? GREYS.deep : BAD }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         )}
-        <rect x={58} y={198} width={70} height={16} rx={3} fill={p.rn ? C.safe : C.slate} />
-        <Txt x={93} y={209} size={7} anchor="middle" fill="white" weight={800}>
-          {p.rn ? "NER 750 mA" : "SOLID N"}
-        </Txt>
-        <Txt x={12} y={16} size={10} weight={900} mono fill={z.score === 6 ? C.safe : C.crit}>
-          {`Degree ${["I", "II", "III"][p.deg - 1]} · ${z.score}/6 checks`}
-        </Txt>
       </g>
     );
   },

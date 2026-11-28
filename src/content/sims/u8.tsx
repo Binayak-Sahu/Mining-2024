@@ -1,6 +1,11 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, polyline, Dim, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { SvgTex } from "@/components/sim/Tex";
+import { T as ET, INK as EINK, INK2 as EINK2, INK3 as EINK3, GREYS as EGREYS, U as EU, ON_LIGHT as EON_LIGHT, OK_LIGHT as EOK_LIGHT, BAD as EBAD, BAD_LIGHT as EBAD_LIGHT } from "@/components/sim/v3";
+import { T as T3, GREYS, Arrow as Arrow3, INK as BINK, INK3 as BINK3, U as BU, ON_LIGHT as BON } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, U, OK, BAD, Dot } from "@/components/sim/v3";
+import { Axes as WAxes, px as wpx, OK_LIGHT as W_OK, BAD_LIGHT as W_BAD } from "@/components/sim/v3";
 
 /* ---------------- Closed traverse & Bowditch ---------------- */
 
@@ -64,6 +69,7 @@ export const bowditchSim: SimDef = {
     { key: "P", label: "Perimeter", unit: "m", digits: 1 },
   ],
   caption: "Bowditch: each leg's latitude and departure are corrected in proportion to its length — distributing the misclosure along the traverse.",
+  v3: { viewH: 250 },
   render: (p) => {
     const t = traverse(p);
     const k = 0.85;
@@ -74,36 +80,65 @@ export const bowditchSim: SimDef = {
     const meas = exag(t.pts);
     const cor = exag(t.cor);
     const truth = [...V, V[0]].map(([x, y]): [number, number] => [X(x), Y(y)]);
+    const adj = !!p.show;
+    const state = t.prec >= 10000 ? "safe" : "unsafe";
+    const line = adj ? cor : meas;
+    const ends = meas;
+    const lab: [number, number, "start" | "middle" | "end"][] = [
+      [46, 222, "end"],
+      [150, 196, "middle"],
+      [252, 142, "start"],
+      [232, 50, "start"],
+      [107, 40, "end"],
+      [24, 112, "start"],
+    ];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#F0FDF4" />
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <path key={i} d={`M-10 ${40 + i * 38} C 90 ${20 + i * 38}, 200 ${70 + i * 34}, 410 ${30 + i * 40}`} fill="none" stroke="#86EFAC" strokeWidth={1} opacity={0.8} />
-        ))}
-        <polyline points={polyline(truth)} fill="none" stroke="#CBD5E1" strokeWidth={6} strokeLinejoin="round" />
-        {p.show ? <polyline points={polyline(cor)} fill="none" stroke={C.safe} strokeWidth={2.5} /> : <polyline points={polyline(meas)} fill="none" stroke={C.crit} strokeWidth={2.5} />}
-        {!p.show && <line x1={meas[meas.length - 1][0]} y1={meas[meas.length - 1][1]} x2={meas[0][0]} y2={meas[0][1]} stroke={C.hazard} strokeWidth={2} strokeDasharray="3 2" />}
+        <defs>
+          <clipPath id="u8bow-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u8bow-clip)">
+          <rect x={0} y={0} width={400} height={250} style={{ fill: U.light }} />
+        </g>
+        <polygon points={polyline(truth)} style={{ fill: "#FFFFFF", stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" />
+        <polyline points={polyline(line)} fill="none" data-state={adj ? "safe" : "unsafe"} style={{ stroke: adj ? OK : BAD }} strokeWidth={2} strokeLinejoin="round" />
+        {!adj && <line x1={ends[ends.length - 1][0]} y1={ends[ends.length - 1][1]} x2={ends[0][0]} y2={ends[0][1]} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeDasharray="4 3" />}
         {V.map(([x, y], i) => (
-          <g key={i}>
-            <path d={`M${X(x)} ${Y(y) - 7} l5 9 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={0.8} />
-            <circle cx={X(x)} cy={Y(y)} r={2} fill={C.ink} />
-            <Txt x={X(x) + 6} y={Y(y) - 4} size={8} mono>
-              {String.fromCharCode(65 + i)}
-            </Txt>
-          </g>
+          <Dot key={i} x={X(x)} y={Y(y)} ring={i === 0} fill={ON_LIGHT} />
         ))}
-        <Txt x={250} y={30} size={9} weight={700} fill={C.slate}>
-          errors exaggerated ×400
-        </Txt>
-        <Txt x={250} y={50} size={9} weight={700} fill={p.show ? C.safe : C.crit}>
-          {p.show ? "— adjusted (closes)" : "— as measured (open)"}
-        </Txt>
-        <Txt x={250} y={66} size={9} fill={C.slate}>
-          ▬ true traverse
-        </Txt>
-        <Txt x={250} y={100} size={14} weight={900} mono fill={t.prec >= 10000 ? C.safe : t.prec >= 5000 ? C.hazard : C.crit}>
-          {Number.isFinite(t.prec) ? `1 : ${Math.round(t.prec)}` : "closed"}
-        </Txt>
+        {lab.map(([x, y, a], i) => (
+          <T key={i} x={x} y={y} anchor={a} fill={ON_LIGHT} weight={700}>
+            {String.fromCharCode(65 + i)}
+          </T>
+        ))}
+        <rect x={256} y={26} width={128} height={106} rx={8} style={{ fill: "#FFFFFF", stroke: INK3 }} strokeWidth={1.5} />
+        <g opacity={adj ? 1 : 0.45}>
+          <line x1={266} y1={42} x2={286} y2={42} data-state="safe" style={{ stroke: OK }} strokeWidth={2} />
+          <T x={376} y={48} anchor="end" fill={ON_LIGHT}>
+            Adjusted
+          </T>
+        </g>
+        <g opacity={adj ? 0.45 : 1}>
+          <line x1={266} y1={67} x2={286} y2={67} data-state="unsafe" style={{ stroke: BAD }} strokeWidth={2} />
+          <T x={376} y={73} anchor="end" fill={ON_LIGHT}>
+            Measured
+          </T>
+        </g>
+        <g opacity={adj ? 0.45 : 1}>
+          <line x1={266} y1={92} x2={286} y2={92} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeDasharray="4 3" />
+          <T x={376} y={98} anchor="end" fill={ON_LIGHT}>
+            Misclosure
+          </T>
+        </g>
+        <rect x={266} y={113} width={20} height={12} style={{ fill: U.light, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={376} y={124} anchor="end" fill={ON_LIGHT}>
+          True
+        </T>
+        <T x={376} y={220} anchor="end" fill={ON_LIGHT}>
+          Errors ×400
+        </T>
       </g>
     );
   },
@@ -133,44 +168,62 @@ export const weisbachSim: SimDef = {
     { key: "err", label: "Orientation error carried underground", unit: "″", digits: 2, tone: (v) => (v <= 1 ? "ok" : v <= 3 ? "warn" : "crit") },
   ],
   caption: "Sine rule with small angles: β ≈ (b/c)·α, so any error in α is multiplied by b/c. Keep the instrument close to the near wire, wires far apart, and α under ~1°.",
-  handles: [{ key: "b", axis: "x", at: (p) => [360 - p.c * 22 - p.b * 22, 132], toValue: (x, p) => (360 - p.c * 22 - x) / 22, color: "#F59E0B" }],
-  render: (p) => {
+  // v3.2 redraw: instrument, near wire, b/c dimension row and shaft keep their lesson-pin places.
+  v3: { viewH: 250, formula: () => "\\beta \\approx \\dfrac{b}{c}\\,\\alpha" },
+  handles: [{ key: "b", axis: "x", at: (p) => [360 - p.c * 22 - p.b * 22, 167], toValue: (x, p) => (360 - p.c * 22 - x) / 22, color: "#F59E0B" }],
+  render: (p, o) => {
     const k = 22;
-    const y = 120;
+    const y = 105;
     const xW2 = 360;
     const xW1 = xW2 - p.c * k;
     const xC = xW1 - p.b * k;
     const off = clamp(p.al / 60, 2, 50);
+    const cx = (xW1 + xW2) / 2;
+    const r = p.c * (k / 2) + 8;
+    const state = o.ok ? "safe" : "unsafe";
+    const instrEnd = Math.min(xC + 10, cx - r - 17);
+    const instrRight = instrEnd - 124 >= 24;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.6} />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill="#9CA3AF" />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20) + 6} fill={MAT.hatch} />
-        <circle cx={(xW1 + xW2) / 2} cy={y} r={Math.max(60, (p.c * k) / 2 + 20)} fill="#1E293B" />
-        <Txt x={(xW1 + xW2) / 2} y={y - Math.max(60, (p.c * k) / 2 + 20) + 14} size={8} anchor="middle" fill="#CBD5E1" weight={700}>
-          SHAFT
-        </Txt>
-        <Stream d={`M${xC} ${y} L${xW2} ${y - off}`} color="#38BDF8" width={1.5} speed={0.7} />
-        <Stream d={`M${xC} ${y} L${xW1} ${y}`} color="#38BDF8" width={1.5} speed={0.7} />
-        <line x1={xW1} y1={y} x2={xW2} y2={y - off} stroke="#F8FAFC" strokeWidth={2} />
-        <circle cx={xW1} cy={y} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
-        <circle cx={xW2} cy={y - off} r={5} fill={C.crit} stroke="#FECACA" strokeWidth={1.5} filter="url(#f-glow)" />
-        <Txt x={xW1} y={y + 18} size={9} anchor="middle" weight={800} fill="#F8FAFC">
+        <defs>
+          <clipPath id="u8wb-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u8wb-clip)">
+          <rect x={0} y={0} width={400} height={250} style={{ fill: GREYS.light }} />
+        </g>
+        <T x={24} y={44} fill={ON_LIGHT}>
+          Rock
+        </T>
+        <circle cx={cx} cy={y} r={r + 7} style={{ fill: GREYS.mid, stroke: GREYS.deep }} strokeWidth={1.5} />
+        <circle cx={cx} cy={y} r={r} style={{ fill: U.light }} />
+        <T x={cx - r - 14} y={50} anchor="end" fill={ON_LIGHT}>
+          Shaft
+        </T>
+        <line x1={xC} y1={y} x2={xW1} y2={y} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeLinecap="round" />
+        <line x1={xC} y1={y} x2={xW2} y2={y - off} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeLinecap="round" />
+        <line x1={xW1} y1={y} x2={xW2} y2={y - off} data-state={state} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeLinecap="round" />
+        <Dot x={xW1} y={y} fill={ON_LIGHT} />
+        <Dot x={xW2} y={y - off} fill={ON_LIGHT} />
+        <polygon points={`${xC - 10},${y + 12} ${xC + 10},${y + 12} ${xC},${y - 10}`} style={{ fill: U.deep, stroke: INK }} strokeWidth={2} strokeLinejoin="round" />
+        <T x={xW1 + 6} y={y + 34} fill={ON_LIGHT}>
           W₁
-        </Txt>
-        <Txt x={xW2} y={y - off - 10} size={9} anchor="middle" weight={800} fill="#F8FAFC">
+        </T>
+        <T x={xW2} y={y - off - 14} anchor="middle" fill={ON_LIGHT}>
           W₂
-        </Txt>
-        <polygon points={`${xC - 7},${y + 12} ${xC + 7},${y + 12} ${xC},${y - 2}`} fill={C.hazard} stroke={C.ink} />
-        <Txt x={xC} y={y + 26} size={9} anchor="middle" weight={800}>
-          C (theodolite)
-        </Txt>
-        <Dim x1={xC} y1={y + 40} x2={xW1} y2={y + 40} label={`b ${p.b} m`} />
-        <Dim x1={xW1} y1={y + 56} x2={xW2} y2={y + 56} label={`c ${p.c} m`} />
-        <Txt x={20} y={30} size={10} weight={800}>
-          α = {p.al}″ (exaggerated)
-        </Txt>
+        </T>
+        <T x={instrRight ? instrEnd : 24} y={78} anchor={instrRight ? "end" : "start"} fill={ON_LIGHT}>
+          Instrument C
+        </T>
+        <g style={{ stroke: GREYS.deep }} strokeWidth={1.5} strokeLinecap="round">
+          <line x1={xC} y1={167} x2={xW2} y2={167} />
+          {[xC, xW1, xW2].map((x) => (
+            <line key={x} x1={x} y1={161} x2={x} y2={173} />
+          ))}
+        </g>
+        <SvgTex x={(xC + xW1) / 2} y={210} tex="b" anchor="middle" color={ON_LIGHT} />
+        <SvgTex x={(xW1 + xW2) / 2} y={210} tex="c" anchor="middle" color={ON_LIGHT} />
       </g>
     );
   },
@@ -201,64 +254,75 @@ export const bondSim: SimDef = {
   ],
   caption: "Rittinger (E ∝ new surface, 1/x) suits fine grinding; Kick (E ∝ log ratio) suits coarse crushing; Bond (E ∝ 1/√x) sits between and is the industry design standard.",
   animated: true,
+  v3: { viewH: 250, formula: () => "W = 10\\,W_i\\left(\\frac{1}{\\sqrt{P_{80}}}-\\frac{1}{\\sqrt{F_{80}}}\\right)" },
   handles: [
     { key: "F", axis: "x", at: (p) => [30 + ((Math.log10(p.F * 1000) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)) / 1000, color: "#0F172A" },
     { key: "P", axis: "x", at: (p) => [30 + ((Math.log10(p.P) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)), color: "#3B82F6" },
   ],
   render: (p, o, t) => {
     const lx = (um: number) => 30 + ((Math.log10(um) - 1) / (Math.log10(300000) - 1)) * 340;
+    const xF = lx(p.F * 1000);
+    const xP = lx(p.P);
+    const close = Math.abs(xF - xP) < 64;
+    const cx = 90;
+    const cy = 165;
+    const R = 38;
+    const bar = clamp(o.W / 32, 0, 1) * 68;
+    const ticks: [number, string][] = [
+      [100, "100 µm"],
+      [1000, "1 mm"],
+      [10000, "10 mm"],
+      [100000, "100 mm"],
+    ];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <Txt x={30} y={24} size={9} weight={700} fill={C.slate}>
-          PARTICLE SIZE (log scale)
-        </Txt>
-        <rect x={30} y={32} width={340} height={16} fill="url(#sizeg)" rx={8} />
         <defs>
-          <linearGradient id="sizeg" x1="0" x2="1">
-            <stop offset="0" stopColor="#e0e7ff" />
-            <stop offset="1" stopColor="#57534e" />
-          </linearGradient>
+          <clipPath id="u8bond-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
         </defs>
-        {[10, 100, 1000, 10000, 100000].map((u) => (
-          <Txt key={u} x={lx(u)} y={62} size={7} anchor="middle" mono fill={C.slate}>
-            {u >= 1000 ? `${u / 1000} mm` : `${u} µm`}
-          </Txt>
+        <g clipPath="url(#u8bond-clip)">
+          <rect x={0} y={cy + R} width={400} height={250 - cy - R} style={{ fill: GREYS.light }} />
+        </g>
+        <rect x={30} y={30} width={340} height={20} rx={10} style={{ fill: BU.light, stroke: BINK3 }} strokeWidth={1.5} />
+        {ticks.map(([u, l]) => (
+          <g key={u}>
+            <line x1={lx(u)} y1={50} x2={lx(u)} y2={54} style={{ stroke: BINK3 }} strokeWidth={1.5} strokeLinecap="round" />
+            <T3 x={lx(u)} y={80} anchor="middle">
+              {l}
+            </T3>
+          </g>
         ))}
-        <Arrow x1={lx(p.F * 1000)} y1={80} x2={lx(p.P) + 6} y2={80} color={C.crit} width={3} />
-        <circle cx={lx(p.F * 1000)} cy={40} r={6} fill={C.ink} />
-        <circle cx={lx(p.P)} cy={40} r={6} fill={C.tech} />
-        <Txt x={lx(p.F * 1000)} y={96} size={8} anchor="middle" weight={700}>
+        {Math.abs(xF - xP) > 16 && <Arrow3 x1={xF} y1={96} x2={xP + (xF > xP ? 6 : -6)} y2={96} color={BU.deep} />}
+        <T3 x={xF} y={118} anchor="middle" fill={BINK} weight={700}>
           F80
-        </Txt>
-        <Txt x={lx(p.P)} y={96} size={8} anchor="middle" weight={700} fill={C.tech}>
+        </T3>
+        <T3 x={xP} y={close ? 140 : 118} anchor="middle" fill={BINK} weight={700}>
           P80
-        </Txt>
-        <circle cx={90} cy={165} r={47} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} filter="url(#f-shadow)" />
-        <circle cx={90} cy={165} r={41} fill="#E2E8F0" />
-        <g transform={`rotate(${((t * 60) % 360).toFixed(0)} 90 165)`}>
+        </T3>
+        <circle cx={cx} cy={cy} r={R} style={{ fill: GREYS.light, stroke: BINK }} strokeWidth={2.5} />
+        <circle cx={cx} cy={cy} r={R - 7} style={{ fill: BU.light }} />
+        <path
+          d={`M${cx + (R - 7) * Math.cos(0.35)} ${cy + (R - 7) * Math.sin(0.35)} A${R - 7} ${R - 7} 0 0 1 ${cx + (R - 7) * Math.cos(2.5)} ${cy + (R - 7) * Math.sin(2.5)} Z`}
+          transform={`rotate(-25 ${cx} ${cy})`}
+          style={{ fill: GREYS.mid }}
+        />
+        <g transform={`rotate(${((t * 40) % 360).toFixed(0)} ${cx} ${cy})`}>
           {[0, 60, 120, 180, 240, 300].map((a) => (
-            <rect key={a} x={88} y={124} width={4} height={6} fill="#64748B" transform={`rotate(${a} 90 165)`} />
+            <rect key={a} x={cx - 2.5} y={cy - R + 5} width={5} height={7} style={{ fill: GREYS.deep }} transform={`rotate(${a} ${cx} ${cy})`} />
           ))}
         </g>
-        {Array.from({ length: 9 }).map((_, i) => {
-          // charge cascades up the rising side and tumbles back
-          const a = ((t * 1.3 + i / 9) % 1) * Math.PI * 1.1 + Math.PI * 0.35;
-          const rr = 18 + (i % 3) * 7;
-          return <circle key={i} cx={90 + Math.cos(a) * rr} cy={170 + Math.sin(a) * rr * 0.8} r={5.5} fill="#475569" stroke="#1E293B" strokeWidth={0.6} />;
-        })}
-        <Txt x={90} y={226} size={8} anchor="middle" weight={700}>
-          ball mill
-        </Txt>
-        <Txt x={170} y={140} size={10} weight={800}>
-          W = 10·Wi(1/√P − 1/√F)
-        </Txt>
-        <Txt x={170} y={164} size={14} weight={900} mono>
-          {`${o.W.toFixed(2)} kWh/t`}
-        </Txt>
-        <Txt x={170} y={186} size={14} weight={900} mono fill={o.power > 8000 ? C.hazard : C.ink}>
-          {`${(o.power / 1000).toFixed(2)} MW`}
-        </Txt>
+        <T3 x={148} y={cy - 4} fill={BINK} weight={700}>
+          Ball mill
+        </T3>
+        <T3 x={148} y={cy + 20}>
+          Shell
+        </T3>
+        <rect x={344} y={124} width={32} height={72} rx={4} style={{ fill: "none", stroke: BINK3 }} strokeWidth={1.5} />
+        <rect x={347} y={193 - bar} width={26} height={bar} rx={2} style={{ fill: BU.mid }} />
+        <T3 x={376} y={222} anchor="end" fill={BON} weight={700}>
+          Energy
+        </T3>
       </g>
     );
   },
@@ -321,8 +385,9 @@ export const washSim: SimDef = {
     { key: "cls", label: "Ease of washing (Bird)", format: (v) => DIFF[v], tone: (v) => (v <= 1 ? "ok" : v <= 3 ? "warn" : "crit") },
   ],
   caption: "Float–sink data of a high-ash Indian coking coal (head ash ≈ 30 %). Ep = 0 is an ideal separator; real dense-medium cyclones achieve Ep ≈ 0.02–0.05.",
+  v3: { viewH: 300 },
   render: (p, o) => {
-    const cum: [number, number][] = [[0, 0]];
+    const cum: [number, number][] = [];
     let m = 0;
     let ma = 0;
     for (const f of FRACS) {
@@ -330,28 +395,41 @@ export const washSim: SimDef = {
       ma += f.m * f.a;
       cum.push([ma / m, m]);
     }
+    const sx = (a: number) => 40 + (a / 35) * 340;
+    const sy = (yv: number) => 204 - yv * 1.9;
+    const line = cum.map(([a, yv]) => `${sx(a).toFixed(1)},${sy(yv).toFixed(1)}`).join(" ");
+    const area = `${sx(0)},${sy(0)} ${line} ${sx(cum[cum.length - 1][0])},${sy(0)}`;
+    const met = o.cleanAsh <= 17;
+    const ox = sx(clamp(o.cleanAsh, 0, 35));
     return (
-      <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={35} ymin={0} ymax={100} xlabel="cumulative ash of floats (%)" ylabel="yield %">
-        {(sx, sy) => (
-          <g>
-            <rect x={sx(0)} y={sy(100)} width={sx(17) - sx(0)} height={sy(0) - sy(100)} fill={C.safe} opacity={0.06} />
-            <polygon points={polyline([[sx(0), sy(0)], ...cum.slice(1).map(([a, yv]): [number, number] => [sx(a), sy(yv)]), [sx(cum[cum.length - 1][0]), sy(0)]])} fill={C.tech} opacity={0.08} />
-            <polyline points={polyline(cum.slice(1).map(([a, yv]) => [sx(a), sy(yv)]))} fill="none" stroke={C.tech} strokeWidth={2.5} strokeLinejoin="round" />
-            {cum.slice(1).map(([a, yv], i) => (
-              <circle key={i} cx={sx(a)} cy={sy(yv)} r={2.5} fill={C.tech} />
-            ))}
-            <line x1={sx(17)} x2={sx(17)} y1={sy(0)} y2={sy(100)} stroke={C.hazard} strokeDasharray="4 3" />
-            <Txt x={sx(17) + 3} y={sy(95)} size={8} fill={C.hazard} weight={700}>
-              17 % ash target
-            </Txt>
-            <circle cx={sx(clamp(o.cleanAsh, 0, 35))} cy={sy(o.y)} r={13} fill={o.cleanAsh <= 17 ? C.safe : C.crit} opacity={0.15} />
-            <circle cx={sx(clamp(o.cleanAsh, 0, 35))} cy={sy(o.y)} r={7} fill={o.cleanAsh <= 17 ? C.safe : C.crit} stroke="white" strokeWidth={2} />
-            <Txt x={sx(clamp(o.cleanAsh, 0, 35)) + 10} y={sy(o.y) + 4} size={9} weight={800} mono>
-              {`${p.rho.toFixed(2)} g/cc`}
-            </Txt>
-          </g>
-        )}
-      </Plot>
+      <g>
+        <rect x={sx(0)} y={sy(100)} width={sx(17) - sx(0)} height={sy(0) - sy(100)} style={{ fill: GREYS.light }} opacity={0.35} />
+        <polygon points={area} style={{ fill: BU.light }} />
+        <WAxes x={40} y={14} w={340} h={190} />
+        <polyline points={line} fill="none" style={{ stroke: BU.ink }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        {cum.map(([a, yv], i) => (
+          <circle key={i} cx={sx(a)} cy={sy(yv)} r={3} style={{ fill: BU.ink }} />
+        ))}
+        <line x1={sx(17)} x2={sx(17)} y1={sy(0)} y2={sy(100)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <g data-state={met ? "safe" : "unsafe"}>
+          <circle cx={ox} cy={sy(o.y)} r={wpx(8)} fill="none" style={{ stroke: INK }} strokeWidth={1.5} />
+          <circle cx={ox} cy={sy(o.y)} r={wpx(4)} style={{ fill: met ? W_OK : W_BAD, stroke: INK }} strokeWidth={1.5} />
+        </g>
+        <T x={52} y={42}>
+          Yield %
+        </T>
+        <T x={376} y={232} anchor="end">
+          Cumulative ash of floats (%)
+        </T>
+        <line x1={40} x2={62} y1={258} y2={258} style={{ stroke: BU.ink }} strokeWidth={2} strokeLinecap="round" />
+        <T x={68} y={264}>
+          Float–sink curve
+        </T>
+        <line x1={218} x2={240} y1={258} y2={258} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <T x={246} y={264}>
+          Ash target
+        </T>
+      </g>
     );
   },
 };
@@ -386,56 +464,60 @@ export const earthSim: SimDef = {
     { key: "Rreq", label: "Resistor for 750 mA limit", unit: "Ω", digits: 0 },
   ],
   caption: "Underground coal mine systems commonly restrict earth-fault current to 750 mA via a neutral earthing resistor, with earth-leakage protection tripping well below that.",
-  render: (p, o) => (
-    <g>
-      <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
-      <rect x={0} y={190} width={400} height={50} fill={MAT.soil} opacity={0.45} />
-      {!o.tripped && <Stream d="M86 70 L318 70 L326 100 L335 110 L335 190 L60 190 L60 96" color={C.crit} width={2} speed={clamp(o.If / 20, 0.08, 1)} opacity={0.75} />}
-      <circle cx={60} cy={70} r={26} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} />
-      <circle cx={52} cy={70} r={11} fill="none" stroke="#B45309" strokeWidth={2} />
-      <circle cx={68} cy={70} r={11} fill="none" stroke="#B45309" strokeWidth={2} />
-      <Txt x={60} y={74} size={9} anchor="middle" weight={800}>
-        TX
-      </Txt>
-      <line x1={86} y1={70} x2={300} y2={70} stroke={C.ink} strokeWidth={2.5} />
-      <Txt x={190} y={62} size={8} anchor="middle" mono>
-        {`phase ${o.vph.toFixed(0)} V`}
-      </Txt>
-      <rect x={300} y={50} width={70} height={60} rx={8} fill={C.hazard} stroke={C.ink} filter="url(#f-shadow)" />
-      <rect x={302} y={52} width={66} height={14} rx={6} fill={MAT.glass} />
-      <Txt x={335} y={84} size={8} anchor="middle" weight={800}>
-        MOTOR FRAME
-      </Txt>
-      <line x1={318} y1={70} x2={326} y2={100} stroke={C.crit} strokeWidth={3} />
-      <Txt x={318} y={128} size={8} fill={C.crit} weight={700}>
-        {`fault ${p.Rf} Ω`}
-      </Txt>
-      <line x1={335} y1={110} x2={335} y2={190} stroke={C.safe} strokeWidth={2.5} />
-      <Txt x={330} y={160} size={8} anchor="end" fill={C.safe} weight={700}>
-        {`earth conductor ${p.Re} Ω`}
-      </Txt>
-      <line x1={20} y1={190} x2={380} y2={190} stroke={C.safe} strokeWidth={3} />
-      <Txt x={200} y={205} size={8} anchor="middle" fill={C.safe} weight={700}>
-        EARTH
-      </Txt>
-      <line x1={60} y1={96} x2={60} y2={120} stroke={C.ink} strokeWidth={2} />
-      <rect x={50} y={120} width={20} height={44} fill={p.Rn > 0 ? C.tech : "#e2e8f0"} stroke={C.ink} />
-      <Txt x={78} y={146} size={8} weight={700} fill={C.tech}>
-        {p.Rn > 0 ? `NER ${p.Rn} Ω` : "solidly earthed"}
-      </Txt>
-      <line x1={60} y1={164} x2={60} y2={190} stroke={C.ink} strokeWidth={2} />
-      <rect x={110} y={100} width={64} height={30} rx={6} fill={o.tripped ? C.safe : C.crit} filter="url(#f-shadow)" />
-      <Txt x={142} y={119} size={8} anchor="middle" fill="white" weight={800}>
-        {o.tripped ? "ELR TRIP" : "ELR —"}
-      </Txt>
-      <Txt x={20} y={30} size={13} weight={900} mono fill={o.If <= 0.75 ? C.safe : C.crit}>
-        {`If = ${o.If < 1 ? (o.If * 1000).toFixed(0) + " mA" : o.If.toFixed(1) + " A"}`}
-      </Txt>
-      <Txt x={20} y={230} size={9} mono fill={o.Vt > 50 ? C.crit : C.ink}>
-        {`frame touch voltage ${o.Vt.toFixed(2)} V`}
-      </Txt>
-    </g>
-  ),
+  v3: { viewH: 250 },
+  render: (_p, o) => {
+    const tripped = o.tripped > 0;
+    const hot = o.Vt > 50;
+    const bolt = tripped ? EINK2 : EBAD;
+    return (
+      <g>
+        <defs>
+          <clipPath id="u8earth-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u8earth-clip)">
+          <rect x={0} y={190} width={400} height={60} style={{ fill: EGREYS.light }} />
+        </g>
+        <ET x={24} y={222} fill={EON_LIGHT} weight={700}>
+          Earth
+        </ET>
+        <line x1={0} y1={190} x2={400} y2={190} style={{ stroke: EINK3 }} strokeWidth={1.5} />
+        <path d="M60 94 L60 120 M60 164 L60 190" fill="none" style={{ stroke: EINK }} strokeWidth={2} strokeLinecap="round" />
+        <rect x={50} y={120} width={20} height={44} rx={3} style={{ fill: _p.Rn > 0 ? EU.mid : EGREYS.light, stroke: EINK3 }} strokeWidth={1.5} />
+        <ET x={82} y={148}>
+          {_p.Rn > 0 ? "Resistor" : "Solid link"}
+        </ET>
+        <path d="M96 72 L250 72 L250 40 L300 40" fill="none" style={{ stroke: EINK }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <ET x={110} y={62}>
+          Phase
+        </ET>
+        <circle cx={50} cy={72} r={24} style={{ fill: EU.light, stroke: EINK }} strokeWidth={2} />
+        <circle cx={74} cy={72} r={24} style={{ fill: EU.mid, stroke: EINK }} strokeWidth={2} />
+        <ET x={100} y={38}>
+          Transformer
+        </ET>
+        <rect x={284} y={58} width={92} height={62} rx={8} data-state={hot ? "unsafe" : "safe"} style={{ fill: hot ? EBAD_LIGHT : EU.light, stroke: EINK }} strokeWidth={2} />
+        <ET x={330} y={96} anchor="middle" fill={EON_LIGHT} weight={700}>
+          Motor
+        </ET>
+        <path d="M300 40 L294 47 L306 51 L300 58" fill="none" data-state={tripped ? "safe" : "unsafe"} style={{ stroke: bolt }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <ET x={318} y={44}>
+          Fault
+        </ET>
+        <line x1={350} y1={120} x2={350} y2={190} style={{ stroke: EINK }} strokeWidth={2} strokeLinecap="round" />
+        <circle cx={350} cy={150} r={7} style={{ fill: EU.light, stroke: EINK3 }} strokeWidth={1.5} />
+        <ET x={340} y={176} anchor="end">
+          Frame earth
+        </ET>
+        <path d="M220 115 L270 115 L270 150 L343 150" fill="none" style={{ stroke: EINK3 }} strokeWidth={1.5} strokeDasharray="5 5" strokeLinejoin="round" />
+        <rect x={160} y={98} width={60} height={34} rx={6} data-state={tripped ? "safe" : "unsafe"} style={{ fill: tripped ? EOK_LIGHT : EBAD_LIGHT, stroke: EINK }} strokeWidth={2} />
+        <ET x={196} y={156} anchor="start">
+          Relay
+        </ET>
+      </g>
+    );
+  },
 };
 
 /* ---------------- Koepe friction winder ---------------- */
@@ -474,50 +556,64 @@ export const koepeSim: SimDef = {
   ],
   caption: "Euler–Eytelwein: no slip while T₁/T₂ ≤ e^(μθ). Worst cases: accelerating a loaded skip up, or emergency braking a loaded skip descending.",
   animated: true,
+  // v3.2 redraw: wheel, tight-side rope, loaded skip and tail rope keep their lesson-pin places.
+  v3: { viewH: 262 },
   render: (p, o, t) => {
-    const cx = 200;
-    const cy = 50;
-    const r = 30;
+    const cx = 220;
+    const cy = 64;
+    const r = 45;
     const slip = o.margin < 1;
-    const travel = Math.sin(t * 0.6) * 12;
-    const col = o.margin >= 1.1 ? C.safe : o.margin >= 1 ? C.hazard : C.crit;
+    const tr = Math.sin(t * 0.6) * 8;
+    const lx = cx - r;
+    const rx = cx + r;
+    const yL = 216 + tr;
+    const yR = 186 - tr;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <path d={`M ${cx - 60} 120 L ${cx - 44} 10 L ${cx + 44} 10 L ${cx + 60} 120`} fill="none" stroke="#475569" strokeWidth={3} />
-        <path d={`M ${cx - 52} 65 L ${cx + 52} 65 M ${cx - 48} 38 L ${cx + 48} 38`} stroke="#94A3B8" strokeWidth={1.5} />
-        <rect x={150} y={10} width={100} height={8} rx={2} fill={MAT.steel} />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke={col} strokeWidth={6} filter={slip ? "url(#f-glow)" : undefined} />
+        <clipPath id="koepe-clip">
+          <rect x={0} y={0} width={400} height={262} rx={12} />
+        </clipPath>
+        <g clipPath="url(#koepe-clip)">
+          <rect x={0} y={112} width={400} height={150} style={{ fill: GREYS.light }} />
+          <rect x={120} y={112} width={236} height={138} style={{ fill: "var(--surface)" }} />
+        </g>
+        <path d={`M 130 112 L 195 24 M 300 112 L 245 24`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <line x1={lx} y1={cy} x2={lx} y2={170 + tr} style={{ stroke: GREYS.deep }} strokeWidth={2} />
+        <line x1={rx} y1={cy} x2={rx} y2={146 - tr} style={{ stroke: GREYS.deep }} strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={r} style={{ fill: U.light, stroke: U.ink }} strokeWidth={2} />
+        <g data-state={slip ? "unsafe" : "safe"}>
+          <circle cx={cx} cy={cy} r={41} fill="none" style={{ stroke: slip ? W_BAD : W_OK }} strokeWidth={5} />
+        </g>
         <g transform={`rotate(${((t * (slip ? 160 : 60)) % 360).toFixed(0)} ${cx} ${cy})`}>
           {[0, 60, 120].map((a) => (
-            <line key={a} x1={cx - r + 4} y1={cy} x2={cx + r - 4} y2={cy} stroke="#334155" strokeWidth={2.5} transform={`rotate(${a} ${cx} ${cy})`} />
+            <line key={a} x1={cx - 24} y1={cy} x2={cx + 24} y2={cy} style={{ stroke: INK3 }} strokeWidth={1.5} transform={`rotate(${a} ${cx} ${cy})`} />
           ))}
         </g>
-        <circle cx={cx} cy={cy} r={5} fill={MAT.metal} stroke={C.ink} />
-        <line x1={cx - r} y1={cy} x2={cx - r} y2={170 + travel} stroke="#334155" strokeWidth={3} />
-        <line x1={cx + r} y1={cy} x2={cx + r} y2={150 - travel} stroke="#334155" strokeWidth={3} />
-        <rect x={cx - r - 16} y={170 + travel} width={32} height={40} rx={2} fill={MAT.coal} stroke="#0F172A" />
-        <Txt x={cx - r} y={194 + travel} size={8} anchor="middle" fill="white" weight={800}>
-          {`${p.Q} t`}
-        </Txt>
-        <rect x={cx + r - 16} y={150 - travel} width={32} height={34} rx={2} fill={MAT.metal} stroke="#475569" />
-        <path d={`M ${cx - r} ${210 + travel} Q ${cx} 238 ${cx + r} ${184 - travel}`} fill="none" stroke={C.slate} strokeWidth={2} strokeDasharray="5 3" />
-        <Txt x={cx} y={234} size={7} anchor="middle" fill={C.slate}>
-          tail rope
-        </Txt>
-        <Arrow x1={cx - r - 30} y1={120} x2={cx - r - 30} y2={150} color={C.crit} width={2.5} />
-        <Txt x={cx - r - 36} y={116} size={9} anchor="end" weight={800} mono fill={C.crit}>
-          {`T₁ ${o.T1.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={cx + r + 26} y={116} size={9} weight={800} mono fill={C.tech}>
-          {`T₂ ${o.T2.toFixed(0)} kN`}
-        </Txt>
-        <Txt x={20} y={30} size={12} weight={900} mono fill={col}>
-          {`T₁/T₂ ${o.ratio.toFixed(2)} vs e^μθ ${o.lim.toFixed(2)}`}
-        </Txt>
-        <Txt x={280} y={180} size={10} weight={800} fill={col}>
-          {o.margin >= 1 ? "NO SLIP" : "ROPE SLIPS"}
-        </Txt>
+        <circle cx={cx} cy={cy} r={8} style={{ fill: GREYS.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={lx - 22} y={170 + tr} width={44} height={46} rx={3} style={{ fill: U.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={rx - 22} y={146 - tr} width={44} height={40} rx={3} style={{ fill: GREYS.light, stroke: INK3 }} strokeWidth={1.5} />
+        <path d={`M ${lx} ${yL} Q ${(lx + rx) / 2} 226.5 ${rx} ${yR}`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <T x={26} y={132} fill={ON_LIGHT}>
+          T₁
+        </T>
+        <T x={296} y={132} fill={INK}>
+          T₂
+        </T>
+        <T x={278} y={52}>
+          Wheel
+        </T>
+        <T x={26} y={206} fill={ON_LIGHT}>
+          Loaded
+        </T>
+        <T x={296} y={176}>
+          Empty
+        </T>
+        <T x={232} y={232}>
+          Tail rope
+        </T>
+        <T x={26} y={232} fill={ON_LIGHT}>
+          Host rock
+        </T>
       </g>
     );
   },

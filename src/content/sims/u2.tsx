@@ -1,6 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT } from "@/components/sim/v3";
+import * as F3 from "@/components/sim/v3";
 
 /* ---------------- Access selection: adit vs incline vs shaft ---------------- */
 
@@ -31,64 +33,93 @@ export const accessSim: SimDef = {
   ],
   caption: "Indicative cost model (₹ crore): incline ≈ 0.08/m + belt drives; shaft ≈ fixed headgear + 0.25/m sinking & lining + winding capacity. Adit only where the seam outcrops above drainage.",
   handles: [{ key: "D", axis: "y", at: (p) => [372, 40 + (p.D * 170) / 900 + 3], toValue: (y) => ((y - 43) * 900) / 170, color: "#0F172A" }],
+  // §5.6d redraw (v3.2): legacy frame kept (surface y 40, scale 170/900, shaft x 324, bars at y 150) so the four pins stay put.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const surf = 40;
     const scale = 170 / 900;
     const yS = surf + p.D * scale;
-    const xShaft = 300;
-    const xEnd = xShaft;
-    const xStart = clamp(xEnd - (p.D * scale) / Math.tan(rad(p.ang)), -400, 400);
-    const max = Math.max(o.incline, o.shaft, Number.isFinite(o.adit) ? o.adit : 0);
+    const xShaft = 324;
+    const xEnd = 270;
+    const tan = Math.tan(rad(p.ang));
+    const xStart = xEnd - (p.D * scale) / tan;
+    const hill = p.hill === 1;
+    const ground = hill ? "M0 100 L120 100 L220 15 L400 15 L400 250 L0 250 Z" : `M0 ${surf} H400 V250 H0 Z`;
+    const best = o.best;
+    const yAt = (x: number) => yS - (xEnd - x) * tan;
+    const x0 = Math.max(xStart, 0);
+    const y0 = xStart < 0 ? yAt(0) : surf;
+    const adit0 = clamp(120 + (100 - yS) / 0.85, 24, 220);
+    const bars = [
+      { label: "Incline", v: o.incline, on: best === 1 },
+      { label: "Shaft", v: o.shaft, on: best === 2 },
+      ...(hill ? [{ label: "Adit", v: o.adit, on: best === 0 }] : []),
+    ];
+    const max = Math.max(...bars.map((b) => b.v));
+    const seamY = yS + 28 <= 221 ? yS + 28 : yS - 30;
+    const panelH = bars.length * 28 + 12;
     return (
       <g>
-        {p.hill ? (
-          <path d={`M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 0 L0 0 Z`} fill={MAT.sky} />
-        ) : (
-          <rect x={0} y={0} width={400} height={surf} fill={MAT.sky} />
-        )}
-        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25} L400 240 L0 240 Z` : `M0 ${surf} L400 ${surf} L400 240 L0 240 Z`} fill={MAT.sand} />
-        <rect x={0} y={yS + 6} width={400} height={240 - yS} fill={MAT.shale} />
-        <path d={p.hill ? `M0 ${surf + 60} L120 ${surf + 60} L220 ${surf - 25} L400 ${surf - 25}` : `M0 ${surf} L400 ${surf}`} fill="none" stroke="#65A30D" strokeWidth={3} />
-        <rect x={0} y={yS} width={400} height={6} fill={MAT.coal} />
-        {p.hill ? (
-          <g>
-            <line x1={120} y1={surf + 55} x2={300} y2={surf + 55} stroke={C.safe} strokeWidth={4} />
-            <Txt x={130} y={surf + 50} size={9} weight={800} fill={C.safe}>
-              ADIT — gravity drainage, no hoisting
-            </Txt>
+        <defs>
+          <clipPath id="u2acc-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+          <clipPath id="u2acc-gnd">
+            <path d={ground} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2acc-clip)">
+          <g clipPath="url(#u2acc-gnd)">
+            <rect x={0} y={0} width={400} height={250} fill={GREYS.light} />
+            <rect x={0} y={yS + 6} width={400} height={250 - yS} fill={GREYS.mid} />
           </g>
-        ) : (
-          <g>
-            <line x1={Math.max(xStart, 0)} y1={xStart < 0 ? yS - (xEnd - 0) * Math.tan(rad(p.ang)) : surf} x2={xEnd} y2={yS} stroke={o.best === 1 ? C.safe : C.slate} strokeWidth={4} />
-            <path d={`M${xShaft + 26} ${surf} L${xShaft + 31} ${surf - 22} L${xShaft + 43} ${surf - 22} L${xShaft + 48} ${surf}`} fill="none" stroke="#334155" strokeWidth={2.5} />
-            <circle cx={xShaft + 37} cy={surf - 22} r={4} fill={MAT.metalH} stroke="#334155" />
-            <line x1={xShaft + 37} y1={surf} x2={xShaft + 37} y2={yS} stroke={o.best === 2 ? C.safe : C.slate} strokeWidth={6} />
-            <Txt x={xShaft + 52} y={surf - 14} size={8} weight={700} fill={C.ink}>
-              SHAFT
-            </Txt>
-            <Txt x={Math.max(xStart, 0) + 6} y={surf - 4} size={8} weight={700} fill={C.ink}>
-              {xStart < 0 ? "INCLINE (off-chart)" : "INCLINE"}
-            </Txt>
-          </g>
-        )}
-        <Dim x1={392} y1={surf} x2={392} y2={yS} label="" color={C.ink} />
-        <Txt x={386} y={(surf + yS) / 2 + 3} size={9} anchor="end" mono weight={700}>
-          {`${p.D} m`}
-        </Txt>
-        <g transform="translate(16,150)">
-          {[
-            { label: "Incline", v: o.incline, c: C.tech },
-            { label: "Shaft", v: o.shaft, c: C.hazard },
-            ...(p.hill ? [{ label: "Adit", v: o.adit, c: C.safe }] : []),
-          ].map((b, i) => (
-            <g key={b.label}>
-              <rect x={0} y={i * 22} width={(170 * b.v) / max} height={14} fill={b.c} rx={2} />
-              <Txt x={4} y={i * 22 + 10} size={8} fill="white" weight={800}>
-                {b.label} ₹{b.v.toFixed(0)} cr
-              </Txt>
-            </g>
-          ))}
+          <path d={hill ? "M0 100 L120 100 L220 15 L400 15" : `M0 ${surf} H400`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
         </g>
+        {bars.map((b, i) => (
+          <g key={b.label}>
+            <rect x={100} y={148 + i * 28} width={(140 * b.v) / max} height={20} rx={4} data-state={b.on ? "safe" : undefined} fill={b.on ? OK_LIGHT : U.mid} />
+            <T x={28} y={148 + i * 28 + 15} fill={ON_LIGHT}>
+              {b.label}
+            </T>
+          </g>
+        ))}
+        <g clipPath="url(#u2acc-clip)">
+          <g clipPath="url(#u2acc-gnd)">
+            <rect x={0} y={yS} width={400} height={6} fill={GREYS.deep} />
+          </g>
+        </g>
+        {hill ? (
+          <g>
+            <path d={`M${adit0} ${yS - 1} H300 V${yS + 7} H${adit0} Z`} data-state="safe" fill={OK_LIGHT} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+            <T x={262} y={seamY} fill={ON_LIGHT} weight={700}>
+              Adit
+            </T>
+          </g>
+        ) : (
+          <g>
+            <path
+              d={`M${x0} ${y0 - 3} L${xEnd} ${yS - 3} V${yS + 3} L${x0} ${y0 + 3} Z`}
+              data-state={best === 1 ? "safe" : undefined}
+              fill={best === 1 ? OK_LIGHT : U.deep}
+              stroke={ON_LIGHT}
+              strokeWidth={1.5}
+              strokeLinejoin="round"
+            />
+            <rect x={xShaft - 3} y={surf} width={6} height={yS - surf} data-state={best === 2 ? "safe" : undefined} fill={best === 2 ? OK_LIGHT : U.deep} stroke={ON_LIGHT} strokeWidth={1.5} />
+            <path d={`M${xShaft - 9} ${surf} L${xShaft - 5} ${surf - 16} H${xShaft + 5} L${xShaft + 9} ${surf}`} fill="none" style={{ stroke: INK }} strokeWidth={1.5} strokeLinejoin="round" />
+            <circle cx={xShaft} cy={surf - 16} r={4} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={1.5} />
+            <T x={312} y={38} anchor="end" fill={INK}>
+              Shaft
+            </T>
+            <T x={xStart >= 100 ? xStart - 6 : Math.max(24, xStart + 8)} y={38} anchor={xStart >= 100 ? "end" : "start"} fill={INK}>
+              Incline
+            </T>
+            <T x={262} y={seamY} fill={ON_LIGHT} weight={700}>
+              Seam
+            </T>
+          </g>
+        )}
+        <F3.DimLine x1={372} y1={surf} x2={372} y2={yS} />
       </g>
     );
   },
@@ -132,77 +163,93 @@ export const sinkingSim: SimDef = {
   ],
   caption: "Monthly rate = rounds/day × advance × 26 working days × 0.6 availability (dewatering, inspections, shift changes).",
   animated: true,
+  // v3.2 redraw: same shaft centre (x 75) and legacy Gantt/gauge rows, so the lesson pins stay on Galloway stage, kibble, muck bar and rate.
+  v3: { viewH: 250 },
   render: (p, o, t) => {
     const ky = 160 + 28 * Math.sin(t * 1.3);
     const segs = [
-      { k: "drill", label: "Drill", c: C.tech },
-      { k: "blast", label: "Charge·Blast·Vent", c: C.crit },
-      { k: "muck", label: "Muck (grab+kibble)", c: C.hazard },
-      { k: "line", label: "Line", c: C.slate },
-      { k: "misc", label: "Misc", c: C.rock },
+      { k: "drill", label: "Drill", fill: GREYS.deep },
+      { k: "blast", label: "Blast", fill: "var(--u-mid)" },
+      { k: "muck", label: "Muck", fill: "var(--u-deep)" },
+      { k: "line", label: "Line", fill: "var(--u-light)" },
+      { k: "misc", label: "Misc", fill: GREYS.light },
     ];
-    let x = 150;
-    const w = 235 / o.cycle;
-    const sw = 40 + p.dia * 6;
+    const RX = 208;
+    const RW = 168;
+    let x = RX;
+    const w = RW / o.cycle;
+    const sw = 60 + p.dia * 5;
+    const sl = 75 - sw / 2;
+    const sr = 75 + sw / 2;
+    const liningH = p.conc ? 150 : 110;
+    const rate = clamp(o.perMonth / 100, 0, 1);
+    const met = o.perMonth >= 70;
     return (
       <g>
-        <rect x={20} y={20} width={110} height={205} fill={MAT.rock} />
-        <rect x={20} y={20} width={110} height={205} fill={MAT.rockShade} />
-        <rect x={75 - sw / 2} y={20} width={sw} height={205} fill="#F1F5F9" />
-        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
-        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
-        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
-        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
-        {[0, 1, 2].map((d) => (
-          <rect key={d} x={75 - sw / 2 + 2} y={120 + d * 12} width={sw - 4} height={4} rx={1} fill={MAT.metal} stroke="#334155" strokeWidth={0.6} />
-        ))}
-        <Txt x={75} y={116} size={7} anchor="middle" weight={700}>
-          GALLOWAY STAGE
-        </Txt>
-        <line x1={75} y1={20} x2={75} y2={ky} stroke="#334155" strokeWidth={1.2} />
-        <path d={`M68 ${ky} h14 l-2 14 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={1} />
-        <Txt x={86} y={ky + 10} size={7} weight={700}>
-          kibble
-        </Txt>
-        <path d={`M ${75 - sw / 2} 215 L ${75 + sw / 2} 215 L ${75 + sw / 2} 225 L ${75 - sw / 2} 225 Z`} fill={MAT.goaf} />
-        <Txt x={75} y={237} size={7} anchor="middle" fill={C.slate}>
-          sump / shaft bottom
-        </Txt>
-        <Txt x={150} y={30} size={9} weight={700} fill={C.slate}>
-          CYCLE GANTT · {o.cycle.toFixed(1)} h
-        </Txt>
+        <defs>
+          <clipPath id="u2sk-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2sk-clip)">
+          {/* host rock, flat bands */}
+          <rect x={0} y={0} width={200} height={250} fill={GREYS.light} />
+          <rect x={0} y={70} width={200} height={46} fill={GREYS.mid} opacity={0.45} />
+          <rect x={0} y={160} width={200} height={34} fill={GREYS.mid} opacity={0.45} />
+          {/* open shaft */}
+          <rect x={sl} y={0} width={sw} height={220} style={{ fill: "var(--surface)" }} />
+          {/* lining: only above the working level (sequential) or down to the stage (concurrent) */}
+          <rect x={sl - 6} y={0} width={6} height={liningH + 12} style={{ fill: U.mid }} />
+          <rect x={sr} y={0} width={6} height={liningH + 12} style={{ fill: U.mid }} />
+          {/* sump */}
+          <rect x={sl} y={208} width={sw} height={14} fill={GREYS.mid} />
+          {/* shaft walls */}
+          <line x1={sl - 6} y1={0} x2={sl - 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sr + 6} y1={0} x2={sr + 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sl - 6} y1={222} x2={sr + 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+        </g>
+        {/* Galloway stage deck, with the hoist rope passing through it */}
+        <rect x={sl} y={120} width={sw} height={14} fill={GREYS.deep} />
+        <T x={140} y={132} fill={ON_LIGHT} weight={700}>
+          Stage
+        </T>
+        <line x1={75} y1={12} x2={75} y2={ky} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <path d={`M${66} ${ky} h18 l-3 18 h-12 z`} style={{ fill: U.deep }} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+        <T x={140} y={ky + 15} fill={ON_LIGHT} weight={700}>
+          Kibble
+        </T>
+        {/* cycle Gantt */}
+        <rect x={RX} y={36} width={RW} height={28} rx={3} fill={GREYS.light} />
         {segs.map((s) => {
           const v = o[s.k];
-          const el = (
-            <g key={s.k}>
-              <rect x={x} y={40} width={Math.max(v * w, 0)} height={26} fill={s.c} />
-              {v * w > 26 && (
-                <Txt x={x + 3} y={56} size={7} fill="white" weight={700}>
-                  {v.toFixed(1)}h
-                </Txt>
-              )}
-            </g>
-          );
+          const el = <rect key={s.k} x={x} y={36} width={Math.max(v * w, 0)} height={28} style={{ fill: s.fill }} />;
           x += v * w;
           return el;
         })}
-        {segs.map((s, i) => (
-          <g key={s.label}>
-            <rect x={150} y={80 + i * 14} width={9} height={9} fill={s.c} />
-            <Txt x={164} y={88 + i * 14} size={8}>
-              {s.label}
-            </Txt>
-          </g>
-        ))}
-        <Txt x={150} y={170} size={9} mono>
-          Excavated Ø {o.dexc.toFixed(1)} m · {o.holes} holes
-        </Txt>
-        <Txt x={150} y={186} size={9} mono>
-          Advance {o.adv.toFixed(2)} m/round
-        </Txt>
-        <Txt x={150} y={210} size={16} weight={900} mono fill={o.perMonth >= 70 ? C.safe : C.hazard}>
-          {o.perMonth.toFixed(0)} m/month
-        </Txt>
+        <rect x={RX} y={36} width={RW} height={28} rx={3} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        {/* legend */}
+        {segs.map((s, i) => {
+          const lx = i < 3 ? RX : RX + 88;
+          const ly = 96 + (i % 3) * 24;
+          return (
+            <g key={s.k}>
+              <rect x={lx} y={ly - 14} width={14} height={14} rx={2} style={{ fill: s.fill, stroke: INK3 }} strokeWidth={1.5} />
+              <T x={lx + 22} y={ly} fill={INK}>
+                {s.label}
+              </T>
+            </g>
+          );
+        })}
+        {/* sinking-rate gauge against the 70 m/month target */}
+        <T x={RX} y={184} fill={INK}>
+          Rate
+        </T>
+        <T x={RX + RW * 0.7} y={184} anchor="middle">
+          target
+        </T>
+        <rect x={RX} y={196} width={RW} height={16} rx={8} fill={GREYS.light} />
+        <rect x={RX} y={196} width={Math.max(RW * rate, 0)} height={16} rx={8} data-state={met ? "safe" : undefined} style={{ fill: met ? OK_LIGHT : "var(--u-mid)" }} />
+        <line x1={RX + RW * 0.7} y1={192} x2={RX + RW * 0.7} y2={216} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
       </g>
     );
   },
@@ -238,61 +285,63 @@ export const freezeSim: SimDef = {
     { key: "e", label: "Design wall thickness", format: (v) => (Number.isFinite(v) ? `${v.toFixed(2)} m` : "INFEASIBLE"), tone: (v) => (!Number.isFinite(v) ? "crit" : v > 4 ? "warn" : "ok") },
     { key: "n", label: "Freeze holes @1.2 m", digits: 0, format: (v) => (v ? String(v) : "—") },
   ],
+  // §5.6d redraw (v3.2): same plan scale and centre as legacy (centre 120,125, 12 px per m) so the four pins stay put.
+  v3: { viewH: 250, formula: () => "e_{\\text{Lamé}} = r\\left[\\sqrt{\\dfrac{\\sigma}{\\sigma-2p}}-1\\right]" },
   render: (p, o) => {
     const cx = 120;
     const cy = 125;
     const k = 12; // px per m
     const rIn = p.r * k;
     const e = Number.isFinite(o.e) ? o.e : 0;
-    const rOut = (p.r + e) * k;
+    const rWall = o.ok ? Math.min((p.r + e) * k, 110) : Math.min(rIn + 26, 110);
+    const state = o.ok ? "safe" : "unsafe";
+    const rArr = rWall + 22;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
-        <rect x={0} y={0} width={400} height={240} fill="#FEF9C3" opacity={0.45} />
-        <Txt x={10} y={16} size={9} weight={700} fill={C.slate}>
-          PLAN AT AQUIFER BASE ({p.h} m)
-        </Txt>
-        <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={o.ok ? "#bae6fd" : "#fecaca"} stroke={o.ok ? C.tech : C.crit} strokeWidth={2} />
-        <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={MAT.glass} />
-        <circle cx={cx} cy={cy} r={rIn} fill="#F8FAFC" stroke={C.ink} strokeWidth={2} />
-        <circle cx={cx} cy={cy} r={rIn - 3} fill="none" stroke="#9CA3AF" strokeWidth={3} />
+        <defs>
+          <clipPath id="u2fz-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        {/* sand aquifer: host ground, edge to edge, clipped */}
+        <rect x={0} y={0} width={400} height={250} fill={F3.GREYS.light} clipPath="url(#u2fz-clip)" />
+        <g clipPath="url(#u2fz-clip)">
+        {/* frozen wall (annulus: the shaft disc sits on top) */}
+        <circle cx={cx} cy={cy} r={rWall} data-state={state} fill={o.ok ? undefined : F3.BAD_LIGHT} style={o.ok ? { fill: F3.U.mid } : undefined} stroke={F3.ON_LIGHT} strokeWidth={1.5} strokeDasharray={o.ok ? undefined : "6 5"} />
+        {/* excavated shaft */}
+        <circle cx={cx} cy={cy} r={rIn} fill="#F5F5F5" style={{ stroke: F3.INK }} strokeWidth={2.5} />
+        {/* freeze holes on the pitch circle */}
         {Array.from({ length: o.n }).map((_, i) => {
           const a = (2 * Math.PI * i) / Math.max(o.n, 1);
           const R = o.Rf * k;
-          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={2.6} fill="#E0F2FE" stroke="#0369A1" strokeWidth={1.2} filter="url(#f-glow)" />;
+          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={3.5} fill={F3.ON_LIGHT} />;
         })}
-        <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={700}>
-          SHAFT
-        </Txt>
+        {/* ground + water pressure acting inwards */}
         {[0, 1, 2, 3].map((i) => {
           const a = (Math.PI / 2) * i + Math.PI / 4;
-          const R = Math.min(rOut, 110) + 22;
-          return <Arrow key={i} x1={cx + R * Math.cos(a)} y1={cy + R * Math.sin(a)} x2={cx + (R - 18) * Math.cos(a)} y2={cy + (R - 18) * Math.sin(a)} color={C.crit} />;
+          return <F3.Arrow key={i} x1={cx + rArr * Math.cos(a)} y1={cy + rArr * Math.sin(a)} x2={cx + (rArr - 32) * Math.cos(a)} y2={cy + (rArr - 32) * Math.sin(a)} color={F3.ON_LIGHT} width={2} />;
         })}
-        <Txt x={255} y={50} size={10} weight={800}>
-          Lamé (thick cylinder)
-        </Txt>
-        <Txt x={255} y={64} size={9} mono>
-          e = r[√(σ/(σ−2p)) − 1]
-        </Txt>
-        <Txt x={255} y={90} size={10} weight={800}>
-          Domke (frozen soil)
-        </Txt>
-        <Txt x={255} y={104} size={9} mono>
-          e = r[0.29p/σ + 2.3(p/σ)²]
-        </Txt>
-        <Txt x={255} y={132} size={9} fill={C.slate}>
-          p ≈ 0.013 MPa per m
-        </Txt>
-        <Txt x={255} y={146} size={9} fill={C.slate}>
-          (saturated sand + water)
-        </Txt>
-        <Txt x={255} y={176} size={14} weight={900} mono fill={o.ok ? C.ink : C.crit}>
-          {o.ok ? `e = ${o.e.toFixed(2)} m` : "σ ≤ 2p !"}
-        </Txt>
-        <Txt x={255} y={194} size={9} fill={C.slate}>
-          Colder brine (−30 °C) ⇒ higher σ
-        </Txt>
+        </g>
+        {/* legend */}
+        <circle cx={256} cy={52} r={9} fill="#F5F5F5" style={{ stroke: F3.INK }} strokeWidth={2.5} />
+        <F3.T x={272} y={58} fill={F3.ON_LIGHT}>
+          Shaft
+        </F3.T>
+        <rect x={247} y={84} width={18} height={18} rx={3} style={{ fill: F3.U.mid }} stroke={F3.ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={272} y={99} fill={F3.ON_LIGHT}>
+          Ice wall
+        </F3.T>
+        <circle cx={256} cy={128} r={3.5} fill={F3.ON_LIGHT} />
+        <F3.T x={272} y={134} fill={F3.ON_LIGHT}>
+          Holes
+        </F3.T>
+        <F3.Arrow x1={247} y1={166} x2={265} y2={166} color={F3.ON_LIGHT} width={2} />
+        <F3.T x={272} y={172} fill={F3.ON_LIGHT}>
+          Pressure
+        </F3.T>
+        <F3.T x={376} y={222} anchor="end" fill={F3.ON_LIGHT}>
+          Sand aquifer
+        </F3.T>
       </g>
     );
   },
@@ -324,6 +373,8 @@ export const burnCutSim: SimDef = {
     { key: "N", label: "Holes N = 2.7√(fS)", digits: 0 },
     { key: "vol", label: "Solid rock / round", unit: "m³", digits: 1 },
   ],
+  // §5.6d redraw (v3.2): face geometry and centre unchanged (pins stay put); room added below for the labels.
+  v3: { viewH: 260 },
   render: (p, o, t) => {
     const w = Math.sqrt(p.S) * 1.15;
     const h = p.S / w;
@@ -366,40 +417,54 @@ export const burnCutSim: SimDef = {
       holes.push({ x: ccx + Math.cos(a) * W * 0.3, y: ccy + Math.sin(a) * Hh * 0.28, d: 3 + (i % 2) });
     }
     const phase = (t % 4) / 4 * 7;
+    const KP = 31; // px per metre of pull in the side column
+    const colTop = 36;
+    const colBase = 200;
+    const pullH = Math.min(o.adv * KP, colBase - colTop);
+    const holeFill = (fired: boolean) => (fired ? F3.U.mid : F3.ON_LIGHT);
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.rock} />
-        <rect x={0} y={0} width={400} height={240} fill="#57534E" opacity={0.35} />
-        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill={MAT.shale} stroke={C.ink} strokeWidth={1.5} />
-        <circle cx={ccx} cy={ccy} r={Math.max(3, (p.phi / 1000) * k * 2.2)} fill="white" stroke={C.ink} strokeWidth={1.5} />
+        <defs>
+          <clipPath id="u2bc-clip">
+            <rect x={12} y={12} width={376} height={236} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2bc-clip)">
+          {/* host rock */}
+          <rect x={0} y={0} width={400} height={260} fill={GREYS.mid} />
+        </g>
+        <F3.T x={24} y={48} fill={F3.ON_LIGHT}>
+          Host rock
+        </F3.T>
+        {/* drift face, seen end-on */}
+        <path d={`M ${x0} ${by} L ${x0} ${y0 + Hh * 0.25} Q ${cx} ${y0 - Hh * 0.15} ${x0 + W} ${y0 + Hh * 0.25} L ${x0 + W} ${by} Z`} fill={GREYS.light} style={{ stroke: INK }} strokeWidth={2} strokeLinejoin="round" />
+        <circle cx={ccx} cy={ccy} r={Math.max(3, (p.phi / 1000) * k * 2.2)} fill="#F5F5F5" stroke={ON_LIGHT} strokeWidth={1.5} />
         {holes.map((hh, i) => {
           const fired = phase >= hh.d;
-          return <circle key={i} cx={hh.x} cy={hh.y} r={fired ? 4 : 3.2} fill={fired ? "#F97316" : C.ink} stroke={fired ? "#FDE68A" : "none"} filter={fired ? "url(#f-glow)" : undefined} />;
+          return <circle key={i} cx={hh.x} cy={hh.y} r={fired ? 4 : 3.2} style={{ fill: holeFill(fired) }} stroke={fired ? ON_LIGHT : "none"} strokeWidth={1} />;
         })}
-        <Txt x={cx} y={228} size={8} anchor="middle" fill={C.slate}>
-          Firing order by delay: cut → cut-spreaders → easers → perimeter → lifters
-        </Txt>
-        <Txt x={265} y={40} size={10} weight={800}>
-          Holmberg pull
-        </Txt>
-        <Txt x={265} y={54} size={8} mono>
-          H = 0.15 + 34.1φ − 39.4φ²
-        </Txt>
-        <Txt x={265} y={80} size={10} weight={800}>
-          Relief hole
-        </Txt>
-        <Txt x={265} y={94} size={8} mono>
-          φ = {p.phi} mm (free face)
-        </Txt>
-        <Txt x={265} y={128} size={20} weight={900} mono fill={o.adv >= 3.5 ? C.safe : C.hazard}>
-          {o.adv.toFixed(2)} m
-        </Txt>
-        <Txt x={265} y={142} size={8} fill={C.slate}>
-          pull per round
-        </Txt>
-        <Txt x={265} y={170} size={9} mono>
-          delay #{Math.min(Math.floor(phase), 6)}
-        </Txt>
+        <F3.T x={cx} y={228} anchor="middle" fill={ON_LIGHT}>
+          Drift face
+        </F3.T>
+        {/* legend */}
+        <circle cx={240} cy={72} r={4} fill={ON_LIGHT} />
+        <F3.T x={254} y={78} fill={ON_LIGHT}>
+          Loaded
+        </F3.T>
+        <circle cx={240} cy={102} r={4} style={{ fill: F3.U.mid }} stroke={ON_LIGHT} strokeWidth={1} />
+        <F3.T x={254} y={108} fill={ON_LIGHT}>
+          Fired
+        </F3.T>
+        <circle cx={240} cy={132} r={6} fill="#F5F5F5" stroke={ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={254} y={138} fill={ON_LIGHT}>
+          Relief
+        </F3.T>
+        {/* pull column: round length with the pulled part filled */}
+        <rect x={330} y={colTop} width={40} height={colBase - colTop} rx={4} fill={GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={330} y={colBase - pullH} width={40} height={pullH} rx={4} style={{ fill: F3.U.mid }} stroke={ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={350} y={228} anchor="middle" fill={ON_LIGHT}>
+          Pull
+        </F3.T>
       </g>
     );
   },
@@ -435,83 +500,103 @@ export const cuttingSim: SimDef = {
   caption: "ICR = k·P / SE with energy-transfer ratio k; SE ≈ 0.11 × UCS (kWh/m³) is an indicative linear fit for sedimentary rocks.",
   animated: true,
   handles: [{ key: "ucs", axis: "x", at: (p) => [30 + (p.ucs / 250) * 340, 36], toValue: (x) => ((x - 30) / 340) * 250, color: "#EF4444" }],
+  // §5.6d redraw (v3.2): legacy frame kept (UCS scale x 30..370 at y 36, TBM bar at y 106, machine at y 180..210) so the four pins stay put.
+  v3: { viewH: 250, formula: () => "\\mathrm{ICR}=\\dfrac{k\\,P}{\\mathrm{SE}},\\quad \\mathrm{SE}\\approx 0.11\\,\\mathrm{UCS}" },
   render: (p, o, t) => {
     const sx = (u: number) => 30 + (u / 250) * 340;
     const spin = (t * 240) % 360;
+    const met = !!o.ok;
+    const rate = F3.clamp(Math.log10(Math.max(o.icr, 1)) / 2.6, 0.03, 1);
+    const rateOk = met && o.icr >= 15;
+    const rock = p.ucs >= 120 ? GREYS.mid : GREYS.light;
+    const FACE = 234;
+    const rows = [74, 90, 106];
     return (
       <g>
-        <Txt x={30} y={20} size={9} weight={700} fill={C.slate}>
-          ROCK STRENGTH SCALE (UCS, MPa) & MACHINE ENVELOPES
-        </Txt>
-        <rect x={30} y={30} width={340} height={12} fill="url(#ucsg)" rx={3} />
-        <defs>
-          <linearGradient id="ucsg" x1="0" x2="1">
-            <stop offset="0" stopColor="#1e293b" />
-            <stop offset="0.2" stopColor="#a8a29e" />
-            <stop offset="1" stopColor="#57534e" />
-          </linearGradient>
-        </defs>
+        <clipPath id="u2cut-clip">
+          <rect x={12} y={12} width={376} height={226} rx={12} />
+        </clipPath>
+        {/* UCS scale */}
+        <rect x={30} y={30} width={340} height={12} rx={6} fill={GREYS.light} />
         {[0, 50, 100, 150, 200, 250].map((u) => (
-          <Txt key={u} x={sx(u)} y={54} size={7} anchor="middle" mono fill={C.slate}>
-            {u}
-          </Txt>
+          <line key={u} x1={sx(u)} x2={sx(u)} y1={42} y2={47} style={{ stroke: INK3 }} strokeWidth={1.5} />
         ))}
-        {MACH.map((m, i) => (
-          <g key={m.name}>
-            <rect x={sx(0)} y={64 + i * 18} width={sx(m.max) - sx(0)} height={12} rx={3} fill={i === p.m ? C.tech : "#cbd5e1"} />
-            <Txt x={sx(0) + 4} y={73 + i * 18} size={7.5} weight={700} fill={i === p.m ? "white" : C.ink}>
-              {m.name}
-            </Txt>
-          </g>
-        ))}
-        <line x1={sx(p.ucs)} x2={sx(p.ucs)} y1={26} y2={122} stroke={o.ok ? C.safe : C.crit} strokeWidth={2.5} />
-        <Txt x={sx(p.ucs)} y={132} size={9} anchor="middle" mono weight={800} fill={o.ok ? C.safe : C.crit}>
-          {p.ucs} MPa
-        </Txt>
-        {/* machine schematic */}
-        <rect x={40} y={180} width={110} height={30} rx={5} fill={C.hazard} stroke="#B45309" filter="url(#f-shadow)" />
-        <rect x={44} y={183} width={102} height={8} rx={3} fill={MAT.glass} />
-        <rect x={40} y={208} width={110} height={10} rx={5} fill={MAT.steel} />
-        {[52, 72, 92, 112, 132].map((x) => (
-          <circle key={x} cx={x} cy={213} r={3.5} fill="#94A3B8" />
-        ))}
+        <T x={376} y={132} anchor="end">
+          UCS, MPa
+        </T>
+        {/* machine envelopes */}
+        {MACH.map((m, i) => {
+          const on = i === p.m;
+          const w = sx(m.max) - sx(0);
+          const bar = (
+            <rect x={sx(0)} y={rows[i] - 4} width={w} height={8} rx={4} data-state={on ? (met ? "safe" : "unsafe") : undefined} style={{ fill: on ? (met ? OK_LIGHT : F3.BAD_LIGHT) : GREYS.light }} />
+          );
+          const name = ["Roadheader", "Continuous miner", "Hard-rock TBM"][i];
+          return (
+            <g key={m.name}>
+              {bar}
+              {i < 2 ? (
+                <T x={sx(0) + w + 8} y={rows[i] + 6} fill={on ? INK : F3.INK2} weight={on ? 700 : 600}>
+                  {name}
+                </T>
+              ) : (
+                <T x={30} y={132} fill={on ? INK : F3.INK2} weight={on ? 700 : 600}>
+                  {name}
+                </T>
+              )}
+            </g>
+          );
+        })}
+        {/* host rock: roof, floor and the face ahead, tone follows UCS; the heading is a surface-coloured cut */}
+        <g clipPath="url(#u2cut-clip)">
+          <rect x={0} y={142} width={400} height={108} fill={rock} />
+          <rect x={0} y={174} width={FACE} height={52} style={{ fill: F3.SURFACE }} />
+          <path d={`M0 174 H${FACE} V226 H0`} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        </g>
+        <T x={30} y={163} fill={ON_LIGHT}>
+          Rock
+        </T>
+        {/* machine */}
         {p.m === 2 ? (
           <g>
-            <rect x={150} y={160} width={14} height={60} fill={C.ink} />
-            {[0, 1, 2, 3].map((i) => (
-              <circle key={i} cx={166} cy={168 + i * 15} r={4} fill={C.slate} />
+            <rect x={40} y={178} width={166} height={38} rx={8} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+            <rect x={206} y={176} width={14} height={44} rx={4} style={{ fill: GREYS.deep, stroke: INK }} strokeWidth={2.5} />
+            {[184, 196, 208].map((y) => (
+              <circle key={y} cx={226} cy={y} r={4} fill={GREYS.light} style={{ stroke: INK3 }} strokeWidth={1.5} />
             ))}
           </g>
         ) : (
           <g>
-            <line x1={140} y1={188} x2={p.m === 0 ? 205 : 190} y2={p.m === 0 ? 160 : 190} stroke={C.ink} strokeWidth={8} />
+            <rect x={44} y={210} width={102} height={12} rx={6} fill={GREYS.deep} />
+            <rect x={40} y={180} width={110} height={30} rx={6} style={{ fill: U.mid, stroke: INK }} strokeWidth={2.5} />
+            <rect x={48} y={186} width={34} height={8} rx={3} fill={GREYS.light} />
             {p.m === 0 ? (
-              <g transform={`rotate(${spin.toFixed(0)} 210 156)`}>
-                <circle cx={210} cy={156} r={12} fill={MAT.metal} stroke={C.ink} strokeWidth={2} />
-                {[0, 60, 120, 180, 240, 300].map((a) => (
-                  <path key={a} d="M210 141 l3 4 h-6 z" fill={C.ink} transform={`rotate(${a} 210 156)`} />
-                ))}
+              <g>
+                <line x1={150} y1={194} x2={200} y2={188} style={{ stroke: INK }} strokeWidth={6} strokeLinecap="round" />
+                <g transform={`rotate(${spin.toFixed(0)} 212 188)`}>
+                  <circle cx={212} cy={188} r={13} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2.5} />
+                  {[0, 60, 120, 180, 240, 300].map((a) => (
+                    <path key={a} d="M212 172 l3 4 h-6 z" fill={ON_LIGHT} transform={`rotate(${a} 212 188)`} />
+                  ))}
+                </g>
               </g>
             ) : (
               <g>
-                <rect x={186} y={168} width={20} height={44} rx={8} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} />
+                <line x1={150} y1={196} x2={196} y2={196} style={{ stroke: INK }} strokeWidth={6} strokeLinecap="round" />
+                <rect x={196} y={180} width={26} height={42} rx={9} fill={GREYS.mid} style={{ stroke: INK }} strokeWidth={2.5} />
                 {[0, 1, 2, 3].map((i) => (
-                  <line key={i} x1={186} x2={206} y1={172 + ((i * 11 + t * 30) % 40)} y2={176 + ((i * 11 + t * 30) % 40)} stroke={C.ink} strokeWidth={1.5} />
+                  <line key={i} x1={196} x2={222} y1={185 + ((i * 10 + t * 30) % 34)} y2={189 + ((i * 10 + t * 30) % 34)} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} />
                 ))}
               </g>
             )}
           </g>
         )}
-        <rect x={225} y={150} width={155} height={75} rx={8} fill="#F1F5F9" stroke="#CBD5E1" />
-        <Txt x={232} y={170} size={9} weight={800}>
-          ICR = k·P / SE
-        </Txt>
-        <Txt x={232} y={186} size={8} mono>
-          = {MACH[p.m].k}×{p.P} / {o.se.toFixed(1)}
-        </Txt>
-        <Txt x={232} y={212} size={16} weight={900} mono fill={o.ok ? C.ink : C.crit}>
-          {o.icr.toFixed(1)} m³/h
-        </Txt>
+        {/* cutting-rate gauge (log scale) */}
+        <rect x={262} y={155} width={110} height={20} rx={10} style={{ fill: F3.SURFACE, stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={263} y={156} width={Math.max(108 * rate, 18)} height={18} rx={9} data-state={rateOk ? "safe" : "unsafe"} style={{ fill: rateOk ? OK_LIGHT : F3.BAD_LIGHT }} />
+        <T x={266} y={204} fill={ON_LIGHT}>
+          Cut rate
+        </T>
       </g>
     );
   },

@@ -1,9 +1,9 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, Meter } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { OK_LIGHT, BAD_PALE, LBL, Dot, curve, scale } from "@/components/sim/v3";
+import { OK_LIGHT, BAD_LIGHT, BAD_PALE, LBL, Dot, Axes, curve, scale, BAD, SURFACE } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
-import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, hue } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, hue } from "@/components/sim/v3";
 
 /* ---------------- Drilling methods ---------------- */
 
@@ -84,7 +84,7 @@ export const drillSim: SimDef = {
             <rect key={i} x={90} y={holeTop + (i + 1) * rodLen - 3} width={10} height={6} rx={1.5} fill={ORG.mid} />
           ))}
         {p.m === 0 && (
-          <T x={126} y={52}>
+          <T x={136} y={52}>
             Joints
           </T>
         )}
@@ -110,7 +110,7 @@ export const drillSim: SimDef = {
           {`${p.depth} m`}
         </T>
         {bars.map((b, i) => {
-          const y0 = 48 + i * 46;
+          const y0 = 44 + i * 42;
           return (
             <g key={b.k}>
               <T x={196} y={y0 - 6} fill={i === p.m ? INK : INK2} weight={i === p.m ? 800 : 600}>
@@ -123,7 +123,7 @@ export const drillSim: SimDef = {
         <T x={376} y={42} anchor="end">
           m/min
         </T>
-        <T x={196} y={184}>
+        <T x={196} y={176}>
           Energy at bit
         </T>
         <rect x={196} y={190} width={180} height={20} rx={4} style={{ fill: GREYS.light }} />
@@ -182,7 +182,6 @@ export const explosiveSim: SimDef = {
     const HW = 208;
     const front = o.vod > 0 ? HX0 + ((t * 160) % HW) : HX0;
     const fumeCol = o.fume === 2 ? AC.mid : o.fume === 1 ? GREYS.deep : GREYS.light;
-    const fumeTxt = o.fume === 1 ? ON_DEEP : ON_LIGHT;
     const mx = gx(o.ob);
     const rock = ROCKS[p.rock];
     return (
@@ -213,11 +212,8 @@ export const explosiveSim: SimDef = {
           return <circle key={k} cx={323 + Math.sin(ph * 6 + k) * 8} cy={122 - ph * 12} r={5 + ph * 8} fill={fumeCol} opacity={0.4 * (1 - ph)} />;
         })}
         <ellipse cx={323} cy={124} rx={34} ry={20} fill={fumeCol} />
-        <T x={323} y={130} anchor="middle" weight={800} fill={fumeTxt}>
-          {o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}
-        </T>
-        <T x={323} y={166} anchor="middle">
-          Fumes
+        <T x={376} y={166} anchor="end">
+          {`Fumes: ${o.fume === 2 ? "NOx" : o.fume === 1 ? "CO" : "clean"}`}
         </T>
         {/* impedance: explosive vs rock, rock = reference length */}
         <rect x={40} y={180} width={210} height={20} fill={GREYS.light} />
@@ -322,12 +318,12 @@ export const kuzRamSim: SimDef = {
           </g>
         ))}
         {/* part labels, with leaders to the third hole */}
-        <line x1={holes[2] + 7} y1={top + (k.T * sc) / 2} x2={146} y2={top + 26} style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <T x={150} y={top + 30} fill={ON_LIGHT}>
+        <line x1={holes[2] + 7} y1={top + (k.T * sc) / 2} x2={138} y2={top + 26} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={142} y={top + 30} fill={ON_LIGHT}>
           Stemming
         </T>
-        <line x1={holes[2] + 7} y1={top + k.T * sc + (k.L * sc) / 2} x2={146} y2={top + 74} style={{ stroke: INK3 }} strokeWidth={1.5} />
-        <T x={150} y={top + 78} fill={ON_LIGHT}>
+        <line x1={holes[2] + 7} y1={top + k.T * sc + (k.L * sc) / 2} x2={138} y2={top + 74} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={142} y={top + 78} fill={ON_LIGHT}>
           Charge
         </T>
         {/* size-distribution plot */}
@@ -404,56 +400,68 @@ export const delaySim: SimDef = {
     { key: "total", label: "Total firing time", unit: "ms", digits: 0 },
   ],
   caption: "A hole is exposed to cut-off if its surface signal arrives after the first hole has already detonated (surface time > in-hole delay) — ground movement can sever its tube.",
+  v3: { viewH: 296 },
   render: (p, o, t) => {
     const d = delayPlan(p);
-    const T = d.total + 120;
-    const ms = ((t % 4) / 4) * T;
+    const Tt = d.total + 120;
+    const ms = ((t % 4) / 4) * Tt;
     const x = (c: number) => 60 + c * 52;
     const y = (r: number) => 70 + r * 50;
+    const H = 296;
     return (
       <g>
-        <rect x={20} y={40} width={360} height={150} rx={4} fill={MAT.rock} />
-        <rect x={20} y={40} width={360} height={150} rx={4} fill="#F5F5F4" opacity={0.45} />
-        <Txt x={20} y={30} size={9} weight={700} fill={C.slate}>
-          FREE FACE ↑ · initiation at front-left · t = {ms.toFixed(0)} ms
-        </Txt>
-        <rect x={20} y={40} width={360} height={4} fill={C.ink} />
+        <clipPath id="u4dl-clip">
+          <rect x={12} y={12} width={376} height={H - 24} rx={12} />
+        </clipPath>
+        {/* host rock: the bench top, neutral band */}
+        <g clipPath="url(#u4dl-clip)">
+          <rect x={12} y={48} width={376} height={152} fill={GREYS.light} />
+        </g>
+        <T x={24} y={38} fill={INK2}>
+          Free face
+        </T>
+        <line x1={20} y1={48} x2={380} y2={48} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        {/* surface connectors: along each row, and down the first column */}
         {Array.from({ length: ROWS }).map((_, r) => (
-          <line key={r} x1={x(0)} x2={x(COLS - 1)} y1={y(r)} y2={y(r)} stroke={C.slate} strokeWidth={1.5} />
+          <line key={r} x1={x(0)} x2={x(COLS - 1)} y1={y(r)} y2={y(r)} style={{ stroke: INK3 }} strokeWidth={1.5} />
         ))}
         {Array.from({ length: ROWS - 1 }).map((_, r) => (
-          <line key={r} x1={x(0)} x2={x(0)} y1={y(r)} y2={y(r + 1)} stroke={C.slate} strokeWidth={1.5} />
+          <line key={r} x1={x(0)} x2={x(0)} y1={y(r)} y2={y(r + 1)} style={{ stroke: INK3 }} strokeWidth={1.5} />
         ))}
         {d.holes.map((h) => {
           const signal = ms >= h.ts;
           const fired = ms >= h.td;
-          const flash = fired && ms - h.td < 60;
           return (
             <g key={`${h.c}-${h.r}`}>
-              {fired && ms - h.td < 400 && <circle cx={x(h.c)} cy={y(h.r)} r={10 + (ms - h.td) * 0.09} fill="none" stroke="#F97316" strokeWidth={2} opacity={1 - (ms - h.td) / 400} />}
-              {h.risk && <circle cx={x(h.c)} cy={y(h.r)} r={13} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeDasharray="4 2" />}
-              <circle cx={x(h.c)} cy={y(h.r)} r={flash ? 11 : 8} fill={fired ? (flash ? C.crit : "#7f1d1d") : signal ? C.tech : "white"} stroke={C.ink} strokeWidth={1.5} />
-              <Txt x={x(h.c)} y={y(h.r) + 22} size={7} anchor="middle" mono fill={C.slate}>
-                {h.td}
-              </Txt>
+              {fired && ms - h.td < 400 && <circle cx={x(h.c)} cy={y(h.r)} r={10 + (ms - h.td) * 0.09} fill="none" style={{ stroke: U.ink }} strokeWidth={2} opacity={1 - (ms - h.td) / 400} />}
+              {h.risk && <circle cx={x(h.c)} cy={y(h.r)} r={12} fill="none" data-state="unmet" style={{ stroke: BAD }} strokeWidth={2} strokeDasharray="4 3" />}
+              <circle cx={x(h.c)} cy={y(h.r)} r={6} style={{ fill: fired ? U.deep : signal ? U.mid : SURFACE, stroke: INK }} strokeWidth={2} />
+              <T x={x(h.c) + 14} y={y(h.r) + 27} fill={ON_LIGHT}>
+                {String(h.td)}
+              </T>
             </g>
           );
         })}
-        <circle cx={30} cy={214} r={5} fill={C.tech} />
-        <Txt x={40} y={217} size={8}>
-          surface signal arrived
-        </Txt>
-        <circle cx={150} cy={214} r={5} fill={C.crit} />
-        <Txt x={160} y={217} size={8}>
-          detonated
-        </Txt>
-        <circle cx={240} cy={214} r={6} fill="none" stroke={C.hazard} strokeWidth={2} strokeDasharray="3 2" />
-        <Txt x={250} y={217} size={8}>
-          cut-off risk
-        </Txt>
-        <Txt x={20} y={234} size={8} fill={C.slate} mono>
-          numbers = detonation time (ms)
-        </Txt>
+        {/* legend */}
+        <circle cx={32} cy={236} r={7} style={{ fill: SURFACE, stroke: INK }} strokeWidth={2} />
+        <T x={46} y={242}>
+          Waiting
+        </T>
+        <circle cx={140} cy={236} r={7} style={{ fill: U.mid, stroke: INK }} strokeWidth={2} />
+        <T x={154} y={242}>
+          Signal in
+        </T>
+        <circle cx={262} cy={236} r={7} style={{ fill: U.deep, stroke: INK }} strokeWidth={2} />
+        <T x={276} y={242}>
+          Fired
+        </T>
+        <circle cx={32} cy={262} r={9} fill="none" data-state="unmet" style={{ stroke: BAD }} strokeWidth={2} strokeDasharray="4 3" />
+        <T x={50} y={268}>
+          Cut-off risk
+        </T>
+        <T x={196} y={268}>
+          Numbers: ms
+        </T>
       </g>
     );
   },
@@ -494,30 +502,58 @@ export const vibeSim: SimDef = {
     { key: "air", label: "Airblast (indicative)", unit: "dB(L)", digits: 0, tone: (v) => (v > 134 ? "warn" : "ok") },
   ],
   caption: "Limits per DGMS Technical Circular 7 of 1997 for structures not belonging to the mine owner. Airblast compared with USBM 134 dB(L) guidance.",
-  handles: [{ key: "D", axis: "x", at: (p, o) => [40 + ((p.D - 50) / 1450) * 340, 198 - (Math.min(o.ppv, 40) / 40) * 180], toValue: (x) => 50 + ((x - 40) / 340) * 1450, color: "#3B82F6" }],
-  render: (p, o) => (
-    <Plot x={40} y={18} w={340} h={180} xmin={50} xmax={1500} ymin={0} ymax={40} xlabel="distance (m)" ylabel="PPV mm/s">
-      {(sx, sy) => (
-        <g>
-          <polygon points={`${sx(50)},${sy(0)} ${sample((d) => Math.min(40, p.K * Math.pow(d / Math.sqrt(p.Q), -p.b)), 50, 1500, 80, sx, sy)} ${sx(1500)},${sy(0)}`} fill={C.tech} opacity={0.1} />
-          <polyline points={sample((d) => Math.min(40, p.K * Math.pow(d / Math.sqrt(p.Q), -p.b)), 50, 1500, 80, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} strokeLinejoin="round" />
-          <line x1={sx(50)} x2={sx(1500)} y1={sy(o.lim)} y2={sy(o.lim)} stroke={C.crit} strokeDasharray="6 4" strokeWidth={1.5} />
-          <Txt x={sx(1500) - 4} y={sy(o.lim) - 4} size={8} anchor="end" fill={C.crit} weight={700}>
-            {`limit ${o.lim} mm/s`}
-          </Txt>
-          <line x1={sx(500)} x2={sx(500)} y1={sy(0)} y2={sy(40)} stroke={C.hazard} strokeDasharray="2 3" />
-          <Txt x={sx(500) + 3} y={sy(38)} size={7} fill={C.hazard}>
-            500 m danger zone
-          </Txt>
-          <circle cx={sx(p.D)} cy={sy(Math.min(o.ppv, 40))} r={14} fill={o.ppv <= o.lim ? C.safe : C.crit} opacity={0.18} />
-          <Arrow x1={sx(p.D)} y1={sy(0) - 2} x2={sx(p.D)} y2={sy(Math.min(o.ppv, 40)) + 8} color={C.slate} width={1} head={4} />
-          <Txt x={sx(p.D) > 320 ? sx(p.D) - 14 : sx(p.D) + 14} anchor={sx(p.D) > 320 ? "end" : "start"} y={sy(Math.min(o.ppv, 40)) - 8} size={9} mono weight={800} fill={o.ppv <= o.lim ? C.safe : C.crit}>
-            {`${o.ppv.toFixed(1)} mm/s`}
-          </Txt>
+  // §5.6d redraw: same plot frame (x 40–380, y 198 = 0 mm/s, 4.5 units per mm/s) so the lesson pins stay on their features.
+  v3: { viewH: 250 },
+  handles: [{ key: "D", axis: "x", at: (p, o) => [40 + ((p.D - 50) / 1450) * 340, 198 - (Math.min(o.ppv, 33) / 40) * 180], toValue: (x) => 50 + ((x - 40) / 340) * 1450, color: "#3B82F6" }],
+  render: (p, o) => {
+    const sx = scale(50, 1500, 40, 380);
+    const sy = scale(0, 40, 198, 18);
+    const f = (d: number) => p.K * Math.pow(d / Math.sqrt(p.Q), -p.b);
+    const d = curve(f, 50, 1500, 80, sx, sy);
+    const ok = o.ppv <= o.lim;
+    const hx = sx(p.D);
+    const hy = Math.max(sy(o.ppv), 46);
+    return (
+      <g>
+        <clipPath id="u4vb-clip">
+          <rect x={40} y={46} width={340} height={152} />
+        </clipPath>
+        {/* host ground under the axis */}
+        <rect x={40} y={198} width={340} height={8} fill={GREYS.light} />
+        <g clipPath="url(#u4vb-clip)">
+          <polygon points={`${sx(50)},${sy(0)} ${d} ${sx(1500)},${sy(0)}`} fill={U.light} opacity={0.6} />
+          <polyline points={d} fill="none" style={{ stroke: U.deep }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </g>
-      )}
-    </Plot>
-  ),
+        <Axes x={40} y={18} w={340} h={180} />
+        <T x={48} y={38}>
+          PPV
+        </T>
+        {[500, 1000].map((v) => (
+          <T key={v} x={sx(v)} y={220} anchor="middle">
+            {String(v)}
+          </T>
+        ))}
+        <T x={376} y={220} anchor="end">
+          1500 m
+        </T>
+        {/* 500 m danger zone */}
+        <line x1={sx(500)} x2={sx(500)} y1={30} y2={198} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
+        <T x={sx(500) + 8} y={70}>
+          Danger zone
+        </T>
+        {/* DGMS permissible limit */}
+        <line x1={40} x2={380} y1={sy(o.lim)} y2={sy(o.lim)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="6 4" />
+        <T x={376} y={sy(o.lim) - 8} anchor="end">
+          Limit
+        </T>
+        {/* the structure, at distance D, with its predicted PPV on the curve */}
+        <line x1={hx} x2={hx} y1={hy} y2={186} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 4" />
+        <polygon points={`${hx - 14},186 ${hx},174 ${hx + 14},186`} data-state={ok ? "met" : "unmet"} fill={ok ? OK_LIGHT : BAD_LIGHT} style={{ stroke: INK }} strokeWidth={1.5} strokeLinejoin="round" />
+        <rect x={hx - 10} y={186} width={20} height={12} data-state={ok ? "met" : "unmet"} fill={ok ? OK_LIGHT : BAD_LIGHT} style={{ stroke: INK }} strokeWidth={1.5} />
+        <Dot x={hx} y={hy} ring />
+      </g>
+    );
+  },
 };
 
 export const U4_SIMS = [drillSim, explosiveSim, kuzRamSim, delaySim, vibeSim];

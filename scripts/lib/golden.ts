@@ -100,7 +100,11 @@ export function goldenFor(def: SimDef): Golden {
   ];
   const g = firstGoal(def.id);
   if (g) {
-    const v = findGoalState(def, g.goal, g.start);
+    // Hand-derived goal states for goals the blind search cannot reach (it changes at most two params, then a random scan).
+    // u10-fta: the lesson goal fixes p1-p3 and needs P(explosion) = P(gas) x P(ignition) <= 0.002; P(gas) = 0.2355, so P(ignition) <= 0.0085: p4 = 0.005, p5 = p6 = 0 gives 0.005 and P(explosion) = 0.00118.
+    const MANUAL: Record<string, Vals> = { "u10-fta": { p4: 0.005, p5: 0, p6: 0 } };
+    const manual = MANUAL[def.id] ? defaults(def, { ...g.start, ...MANUAL[def.id] }) : null;
+    const v = manual && g.goal.test(manual, def.compute(manual)) ? manual : findGoalState(def, g.goal, g.start);
     if (v) states.push({ name: "objective-met", vals: v, readouts: readouts(def, v), goal: g.goal.text, goalMet: true });
     else states.push({ name: "objective-met", vals: defaults(def, g.start), readouts: readouts(def, defaults(def, g.start)), goal: g.goal.text, goalMet: false });
   }

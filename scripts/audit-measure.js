@@ -79,7 +79,8 @@ window.measureSvgs = function (meta) {
         } else if (inter(pr, h) > 10) res.push(`pin      ${where}: pin ${p.i} covers ${h.t}`);
       }
       for (const q of pins) if (q.i > p.i && Math.hypot(q.x - p.x, q.y - p.y) < 20) res.push(`pin      ${where}: pins ${p.i} and ${q.i} touch`);
-      if (p.x < 10 || p.y < 10 || p.x > W - 10 || p.y > H - 10) res.push(`pin      ${where}: pin ${p.i} at the edge`);
+      // §5.6d(a) (2026-11-28): the 24 px inset is for TEXT only; a pin may reach the stage edge, but its centre must lie inside the stage.
+      if (p.x < 0 || p.y < 0 || p.x > W || p.y > H) res.push(`pin      ${where}: pin ${p.i} outside the stage`);
     }
   });
   return res;
@@ -125,7 +126,7 @@ window.suggestPins = function (meta) {
     };
     const placed = m.pins.map((p) => ({ x: p.x, y: p.y }));
     const bad = (x, y, self) => {
-      if (x < 12 || y < 12 || x > 388 || y > 228) return true;
+      if (x < 0 || y < 0 || x > (m.w ?? 400) || y > (m.h ?? 240)) return true;
       const pr = { x: x - 10, y: y - 10, w: 20, h: 20 };
       if (texts.some((t) => inter(pr, t) > 6)) return true;
       if (heads.some((h) => h.w * h.h < 4000 && inter(pr, h) > 6)) return true;

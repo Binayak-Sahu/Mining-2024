@@ -528,7 +528,7 @@ export const dumpSim: SimDef = {
               <Cracks key={`d${Math.round(o.fos * 20)}`} cracks={[{ x: crest[0] - 10, y: crest[1] + 2, len: 40, angle: 120, seed: 3 }, { x: (toeX + crest[0]) / 2, y: (base + crest[1]) / 2, len: 30, angle: 150, seed: 7 }]} color={ON_LIGHT} width={2} />
             </g>
           )}
-          <line data-state={safe ? "safe" : "unsafe"} x1={toeX} y1={base} x2={crest[0]} y2={crest[1]} style={{ stroke: col }} strokeWidth={2.5} strokeDasharray="6 4" strokeLinecap="round" />
+          <line data-state={safe ? "safe" : "unsafe"} x1={toeX} y1={base} x2={crest[0]} y2={crest[1]} style={{ stroke: col }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />
           {p.ru > 0 && <Stream d={`M${toeX} ${base - 2} L390 ${(base - o.Ht * k * p.ru * 1.6).toFixed(1)}`} color="var(--u-ink)" width={2} speed={0.3} />}
         </g>
         {showW && (
