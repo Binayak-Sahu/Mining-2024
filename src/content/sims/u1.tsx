@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, LBL, HeatRamp, num, OK_LIGHT, BAD_LIGHT } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, GREYS, U, LBL, HeatRamp, num, OK_LIGHT, BAD_LIGHT, textW } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Coalification & rank ---------------- */
@@ -277,6 +277,9 @@ export const faultSim: SimDef = {
     { key: "heave", label: "Heave (horizontal)", unit: "m", digits: 2 },
     { key: "zone", label: "Seam in plan", format: (v, o) => (v === 0 ? `Barren GAP ${o.heave.toFixed(1)} m` : `Double-seam OVERLAP ${o.heave.toFixed(1)} m`), tone: (v) => (v === 0 ? "warn" : "crit") },
   ],
+  // §5.6d redraw (v3.2): fault plane x(y) = 170 + (y - 20) / tan(theta) and the seams at y 120 / 120 ± throw are the legacy ones (lesson pins 1–4).
+  v3: { viewH: 250, formula: () => "\\text{throw} = d\\sin\\theta \\qquad \\text{heave} = d\\cos\\theta" },
+  primary: ["throwV", "heave"],
   handles: [
     {
       key: "d",
@@ -295,34 +298,73 @@ export const faultSim: SimDef = {
     const t = Math.tan(rad(p.theta));
     const fx = (y: number) => 170 + (y - 20) / t; // fault plane x at depth y (dips to the right)
     const yF = 120; // footwall seam
-    const dy = (p.type === 0 ? 1 : -1) * o.throwV * s;
-    const yH = yF + dy; // hanging-wall seam
+    const normal = p.type === 0;
+    const yH = yF + (normal ? 1 : -1) * o.throwV * s; // hanging-wall seam
     const th = 10;
+    const bw = 13; // half width of the crushed fault zone (horizontal)
+    const yTop = Math.min(yF, yH);
+    const ln = { style: { stroke: ON_LIGHT }, strokeWidth: 1.5, strokeLinecap: "round" as const };
+    // throw: vertical dimension in the footwall block, between the seam level and the displaced level
+    const dimX = fx(yTop) - bw - 28;
+    const throwBase = normal ? Math.min(Math.max(yH + 5, yF + th + 22), 200) : clamp((yH + yF) / 2 + 6, 40, yF - 8);
+    // heave: horizontal dimension between the two seam ends on the fault
+    const xa = Math.min(fx(yF), fx(yH));
+    const xb = Math.max(fx(yF), fx(yH));
+    const below = (normal ? yH : yF) + th + 14 <= 178;
+    const hy = below ? (normal ? yH : yF) + th + 14 : yTop - 14;
+    const hBase = below ? hy + 22 : hy - 10;
+    const hxe = Math.min(fx(hBase - 14) - bw - 6, 376);
+    const showHeave = xb <= 394;
+    const hw = textW(`Heave · ${normal ? "gap" : "overlap"}`);
+    // hanging-wall label goes where the displaced seam is not
+    const hwY = yH < 52 ? 220 : 44;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={20} fill={MAT.sky} />
-        <polygon points={`0,20 ${fx(20)},20 ${fx(240)},240 0,240`} fill={MAT.sand} />
-        <polygon points={`${fx(20)},20 400,20 400,240 ${fx(240)},240`} fill={MAT.shale} />
-        <polygon points={`${fx(20)},20 400,20 400,240 ${fx(240)},240`} fill={MAT.rockShade} />
-        <rect x={0} y={yF} width={fx(yF)} height={th} fill={MAT.coal} />
-        <rect x={fx(yH)} y={yH} width={Math.max(0, 400 - fx(yH))} height={th} fill={MAT.coal} />
-        <line x1={fx(20)} y1={20} x2={fx(240)} y2={240} stroke="#7F1D1D" strokeWidth={6} opacity={0.25} />
-        <line x1={fx(20)} y1={20} x2={fx(240)} y2={240} stroke={C.crit} strokeWidth={2.5} strokeDasharray="10 3" />
-        <Txt x={fx(20) + 6} y={32} size={9} fill={C.crit} weight={800}>
-          FAULT PLANE θ={p.theta}°
-        </Txt>
-        <Txt x={10} y={230} size={9} weight={700} fill={C.slate}>
-          FOOTWALL
-        </Txt>
-        <Txt x={390} y={230} size={9} weight={700} fill={C.slate} anchor="end">
-          HANGING WALL {p.type === 0 ? "↓ (down-thrown)" : "↑ (up-thrown)"}
-        </Txt>
-        <Arrow x1={fx(yF) + 12} y1={yF + 2} x2={fx(yH) + 12} y2={yH + 2} color={C.tech} width={2} />
-        <Dim x1={Math.min(fx(yF) - 30, 330)} y1={yF} x2={Math.min(fx(yF) - 30, 330)} y2={yH} label={`T ${o.throwV.toFixed(1)} m`} color={C.ink} side="left" />
-        <line x1={fx(yF)} x2={fx(yH)} y1={p.type === 0 ? yH + th + 14 : yF + th + 14} y2={p.type === 0 ? yH + th + 14 : yF + th + 14} stroke={C.hazard} strokeWidth={3} />
-        <Txt x={clamp((fx(yF) + fx(yH)) / 2, 60, 340)} y={Math.min((p.type === 0 ? yH : yF) + th + 28, 214)} size={9} anchor="middle" weight={800} fill="#B45309" mono>
-          heave {o.heave.toFixed(1)} m · {p.type === 0 ? "GAP" : "OVERLAP"}
-        </Txt>
+        <clipPath id="u1-fault-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u1-fault-clip)">
+          {/* host rock: footwall left of the fault, hanging wall right of it */}
+          <polygon points={`0,20 ${fx(20)},20 ${fx(260)},260 0,260`} fill={GREYS.light} />
+          <polygon points={`${fx(20)},20 400,20 400,260 ${fx(260)},260`} fill={GREYS.mid} />
+          {/* coal seam: footwall piece, hanging-wall piece */}
+          <rect x={0} y={yF} width={Math.max(0, fx(yF))} height={th} style={{ fill: U.deep }} />
+          <rect x={fx(yH)} y={yH} width={Math.max(0, 400 - fx(yH))} height={th} style={{ fill: U.deep }} />
+          {/* crushed fault zone */}
+          <polygon points={`${fx(20) - bw},20 ${fx(20) + bw},20 ${fx(260) + bw},260 ${fx(260) - bw},260`} style={{ fill: U.light }} />
+          <line x1={fx(20)} y1={20} x2={fx(260)} y2={260} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeDasharray="8 5" />
+        </g>
+        <T x={28} y={44} fill={ON_LIGHT}>
+          Footwall
+        </T>
+        <T x={376} y={hwY} anchor="end" fill={ON_LIGHT}>
+          Hanging wall
+        </T>
+        {/* throw */}
+        {dimX <= 376 && (
+          <g>
+            <line x1={dimX} x2={fx(yH) - bw - 4} y1={yH} y2={yH} {...ln} strokeDasharray="4 4" />
+            <line x1={dimX - 6} x2={dimX + 6} y1={yF} y2={yF} {...ln} />
+            <line x1={dimX} x2={dimX} y1={yTop} y2={Math.max(yF, yH)} {...ln} />
+            <line x1={dimX - 6} x2={dimX + 6} y1={yH} y2={yH} {...ln} />
+            <T x={dimX - 10} y={throwBase} anchor="end" fill={ON_LIGHT}>
+              Throw
+            </T>
+          </g>
+        )}
+        {/* heave */}
+        {showHeave && (
+          <g>
+            <line x1={fx(yF)} x2={fx(yF)} y1={below ? yF + th : yF} y2={hy} {...ln} strokeDasharray="3 3" />
+            <line x1={fx(yH)} x2={fx(yH)} y1={below ? yH + th : yH} y2={hy} {...ln} strokeDasharray="3 3" />
+            <line x1={xa} x2={xb} y1={hy} y2={hy} {...ln} />
+            <line x1={xa} x2={xa} y1={hy - 6} y2={hy + 6} {...ln} />
+            <line x1={xb} x2={xb} y1={hy - 6} y2={hy + 6} {...ln} />
+            <T x={Math.max(hxe, 24 + hw)} y={hBase} anchor="end" fill={ON_LIGHT}>
+              Heave · {normal ? "gap" : "overlap"}
+            </T>
+          </g>
+        )}
       </g>
     );
   },

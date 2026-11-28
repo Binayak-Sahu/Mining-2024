@@ -2,6 +2,8 @@ import type { SimDef } from "@/lib/types";
 import { C, Txt, Plot, sample, clamp, polyline } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
 import { erf } from "./u3";
+import { T, Axes, Dot, U, INK, INK3, curve as v3curve, scale as v3scale, clamp as v3clamp } from "@/components/sim/v3";
+import { GREYS, INK2, ON_LIGHT, SURFACE, DimLine, pts, textW } from "@/components/sim/v3";
 
 /* ---------------- DCF: NPV, IRR, payback with Indian levies ---------------- */
 
@@ -59,57 +61,82 @@ export const npvSim: SimDef = {
     { key: "royalty", label: "Royalty + DMF + NMET", format: (v, o) => `₹${(v + o.dmf + o.nmet).toFixed(1)} cr/yr` },
   ],
   caption: "Pre-tax illustration. DMF = 30 % of royalty for leases granted before 12 Jan 2015 and 10 % for auctioned leases; NMET = 2 % of royalty.",
+  // §5.6d redraw (v3.2): same year grid and zero line family as legacy (x 30..370), so the four pins stay on bars, line and the life bracket.
+  v3: { viewH: 250 },
   render: (p, o) => {
     const years = Math.min(p.life, 40);
     const bw = 340 / (years + 1);
-    const zero = 120;
-    const k = 90 / Math.max(Math.abs(o.cf) * 1.2, p.capex * 0.25, 1);
+    const zero = 125;
+    const k = 75 / Math.max(Math.abs(o.cf) * 1.2, p.capex * 0.25, 1);
+    const capH = Math.min(p.capex * k, 66);
     let cum = -p.capex;
-    const pts: [number, number][] = [[30 + bw / 2, zero - cum * k * 0.25]];
+    const ys = (v: number) => clamp(zero - v * k * 0.25, 62, 190);
+    const pts2: [number, number][] = [[30 + bw / 2, ys(cum)]];
     for (let t = 1; t <= years; t++) {
       cum += o.cf / Math.pow(1 + p.r / 100, t);
-      pts.push([30 + t * bw + bw / 2, zero - cum * k * 0.25]);
+      pts2.push([30 + t * bw + bw / 2, ys(cum)]);
     }
+    const leg = [
+      { l: "Nominal", w: textW("Nominal") },
+      { l: "Discounted", w: textW("Discounted") },
+      { l: "Cumulative", w: textW("Cumulative") },
+    ];
+    const total = leg.reduce((s, e) => s + 14 + e.w, 0) + 2 * 12;
+    let lx = 200 - total / 2;
+    const legX = leg.map((e) => {
+      const x = lx;
+      lx += 14 + e.w + 12;
+      return x;
+    });
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
-        <rect x={30} y={zero} width={340} height={100} fill={C.crit} opacity={0.04} />
-        <line x1={30} x2={370} y1={zero} y2={zero} stroke={C.ink} />
-        <rect x={30 + 1} y={zero} width={bw - 2} height={Math.min(p.capex * k, 86)} rx={1.5} fill={C.crit} />
-        <rect x={30 + 1} y={zero} width={(bw - 2) / 3} height={Math.min(p.capex * k, 86)} fill={MAT.glass} />
-        {p.capex * k > 86 && <line x1={28} x2={30 + bw} y1={zero + 80} y2={zero + 74} stroke="white" strokeWidth={3} />}
+        <defs>
+          <clipPath id="u9npv-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        {/* host context: neutral ground, with the cash-out side below the zero line a shade deeper */}
+        <g clipPath="url(#u9npv-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} opacity={0.35} />
+          <rect x={0} y={zero} width={400} height={250 - zero} fill={GREYS.mid} opacity={0.25} />
+        </g>
+        <line x1={24} x2={376} y1={zero} y2={zero} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        {/* year 0 capital outlay */}
+        <rect x={30 + 1} y={zero} width={bw - 2} height={capH} rx={1.5} style={{ fill: INK2 }} />
+        {p.capex * k > 66 && <line x1={28} x2={30 + bw} y1={zero + 48} y2={zero + 42} style={{ stroke: SURFACE }} strokeWidth={3} />}
         {Array.from({ length: years }).map((_, i) => {
           const t = i + 1;
           const h = o.cf * k;
           const hd = (o.cf / Math.pow(1 + p.r / 100, t)) * k;
           return (
             <g key={t}>
-              <rect x={30 + t * bw + 1} y={zero - Math.max(h, 0)} width={bw - 2} height={Math.abs(h)} fill="#bfdbfe" />
-              <rect x={30 + t * bw + 1} y={zero - Math.max(hd, 0)} width={bw - 2} height={Math.abs(hd)} fill={C.tech} />
-              <rect x={30 + t * bw + 1} y={zero - Math.max(hd, 0)} width={(bw - 2) / 3} height={Math.abs(hd)} fill={MAT.glass} />
+              <rect x={30 + t * bw + 1} y={zero - Math.max(h, 0)} width={bw - 2} height={Math.abs(h)} style={{ fill: U.light }} />
+              <rect x={30 + t * bw + 1} y={zero - Math.max(hd, 0)} width={bw - 2} height={Math.abs(hd)} style={{ fill: U.deep }} />
             </g>
           );
         })}
-        <polyline points={polyline(pts.map(([x, y]) => [x, clamp(y, 5, 235)]))} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeLinejoin="round" />
-        {(() => {
-          const i = pts.findIndex(([, y], j) => j > 0 && y <= zero);
-          if (i < 1) return null;
-          return (
-            <g>
-              <circle cx={pts[i][0]} cy={zero} r={9} fill={C.safe} opacity={0.2} />
-              <circle cx={pts[i][0]} cy={zero} r={4.5} fill={C.safe} stroke="white" strokeWidth={1.5} />
-              <Txt x={pts[i][0]} y={zero + 16} size={8} anchor="middle" weight={800} fill="#047857">
-                {`payback yr ${i}`}
-              </Txt>
-            </g>
-          );
-        })()}
-        <Txt x={34} y={20} size={9} weight={700} fill={C.slate}>
-          light = nominal CF · dark = discounted · amber = cumulative discounted (¼ scale)
-        </Txt>
-        <Txt x={34} y={228} size={12} weight={900} mono fill={o.npv >= 0 ? C.safe : C.crit}>
-          {`NPV ₹${o.npv.toFixed(0)} cr · IRR ${Number.isFinite(o.irr) ? o.irr.toFixed(1) + "%" : "—"}`}
-        </Txt>
+        <polyline points={pts(pts2)} fill="none" style={{ stroke: INK }} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+        {/* legend */}
+        {leg.map((e, i) => (
+          <g key={e.l}>
+            {i === 2 ? (
+              <line x1={legX[i]} x2={legX[i] + 10} y1={34} y2={34} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+            ) : (
+              <rect x={legX[i]} y={28} width={10} height={12} style={{ fill: i === 0 ? U.light : U.deep }} />
+            )}
+            <T x={legX[i] + 14} y={40} fill={INK}>
+              {e.l}
+            </T>
+          </g>
+        ))}
+        <T x={24} y={212} fill={INK}>
+          Year 0
+        </T>
+        {/* mine life bracket */}
+        <DimLine x1={Math.max(30 + bw, 100)} y1={222} x2={370} y2={222} />
+        <T x={200} y={214} anchor="middle" fill={INK}>
+          Mine life
+        </T>
       </g>
     );
   },
@@ -161,30 +188,40 @@ export const cutoffSim: SimDef = {
   ],
   caption: "Lognormal grade distribution; each tonne above cut-off is mined and processed. Lane's theory raises the cut-off above break-even when the mill (or mine/market) is the bottleneck and time value matters.",
   handles: [{ key: "c", axis: "x", at: (p) => [40 + (p.c / 5) * 320, 204], toValue: (x) => ((x - 40) / 320) * 5, color: "#0F172A" }],
-  render: (p, o) => (
-    <Plot x={40} y={14} w={320} h={190} xmin={0} xmax={5} ymin={0} ymax={10} xlabel="cut-off grade (g/t)" ylabel="Mt above">
-      {(sx, sy) => (
-        <g>
-          <polygon points={`${sx(p.c)},${sy(0)} ${sample((c) => 10 * gradeTonnage(p.mean, p.cv, c).frac, p.c, 5, 50, sx, sy)} ${sx(5)},${sy(0)}`} fill={C.ore} opacity={0.18} />
-          <polyline points={sample((c) => 10 * gradeTonnage(p.mean, p.cv, c).frac, 0, 5, 80, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} />
-          <polyline points={sample((c) => Math.min(10, gradeTonnage(p.mean, p.cv, c).g), 0.01, 5, 80, sx, sy)} fill="none" stroke={C.hazard} strokeWidth={2.5} strokeDasharray="6 3" />
-          <line x1={sx(o.gbe)} x2={sx(o.gbe)} y1={sy(0)} y2={sy(10)} stroke={C.crit} strokeDasharray="4 3" />
-          <Txt x={sx(o.gbe) + 3} y={sy(6.2)} size={8} fill={C.crit} weight={700}>
-            break-even
-          </Txt>
-          <line x1={sx(p.c)} x2={sx(p.c)} y1={sy(0)} y2={sy(10)} stroke={C.ink} strokeWidth={2} />
-          <circle cx={sx(p.c)} cy={sy(o.tonnes)} r={10} fill={C.tech} opacity={0.18} />
-          <circle cx={sx(p.c)} cy={sy(o.tonnes)} r={5} fill={C.tech} stroke="white" strokeWidth={1.5} />
-          <Txt x={sx(3.2)} y={sy(9.3)} size={8} fill={C.tech} weight={700}>
-            — tonnes (Mt)
-          </Txt>
-          <Txt x={sx(3.2)} y={sy(8.5)} size={8} fill={C.hazard} weight={700}>
-            - - grade above c/o (g/t)
-          </Txt>
-        </g>
-      )}
-    </Plot>
-  ),
+  v3: { viewH: 284 },
+  render: (p, o) => {
+    const sx = v3scale(0, 5, 40, 360);
+    const sy = v3scale(0, 10, 204, 14);
+    const tons = (c: number) => 10 * gradeTonnage(p.mean, p.cv, c).frac;
+    const grade = (c: number) => Math.min(10, gradeTonnage(p.mean, p.cv, c).g);
+    const beX = sx(o.gbe);
+    const beC = v3clamp(beX, 90, 190);
+    return (
+      <g>
+        <polygon points={`${sx(p.c)},${sy(0)} ${v3curve(tons, p.c, 5, 50, sx, sy)} ${sx(5)},${sy(0)}`} style={{ fill: U.light }} />
+        <Axes x={40} y={14} w={320} h={190} />
+        <line x1={beX} x2={beX} y1={sy(0)} y2={sy(10)} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="5 4" />
+        <polyline points={v3curve(tons, 0, 5, 80, sx, sy)} fill="none" style={{ stroke: U.ink }} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points={v3curve(grade, 0.01, 5, 80, sx, sy)} fill="none" style={{ stroke: INK }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1={sx(p.c)} x2={sx(p.c)} y1={sy(0)} y2={sy(10)} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <Dot x={sx(p.c)} y={sy(o.tonnes)} ring />
+        <T x={beC} y={226} anchor="middle">
+          Break-even
+        </T>
+        <T x={360} y={226} anchor="end">
+          Cut-off g/t
+        </T>
+        <line x1={40} x2={62} y1={245} y2={245} style={{ stroke: U.ink }} strokeWidth={2} strokeLinecap="round" />
+        <T x={68} y={250}>
+          Ore (Mt)
+        </T>
+        <line x1={170} x2={192} y1={245} y2={245} style={{ stroke: INK }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />
+        <T x={198} y={250}>
+          Grade (g/t)
+        </T>
+      </g>
+    );
+  },
 };
 
 /* ---------------- Lerchs–Grossmann 2-D ultimate pit ---------------- */
@@ -282,6 +319,8 @@ export const pitOptSim: SimDef = {
     { key: "maxDepth", label: "Pit depth (benches)", digits: 0 },
   ],
   caption: "Exact 2-D dynamic-programming solution: maximises total block value subject to 45° slope precedence. Re-run at each price to get nested pits for pushback design.",
+  // §5.6d redraw (v3.2): same block grid and origin as the legacy section (x0 20, y0 30, 18-unit blocks), so hotspots stay put.
+  v3: { viewH: 270 },
   render: (p) => {
     const r = lgPit(p);
     const cw = 18;
@@ -292,28 +331,36 @@ export const pitOptSim: SimDef = {
       for (let c = 0; c < COLS; c++) {
         const g = blockGrade(row, c);
         const ore = g > 0.3;
-        cells.push(<rect key={`${row}-${c}`} x={x0 + c * cw} y={y0 + row * cw} width={cw - 1} height={cw - 1} fill={ore ? `rgba(217,119,6,${clamp(0.25 + g / 4, 0.25, 1)})` : MAT.rock} opacity={ore ? 1 : 0.55} />);
+        cells.push(<rect key={`${row}-${c}`} x={x0 + c * cw} y={y0 + row * cw} width={cw - 1} height={cw - 1} style={{ fill: !ore ? GREYS.light : g > 1.6 ? U.deep : U.mid }} />);
       }
-    const pts: [number, number][] = [[x0, y0]];
+    const pts2: [number, number][] = [[x0, y0]];
     r.depth.forEach((d, c) => {
-      pts.push([x0 + c * cw, y0 + d * cw]);
-      pts.push([x0 + (c + 1) * cw, y0 + d * cw]);
+      pts2.push([x0 + c * cw, y0 + d * cw]);
+      pts2.push([x0 + (c + 1) * cw, y0 + d * cw]);
     });
-    pts.push([x0 + COLS * cw, y0]);
+    pts2.push([x0 + COLS * cw, y0]);
+    const ly = 236;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" />
-        <rect x={x0} y={y0 - 8} width={COLS * cw} height={8} fill={MAT.sky} />
-        <Txt x={20} y={20} size={9} weight={700} fill={C.slate}>
-          BLOCK MODEL SECTION · amber = ore (darker richer)
-        </Txt>
+        <clipPath id="u9-pit-clip">
+          <rect x={0} y={0} width={400} height={270} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u9-pit-clip)">
+          {/* host rock around and below the block model */}
+          <rect x={0} y={y0} width={400} height={ROWS * cw + 6} fill={GREYS.mid} />
+        </g>
         {cells}
-        <polygon points={polyline(pts)} fill="#0EA5E9" opacity={0.12} />
-        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={6} opacity={0.2} strokeLinejoin="round" />
-        <polyline points={polyline(pts)} fill="none" stroke={C.crit} strokeWidth={3} strokeLinejoin="round" />
-        <Txt x={20} y={228} size={11} weight={900} mono fill={C.crit}>
-          {`optimal pit · ${r.ore} ore / ${r.waste} waste blocks`}
-        </Txt>
+        <line x1={0} x2={400} y1={y0} y2={y0} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <polyline points={polyline(pts2)} fill="none" style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeLinejoin="round" />
+        {/* legend */}
+        <rect x={24} y={ly - 14} width={16} height={16} rx={3} style={{ fill: U.deep, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={46} y={ly}>Rich ore</T>
+        <rect x={142} y={ly - 14} width={16} height={16} rx={3} style={{ fill: U.mid, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={164} y={ly}>Ore</T>
+        <rect x={214} y={ly - 14} width={16} height={16} rx={3} style={{ fill: GREYS.light, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={236} y={ly}>Waste</T>
+        <line x1={318} x2={338} y1={ly - 6} y2={ly - 6} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+        <T x={344} y={ly}>Pit</T>
       </g>
     );
   },
