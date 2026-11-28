@@ -35,3 +35,6 @@ Other agents edit OTHER sims in the same file at the same time. Use small `Edit`
 
 ## Legacy (todo) sims
 If your sim has no `v3` yet: add `v3: { viewH: 250 }` (or taller) and replace the legacy `render` with a v3.2 drawing in `0 0 400 viewH` (the legacy frame was `-24 -24 448 288`; its drawing lived in the 0..400 × 0..240 box). Use the v3 primitives, drop legacy defs (`url(#grad-*)`, `pat-*`, `f-shadow`, plate textures). Keep legacy handle keys/axes. Keep the same hotspots landing on the same features where the 24-unit inset allows (otherwise `unsure`). Look at redrawn sims in the same file for style.
+
+## `primary` must list exactly 2 outputs
+`npm run validate` fails otherwise (§5.9). If a sim has only one informative readout, list a second output key (a duplicate key such as `["deg","deg"]` selects both outputs that share it).
