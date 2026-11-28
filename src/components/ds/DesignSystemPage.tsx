@@ -12,8 +12,7 @@ import { TabBar } from "./TabBar";
 import { FeedbackSheet } from "./FeedbackSheet";
 import { StageKinds } from "./StageKinds";
 import { Readouts } from "./Readouts";
-import { StrataColours, CardDepth } from "./V21";
-import { PlatePilot } from "./PlatePilot";
+import { DesignSystemV3 } from "./v3/DesignSystemV3";
 
 const SECTIONS = [
   ["colours", "Colour tokens", "Light and dark side by side. Each text pair shows its contrast, measured live on this device.", Swatches],
@@ -27,9 +26,6 @@ const SECTIONS = [
   ["feedback", "Feedback sheet", "Opened by the buttons; it slides up over the footer.", FeedbackSheet],
   ["kinds", "Stage-kind labels", undefined, StageKinds],
   ["readouts", "Sim readouts", undefined, Readouts],
-  ["strata", "v2.1 · Stratum colours", "One colour per unit, only on the icon tile, the eyebrow dot and the unit header band. The number under each tile is the icon-on-tint contrast, measured live (rule: at least 3:1).", StrataColours],
-  ["depth", "v2.1 · Card depth", "Dark surfaces #1E1E1E / #282828, the --ledge token, the 1 px top highlight (dark only) and button-style pressing.", CardDepth],
-  ["plate", "v2.1 · Sim plate pilot", "Three sims on the §2.3b plate. Production sims are unchanged: this sandbox re-colours its own copy with the token rules. The caption under each plate is measured live.", PlatePilot],
 ] as const;
 
 function TopBars() {
@@ -41,29 +37,28 @@ function TopBars() {
   );
 }
 
-/** /design-system: design system v2 sandbox (DESIGN.md §2–§6). Nothing here is used by production screens. */
+/**
+ * /design-system: the v3 sandbox (Phase 15.5-v3a) first, then the v2 components production uses today, folded away.
+ * The v2.1 (15.5f) previews were removed: DESIGN.md v3 supersedes them (Appendix A). Nothing here is used by production.
+ */
 export function DesignSystemPage() {
   return (
-    <div className="ds2 min-h-screen">
-      <div className="max-w-[640px] mx-auto px-5 sm:px-6 pt-8 pb-32">
-        <div className="t-eyebrow">Phase 15.5f · sandbox</div>
-        <h1 className="t-display mt-2">Design system v2.1</h1>
-        <p className="t-secondary mt-3">Every DESIGN.md component in one place. Sections marked v2.1 preview the 15.5f rules; production screens do not use them yet.</p>
-        <nav aria-label="Sections" className="mt-6 flex flex-wrap gap-2">
-          {SECTIONS.map(([id, title]) => (
-            <a key={id} href={`#${id}`} className="t-label ds-focus inline-flex items-center min-h-11 px-3 rounded-full" style={{ background: "var(--surface-2)", color: "var(--text)" }}>
-              {title}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-16 space-y-16">
-          {SECTIONS.map(([id, title, note, Body], i) => (
-            <Section key={id} id={id} n={i + 1} title={title} note={note}>
-              <Body />
-            </Section>
-          ))}
+    <>
+      <DesignSystemV3 />
+      <div className="ds2 min-h-screen">
+        <div className="max-w-[640px] mx-auto px-5 sm:px-6 pt-8 pb-32">
+          <details>
+            <summary className="btn-3d tone-ghost list-none cursor-pointer select-none w-full [&::-webkit-details-marker]:hidden">v2 components (production today)</summary>
+            <div className="mt-16 space-y-16">
+              {SECTIONS.map(([id, title, note, Body], i) => (
+                <Section key={id} id={id} n={i + 1} title={title} note={note}>
+                  <Body />
+                </Section>
+              ))}
+            </div>
+          </details>
         </div>
       </div>
-    </div>
+    </>
   );
 }

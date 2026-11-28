@@ -1,0 +1,256 @@
+/*
+ * DESIGN.md v3 — sandbox only (Phase 15.5-v3a). Everything here is scoped under `.ds3`, which only /design-system renders.
+ * Production keeps the v2 tokens in globals.css until a rollout slice moves these to :root.
+ */
+@import "@fontsource-variable/figtree/wght.css";
+@import "@fontsource-variable/onest/wght.css";
+
+.ds3 {
+  --font-figtree: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-onest: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --v3-font: var(--font-figtree);
+
+  /* §2.1 neutrals (light) */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f4;
+  --edge: #e3e3e3;
+  --edge-strong: #d0d0d0;
+  --text: #141414;
+  --text-2: #5c5c5c;
+  --text-3: #6f6f6f;
+  /* §2.3 states */
+  --success: #22c55e;
+  --success-ledge: #15803d;
+  --success-on: #141414;
+  --progress: #15803d;
+  --danger: #ef4444;
+  --danger-ledge: #b91c1c;
+  --danger-on: #141414;
+  --danger-text: #b91c1c;
+  --energy: #f5b417;
+  --energy-ledge: #b47f06;
+  --ink: #141414;
+  --ink-ledge: #000000;
+  --ink-on: #ffffff;
+  /* default unit family = blue until an element sets its own --u-* (tokens.ts familyVars) */
+  --u-face: #4568f5;
+  --u-ledge: #3451c9;
+  --u-on: #ffffff;
+  --u-ink: #2e46c2;
+  --u-deep: #2e46c2;
+  --u-mid: #4c6ef5;
+  --u-light: #aab9ff;
+  --u-glow: #0d1a45;
+  --u-tint: #eef1ff;
+
+  /* v2 aliases so the production Readouts/Controls/Slider used inside the pilot pick up v3 neutrals */
+  --line: var(--edge);
+  --line-strong: var(--edge-strong);
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--v3-font);
+  font-feature-settings: "kern";
+}
+.ds3[data-theme="dark"],
+.ds3 [data-theme="dark"] {
+  --bg: #141414;
+  --surface: #1e1e1e;
+  --surface-2: #262626;
+  --edge: #333333;
+  --edge-strong: #3d3d3d;
+  --text: #f5f5f5;
+  --text-2: #a6a6a6;
+  --text-3: #8c8c8c;
+  --progress: #22c55e;
+  --danger-text: #f87171;
+  --energy-ledge: #9c6e05;
+  --ink: #d4d4d4;
+  --ink-ledge: #949494;
+  --ink-on: #141414;
+}
+.ds3 [data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f4;
+  --edge: #e3e3e3;
+  --edge-strong: #d0d0d0;
+  --text: #141414;
+  --text-2: #5c5c5c;
+  --text-3: #6f6f6f;
+  --progress: #15803d;
+  --danger-text: #b91c1c;
+  --energy-ledge: #b47f06;
+  --ink: #141414;
+  --ink-ledge: #000000;
+  --ink-on: #ffffff;
+}
+.ds3 [data-theme] {
+  background: var(--bg);
+  color: var(--text);
+}
+.ds3[data-font="figtree"],
+.ds3 [data-font="figtree"] { --v3-font: var(--font-figtree); font-family: var(--v3-font); }
+.ds3[data-font="onest"],
+.ds3 [data-font="onest"] { --v3-font: var(--font-onest); font-family: var(--v3-font); }
+.ds3[data-font="jakarta"],
+.ds3 [data-font="jakarta"] { --v3-font: var(--font-jakarta); font-family: var(--v3-font); }
+
+/* §3 type */
+.ds3 .v3-hero { font-size: 30px; line-height: 36px; font-weight: 800; letter-spacing: -0.015em; }
+.ds3 .v3-display { font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.01em; }
+.ds3 .v3-title { font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: -0.005em; }
+.ds3 .v3-card-title { font-size: 19px; line-height: 25px; font-weight: 700; }
+.ds3 .v3-body { font-size: 18px; line-height: 28px; font-weight: 400; }
+.ds3 .v3-secondary { font-size: 16px; line-height: 24px; font-weight: 400; color: var(--text-2); }
+.ds3 .v3-eyebrow { font-size: 14px; line-height: 18px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+.ds3 .v3-button { font-size: 18px; line-height: 24px; font-weight: 700; }
+.ds3 .v3-stat { font-size: 20px; line-height: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ds3 .v3-label { font-size: 14px; line-height: 20px; font-weight: 600; }
+.ds3 .v3-tab { font-size: 13px; line-height: 16px; font-weight: 600; }
+.ds3 .v3-readout,
+.ds3 .t-readout { font-family: var(--v3-font) !important; font-size: 17px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ds3 .tnum { font-variant-numeric: tabular-nums; }
+
+/* §4 shapes */
+.ds3 .v3-card {
+  background: var(--surface);
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 28px;
+  padding: 24px;
+}
+.ds3 .v3-press {
+  transition: transform 0.12s ease-out, border-bottom-width 0.12s ease-out, margin-bottom 0.12s ease-out;
+  cursor: pointer;
+}
+.ds3 .v3-press:active,
+.ds3 .v3-press[data-pressed="true"] {
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+  margin-bottom: 4px;
+}
+.ds3 .v3-tile {
+  background: var(--surface);
+  border: 2px solid var(--edge);
+  border-bottom-width: 4px;
+  border-radius: 18px;
+}
+.ds3 .v3-tile[data-selected="true"] {
+  background: var(--u-tint);
+  border-color: var(--u-ink);
+  border-width: 3px;
+  border-bottom-width: 4px;
+}
+.ds3 .v3-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  border: 2px solid var(--edge);
+  background: var(--surface);
+}
+.ds3 .v3-btn {
+  --b-face: var(--u-face);
+  --b-ledge: var(--u-ledge);
+  --b-on: var(--u-on);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 56px;
+  padding: 0 28px;
+  border-radius: 9999px;
+  background: var(--b-face);
+  color: var(--b-on);
+  box-shadow: 0 5px 0 var(--b-ledge);
+  margin-bottom: 5px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  user-select: none;
+}
+.ds3 .v3-btn:active:not(:disabled),
+.ds3 .v3-btn[data-pressed="true"] {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 var(--b-ledge);
+}
+.ds3 .v3-btn.tone-success { --b-face: var(--success); --b-ledge: var(--success-ledge); --b-on: var(--success-on); }
+.ds3 .v3-btn.tone-danger { --b-face: var(--danger); --b-ledge: var(--danger-ledge); --b-on: var(--danger-on); }
+.ds3 .v3-btn.tone-ink { --b-face: var(--ink); --b-ledge: var(--ink-ledge); --b-on: var(--ink-on); }
+.ds3 .v3-btn.tone-ghost {
+  --b-face: var(--surface);
+  --b-ledge: var(--edge-strong);
+  --b-on: var(--text);
+  border: 2px solid var(--edge-strong);
+}
+.ds3 .v3-btn:disabled {
+  --b-face: var(--surface-2);
+  --b-ledge: transparent;
+  --b-on: var(--text-3);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.ds3 .v3-btn:focus-visible,
+.ds3 .v3-focus:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--u-ink) 60%, transparent);
+  outline-offset: 3px;
+}
+.ds3 .v3-glow { background: var(--bg); }
+.ds3 [data-theme="dark"] .v3-glow,
+.ds3[data-theme="dark"] .v3-glow {
+  background: linear-gradient(to bottom, var(--u-glow) 0, var(--bg) 280px);
+}
+.ds3 .v3-spine {
+  width: 4px;
+  height: 24px;
+  margin: 0 auto;
+  background: var(--edge);
+}
+.ds3 .v3-bar {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.ds3 .v3-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--progress);
+}
+.ds3 .v3-scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.ds3 .v3-scroller::-webkit-scrollbar { display: none; }
+.ds3 .v3-scroller > * { scroll-snap-align: start; flex: none; }
+
+/* §5.6 sim stage */
+.ds3 .v3-stage {
+  background: var(--surface);
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 28px;
+  padding: 12px;
+  transition: border-color 0.3s;
+}
+.ds3 .v3-stage[data-met="true"] { border-color: var(--success); }
+.ds3 .v3-stage svg text { font-family: var(--v3-font); font-variant-numeric: tabular-nums; }
+.ds3 .v3-fo { color: var(--text); font-family: var(--v3-font); line-height: 1.1; white-space: nowrap; }
+.ds3 .v3-fo .katex { font-size: 1em; }
+.ds3 .v3-math { font-size: 20px; }
+.ds3 .v3-math .katex { font-size: 1.1em; }
+.ds3 .ds-readout-row { border-color: var(--edge); }
+.ds3 .text-fg { color: var(--text); }
+.ds3 .text-fg-2 { color: var(--text-2); }

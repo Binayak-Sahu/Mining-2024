@@ -333,3 +333,17 @@ Run `npm run audit:svg` after any diagram change.
 - `src/components/shell/ProfileMenu.tsx`: the top-bar rank button opens Profile + Backup & restore (Export, Restore, Repair app). `src/lib/restore.ts` is the one restore path (also used by `SyncCard`). Hero restore link removed from `Campaign.tsx`; touch suite updated.
 - Dark sim-plate pilot: `src/components/ds/PlatePilot.tsx` re-colours a sandbox copy of 3 sims with the §2.3b rules (incl. Bink's 3 extra rules) and measures text contrast and size live. No production sim changed.
 
+
+
+## Phase 15.5-v3a — design system v3 sandbox (2026-11-28)
+- **DESIGN.md is now v3** (the Brilliant system), merged from `DESIGN_v3.md`, with Bink's 2026-11-28 contrast fixes (§2.2b) and Appendix A for the superseded v2.1 values.
+- **Sandbox:** `/design-system` renders `src/components/ds/v3/DesignSystemV3.tsx` first (scope `.ds3`, tokens in `v3.css` and `tokens.ts`), then the v2 components folded away.
+- **Pieces in `src/components/ds/v3/`:**
+  - `Mocks.tsx`: stat bar, Home §5.2, Path §5.3. Reads content titles only, never progress.
+  - `TokensDemo.tsx`: neutrals, families, buttons and surfaces, with measured contrast.
+  - `PilotStage.tsx` and `pilots.tsx`: 3 pilot sims (production SimDefs spread, new render and grips).
+  - `Tex.tsx`: KaTeX, plus a `foreignObject` variant for maths labels inside SVG.
+- **Illustrations:** `src/assets/illustrations/` (iso helpers, U4 and U7 drafts, exported `.svg`).
+- **Scripts:** `scripts/export-illustrations.tsx`, `scripts/katex-css.mjs`.
+- **New dependencies:** `@fontsource-variable/figtree`, `@fontsource-variable/onest`, `katex`.
+- **Production screens, sims, stores, service worker and lesson content:** unchanged.

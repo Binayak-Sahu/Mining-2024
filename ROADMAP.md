@@ -39,6 +39,7 @@ _(none. Proposed statutory changes are listed here as old → new, source, locat
 | 14 | Trust, pacing & situations | done (14.5 partial, see below) |
 | 15 | Sources & coverage map | done 2026-11-26; DGMS side rebuilt on the G.S.R. 910(E) syllabus 2026-11-27 |
 | 15.5 | Design overhaul (DESIGN.md v2) | done 2026-11-27 (15.5-setup, 15.5a–f; v2.1 rollout and sim conversion still to plan) |
+| 15.5-v3 | Design system v3 (the Brilliant system) | 15.5-v3a sandbox done 2026-11-28; font pick, illustration refine and rollout next |
 | 16 | Deep theory for the 52 remaining theory stages | **next** |
 | 17 | Code Underground merge | planned |
 | 18 | Exam realism | planned |
@@ -202,9 +203,46 @@ Restructure the exam simulator to the DGMS First Class paper layout from `source
   - Sim colours: the 61 sims use 72 distinct hard-coded colours in `src/content/sims/*` (115 counting the shared `C` palette in `svg.tsx` and the patterns in `defs.tsx`, plus `"white"` 70×). Three groups did not map to the first §2.3b rules (near-black coal, text on materials, semantic markers); Bink chose three extra rules (now in DESIGN §2.3b): dark-material lightness floor + outline, `--mat-ink`, markers on the accent faces.
   - Dark-plate pilot (`src/components/ds/PlatePilot.tsx`, sandbox §14): Coalification (`u1-coalrank`), Virgin vertical stress (`u0-overburden`), Ore genesis (`u1-supergene`) in light and dark. Production sim files untouched; the sandbox re-colours its own copy. Measured live at 390 px: lowest text contrast light / dark: coal 5.98 / 6.30, overburden 6.18 / 6.91, supergene 4.57 / **4.49** (one label on a mid-tone material just under 4.5). Smallest SVG text 5.6–6.4 px rendered (rule ≥ 12 px): every converted sim needs a label re-layout, a geometry change for its own roadmap step. Seen in the shots: faded (inactive) anthracite ranks are still very dark on the dark plate; the `Dim` label box stays light ("paper" in `svg.tsx` not mapped in the pilot).
 
+### 15.5-v3 — Design system v3 (DESIGN.md v3, the Brilliant system)
+- [x] 15.5-v3a sandbox only: done 2026-11-28.
+  - **Docs.** `DESIGN_v3.md` merged into `DESIGN.md` (v3 won every conflict; v2 sections it doesn't mention kept), then deleted. Changelog at the top; 15.5f/v2.1 values listed as superseded in Appendix A.
+  - **Contrast fixes** Bink approved (DESIGN §2.2b):
+    - new per-family `ink` tone for unit-hue text and rings;
+    - blue and purple button faces `#4568F5` / `#8E49FF`;
+    - `#141414` text on the success and danger faces;
+    - light progress fill `#15803D`;
+    - light `--text-3` `#6F6F6F`.
+  - **Other spec changes**, recorded in DESIGN:
+    - eyebrow stays 14 / 18 (the draft's 13 broke its own 14 px floor);
+    - sim stage padding 12 (not 24), so 14 px labels fit at 390 px;
+    - per-sim viewBox for redrawn sims;
+    - number–unit space U+202F.
+  - **Packages** (approved in the request): `@fontsource-variable/figtree`, `@fontsource-variable/onest`, `katex`.
+    - KaTeX uses a woff2-only copy of its CSS (`src/components/ds/v3/katex-woff2.css`; regenerate with `node scripts/katex-css.mjs` after a katex update).
+    - Service-worker precache: 239 → 270 files, 7.2 → 8.0 MB. All fonts are precached even though only the sandbox uses them. `public/sw.js` and `build-sw.mjs` are untouched.
+  - **Sandbox** (`/design-system`, `.ds3` scope; code in `src/components/ds/v3/`). Theme and font switches change the page only and are not saved.
+    - font bake-off (the same U4 Home in Figtree, Onest and Plus Jakarta Sans);
+    - neutrals and the 5 families with measured contrast;
+    - buttons with ledges, cards, stat pills, course tabs;
+    - Home mock (U4) with a swipeable unit carousel;
+    - Path mock (U7);
+    - KaTeX formulas.
+    - The v2 sections are folded under "v2 components (production today)". The v2.1 previews (`V21.tsx`, `PlatePilot.tsx`) were removed; the dead `.ds21` CSS is still in `globals.css` for the rollout slice to delete.
+  - **Illustrations** (drafts for Figma): `src/assets/illustrations/` U4 cartridge + detonator, U7 axial fan. Each is a `.tsx` component plus an `.svg` exported by `scripts/export-illustrations.tsx`.
+  - **Pilot sims** (`src/components/ds/v3/pilots.tsx`): Coalification, Virgin vertical stress, Dip and strike.
+    - They spread the production SimDefs, so params, maths, readouts and the lesson objective are the production ones. Drawing and grip positions are new.
+    - Teaching check: dragging each grip meets its lesson objective (D 2 → 4.8 km, H 300 → 800 m, β 80 → 25°), and readouts update.
+    - Production sim files are unchanged (audit:svg 843 renders 0/0/0/0). audit:svg does not cover the pilot copies; they were checked by the sandbox text-size scan (0 text under 14 px except the 13 px tabs) and by screenshots.
+  - **Open for Bink:**
+    1. Pick the font after the phone check (recommendation: Figtree, the roundest and closest to Brilliant at 800).
+    2. Refine the two illustrations in Figma.
+    3. Judge the pilot sims in dark. Their fills keep light values (light greys and orange on `#1E1E1E`).
+- [ ] 15.5-v3b rollout: v3 tokens to `:root`, chosen font, remove JetBrains Mono and the losing font, Home/Path rebuilt to §5.2/§5.3, remaining illustrations, sims converted one unit at a time (geometry changes need a roadmap step + audit:svg).
+
 ## Run log
 | date (UTC) | run | outcome |
 |---|---|---|
+| 2026-11-28 | Phase 15.5-v3a: design system v3, sandbox only | Shipped on the working branch (see Phase 15.5-v3). Stopped once to ask about 8 failing v3 contrast pairs; Bink chose the 4 recommended fixes. Gates: validate 0 errors (404 stages; quotes 25 found, 0 not found; `excerpts.gen.ts` restored), tsc, lint, build, base-path build, audit:svg 843 renders 0/0/0/0 (no production sim changed), touch suite 50/50. Sandbox at 390×844 light and dark: 0 console errors, 0 horizontal overflow, no text under 14 px except 13 px tabs. Pilot grips meet their objectives (mouse and touch contexts). Shots in `.audit/v3a/` (local). Inspector acceptance and design review not run: no store, LessonPlayer or production screen changed. Not merged to `main`. |
 | 2026-11-27 | Phase 15 rebuild: coverage map on the G.S.R. 910(E) syllabus | DGMS side of `coverage/build_map.py` now parses Annexure I of G.S.R. 910(E) (3 papers, 62 topics, 324 lines; native text, no OCR) instead of CMR regulation headings; NITR rows byte-identical to before; id-existence asserts pass. Dates: notified 14-09-2018, gazetted 24-09-2018 (both printed). No conflict with G.S.R. 555(E). Gaps re-ranked (management, accidents, thick-seam on top); Phase 16 order U7 → U6 → U5 → U10 → U4 → U3 → U2 → U1 → U9 → U8 (was U7 → U4 → U8 → U2 → U6 → U10 → U5 → U3 → U1 → U9); paper-(a)-only order left for the owner. Phase 18 paper names and original/2021 marks recorded. No `src/` change. Gates: validate 0 errors (404 stages; quotes 25 found, 0 not found; `excerpts.gen.ts` restored), tsc, lint. Build, audit:svg, touch suite and Inspector check not run: no `src/` change. |
 | 2026-11-27 | Phase 15.5e: sim stages, remaining pages, whole-app sweep (closes 15.5) | Shipped (see Phase 15.5). `scripts/sweep.mjs` on the final build: every route (86), every sim stage (61) and try-it screen (3) before and after a slider move + "All readouts", 25 interaction states (node popovers, feedback sheets, menus, Sources/Inspector sheets, predict/crisis, exam question/results/analytics, Profile reset dialog, Codex tabs, Tools, Sim Lab sheet, boss rounds, seeded Warmup) at 390×844 and 1440×900, light and dark, reduced motion: 968 checks, 0 failures (0 console errors, 0 overflow, CTA on screen, 0 text under 4.5:1). End-of-lesson confetti: 0 canvases under reduced motion, 1 without (control); path-node pulse animation none under reduced motion. Text < 14 px: only the 12 px tab labels (and the sandbox). Gates: validate 0 errors (excerpts.gen.ts restored after each run), tsc, lint, base-path build, audit:svg 843 renders 0/0/0/0, touch suite 49/49, Inspector acceptance byte-identical at 390×844 and 1366×900 (Master popover start, 5 jumper stages with slider, wrong-answer and crisis input). Before/after shots: `.audit/15.5e-before/`, `.audit/15.5e-after/` (diff: only Exam, Profile, Tools and the sim stage changed; the lesson flow screen differs by ≤ 4/255 from the neutral focus dim; Campaign, unit page and question screens identical). |
 | 2026-11-27 | Phase 15.5d: Campaign, unit pages, path, start popover | Shipped (see Phase 15.5). Contrast sweep Campaign + 11 unit pages light+dark: 71 → 0 sub-4.5:1 (rock-layer labels, unit eyebrow/depth, header description all fixed); node popover states 0; text < 14 px on these pages: only the 12 px tab labels. Popover check at 390×844 light+dark, fresh and mid-progress profiles (146/146): every node, centred and at the bottom edge, popover fully on screen (x 105–285 node centres); Escape, Back and tap-outside close it; Start opens the right lesson; Back from the lesson returns to the unit page and a second Back leaves it (no stray entry). Gates: validate 0 errors, tsc, lint, base-path build, touch suite 49/49, Inspector acceptance (lesson started from a Master popover, 6/6 jumper stages, hearts lost, progress byte-identical at 390×844 and 1366×900). audit:svg not run: no sim render changed. Lesson screenshots pixel-identical to before. Design review: applied popover side by node position, 4-line labels, Next badge instead of a second action-border card, badge padding; not applied: focus ring solid (DESIGN §2.2 says 60 %), text-3 contrast worry (measured 0 failures). |

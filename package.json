@@ -14,7 +14,9 @@
     "audit:svg": "tsx --tsconfig scripts/tsconfig.json scripts/audit-svg.tsx"
   },
   "dependencies": {
+    "@fontsource-variable/figtree": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/onest": "^5.3.1",
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@radix-ui/react-dialog": "^1.3.1",
     "@radix-ui/react-popover": "^1.3.1",
@@ -22,6 +24,7 @@
     "@rive-app/react-canvas": "^4.41.0",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^14.14.0",
+    "katex": "^0.19.1",
     "lucide-react": "^1.79.0",
     "next": "15.5.29",
     "react": "19.1.0",
