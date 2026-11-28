@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
@@ -172,33 +172,50 @@ export const failureSim: SimDef = {
     { key: "mb", label: "mb / s", format: (v, o) => `${v.toFixed(2)} / ${o.s.toExponential(1)}` },
   ],
   handles: [{ key: "s3", axis: "x", at: (p) => [40 + (p.s3 / 30) * 340, 202], toValue: (x) => ((x - 40) / 340) * 30, color: "#64748B" }],
+  // §5.6d redraw (v3e): the legacy plot box (x 40..380, y 15..210) is kept, so the lesson pins still land on the HB curve, the MC line and the s3 line.
+  v3: { viewH: 290 },
   render: (p, o) => {
     const ymax = Math.max(60, Math.ceil(((o.scMC + 30 * o.Nphi) * 1.05) / 20) * 20, Math.ceil((30 + p.sci * Math.pow((hb(p.gsi, p.mi).mb * 30) / p.sci + hb(p.gsi, p.mi).s, hb(p.gsi, p.mi).a)) / 20) * 20);
     const h = hb(p.gsi, p.mi);
+    const AC = v3hue("orange");
+    const sx = (v: number) => 40 + (v / 30) * 340;
+    const sy = (v: number) => 210 - (v / ymax) * 195;
+    const hbf = (s3: number) => Math.min(ymax, s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a));
+    const env = v3curve(hbf, 0, 30, 60, sx, sy);
     return (
-      <Plot x={40} y={15} w={340} h={195} xmin={0} xmax={30} ymin={0} ymax={ymax} xlabel="σ3 (MPa)" ylabel="σ1 (MPa)">
-        {(sx, sy) => (
-          <g>
-            <polygon points={`${sx(0)},${sy(0)} ${sample((s3) => Math.min(ymax, s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a)), 0, 30, 60, sx, sy)} ${sx(30)},${sy(0)}`} fill={C.safe} opacity={0.1} />
-            <polygon points={`${sx(0)},${sy(ymax)} ${sample((s3) => Math.min(ymax, s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a)), 0, 30, 60, sx, sy)} ${sx(30)},${sy(ymax)}`} fill={C.crit} opacity={0.07} />
-            <polyline points={sample((s3) => s3 + p.sci * Math.pow((h.mb * s3) / p.sci + h.s, h.a), 0, 30, 60, sx, sy)} fill="none" stroke={C.crit} strokeWidth={2.5} strokeLinejoin="round" />
-            <polyline points={sample((s3) => o.scMC + s3 * o.Nphi, 0, 30, 2, sx, sy)} fill="none" stroke={C.tech} strokeWidth={2.5} strokeDasharray="6 4" />
-            <line x1={sx(p.s3)} x2={sx(p.s3)} y1={sy(0)} y2={sy(ymax)} stroke={C.slate} strokeDasharray="2 3" />
-            <circle cx={sx(p.s3)} cy={sy(o.hb)} r={9} fill={C.crit} opacity={0.15} />
-            <circle cx={sx(p.s3)} cy={sy(o.hb)} r={4.5} fill={C.crit} stroke="white" strokeWidth={1.5} />
-            <circle cx={sx(p.s3)} cy={sy(o.mc)} r={4.5} fill={C.tech} stroke="white" strokeWidth={1.5} />
-            <Txt x={sx(2)} y={sy(0) - 8} size={8} weight={700} fill="#047857">
-              stable (below envelope)
-            </Txt>
-            <Txt x={sx(12)} y={sy(ymax) + 14} size={9} weight={800} fill={C.crit}>
-              — Hoek–Brown (curved)
-            </Txt>
-            <Txt x={sx(12)} y={sy(ymax) + 28} size={9} weight={800} fill={C.tech}>
-              - - Mohr–Coulomb (linear)
-            </Txt>
-          </g>
-        )}
-      </Plot>
+      <g>
+        <clipPath id="failure-clip">
+          <rect x={40} y={15} width={340} height={195} />
+        </clipPath>
+        <g clipPath="url(#failure-clip)">
+          <rect x={40} y={15} width={340} height={195} fill={V3GREYS.light} />
+          <polygon points={`${sx(0)},${sy(0)} ${env} ${sx(30)},${sy(0)}`} fill={V3U.light} />
+          <line x1={sx(p.s3)} x2={sx(p.s3)} y1={sy(0)} y2={15} style={{ stroke: "var(--text-3)" }} strokeWidth={1.5} strokeDasharray="3 4" />
+        </g>
+        <V3Axes x={40} y={15} w={340} h={195} />
+        <polyline points={env} fill="none" style={{ stroke: AC.deep }} strokeWidth={2} strokeLinejoin="round" />
+        <polyline points={v3curve((s3) => o.scMC + s3 * o.Nphi, 0, 30, 2, sx, sy)} fill="none" style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+        <circle cx={sx(p.s3)} cy={sy(o.hb)} r={5} style={{ fill: AC.deep, stroke: V3SURFACE }} strokeWidth={1.5} />
+        <circle cx={sx(p.s3)} cy={sy(o.mc)} r={5} style={{ fill: V3U.deep, stroke: V3SURFACE }} strokeWidth={1.5} />
+        <SvgTex x={48} y={44} tex="\sigma_1" size={LBL} anchor="start" color={V3ON_LIGHT} />
+        <SvgTex x={376} y={235} tex="\sigma_3" size={LBL} anchor="end" color="var(--text-2)" />
+        <rect x={40} y={221} width={16} height={16} rx={3} fill={V3U.light} />
+        <V3T x={64} y={235}>
+          Stable
+        </V3T>
+        <g>
+          <line x1={40} x2={72} y1={259} y2={259} style={{ stroke: AC.deep }} strokeWidth={2} />
+          <circle cx={56} cy={259} r={5} style={{ fill: AC.deep }} />
+          <V3T x={80} y={265}>
+            Hoek–Brown
+          </V3T>
+          <line x1={206} x2={238} y1={259} y2={259} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+          <circle cx={222} cy={259} r={5} style={{ fill: V3U.deep }} />
+          <V3T x={246} y={265}>
+            Mohr–Coulomb
+          </V3T>
+        </g>
+      </g>
     );
   },
 };
@@ -255,73 +272,82 @@ export const rmrSim: SimDef = {
     { key: "gsi", label: "GSI ≈ RMR89(dry) − 5", digits: 0 },
   ],
   caption: "Support guidance is Bieniawski's for a 10 m horseshoe tunnel; coal roadways in India are designed with the CMRI-ISM RMR and Systematic Support Rules.",
+  v3: { viewH: 300 },
   render: (p, o) => {
-    const parts = [
-      { k: "UCS", v: o.r1, max: 15, c: "#6366f1" },
-      { k: "RQD", v: o.r2, max: 20, c: "#0ea5e9" },
-      { k: "Spac.", v: o.r3, max: 20, c: "#14b8a6" },
-      { k: "Cond.", v: p.cond, max: 30, c: "#f59e0b" },
-      { k: "Water", v: p.gw, max: 15, c: "#3b82f6" },
-    ];
-    let x = 30;
     const k = 3.4;
+    const x0 = 30;
+    const parts = [
+      { k: "UCS", v: o.r1, c: V3U.deep },
+      { k: "RQD", v: o.r2, c: V3U.mid },
+      { k: "Space", v: o.r3, c: V3U.light },
+      { k: "Joint", v: p.cond, c: V3GREYS.mid },
+      { k: "Water", v: p.gw, c: V3GREYS.light },
+    ];
+    let x = x0;
+    const segs = parts.map((pt) => {
+      const el = <rect key={pt.k} x={x} y={34} width={pt.v * k} height={26} fill={pt.c} style={{ stroke: V3SURFACE }} strokeWidth={1.5} />;
+      x += pt.v * k;
+      return el;
+    });
+    const xEnd = x;
+    const mark = x0 + clamp(o.rmr, 0, 100) * k;
+    const bands = [
+      { n: "V", c: V3GREYS.deep, t: "#FFFFFF" },
+      { n: "IV", c: V3GREYS.mid, t: V3ON_LIGHT },
+      { n: "III", c: V3U.light, t: V3ON_LIGHT },
+      { n: "II", c: V3U.mid, t: "#FFFFFF" },
+      { n: "I", c: V3U.deep, t: "#FFFFFF" },
+    ];
+    // wrap the support text to the card
+    const words = RMR_CLASS[o.cls].support.split(" ");
+    const lines: string[] = [];
+    let cur = "";
+    for (const w of words) {
+      if ((cur + " " + w).trim().length > 33) {
+        lines.push(cur);
+        cur = w;
+      } else cur = (cur + " " + w).trim();
+    }
+    if (cur) lines.push(cur);
+    const legend = [
+      ...parts.map((pt) => ({ t: `${pt.k} ${pt.v}`, c: pt.c, bad: false })),
+      { t: `Orient. ${String(p.ori).replace("-", "−")}`, c: p.ori < 0 ? V3BAD_LIGHT : "none", bad: p.ori < 0 },
+    ];
     return (
       <g>
-        <Txt x={30} y={22} size={9} weight={700} fill={C.slate}>
-          RATING STACK (max 100)
-        </Txt>
-        {parts.map((pt) => {
-          const el = (
-            <g key={pt.k}>
-              <rect x={x} y={30} width={pt.v * k} height={28} fill={pt.c} />
-              <rect x={x} y={30} width={pt.v * k} height={10} fill={MAT.glass} />
-              {pt.v * k > 24 && (
-                <Txt x={x + 3} y={48} size={8} fill="white" weight={800}>
-                  {pt.v}
-                </Txt>
-              )}
+        {segs}
+        {p.ori < 0 && <rect data-state="unsafe" x={xEnd + p.ori * k} y={34} width={-p.ori * k} height={26} fill={V3BAD_LIGHT} style={{ stroke: V3SURFACE }} strokeWidth={1.5} />}
+        <rect x={x0} y={34} width={340} height={26} rx={2} fill="none" style={{ stroke: V3INK }} strokeWidth={2.5} />
+        {legend.map((l, i) => {
+          const lx = 30 + (i % 3) * 116;
+          const ly = i < 3 ? 86 : 108;
+          return (
+            <g key={l.t}>
+              <rect x={lx} y={ly - 13} width={14} height={14} rx={3} fill={l.c} data-state={l.bad ? "unsafe" : undefined} style={{ stroke: V3INK3 }} strokeWidth={l.c === "none" ? 1.5 : 0} />
+              <V3T x={lx + 22} y={ly}>
+                {l.t}
+              </V3T>
             </g>
           );
-          x += pt.v * k;
-          return el;
         })}
-        {p.ori < 0 && <rect x={x + p.ori * k} y={30} width={-p.ori * k} height={28} fill="url(#hatch)" />}
-        <defs>
-          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect width="6" height="6" fill="#fecaca" />
-            <line x1="0" y1="0" x2="0" y2="6" stroke={C.crit} strokeWidth="3" />
-          </pattern>
-        </defs>
-        <rect x={30} y={30} width={340} height={28} rx={2} fill="none" stroke={C.ink} />
-        {parts.map((pt, i) => (
-          <g key={pt.k}>
-            <rect x={30 + i * 70} y={66} width={9} height={9} fill={pt.c} />
-            <Txt x={42 + i * 70} y={74} size={7.5}>
-              {`${pt.k} ${pt.v}/${pt.max}`}
-            </Txt>
+        {bands.map((b, i) => (
+          <g key={b.n}>
+            <rect x={x0 + i * 68} y={128} width={68} height={32} fill={b.c} opacity={o.cls === 4 - i ? 1 : 0.4} style={{ stroke: V3SURFACE }} strokeWidth={1.5} />
+            <V3T x={x0 + i * 68 + 34} y={150} anchor="middle" fill={b.t} weight={700}>
+              {b.n}
+            </V3T>
           </g>
         ))}
-        <Txt x={30} y={100} size={9} weight={700} fill={C.slate}>
-          CLASS SCALE
-        </Txt>
-        {[0, 20, 40, 60, 80].map((v, i) => (
-          <g key={v}>
-            <rect x={30 + v * 3.4} y={108} width={68} height={18} fill={["#991b1b", "#ef4444", "#f59e0b", "#10b981", "#047857"][i]} opacity={o.cls === 4 - i ? 1 : 0.35} filter={o.cls === 4 - i ? "url(#f-shadow)" : undefined} />
-            <Txt x={64 + v * 3.4} y={121} size={8} anchor="middle" fill="white" weight={800}>
-              {["V", "IV", "III", "II", "I"][i]}
-            </Txt>
-          </g>
+        <polygon points={`${mark},126 ${mark - 6},117 ${mark + 6},117`} style={{ fill: V3INK }} />
+        <rect x={16} y={166} width={376} height={28 + lines.length * 22} rx={10} fill={V3GREYS.light} />
+        <V3T x={30} y={188} fill={V3ON_LIGHT} weight={700}>
+          Support, 10 m tunnel
+        </V3T>
+        {lines.map((l, i) => (
+          <V3T key={i} x={30} y={212 + i * 22} fill={V3ON_LIGHT}>
+            {l}
+          </V3T>
         ))}
-        <polygon points={`${30 + clamp(o.rmr, 0, 100) * 3.4},106 ${26 + clamp(o.rmr, 0, 100) * 3.4},98 ${34 + clamp(o.rmr, 0, 100) * 3.4},98`} fill={C.ink} />
-        <Txt x={30} y={150} size={18} weight={900} mono>
-          RMR {o.rmr.toFixed(0)}
-        </Txt>
-        <Txt x={150} y={150} size={11} weight={700}>
-          {RMR_CLASS[o.cls].name}
-        </Txt>
-        <foreignObject x={30} y={160} width={345} height={70}>
-          <div style={{ fontSize: 9, lineHeight: 1.3, color: "#334155", fontFamily: SANS }}>Support (10 m tunnel): {RMR_CLASS[o.cls].support}</div>
-        </foreignObject>
       </g>
     );
   },
