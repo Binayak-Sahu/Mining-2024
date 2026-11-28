@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, sample, clamp, rad, deg, polyline, heatColor, Cracks, SANS } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
+import { T as V3T, INK as V3INK, INK3 as V3INK3, GREYS as V3GREYS, U as V3U, BAD as V3BAD, BAD_LIGHT as V3BAD_LIGHT, ON_LIGHT as V3ON_LIGHT, ON_DEEP as V3ON_DEEP, DimLine as V3DimLine, LBL, SURFACE as V3SURFACE, Arrow as V3Arrow, hue as v3hue, Axes as V3Axes, curve as v3curve } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /** Abramowitz & Stegun 7.1.26 error function. */
@@ -383,11 +383,14 @@ export const boltSim: SimDef = {
   ],
   caption: "Shale tensile strength taken as 1.5 MPa; γ = 25 kN/m³. Beam stress for a clamped beam under self-weight.",
   handles: [{ key: "L", axis: "x", at: (p) => [200 + (p.L * 55) / 2, 132], toValue: (x) => ((x - 200) * 2) / 55, color: "#F59E0B" }],
+  // §5.6d redraw (v3e): legacy 0..400 x 0..240 box kept (roof line y=120), so the lesson pins still land on the roof laminae, anchorage strata, span and rib.
+  v3: { viewH: 250, formula: () => "\\sigma_{\\max} = \\dfrac{\\gamma L^{2}}{2\\,t_{\\text{beam}}}" },
   render: (p, o) => {
     const k = 330 / 6;
     const x0 = 200 - (p.L * k) / 2;
     const x1 = 200 + (p.L * k) / 2;
     const yRoof = 120;
+    const yFloor = 190;
     const th = p.t * 28;
     const sag = clamp(o.ratio * 10, 0, 22);
     const layers = [];
@@ -395,35 +398,56 @@ export const boltSim: SimDef = {
       const lt = th / p.n;
       const y = yRoof - (i + 1) * lt;
       const gap = p.mode ? 0 : 2.2 * (p.n - i) * clamp(o.ratio, 0.2, 1.5);
-      layers.push(<path key={i} d={`M 20 ${y} L ${x0} ${y} Q 200 ${y + lt + sag + gap} ${x1} ${y} L 380 ${y} L 380 ${y + lt} L ${x1} ${y + lt} Q 200 ${y + 2 * lt + sag + gap} ${x0} ${y + lt} L 20 ${y + lt} Z`} fill={i % 2 ? MAT.shale : MAT.sand} stroke="#78716c" strokeWidth={0.6} />);
+      layers.push(<path key={i} d={`M 0 ${y} L ${x0} ${y} Q 200 ${y + lt + sag + gap} ${x1} ${y} L 400 ${y} L 400 ${y + lt} L ${x1} ${y + lt} Q 200 ${y + 2 * lt + sag + gap} ${x0} ${y + lt} L 0 ${y + lt} Z`} fill={i % 2 ? V3U.mid : V3U.light} />);
     }
     const bolts = [];
     if (p.mode) {
-      for (let x = x0 + (p.s * k) / 2; x < x1; x += p.s * k) bolts.push(<line key={x} x1={x} x2={x} y1={yRoof + sag * 0.3} y2={yRoof - th - 0.3 * 28} stroke={C.tech} strokeWidth={3} />);
+      for (let x = x0 + (p.s * k) / 2; x < x1; x += p.s * k) {
+        bolts.push(
+          <g key={x}>
+            <line x1={x} x2={x} y1={yRoof + sag * 0.3} y2={yRoof - th - 0.3 * 28} style={{ stroke: V3U.deep }} strokeWidth={2} strokeLinecap="round" />
+            <rect x={x - 5} y={yRoof + sag * 0.3 - 1} width={10} height={4} rx={1.5} style={{ fill: V3U.deep }} />
+          </g>,
+        );
+      }
     }
+    const crack = (x: number, y: number, len: number, ang: number) => `${x},${y} ${x + len * Math.cos(rad(ang))},${y + len * Math.sin(rad(ang))}`;
     return (
       <g>
-        <rect x={20} y={20} width={360} height={yRoof - th - 20} fill={MAT.rock} />
-        <rect x={20} y={20} width={360} height={yRoof - th - 20} fill="#57534E" opacity={0.45} />
-        <Txt x={30} y={34} size={8} fill="white" weight={700}>
-          COMPETENT STRATA (anchorage horizon)
-        </Txt>
-        {layers}
-        <rect x={x0} y={yRoof} width={x1 - x0} height={70} fill="white" />
-        <rect x={20} y={yRoof} width={x0 - 20} height={90} fill={C.coal} />
-        <rect x={x1} y={yRoof} width={380 - x1} height={90} fill={C.coal} />
-        <rect x={20} y={yRoof + 70} width={360} height={20} fill="#57534e" />
-        {bolts}
-        {o.ratio >= 1 && <Cracks key={`b${p.mode}${Math.round(o.ratio * 4)}`} cracks={[{ x: 200, y: yRoof + sag * 0.6, len: Math.min(th, 40), angle: -95, seed: 2 }, { x: x0 + 6, y: yRoof - 2, len: 22, angle: -60, seed: 6 }, { x: x1 - 6, y: yRoof - 2, len: 22, angle: -120, seed: 10 }]} color="#7F1D1D" width={2} />}
-        <Txt x={200} y={yRoof + 40} size={10} anchor="middle" weight={800}>
-          {`span ${p.L.toFixed(1)} m`}
-        </Txt>
-        <Txt x={200} y={yRoof + 56} size={9} anchor="middle" fill={o.ratio >= 1 ? C.crit : C.slate} mono>
-          {p.mode ? "clamped into one thick beam" : `${p.n} free laminae × ${o.tl.toFixed(2)} m`}
-        </Txt>
-        <Txt x={30} y={232} size={8} fill={C.slate}>
-          {p.mode ? "Bolts: suspend weak roof from strong strata AND clamp laminae into a composite beam." : "Laminae sag independently: each carries its own weight with its own small thickness."}
-        </Txt>
+        <clipPath id="bolt-clip">
+          <rect x={0} y={0} width={400} height={250} rx={12} />
+        </clipPath>
+        <g clipPath="url(#bolt-clip)">
+          <rect x={0} y={0} width={400} height={yRoof - th} fill={V3GREYS.light} />
+          <rect x={0} y={yRoof - th} width={400} height={th} fill={V3GREYS.deep} />
+          <rect x={0} y={yRoof} width={400} height={yFloor - yRoof} fill={V3GREYS.deep} />
+          <rect x={x0} y={yRoof} width={x1 - x0} height={yFloor - yRoof} style={{ fill: V3SURFACE }} />
+          <rect x={0} y={yFloor} width={400} height={60} fill={V3GREYS.mid} />
+          {layers}
+          {bolts}
+          {o.ratio >= 1 && (
+            <g data-state="unsafe" fill="none" strokeWidth={2} strokeLinecap="round" style={{ stroke: V3BAD }}>
+              <polyline points={crack(216, yRoof + sag * 0.6, Math.min(th, 40), -95)} />
+              <polyline points={crack(x0 + 6, yRoof - 2, 22, -60)} />
+              <polyline points={crack(x1 - 6, yRoof - 2, 22, -120)} />
+            </g>
+          )}
+        </g>
+        <V3DimLine x1={x0} y1={152} x2={x1} y2={152} />
+        <V3T x={200} y={178} anchor="middle">
+          Span
+        </V3T>
+        <V3T x={24} y={42} fill={V3ON_LIGHT}>
+          Competent strata
+        </V3T>
+        {x0 >= 62 && (
+          <V3T x={24} y={184} fill={V3ON_DEEP}>
+            Rib
+          </V3T>
+        )}
+        <V3T x={24} y={220} fill={V3ON_LIGHT}>
+          {p.mode ? "Clamped into one beam" : "Laminae slip freely"}
+        </V3T>
       </g>
     );
   },
