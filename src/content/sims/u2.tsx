@@ -1,6 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT } from "@/components/sim/v3";
+import * as F3 from "@/components/sim/v3";
 
 /* ---------------- Access selection: adit vs incline vs shaft ---------------- */
 
@@ -132,77 +134,93 @@ export const sinkingSim: SimDef = {
   ],
   caption: "Monthly rate = rounds/day × advance × 26 working days × 0.6 availability (dewatering, inspections, shift changes).",
   animated: true,
+  // v3.2 redraw: same shaft centre (x 75) and legacy Gantt/gauge rows, so the lesson pins stay on Galloway stage, kibble, muck bar and rate.
+  v3: { viewH: 250 },
   render: (p, o, t) => {
     const ky = 160 + 28 * Math.sin(t * 1.3);
     const segs = [
-      { k: "drill", label: "Drill", c: C.tech },
-      { k: "blast", label: "Charge·Blast·Vent", c: C.crit },
-      { k: "muck", label: "Muck (grab+kibble)", c: C.hazard },
-      { k: "line", label: "Line", c: C.slate },
-      { k: "misc", label: "Misc", c: C.rock },
+      { k: "drill", label: "Drill", fill: GREYS.deep },
+      { k: "blast", label: "Blast", fill: "var(--u-mid)" },
+      { k: "muck", label: "Muck", fill: "var(--u-deep)" },
+      { k: "line", label: "Line", fill: "var(--u-light)" },
+      { k: "misc", label: "Misc", fill: GREYS.light },
     ];
-    let x = 150;
-    const w = 235 / o.cycle;
-    const sw = 40 + p.dia * 6;
+    const RX = 196;
+    const RW = 180;
+    let x = RX;
+    const w = RW / o.cycle;
+    const sw = 60 + p.dia * 5;
+    const sl = 75 - sw / 2;
+    const sr = 75 + sw / 2;
+    const liningH = p.conc ? 150 : 110;
+    const rate = clamp(o.perMonth / 100, 0, 1);
+    const met = o.perMonth >= 70;
     return (
       <g>
-        <rect x={20} y={20} width={110} height={205} fill={MAT.rock} />
-        <rect x={20} y={20} width={110} height={205} fill={MAT.rockShade} />
-        <rect x={75 - sw / 2} y={20} width={sw} height={205} fill="#F1F5F9" />
-        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
-        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill="#9CA3AF" />
-        <rect x={75 - sw / 2 - 5} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
-        <rect x={75 + sw / 2} y={20} width={5} height={p.conc ? 150 : 110} fill={MAT.hatch} />
-        {[0, 1, 2].map((d) => (
-          <rect key={d} x={75 - sw / 2 + 2} y={120 + d * 12} width={sw - 4} height={4} rx={1} fill={MAT.metal} stroke="#334155" strokeWidth={0.6} />
-        ))}
-        <Txt x={75} y={116} size={7} anchor="middle" weight={700}>
-          GALLOWAY STAGE
-        </Txt>
-        <line x1={75} y1={20} x2={75} y2={ky} stroke="#334155" strokeWidth={1.2} />
-        <path d={`M68 ${ky} h14 l-2 14 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={1} />
-        <Txt x={86} y={ky + 10} size={7} weight={700}>
-          kibble
-        </Txt>
-        <path d={`M ${75 - sw / 2} 215 L ${75 + sw / 2} 215 L ${75 + sw / 2} 225 L ${75 - sw / 2} 225 Z`} fill={MAT.goaf} />
-        <Txt x={75} y={237} size={7} anchor="middle" fill={C.slate}>
-          sump / shaft bottom
-        </Txt>
-        <Txt x={150} y={30} size={9} weight={700} fill={C.slate}>
-          CYCLE GANTT · {o.cycle.toFixed(1)} h
-        </Txt>
+        <defs>
+          <clipPath id="u2sk-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u2sk-clip)">
+          {/* host rock, flat bands */}
+          <rect x={0} y={0} width={190} height={250} fill={GREYS.light} opacity={0.5} />
+          <rect x={0} y={70} width={190} height={46} fill={GREYS.light} />
+          <rect x={0} y={160} width={190} height={34} fill={GREYS.light} />
+          {/* open shaft */}
+          <rect x={sl} y={0} width={sw} height={220} style={{ fill: "var(--surface)" }} />
+          {/* lining: only above the working level (sequential) or down to the stage (concurrent) */}
+          <rect x={sl - 4} y={0} width={4} height={liningH + 12} style={{ fill: U.light }} />
+          <rect x={sr} y={0} width={4} height={liningH + 12} style={{ fill: U.light }} />
+          {/* sump */}
+          <rect x={sl} y={208} width={sw} height={14} fill={GREYS.mid} />
+          {/* shaft walls */}
+          <line x1={sl - 4} y1={0} x2={sl - 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sr + 4} y1={0} x2={sr + 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sl - 4} y1={222} x2={sr + 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+        </g>
+        {/* Galloway stage deck, with the hoist rope passing through it */}
+        <rect x={sl} y={120} width={sw} height={14} fill={GREYS.deep} />
+        <T x={132} y={132} fill={ON_LIGHT} weight={700}>
+          Stage
+        </T>
+        <line x1={75} y1={12} x2={75} y2={ky} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <path d={`M${66} ${ky} h18 l-3 18 h-12 z`} style={{ fill: U.deep }} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
+        <T x={132} y={ky + 15} fill={ON_LIGHT} weight={700}>
+          Kibble
+        </T>
+        {/* cycle Gantt */}
+        <rect x={RX} y={36} width={RW} height={28} rx={3} fill={GREYS.light} />
         {segs.map((s) => {
           const v = o[s.k];
-          const el = (
-            <g key={s.k}>
-              <rect x={x} y={40} width={Math.max(v * w, 0)} height={26} fill={s.c} />
-              {v * w > 26 && (
-                <Txt x={x + 3} y={56} size={7} fill="white" weight={700}>
-                  {v.toFixed(1)}h
-                </Txt>
-              )}
-            </g>
-          );
+          const el = <rect key={s.k} x={x} y={36} width={Math.max(v * w, 0)} height={28} style={{ fill: s.fill }} />;
           x += v * w;
           return el;
         })}
-        {segs.map((s, i) => (
-          <g key={s.label}>
-            <rect x={150} y={80 + i * 14} width={9} height={9} fill={s.c} />
-            <Txt x={164} y={88 + i * 14} size={8}>
-              {s.label}
-            </Txt>
-          </g>
-        ))}
-        <Txt x={150} y={170} size={9} mono>
-          Excavated Ø {o.dexc.toFixed(1)} m · {o.holes} holes
-        </Txt>
-        <Txt x={150} y={186} size={9} mono>
-          Advance {o.adv.toFixed(2)} m/round
-        </Txt>
-        <Txt x={150} y={210} size={16} weight={900} mono fill={o.perMonth >= 70 ? C.safe : C.hazard}>
-          {o.perMonth.toFixed(0)} m/month
-        </Txt>
+        <rect x={RX} y={36} width={RW} height={28} rx={3} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        {/* legend */}
+        {segs.map((s, i) => {
+          const lx = i < 3 ? RX : RX + 88;
+          const ly = 96 + (i % 3) * 24;
+          return (
+            <g key={s.k}>
+              <rect x={lx} y={ly - 14} width={14} height={14} rx={2} style={{ fill: s.fill, stroke: INK3 }} strokeWidth={1.5} />
+              <T x={lx + 22} y={ly} fill={INK}>
+                {s.label}
+              </T>
+            </g>
+          );
+        })}
+        {/* sinking-rate gauge against the 70 m/month target */}
+        <T x={RX} y={184} fill={INK}>
+          Rate
+        </T>
+        <T x={RX + RW * 0.7} y={184} anchor="middle">
+          target
+        </T>
+        <rect x={RX} y={196} width={RW} height={16} rx={8} fill={GREYS.light} />
+        <rect x={RX} y={196} width={Math.max(RW * rate, 0)} height={16} rx={8} data-state={met ? "safe" : undefined} style={{ fill: met ? OK_LIGHT : "var(--u-mid)" }} />
+        <line x1={RX + RW * 0.7} y1={192} x2={RX + RW * 0.7} y2={216} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
       </g>
     );
   },
@@ -238,61 +256,63 @@ export const freezeSim: SimDef = {
     { key: "e", label: "Design wall thickness", format: (v) => (Number.isFinite(v) ? `${v.toFixed(2)} m` : "INFEASIBLE"), tone: (v) => (!Number.isFinite(v) ? "crit" : v > 4 ? "warn" : "ok") },
     { key: "n", label: "Freeze holes @1.2 m", digits: 0, format: (v) => (v ? String(v) : "—") },
   ],
+  // §5.6d redraw (v3.2): same plan scale and centre as legacy (centre 120,125, 12 px per m) so the four pins stay put.
+  v3: { viewH: 250, formula: () => "e_{\\text{Lamé}} = r\\left[\\sqrt{\\dfrac{\\sigma}{\\sigma-2p}}-1\\right]" },
   render: (p, o) => {
     const cx = 120;
     const cy = 125;
     const k = 12; // px per m
     const rIn = p.r * k;
     const e = Number.isFinite(o.e) ? o.e : 0;
-    const rOut = (p.r + e) * k;
+    const rWall = o.ok ? Math.min((p.r + e) * k, 110) : Math.min(rIn + 26, 110);
+    const state = o.ok ? "safe" : "unsafe";
+    const rArr = rWall + 22;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
-        <rect x={0} y={0} width={400} height={240} fill="#FEF9C3" opacity={0.45} />
-        <Txt x={10} y={16} size={9} weight={700} fill={C.slate}>
-          PLAN AT AQUIFER BASE ({p.h} m)
-        </Txt>
-        <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={o.ok ? "#bae6fd" : "#fecaca"} stroke={o.ok ? C.tech : C.crit} strokeWidth={2} />
-        <circle cx={cx} cy={cy} r={Math.min(rOut, 110)} fill={MAT.glass} />
-        <circle cx={cx} cy={cy} r={rIn} fill="#F8FAFC" stroke={C.ink} strokeWidth={2} />
-        <circle cx={cx} cy={cy} r={rIn - 3} fill="none" stroke="#9CA3AF" strokeWidth={3} />
+        <defs>
+          <clipPath id="u2fz-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        {/* sand aquifer: host ground, edge to edge, clipped */}
+        <rect x={0} y={0} width={400} height={250} fill={F3.GREYS.light} clipPath="url(#u2fz-clip)" />
+        <g clipPath="url(#u2fz-clip)">
+        {/* frozen wall (annulus: the shaft disc sits on top) */}
+        <circle cx={cx} cy={cy} r={rWall} data-state={state} fill={o.ok ? undefined : F3.BAD_LIGHT} style={o.ok ? { fill: F3.U.mid } : undefined} stroke={F3.ON_LIGHT} strokeWidth={1.5} strokeDasharray={o.ok ? undefined : "6 5"} />
+        {/* excavated shaft */}
+        <circle cx={cx} cy={cy} r={rIn} fill="#F5F5F5" style={{ stroke: F3.INK }} strokeWidth={2.5} />
+        {/* freeze holes on the pitch circle */}
         {Array.from({ length: o.n }).map((_, i) => {
           const a = (2 * Math.PI * i) / Math.max(o.n, 1);
           const R = o.Rf * k;
-          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={2.6} fill="#E0F2FE" stroke="#0369A1" strokeWidth={1.2} filter="url(#f-glow)" />;
+          return <circle key={i} cx={cx + R * Math.cos(a)} cy={cy + R * Math.sin(a)} r={3.5} fill={F3.ON_LIGHT} />;
         })}
-        <Txt x={cx} y={cy + 3} size={9} anchor="middle" weight={700}>
-          SHAFT
-        </Txt>
+        {/* ground + water pressure acting inwards */}
         {[0, 1, 2, 3].map((i) => {
           const a = (Math.PI / 2) * i + Math.PI / 4;
-          const R = Math.min(rOut, 110) + 22;
-          return <Arrow key={i} x1={cx + R * Math.cos(a)} y1={cy + R * Math.sin(a)} x2={cx + (R - 18) * Math.cos(a)} y2={cy + (R - 18) * Math.sin(a)} color={C.crit} />;
+          return <F3.Arrow key={i} x1={cx + rArr * Math.cos(a)} y1={cy + rArr * Math.sin(a)} x2={cx + (rArr - 32) * Math.cos(a)} y2={cy + (rArr - 32) * Math.sin(a)} color={F3.ON_LIGHT} width={2} />;
         })}
-        <Txt x={255} y={50} size={10} weight={800}>
-          Lamé (thick cylinder)
-        </Txt>
-        <Txt x={255} y={64} size={9} mono>
-          e = r[√(σ/(σ−2p)) − 1]
-        </Txt>
-        <Txt x={255} y={90} size={10} weight={800}>
-          Domke (frozen soil)
-        </Txt>
-        <Txt x={255} y={104} size={9} mono>
-          e = r[0.29p/σ + 2.3(p/σ)²]
-        </Txt>
-        <Txt x={255} y={132} size={9} fill={C.slate}>
-          p ≈ 0.013 MPa per m
-        </Txt>
-        <Txt x={255} y={146} size={9} fill={C.slate}>
-          (saturated sand + water)
-        </Txt>
-        <Txt x={255} y={176} size={14} weight={900} mono fill={o.ok ? C.ink : C.crit}>
-          {o.ok ? `e = ${o.e.toFixed(2)} m` : "σ ≤ 2p !"}
-        </Txt>
-        <Txt x={255} y={194} size={9} fill={C.slate}>
-          Colder brine (−30 °C) ⇒ higher σ
-        </Txt>
+        </g>
+        {/* legend */}
+        <circle cx={256} cy={52} r={9} fill="#F5F5F5" style={{ stroke: F3.INK }} strokeWidth={2.5} />
+        <F3.T x={272} y={58} fill={F3.ON_LIGHT}>
+          Shaft
+        </F3.T>
+        <rect x={247} y={84} width={18} height={18} rx={3} style={{ fill: F3.U.mid }} stroke={F3.ON_LIGHT} strokeWidth={1.5} />
+        <F3.T x={272} y={99} fill={F3.ON_LIGHT}>
+          Ice wall
+        </F3.T>
+        <circle cx={256} cy={128} r={3.5} fill={F3.ON_LIGHT} />
+        <F3.T x={272} y={134} fill={F3.ON_LIGHT}>
+          Holes
+        </F3.T>
+        <F3.Arrow x1={247} y1={166} x2={265} y2={166} color={F3.ON_LIGHT} width={2} />
+        <F3.T x={272} y={172} fill={F3.ON_LIGHT}>
+          Pressure
+        </F3.T>
+        <F3.T x={376} y={222} anchor="end" fill={F3.ON_LIGHT}>
+          Sand aquifer
+        </F3.T>
       </g>
     );
   },

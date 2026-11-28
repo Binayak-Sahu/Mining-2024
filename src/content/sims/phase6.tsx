@@ -5,7 +5,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, rad, deg, polyline, Cracks } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
+import { T, INK, INK3, OK_LIGHT, ON_LIGHT, ON_DEEP, GREYS, U, OK, BAD, BAD_TEXT, BAD_LIGHT, SURFACE, pts, num } from "@/components/sim/v3";
 
 /* =========================================================================
  * 1. Three-point dip & strike solver
@@ -247,44 +247,71 @@ export const slopeModesSim: SimDef = {
     { key: "mech", label: "Toppling check", format: (v, _, p) => (p.mode !== 3 ? "—" : v === 1 ? "Topples first (b/h < tan ψ)" : "Slides first (ψ > φ)") },
   ],
   caption: "Plane: limit equilibrium. Wedge: Hoek & Bray wedge factor k = sinβ/sin(ξ/2) (symmetric wedge, β = 90°) on the line of intersection. Circular: Bishop's simplified method, 49-circle search through the toe (γ = 20 kN/m³). Toppling: b/h vs tan ψ, sliding tanφ/tanψ.",
+  // §5.6d redraw (v3.2): legacy toe (90, 205) and scale kept; one stage per failure mode, mass colour carries the state.
+  v3: {
+    viewH: 250,
+    formula: (p) =>
+      p.mode === 0
+        ? "\\mathrm{FoS} = \\dfrac{cA + W\\cos\\psi_p\\,(1-r_u)\\tan\\varphi}{W\\sin\\psi_p}"
+        : p.mode === 1
+          ? "k = \\dfrac{\\sin\\beta}{\\sin(\\xi/2)}"
+          : p.mode === 2
+            ? "F = \\dfrac{\\sum \\big[cb + (W-ub)\\tan\\varphi\\big]/m_\\alpha}{\\sum W\\sin\\alpha},\\quad m_\\alpha = \\cos\\alpha\\,\\Big(1+\\dfrac{\\tan\\alpha\\tan\\varphi}{F}\\Big)"
+            : "\\text{topples if } b/h < \\tan\\psi;\\ \\text{slides if } \\psi > \\varphi",
+  },
   render: (p, o, t) => {
+    const VH = 250;
     const fail = o.fos < 1;
     const d = fail ? ((t % 3) / 3) * 22 : 0;
-    const col = o.fos >= 1.3 ? C.safe : o.fos >= 1 ? C.hazard : C.crit;
-    const k = 2.6;
+    const state = !Number.isFinite(o.fos) || o.fos >= 1.3 ? "safe" : fail ? "unsafe" : undefined;
+    const massFill = state === "safe" ? OK_LIGHT : state === "unsafe" ? BAD_LIGHT : U.light;
+    const k = 2.4;
     const toeX = 90;
-    const toeY = 205;
+    const toeY = 195;
     const Hp = p.H * k;
     const crestX = toeX + Hp / Math.tan(rad(p.pf));
     const topY = toeY - Hp;
-    const header = (
-      <g>
-        <Txt x={12} y={22} size={15} weight={900} mono fill={col}>
-          {Number.isFinite(o.fos) ? `FoS ${o.fos.toFixed(2)}` : "FoS ∞"}
-        </Txt>
-        <Txt x={12} y={38} size={9} weight={800} fill={C.slate}>
-          {`${MODES[p.mode].toUpperCase()} FAILURE${fail ? " — MOVING" : ""}`}
-        </Txt>
-      </g>
+    const rockPoly = [[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, VH], [0, VH]] as [number, number][];
+    const clip = (
+      <clipPath id="u3-modes-clip">
+        <rect x={0} y={0} width={400} height={VH} rx={12} />
+      </clipPath>
+    );
+    const profile = (
+      <polyline points={pts([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+    );
+    const crestLabel = (
+      <T x={crestX > 300 ? 376 : Math.max(crestX - 6, 24)} y={Math.max(topY - 12, 42)} anchor={crestX > 300 ? "end" : "start"}>
+        Crest
+      </T>
     );
     if (p.mode === 1) {
-      // front view of a face with a wedge between two joint traces
-      const half = clamp(80 * Math.tan(rad(p.xi / 2)), 25, 150);
+      const hW = 110;
+      const faceT = 60;
+      const faceB = 186;
+      const half = clamp(hW * Math.tan(rad(p.xi / 2)), 25, 160);
+      const apexY = faceT + hW;
+      const sl = 160 / half;
+      const wedge: [number, number][] = [[200 - half, faceT], [200 + half, faceT], [200, apexY]];
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <rect x={40} y={50} width={320} height={160} fill={MAT.rock} stroke={C.ink} />
-          <polygon points={polyline([[200 - half, 50], [200 + half, 50], [200, 50 + 150]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(0 ${d})`} />
-          <line x1={200 - half - 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
-          <line x1={200 + half + 40} y1={50 - 40 * (150 / half)} x2={200} y2={200} stroke={C.ink} strokeDasharray="5 3" />
-          <Arrow x1={200} y1={120} x2={200} y2={175} color={C.crit} width={2} />
-          <Txt x={208} y={170} size={8} fill={C.crit} weight={700}>
-            {`line of intersection plunge ${p.pp}°`}
-          </Txt>
-          <Txt x={60} y={228} size={8} fill={C.slate}>
-            {`face view · included angle ξ = ${p.xi}° · wedge factor k = ${(1 / Math.sin(rad(p.xi / 2))).toFixed(2)}`}
-          </Txt>
-          {header}
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <rect x={0} y={0} width={400} height={VH} style={{ fill: GREYS.light }} />
+            <rect x={0} y={faceT} width={400} height={faceB - faceT} style={{ fill: GREYS.mid }} />
+            <line x1={0} y1={faceT} x2={400} y2={faceT} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <line x1={0} y1={faceB} x2={400} y2={faceB} style={{ stroke: INK3 }} strokeWidth={1.5} />
+            <g className={fail ? "shake" : undefined}>
+              <polygon data-state={state} points={pts(wedge)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" transform={`translate(0 ${d})`} />
+            </g>
+            <line x1={200 - half} y1={faceT} x2={200 + (faceB - apexY) / sl} y2={faceB} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+            <line x1={200 + half} y1={faceT} x2={200 - (faceB - apexY) / sl} y2={faceB} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+          </g>
+          <Arrow x1={200} y1={faceT + 36} x2={200} y2={faceB + 14} color={ON_LIGHT} width={2} head={10} />
+          <T x={24} y={44}>Crest</T>
+          <T x={24} y={220}>Pit floor</T>
+          <T x={376} y={44} anchor="end">Face view</T>
+          <T x={376} y={220} anchor="end">Line of intersection</T>
         </g>
       );
     }
@@ -302,67 +329,106 @@ export const slopeModesSim: SimDef = {
         }
       }
       const mass: [number, number][] = [[S(0), SY(0)], [crestX, topY], [S(b.xe), topY], ...arc.slice().reverse()];
+      const mid = arc.length ? arc[Math.floor(arc.length * 0.6)] : null;
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.goaf} />
-          {arc.length > 0 && (
-            <g transform={`rotate(${deg(ang)} ${S(b.cx)} ${SY(b.cy)})`}>
-              <polygon points={polyline(mass)} fill={col} opacity={0.55} stroke={C.ink} />
-            </g>
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <polygon points={pts(rockPoly)} style={{ fill: GREYS.light }} />
+            {arc.length > 0 && (
+              <g transform={`rotate(${deg(ang)} ${S(b.cx)} ${SY(b.cy)})`}>
+                <polygon data-state={state} points={pts(mass)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
+              </g>
+            )}
+            {profile}
+          </g>
+          {crestLabel}
+          <T x={toeX} y={220} anchor="middle">Toe</T>
+          <T x={376} y={220} anchor="end">Weak ground</T>
+          {mid && (
+            <>
+              <T x={24} y={44}>Slip circle</T>
+              <line x1={24 + 104} y1={38} x2={mid[0]} y2={mid[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+            </>
           )}
-          {arc.length > 0 && <circle cx={S(b.cx)} cy={SY(b.cy)} r={3} fill={C.ink} />}
-          <Txt x={396} y={225} size={7.5} fill={C.slate} anchor="end">
-            critical circle (Bishop, weak overburden/dump)
-          </Txt>
-          {header}
         </g>
       );
     }
     if (p.mode === 3) {
-      const n = 6;
-      const bw = 18;
-      const bhgt = bw / p.bh;
-      const baseAng = p.pp;
+      const bw = 22;
+      const bhgt = Math.min(bw / p.bh, 140);
+      const a = rad(p.pp);
+      const x0 = 40;
+      const y0 = 195;
+      const step = bw + 2;
+      const n = Math.max(4, Math.min(9, Math.floor(140 / (step * Math.sin(a)))));
+      const yAt = (x: number) => y0 - (x - x0) * Math.tan(a);
+      const xe = Math.min(400, x0 + y0 / Math.tan(a));
+      const rock: [number, number][] = [[0, y0], [x0, y0], [xe, yAt(xe)], [400, yAt(xe)], [400, VH], [0, VH]];
       const blocks = [];
       for (let i = 0; i < n; i++) {
-        const bx = 120 + i * (bw + 2) * Math.cos(rad(baseAng));
-        const by = 210 - i * (bw + 2) * Math.sin(rad(baseAng));
+        const bx = x0 + i * step * Math.cos(a);
+        const by = y0 - i * step * Math.sin(a);
         const tilt = fail && o.mech === 1 ? Math.min(d * 2, 35) : 0;
         const slide = fail && o.mech === 2 ? d : 0;
         blocks.push(
-          <g key={i} transform={`translate(${-slide * Math.cos(rad(baseAng))} ${slide * Math.sin(rad(baseAng))}) rotate(${-baseAng - tilt} ${bx} ${by})`}>
-            <rect x={bx} y={by - Math.min(bhgt, 140)} width={bw} height={Math.min(bhgt, 140)} fill={col} opacity={0.7} stroke={C.ink} />
+          <g key={i} transform={`translate(${-slide * Math.cos(a)} ${slide * Math.sin(a)}) rotate(${-p.pp - tilt} ${bx} ${by})`}>
+            <rect data-state={state} x={bx} y={by - bhgt} width={bw} height={bhgt} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" />
           </g>,
         );
       }
       return (
         <g>
-          <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-          <polygon points={polyline([[60, 215], [380, 215 - 320 * Math.tan(rad(baseAng))], [400, 240], [0, 240]])} fill={MAT.rock} />
-          {blocks}
-          <Txt x={230} y={232} size={8} fill={C.slate}>
-            {`b/h ${p.bh.toFixed(2)} vs tan ψ ${Math.tan(rad(p.pp)).toFixed(2)}`}
-          </Txt>
-          {header}
+          {clip}
+          <g clipPath="url(#u3-modes-clip)">
+            <polygon points={pts(rock)} style={{ fill: GREYS.light }} />
+            <polyline points={pts([[0, y0], [x0, y0], [xe, yAt(xe)]])} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+            {blocks}
+          </g>
+          <T x={24} y={44}>Rock columns</T>
+          <T x={376} y={220} anchor="end">Intact rock</T>
+          <T x={24} y={220}>Pit floor</T>
         </g>
       );
     }
     // plane
     const planeX = toeX + Hp / Math.tan(rad(p.pp));
+    const fits = planeX <= 400;
+    const endX = fits ? planeX : 400;
+    const endY = fits ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp));
     const dx = d * Math.cos(rad(p.pp));
     const dy = d * Math.sin(rad(p.pp));
+    const blk: [number, number][] = fits ? [[toeX, toeY], [crestX, topY], [planeX, topY]] : [[toeX, toeY], [crestX, topY], [400, topY], [400, endY]];
+    const bc: [number, number] = [blk.reduce((s, q) => s + q[0], 0) / blk.length, blk.reduce((s, q) => s + q[1], 0) / blk.length];
+    const wy = topY + (1 - p.ru * 1.5) * Hp * 0.8;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sky} />
-        <polygon points={polyline([[0, toeY], [toeX, toeY], [crestX, topY], [400, topY], [400, 240], [0, 240]])} fill={MAT.shale} />
-        {fail && <Cracks key={`m${p.mode}`} cracks={[{ x: crestX + 20, y: topY, len: 34, angle: 100, seed: 5 }, { x: crestX + 46, y: topY, len: 26, angle: 80, seed: 11 }]} color="#7F1D1D" width={2} />}
-        {o.kin === 1 && planeX <= 400 && (
-          <polygon points={polyline([[toeX, toeY], [crestX, topY], [planeX, topY]])} fill={col} opacity={0.6} stroke={C.ink} transform={`translate(${-dx} ${dy})`} />
+        {clip}
+        <g clipPath="url(#u3-modes-clip)">
+          <polygon points={pts(rockPoly)} style={{ fill: GREYS.light }} />
+          {o.kin === 1 && (
+            <g className={fail ? "shake" : undefined}>
+              <polygon data-state={state} points={pts(blk)} style={{ fill: massFill, stroke: ON_LIGHT }} strokeWidth={2.5} strokeLinejoin="round" transform={`translate(${-dx} ${dy})`} />
+            </g>
+          )}
+          {fail && o.kin === 1 && (
+            <g data-state="unsafe">
+              <Cracks key={`m${p.mode}`} cracks={[{ x: Math.min(planeX, 396) + 6, y: topY, len: 30, angle: 100, seed: 5 }]} color={ON_LIGHT} width={2} />
+            </g>
+          )}
+          <line x1={toeX} y1={toeY} x2={endX} y2={endY} style={{ stroke: ON_LIGHT }} strokeWidth={1.5} strokeDasharray="6 4" strokeLinecap="round" />
+          {p.ru > 0 && <line x1={toeX} y1={toeY - 4} x2={400} y2={wy} style={{ stroke: U.ink }} strokeWidth={2} strokeDasharray="8 4" />}
+          {profile}
+        </g>
+        {crestLabel}
+        {o.kin === 1 && (
+          <>
+            <T x={24} y={44}>Sliding block</T>
+            <line x1={24 + 126} y1={38} x2={bc[0]} y2={bc[1]} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinecap="round" />
+          </>
         )}
-        <line x1={toeX} y1={toeY} x2={Math.min(planeX, 400)} y2={planeX <= 400 ? topY : toeY - (400 - toeX) * Math.tan(rad(p.pp))} stroke={C.ink} strokeDasharray="6 4" />
-        {p.ru > 0 && <line x1={toeX} y1={toeY - 3} x2={400} y2={topY + (1 - p.ru * 1.5) * Hp * 0.8} stroke={C.tech} strokeWidth={2} strokeDasharray="8 4" />}
-        {header}
+        <T x={24} y={220}>Pit floor</T>
+        <T x={376} y={220} anchor="end">Failure plane</T>
       </g>
     );
   },
