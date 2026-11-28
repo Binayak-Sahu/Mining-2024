@@ -266,8 +266,11 @@ Every unit, and later every lesson, has an SVG illustration in **one** style:
 | U4 | cartridge + detonator | U10 | rescue breathing apparatus + statute book |
 | U5 | dragline bucket over a bench | | |
 
-- Claude Code draws a first set to this spec; Bink refines them in Figma. Files live in `src/assets/illustrations/`. Each illustration is a `.tsx` component plus an exported `.svg` for Figma, made by `scripts/export-illustrations.tsx`.
-- Drafts so far: U4, U7 (15.5-v3a).
+- Claude Code draws a first set to this spec; Bink refines them in Figma. **The `.svg` files are the source of truth** (15.5-v3d): `src/assets/illustrations/u0.svg … u10.svg`, rendered by `UnitIllustration` (`src/assets/illustrations/index.tsx`) as a static image.
+  - **Figma round trip:** drag the `.svg` into Figma (or File → Import), edit, then export the 160 × 160 frame as SVG with "Outline text" on and "Include id" off, and save it over the same file name. Keep the frame fill empty (transparent background).
+  - `npm run audit:illus` fails on `<text>`, gradients, strokes on filled or closed shapes (outlines), more than 2 hue families (greys excluded) or a viewBox other than `0 0 160 160`; it warns on off-palette colours. `npm run audit:illus -- <folder>` checks a Figma export folder before copying it in.
+  - `npm run draw:illus` (scripts/draw-illustrations.ts, drawings in `scripts/illustrations/`) rewrote the first drafts. It only overwrites a file that still carries its draft marker comment, so a Figma-edited file is never replaced unless `--force` is passed.
+- Drawn: all 11 units (first drafts, 15.5-v3d; U4 and U7 from 15.5-v3a). The placeholder below stays for future lesson art.
 - **Placeholder until a unit has its illustration** (Bink, 2026-11-28: the raw lucide icons looked uneven and their fills broke):
   - it takes the same footprint as a drawn illustration, a rounded tile 72 % of the box in the family `light` tone with a `mid` bottom edge;
   - the unit's lucide icon (`src/content/unitIcons.ts`) sits on it at 40 % of the box, in `deep`, outline only (never filled);

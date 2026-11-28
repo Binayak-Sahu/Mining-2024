@@ -3,7 +3,7 @@ import { iso, ring, hull, path, type V3, type P2 } from "./iso";
 /**
  * U7 Ventilation (DESIGN.md §5.5 draft, Phase 15.5-v3a): an axial fan casing with its blades, blowing air out
  * along its axis (chunky airflow arrows). Main hue teal, accent yellow (hub), greys for the blades.
- * Draft for Bink to refine in Figma; the .svg next to this file is exported from it (scripts/export-illustrations.tsx).
+ * Drawing source of the first draft of src/assets/illustrations/u7.svg (written by scripts/draw-illustrations.ts).
  */
 const T = { light: "#8FE3D8", mid: "#1FB5A3", deep: "#0E7C6F" };
 const Y = { light: "#FCE38A", mid: "#F6C22C", deep: "#B88A0A" };

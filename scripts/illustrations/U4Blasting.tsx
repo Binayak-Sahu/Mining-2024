@@ -3,7 +3,7 @@ import { upright, r1 } from "./iso";
 /**
  * U4 Blasting (DESIGN.md §5.5 draft, Phase 15.5-v3a): an explosive cartridge and a detonator with its leg wires.
  * Main hue yellow (light top, mid front, deep side), accent blue (wires, plug), greys for the aluminium shell.
- * Draft for Bink to refine in Figma; the .svg next to this file is exported from it (scripts/export-illustrations.tsx).
+ * Drawing source of the first draft of src/assets/illustrations/u4.svg (written by scripts/draw-illustrations.ts).
  */
 const Y = { light: "#FCE38A", mid: "#F6C22C", deep: "#B88A0A" };
 const B = { light: "#AAB9FF", mid: "#4C6EF5", deep: "#2E46C2" };

@@ -7,7 +7,7 @@ import { UNITS } from "@/content";
 import { unitIcon } from "@/content/unitIcons";
 import { unitCounts } from "@/lib/questions";
 import { stageSlide } from "@/lib/motion";
-import { UNIT_ILLUSTRATIONS } from "@/assets/illustrations";
+import { UNIT_ILLUSTRATIONS, UnitIllustration } from "@/assets/illustrations";
 import { FAMILIES, UNIT_FAMILY, familyVars, NNBSP, type Theme } from "./tokens";
 
 /**
@@ -23,8 +23,7 @@ const MOCK = { streak: 3, xp: 120, hearts: 5 };
  * outline only (filling lucide icons garbles open shapes), stroke scaled with the size so every unit looks the same weight.
  */
 export function UnitArt({ unitId, size }: { unitId: string; size: number }) {
-  const Art = UNIT_ILLUSTRATIONS[unitId];
-  if (Art) return <Art size={size} />;
+  if (UNIT_ILLUSTRATIONS[unitId]) return <UnitIllustration unitId={unitId} size={size} />;
   const Icon = unitIcon(unitId);
   const f = FAMILIES[UNIT_FAMILY[unitId] ?? "blue"];
   const tile = Math.round(size * 0.72);

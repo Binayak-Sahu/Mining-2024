@@ -2,7 +2,9 @@
 
 import "./v3.css";
 import { useEffect, useState, type ReactNode } from "react";
-import { HomeMock, PathMock, UnitArt } from "./Mocks";
+import { HomeMock, PathMock } from "./Mocks";
+import { UnitIllustration } from "@/assets/illustrations";
+import { UNITS } from "@/content";
 import { Neutrals, Families, ButtonsV3, SurfacesV3 } from "./TokensDemo";
 import { PilotStage } from "./PilotStage";
 import { PILOTS } from "./pilots";
@@ -119,19 +121,25 @@ export function DesignSystemV3() {
     ],
     [
       "v3-art",
-      "Illustrations (drafts)",
-      "§5.5: U4 cartridge + detonator (yellow, blue accent) and U7 axial fan (teal, yellow accent), at 128, 80 and 56 px (drawn on a 160 grid). Drafts for refining in Figma; the .svg files are in src/assets/illustrations/.",
-      <div key="a" className="grid gap-4 sm:grid-cols-2">
+      "Illustrations",
+      "§5.5: all 11 unit illustrations (Phase 15.5-v3d drafts) at 200 px and 56 px, on light and dark. The same art in both themes. Source files: src/assets/illustrations/u0.svg … u10.svg (edit in Figma, export at 160 × 160 over the same name); npm run audit:illus checks them.",
+      <div key="a" className="space-y-6" data-testid="illus-gallery">
         {(["light", "dark"] as const).map((t) => (
-          <div key={t} data-theme={t} className="rounded-[28px] p-4" style={{ border: "2px solid var(--edge)" }}>
+          <div key={t} data-theme={t} className="rounded-[28px] p-4" style={{ border: "2px solid var(--edge)", background: "var(--bg)" }}>
             <div className="v3-eyebrow mb-2">{t === "light" ? "Light" : "Dark"}</div>
-            {["u4", "u7"].map((u) => (
-              <div key={u} className="flex items-end gap-3">
-                <UnitArt unitId={u} size={128} />
-                <UnitArt unitId={u} size={80} />
-                <UnitArt unitId={u} size={56} />
-              </div>
-            ))}
+            <ul className="grid gap-8">
+              {UNITS.map((u) => (
+                <li key={u.id} className="flex items-end gap-4">
+                  <UnitIllustration unitId={u.id} size={200} title={`Unit ${u.n} ${u.short}`} />
+                  <div className="flex flex-col items-start gap-2 min-w-0">
+                    <UnitIllustration unitId={u.id} size={56} />
+                    <span className="v3-label" style={{ color: "var(--text-2)" }}>
+                      U{u.n}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
       </div>,

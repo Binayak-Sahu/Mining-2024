@@ -347,3 +347,10 @@ Run `npm run audit:svg` after any diagram change.
 - **Scripts:** `scripts/export-illustrations.tsx`, `scripts/katex-css.mjs`.
 - **New dependencies:** `@fontsource-variable/figtree`, `@fontsource-variable/onest`, `katex`.
 - **Production screens, sims, stores, service worker and lesson content:** unchanged.
+
+## Phase 15.5-v3d — unit illustrations (2026-11-28)
+- **Art:** `src/assets/illustrations/u0.svg … u10.svg`, one per unit, to DESIGN §5.5 (160 grid, three tones per hue, unit family + one accent, greys for metal and rock, no text, outlines, gradients or people). U4 and U7 are the 15.5-v3a drafts renamed (`u4-blasting.svg` → `u4.svg`, `u7-ventilation.svg` → `u7.svg`).
+- **Source of truth:** the `.svg` files. `index.tsx` imports them as static images (`UNIT_ILLUSTRATIONS`, `UnitIllustration`); the sandbox `UnitArt` uses them. The old `.tsx` components and `iso.ts` moved to `scripts/illustrations/` as drawing sources; `scripts/export-illustrations.tsx` is replaced by `scripts/draw-illustrations.ts` (`npm run draw:illus`, never overwrites a file without its draft marker).
+- **Audit:** `scripts/audit-illustrations.ts` (`npm run audit:illus`).
+- **Gallery:** `/design-system` → Illustrations: every unit at 200 and 56 px, light and dark panels.
+- **Production screens, sims, content, stores, service worker:** unchanged. No new dependencies.
