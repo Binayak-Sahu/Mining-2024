@@ -54,7 +54,11 @@ export interface SimDef {
    * Set on sims redrawn to DESIGN.md §5.6 (Phase 15.5-v3e). The sim then draws in `0 0 400 viewH` on the §5.6 stage card
    * (origin and the 400 × 240 box unchanged, so lesson hotspots stay put) with §5.6 grips; its family comes from its id.
    */
-  v3?: { viewH: number };
+  v3?: {
+    viewH: number;
+    /** KaTeX working line(s) shown centred under the stage (§5.6 Formula); return null to hide (e.g. while predicting). */
+    formula?: (p: Vals, o: Vals) => string | null;
+  };
 }
 
 /** A draggable grip on a simulation canvas bound to one parameter along one axis. */

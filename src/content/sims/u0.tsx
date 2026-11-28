@@ -1,6 +1,10 @@
 import type { SimDef } from "@/lib/types";
-import { C, Txt, Arrow, Dim, clamp } from "@/components/sim/svg";
-import { MAT } from "@/components/sim/defs";
+import { T, INK, SURFACE, ON_LIGHT, GREYS, U, BAD, BAD_TEXT, DimLine, num, clamp } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
+
+/** Column frame: legacy x 56–200 and the 0–1200 m depth scale give the gallery y = 70 at 300 m (lesson hotspot). */
+const OB = { top: 20, bottom: 220, x0: 56, x1: 200 };
+const obY = (H: number) => OB.top + ((OB.bottom - OB.top) * H) / 1200;
 
 export const overburden: SimDef = {
   id: "u0-overburden",
@@ -23,54 +27,50 @@ export const overburden: SimDef = {
       tone: (v) => (v >= 20 ? "crit" : v > 10 ? "warn" : "ok"),
     },
   ],
-  handles: [{ key: "H", axis: "y", at: (p) => [168, 20 + (200 * p.H) / 1200], toValue: (y) => (y - 20) * 6, color: "#3B82F6" }],
+  caption: "Rule of thumb: ≈ 0.025 MPa per metre (2.5 t/m³ rock). Pillars, roof bolts and shaft linings all start here.",
+  // §5.6 redraw (v3e). Column, gallery and load path keep their legacy places so the lesson hotspots still land on them.
+  v3: {
+    viewH: 240,
+    // Predict stages pass __predicting = 1 before the reveal: hide the working that gives the answer away.
+    formula: (p, o) => (p.__predicting === 1 ? "\\sigma_v = \\rho\\, g\\, H" : `\\sigma_v = \\rho g H = ${p.rho.toFixed(2)} \\times 9.81 \\times ${p.H} = ${o.sv.toFixed(2)}\\ \\text{MPa}`),
+  },
+  handles: [{ key: "H", axis: "y", at: (p) => [OB.x1, obY(p.H)], toValue: (y) => ((y - OB.top) / (OB.bottom - OB.top)) * 1200 }],
   render: (p, o) => {
-    const top = 20;
-    const bottom = 220;
-    const yWork = top + ((bottom - top) * p.H) / 1200;
-    const layers = [MAT.soil, MAT.sand, MAT.shale, MAT.sand, MAT.shale, MAT.rock];
-    const arrowLen = clamp(o.sv * 4, 6, 150);
+    const y = obY(p.H);
+    const crit = o.sv > 20;
+    const top = y - 9 - clamp(o.sv * 5, 22, Math.max(22, y - 9 - OB.top - 4));
+    const beds = [0.2, 0.4, 0.6, 0.8];
     return (
       <g>
-        {layers.map((c, i) => (
-          <rect key={i} x={56} y={top + (i * (bottom - top)) / layers.length} width={144} height={(bottom - top) / layers.length} fill={c} />
+        <rect x={OB.x0} y={OB.top} width={OB.x1 - OB.x0} height={OB.bottom - OB.top} rx={8} fill={GREYS.light} />
+        {beds.map((f) => (
+          <line key={f} x1={OB.x0} x2={OB.x1} y1={OB.top + f * (OB.bottom - OB.top)} y2={OB.top + f * (OB.bottom - OB.top)} stroke={GREYS.mid} strokeWidth={1.5} />
         ))}
-        <rect x={56} y={top} width={144} height={bottom - top} fill={MAT.rockShade} />
-        <rect x={56} y={top - 6} width={144} height={6} rx={1} fill="#65A30D" />
-        <rect x={56} y={top} width={144} height={bottom - top} fill="none" stroke="rgba(15,23,42,0.35)" />
-        <rect x={56} y={yWork - 4} width={144} height={8} fill={MAT.coal} />
-        <rect x={100} y={yWork - 4} width={40} height={8} fill="#FEF3C7" stroke={C.ink} />
-        <circle cx={120} cy={yWork} r={14} fill="url(#grad-lamp)" />
-        <Txt x={120} y={yWork + 3} size={7} anchor="middle" weight={700}>
-          GALLERY
-        </Txt>
-        <Dim x1={46} y1={top} x2={46} y2={yWork} label={`${p.H} m`} side="left" />
-        <Arrow x1={120} y1={yWork - 6 - arrowLen} x2={120} y2={yWork - 6} color={o.sv > 20 ? C.crit : C.tech} width={4} head={9} />
-        <Txt x={230} y={40} size={11} weight={700}>
-          σv = ρ·g·H
-        </Txt>
-        {/* Predict stages pass __predicting = 1 before the reveal: hide the working that gives the answer away. */}
-        {p.__predicting !== 1 && (
-          <Txt x={230} y={58} size={10} mono>
-            {`= ${p.rho.toFixed(2)}×9.81×${p.H}`}
-          </Txt>
-        )}
-        <Txt x={230} y={78} size={15} weight={800} mono fill={o.sv > 20 ? C.crit : C.ink}>
-          {`${o.sv.toFixed(2)} MPa`}
-        </Txt>
-        {p.__predicting !== 1 && (
-          <>
-            <Txt x={230} y={104} size={9} fill={C.slate}>
-              Rule of thumb: ≈ 0.025 MPa per metre
-            </Txt>
-            <Txt x={230} y={118} size={9} fill={C.slate}>
-              (2.5 t/m³ rock). Pillars, roof bolts
-            </Txt>
-            <Txt x={230} y={132} size={9} fill={C.slate}>
-              and shaft linings all start here.
-            </Txt>
-          </>
-        )}
+        <line x1={OB.x0 - 8} x2={OB.x1 + 8} y1={OB.top} y2={OB.top} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={OB.x1 + 40} y={OB.top + 6}>
+          Surface
+        </T>
+        {/* the seam with the gallery */}
+        <rect x={OB.x0} y={y - 8} width={OB.x1 - OB.x0} height={16} fill={GREYS.deep} />
+        <rect x={132} y={y - 8} width={36} height={16} rx={3} style={{ fill: SURFACE }} />
+        <T x={OB.x0 + 8} y={y < 170 ? y + 30 : y - 16} fill={ON_LIGHT} weight={700}>
+          Gallery
+        </T>
+        {/* load path onto the gallery */}
+        <path d={`M146 ${top} h8 v${y - 9 - top - 14} h7 l-11 14 l-11 -14 h7 z`} style={{ fill: crit ? BAD : U.mid }} strokeLinejoin="round" />
+        {/* depth */}
+        <DimLine x1={OB.x1 + 30} y1={OB.top} x2={OB.x1 + 30} y2={y} />
+        <T x={OB.x1 + 40} y={clamp(y + 6, OB.top + 42, OB.bottom)} fill={INK} weight={700}>
+          {num(p.H, 0, "m")}
+        </T>
+        {/* result */}
+        <SvgTex x={306} y={112} tex="\sigma_v" size={24} color="var(--text-2)" />
+        <T x={306} y={150} fill={crit ? BAD_TEXT : INK} size={26} weight={800}>
+          {num(o.sv, 2)}
+        </T>
+        <T x={306} y={174}>
+          MPa
+        </T>
       </g>
     );
   },

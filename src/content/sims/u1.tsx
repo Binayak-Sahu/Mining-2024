@@ -1,6 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Dim, clamp, rad, deg, Meter, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T, INK, INK2, ON_LIGHT, GREYS, U, LBL, HeatRamp, num } from "@/components/sim/v3";
+import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Coalification & rank ---------------- */
 
@@ -14,6 +16,13 @@ const RANKS = [
   { max: 2.5, name: "Semi-anthracite", color: "#111827" },
   { max: 99, name: "Anthracite", color: "#030712" },
 ];
+
+/** Ladder names short enough for 14 px labels (the readout keeps the full name). */
+const SHORT = ["Peat", "Lignite", "Sub-bituminous", "HV bituminous", "MV bituminous", "LV bituminous", "Semi-anthracite", "Anthracite"];
+/** §5.6 frame: legacy column x 20–110 and depth scale y 30–210, ladder x 190 (lesson hotspots). */
+const CR = { top: 30, bottom: 210, x0: 20, x1: 110, lx: 196, lw: 30, bandH: 180 / 8 };
+const crY = (D: number) => CR.top + (D / 8) * (CR.bottom - CR.top);
+const bandTop = (i: number) => CR.bottom - (i + 1) * CR.bandH;
 
 export function rankIndex(ro: number): number {
   return RANKS.findIndex((r) => ro < r.max);
@@ -43,61 +52,55 @@ export const coalRank: SimDef = {
     { key: "moist", label: "Bed moisture", unit: "%", digits: 1 },
     { key: "gcv", label: "GCV (daf)", unit: "kcal/kg", digits: 0 },
   ],
-  handles: [{ key: "D", axis: "y", at: (p) => [65, 30 + (p.D / 8) * 180], toValue: (y) => ((y - 30) / 180) * 8, color: "#DC2626" }],
+  // §5.6 redraw (v3e): burial column and rank ladder keep their legacy places, so the lesson hotspots still land on them.
+  v3: { viewH: 240 },
+  handles: [{ key: "D", axis: "y", at: (p) => [CR.x1, crY(p.D)], toValue: (y) => ((y - CR.top) / (CR.bottom - CR.top)) * 8 }],
   render: (p, o) => {
-    const depthY = 30 + (p.D / 8) * 180;
-    const logMin = Math.log10(0.15);
-    const logMax = Math.log10(5);
-    const ry = (ro: number) => 215 - ((Math.log10(clamp(ro, 0.15, 5)) - logMin) / (logMax - logMin)) * 185;
+    const y = crY(p.D);
+    const k = o.rank as number;
+    const lo = k === 0 ? 0.15 : RANKS[k - 1].max;
+    const hi = Math.min(RANKS[k].max, 5);
+    const frac = clamp((Math.log(o.ro) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)), 0, 1);
+    const py = bandTop(k) + CR.bandH - frac * CR.bandH;
+    const ly = py - 14 < CR.top + 24 ? py + 26 : py - 12; // Ro label above the pointer, below it near the top
+    const free = (yy: number) => Math.abs(y - yy) > 26 && Math.abs(ly - yy) > 24;
     return (
       <g>
-        <Txt x={20} y={18} size={9} fill={C.slate} weight={700}>
-          BURIAL COLUMN
-        </Txt>
-        <rect x={20} y={25} width={90} height={190} rx={4} fill="url(#heat)" />
-        <rect x={20} y={25} width={90} height={190} rx={4} fill={MAT.shale} opacity={0.22} />
-        <rect x={20} y={25} width={90} height={190} rx={4} fill="none" stroke="rgba(15,23,42,0.3)" />
         <defs>
-          <linearGradient id="heat" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#fde68a" />
-            <stop offset="1" stopColor="#dc2626" />
-          </linearGradient>
+          {/* heat ramp: burial temperature is the data here (§5.6) */}
+          <HeatRamp id="u1-coal-heat" stops={[[0, "var(--u-light)"], [0.5, "var(--u-mid)"], [1, "var(--u-deep)"]]} />
         </defs>
-        {[0, 2, 4, 6, 8].map((d) => (
-          <g key={d}>
-            <line x1={110} x2={116} y1={30 + (d / 8) * 180} y2={30 + (d / 8) * 180} stroke={C.slate} />
-            <Txt x={119} y={33 + (d / 8) * 180} size={8} fill={C.slate} mono>
-              {d} km
-            </Txt>
-          </g>
-        ))}
-        <rect x={26} y={depthY - 6} width={78} height={12} rx={2} fill={RANKS[o.rank]?.color ?? C.coal} stroke="white" strokeWidth={1.5} filter="url(#f-shadow)" />
-        <rect x={26} y={depthY - 6} width={78} height={12} rx={2} fill={MAT.coal} opacity={0.35} />
-        <Arrow x1={40} y1={28} x2={40} y2={depthY - 8} color={C.ink} width={1.5} />
-        <Txt x={65} y={depthY < 190 ? depthY + 22 : depthY - 12} size={9} anchor="middle" weight={800} mono>
-          {o.T.toFixed(0)} °C
-        </Txt>
-        <Txt x={190} y={18} size={9} fill={C.slate} weight={700}>
-          RANK LADDER (Ro %, log)
-        </Txt>
+        <rect x={CR.x0} y={CR.top} width={CR.x1 - CR.x0} height={CR.bottom - CR.top} rx={8} fill="url(#u1-coal-heat)" />
+        {free(CR.top + 7) && (
+          <T x={CR.x1 + 8} y={CR.top + 13}>
+            {num(0, 0, "km")}
+          </T>
+        )}
+        {free(CR.bottom - 6) && (
+          <T x={CR.x1 + 8} y={CR.bottom}>
+            {num(8, 0, "km")}
+          </T>
+        )}
+        {/* the seam at maximum burial */}
+        <rect x={CR.x0} y={y - 10} width={CR.x1 - CR.x0} height={20} rx={5} fill={GREYS.deep} />
+        <T x={CR.x1 + 22} y={y + 6} fill={INK} weight={800}>
+          {num(o.T, 0, "°C")}
+        </T>
+        {/* rank ladder: equal bands, Ro placed on a log scale inside its band */}
         {RANKS.map((r, i) => {
-          const lo = i === 0 ? 0.15 : RANKS[i - 1].max;
-          const hi = Math.min(r.max, 5);
-          const active = i === o.rank;
+          const on = i === k;
           return (
             <g key={r.name}>
-              <rect x={190} y={ry(hi)} width={36} height={ry(lo) - ry(hi)} fill={r.color} opacity={active ? 1 : 0.35} stroke="white" />
-              {active && <rect x={188} y={ry(hi) - 1} width={40} height={ry(lo) - ry(hi) + 2} rx={2} fill="none" stroke={C.hazard} strokeWidth={2} filter="url(#f-glow)" />}
-              <Txt x={232} y={(ry(hi) + ry(lo)) / 2 + 3} size={active ? 10 : 8} weight={active ? 800 : 500} fill={active ? C.ink : C.slate}>
-                {r.name}
-              </Txt>
+              <rect x={CR.lx} y={bandTop(i) + 1.5} width={CR.lw} height={CR.bandH - 3} rx={4} style={{ fill: on ? U.mid : GREYS.light }} />
+              {on && <rect x={CR.lx - 4} y={bandTop(i) - 2.5} width={CR.lw + 8} height={CR.bandH + 5} rx={7} fill="none" style={{ stroke: U.ink }} strokeWidth={3} />}
+              <T x={CR.lx + CR.lw + 10} y={bandTop(i) + CR.bandH / 2 + 6} fill={on ? INK : INK2} weight={on ? 800 : 500}>
+                {SHORT[i]}
+              </T>
             </g>
           );
         })}
-        <polygon points={`${182},${ry(o.ro)} ${174},${ry(o.ro) - 5} ${174},${ry(o.ro) + 5}`} fill={C.crit} />
-        <Txt x={172} y={ry(o.ro) - 7} size={8} anchor="end" mono fill={C.crit}>
-          {o.ro.toFixed(2)}
-        </Txt>
+        <path d={`M${CR.lx - 6} ${py} l-13 -8 v16 z`} style={{ fill: INK }} strokeLinejoin="round" />
+        <SvgTex x={CR.lx - 22} y={ly} tex={`R_o\\ ${o.ro.toFixed(2)}\\,\\%`} size={LBL} anchor="end" color="var(--text)" />
       </g>
     );
   },
@@ -170,6 +173,10 @@ export const supergene: SimDef = {
 
 /* ---------------- True vs apparent dip ---------------- */
 
+/** §5.6 frame: legacy plan circle (100, 125, r 80) and section x 215–385, ground y 70 (lesson hotspots). */
+const PV = { cx: 100, cy: 125, r: 80 };
+const SV = { x0: 215, x1: 385, g: 70, bottom: 196 };
+
 export const apparentDip: SimDef = {
   id: "u1-dip",
   title: "True vs apparent dip — plan and section",
@@ -187,59 +194,52 @@ export const apparentDip: SimDef = {
     { key: "grad", label: "Gradient 1 in", digits: 2, format: (v) => (Number.isFinite(v) ? `1 in ${v.toFixed(2)}` : "level (∞)") },
     { key: "ratio", label: "α / δ", digits: 2 },
   ],
-  handles: [{ key: "beta", axis: "x", at: (p) => [100 + 80 * Math.cos(rad(p.beta)), 125 + 80 * Math.sin(rad(p.beta))], toValue: (x) => deg(Math.acos(clamp((x - 100) / 80, 0, 1))), color: "#3B82F6" }],
+  // §5.6 redraw (v3e): plan circle and section keep their legacy places, so the lesson hotspots still land on them.
+  v3: { viewH: 252 },
+  handles: [{ key: "beta", axis: "x", at: (p) => [PV.cx + PV.r * Math.cos(rad(p.beta)), PV.cy + PV.r * Math.sin(rad(p.beta))], toValue: (x) => deg(Math.acos(clamp((x - PV.cx) / PV.r, 0, 1))) }],
   render: (p, o) => {
-    const cx = 100;
-    const cy = 125;
-    const r = 80;
+    const { cx, cy, r } = PV;
     const b = rad(p.beta);
+    const a = rad(o.alpha);
+    const ey = SV.g + (SV.x1 - SV.x0) * Math.tan(a);
     return (
       <g>
-        <Txt x={20} y={20} size={9} weight={700} fill={C.slate}>
-          PLAN VIEW
-        </Txt>
-        <circle cx={cx} cy={cy} r={r} fill={MAT.sand} stroke="#A8A29E" />
-        <circle cx={cx} cy={cy} r={r} fill="white" opacity={0.45} />
-        <line x1={cx - r} x2={cx + r} y1={cy} y2={cy} stroke={C.ink} strokeWidth={3} />
-        <Txt x={cx + r - 2} y={cy - 5} size={8} anchor="end" weight={700}>
-          STRIKE
-        </Txt>
-        <Arrow x1={cx} y1={cy} x2={cx} y2={cy + 55} color={C.crit} width={2.5} />
-        <Txt x={cx + 5} y={cy + 52} size={8} fill={C.crit} weight={700}>
-          true dip {p.delta}°
-        </Txt>
-        <line x1={cx - r * Math.cos(b)} y1={cy - r * Math.sin(b)} x2={cx + r * Math.cos(b)} y2={cy + r * Math.sin(b)} stroke={C.tech} strokeWidth={2.5} strokeDasharray="6 3" />
-        <Txt x={cx + r * Math.cos(b) + 3} y={cy + r * Math.sin(b) + 10} size={8} fill={C.tech} weight={700}>
-          section
-        </Txt>
-        <path d={`M ${cx + 28} ${cy} A 28 28 0 0 1 ${cx + 28 * Math.cos(b)} ${cy + 28 * Math.sin(b)}`} fill="none" stroke={C.tech} />
-        <Txt x={cx + 32} y={cy + 14} size={8} fill={C.tech} mono>
-          β={p.beta}°
-        </Txt>
-        <Txt x={215} y={20} size={9} weight={700} fill={C.slate}>
-          VERTICAL SECTION ALONG SECTION LINE
-        </Txt>
-        <rect x={215} y={40} width={170} height={30} fill={MAT.sky} />
-        <rect x={215} y={70} width={170} height={140} fill={MAT.sand} />
-        <rect x={215} y={40} width={170} height={170} fill="none" stroke="#A8A29E" />
-        <line x1={215} x2={385} y1={70} y2={70} stroke="#65A30D" strokeWidth={3} />
-        {(() => {
-          const a = rad(o.alpha);
-          const x2 = 385;
-          const y2 = 70 + 170 * Math.tan(a);
-          return (
-            <g>
-              <polygon points={`215,70 ${x2},${Math.min(y2, 210)} ${x2},${Math.min(y2 + 12, 210)} 215,82`} fill={MAT.coal} stroke="#0F172A" strokeWidth={0.8} />
-              <path d={`M 265 70 A 50 50 0 0 1 ${215 + 50 * Math.cos(a)} ${70 + 50 * Math.sin(a)}`} fill="none" stroke={C.crit} strokeWidth={1.5} />
-              <Txt x={272} y={66} size={10} fill={C.crit} weight={800} mono>
-                α = {o.alpha.toFixed(1)}°
-              </Txt>
-            </g>
-          );
-        })()}
-        <Txt x={222} y={202} size={8} fill={C.slate}>
-          tan α = tan δ · sin β
-        </Txt>
+        <T x={cx - r} y={24} weight={700}>
+          Plan
+        </T>
+        <circle cx={cx} cy={cy} r={r} style={{ fill: U.light }} />
+        {/* strike (solid) and section line (dashed) */}
+        <line x1={cx - r} x2={cx + r} y1={cy} y2={cy} stroke={ON_LIGHT} strokeWidth={2.5} strokeLinecap="round" />
+        <line x1={cx - r * Math.cos(b)} y1={cy - r * Math.sin(b)} x2={cx + r * Math.cos(b)} y2={cy + r * Math.sin(b)} stroke={ON_LIGHT} strokeWidth={2.5} strokeDasharray="7 6" strokeLinecap="round" />
+        {/* true dip, square to strike */}
+        <line x1={cx} y1={cy} x2={cx} y2={cy + 42} stroke={ON_LIGHT} strokeWidth={2.5} strokeLinecap="round" />
+        <path d={`M${cx - 7} ${cy + 38} L${cx} ${cy + 52} L${cx + 7} ${cy + 38} Z`} fill={ON_LIGHT} strokeLinejoin="round" />
+        {p.beta > 2 && <path d={`M${cx + 28} ${cy} A28 28 0 0 1 ${cx + 28 * Math.cos(b)} ${cy + 28 * Math.sin(b)}`} fill="none" stroke={ON_LIGHT} strokeWidth={1.5} />}
+        <SvgTex x={cx + 8} y={cy - 18} tex={`\\beta = ${p.beta}\\degree`} size={LBL} color={ON_LIGHT} />
+        <circle cx={cx} cy={cy} r={4} fill={ON_LIGHT} />
+        {/* legend for the two lines, off the fill */}
+        <line x1={cx - r} x2={cx - r + 22} y1={cy + r + 34} y2={cy + r + 34} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={cx - r + 30} y={cy + r + 40}>
+          Strike
+        </T>
+        <line x1={cx + 18} x2={cx + 40} y1={cy + r + 34} y2={cy + r + 34} style={{ stroke: INK }} strokeWidth={2.5} strokeDasharray="7 6" strokeLinecap="round" />
+        <T x={cx + 48} y={cy + r + 40}>
+          Section
+        </T>
+
+        <T x={SV.x0} y={24} weight={700}>
+          Section
+        </T>
+        <clipPath id="u1-dip-sec">
+          <rect x={SV.x0} y={SV.g} width={SV.x1 - SV.x0} height={SV.bottom - SV.g} rx={8} />
+        </clipPath>
+        <rect x={SV.x0} y={SV.g} width={SV.x1 - SV.x0} height={SV.bottom - SV.g} rx={8} fill={GREYS.light} />
+        <polygon clipPath="url(#u1-dip-sec)" points={`${SV.x0},${SV.g} ${SV.x1},${ey} ${SV.x1},${ey + 16} ${SV.x0},${SV.g + 16}`} fill={GREYS.deep} />
+        <line x1={SV.x0 - 4} x2={SV.x1 + 4} y1={SV.g} y2={SV.g} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        {o.alpha > 1 && <path clipPath="url(#u1-dip-sec)" d={`M${SV.x0 + 64} ${SV.g} A64 64 0 0 1 ${SV.x0 + 64 * Math.cos(a)} ${SV.g + 64 * Math.sin(a)}`} fill="none" stroke={ON_LIGHT} strokeWidth={2} />}
+        <SvgTex x={SV.x0 + 4} y={SV.g - 16} tex={`\\alpha = ${o.alpha.toFixed(1)}\\degree`} size={20} color="var(--text)" />
+        <SvgTex x={SV.x1} y={SV.g - 16} tex={`\\delta = ${p.delta}\\degree`} size={LBL} anchor="end" color="var(--text-2)" />
+        <SvgTex x={SV.x0 + 4} y={SV.bottom + 22} tex="\tan\alpha = \tan\delta\,\sin\beta" size={LBL} color="var(--text-2)" />
       </g>
     );
   },

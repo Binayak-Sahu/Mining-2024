@@ -8,6 +8,8 @@ import { sfx } from "@/lib/sfx";
 import { tactilePress, fadeQuick } from "@/lib/motion";
 import { familyOf } from "@/lib/family";
 import { num } from "./v3";
+import { Tex } from "./Tex";
+import "@/components/ui/katex-woff2.css";
 
 function snap(p: SimParam, v: number): number {
   const s = Math.round((v - p.min) / p.step) * p.step + p.min;
@@ -102,6 +104,7 @@ export function SimStage({
     }
   };
   const P = (n: number) => n * upp;
+  const formula = def.v3!.formula?.(values, out) ?? null;
 
   return (
     <div>
@@ -197,6 +200,11 @@ export function SimStage({
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: used ? 0 : 1 }} transition={fadeQuick} className="t-label text-fg-2 flex items-center gap-2 mt-2" style={{ fontWeight: 400 }} aria-hidden={used}>
           <Hand size={16} aria-hidden /> Drag the grips on the diagram
         </motion.p>
+      )}
+      {!thumb && formula && (
+        <div className="mt-3 text-center overflow-x-auto t-body text-fg" data-sim-formula="">
+          <Tex tex={formula} />
+        </div>
       )}
       {after}
     </div>
