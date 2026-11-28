@@ -110,7 +110,7 @@ export function DesignSystemV3() {
     [
       "v3-path",
       "Path · Unit 7 Ventilation",
-      "§5.3. Tap a unit tab to switch. Lesson cards press like buttons. Progress is a fixed mock value.",
+      "§5.3. Tap a unit tab to switch. Lesson cards press like buttons and show the lesson number until lessons have their own art. Progress is a fixed mock value.",
       <div key="p" className="-mx-6 sm:mx-0">
         <Frame font={font}>
           <PathMock unitId="u7" theme={theme} />

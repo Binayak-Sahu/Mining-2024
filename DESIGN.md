@@ -268,7 +268,12 @@ Every unit, and later every lesson, has an SVG illustration in **one** style:
 
 - Claude Code draws a first set to this spec; Bink refines them in Figma. Files live in `src/assets/illustrations/`. Each illustration is a `.tsx` component plus an exported `.svg` for Figma, made by `scripts/export-illustrations.tsx`.
 - Drafts so far: U4, U7 (15.5-v3a).
-- Until a unit has its illustration, its lucide icon (`src/content/unitIcons.ts`) stands in.
+- **Placeholder until a unit has its illustration** (Bink, 2026-11-28: the raw lucide icons looked uneven and their fills broke):
+  - it takes the same footprint as a drawn illustration, a rounded tile 72 % of the box in the family `light` tone with a `mid` bottom edge;
+  - the unit's lucide icon (`src/content/unitIcons.ts`) sits on it at 40 % of the box, in `deep`, outline only (never filled);
+  - the stroke scales with the size, so every unit looks the same weight at 56, 96, 120 and 200 px.
+- **Lesson cards until lessons have art:** a 96 px tile with the lesson number ("7.1") in the unit `ink` on the tab tint. The card eyebrow then drops the repeated "LESSON n.m" and shows "6 STAGES". Never repeat the unit illustration on every lesson card.
+- **Home carousel:** one strip of every unit's art, moved as a whole. The slot pitch is half the screen width + 40 px, so the centre art is 200 px and each neighbour shows 60 px at the edge. Drag moves the strip with the finger; release snaps one unit with `stageSlide`.
 
 ### 5.6 Sim stage (v3, rewritten)
 The Brilliant diagram language:

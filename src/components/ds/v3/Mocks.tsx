@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { motion, type PanInfo } from "framer-motion";
+import { animate, motion, useMotionValue, type PanInfo } from "framer-motion";
 import { Flame, Gem, Heart, Lock } from "lucide-react";
 import { UNITS } from "@/content";
 import { unitIcon } from "@/content/unitIcons";
@@ -17,15 +17,35 @@ import { FAMILIES, UNIT_FAMILY, familyVars, NNBSP, type Theme } from "./tokens";
 
 const MOCK = { streak: 3, xp: 120, hearts: 5 };
 
-/** A unit's illustration, or its lucide icon in the family tones until it has one (§5.5). */
+/**
+ * A unit's illustration, or a placeholder until it has one (§5.5). The placeholder takes the same footprint as a drawn
+ * illustration (about 72 % of the box): a rounded tile in the family's `light` tone with the unit's lucide icon in `deep`,
+ * outline only (filling lucide icons garbles open shapes), stroke scaled with the size so every unit looks the same weight.
+ */
 export function UnitArt({ unitId, size }: { unitId: string; size: number }) {
   const Art = UNIT_ILLUSTRATIONS[unitId];
   if (Art) return <Art size={size} />;
   const Icon = unitIcon(unitId);
   const f = FAMILIES[UNIT_FAMILY[unitId] ?? "blue"];
+  const tile = Math.round(size * 0.72);
   return (
-    <span className="inline-flex items-center justify-center" style={{ width: size, height: size }} aria-hidden>
-      <Icon size={size * 0.62} color={f.deep} fill={f.light} strokeWidth={1.75} />
+    <span className="inline-flex items-center justify-center shrink-0" style={{ width: size, height: size }} aria-hidden data-placeholder-art="">
+      <span className="inline-flex items-center justify-center" style={{ width: tile, height: tile, borderRadius: tile * 0.28, background: f.light, boxShadow: `inset 0 ${-Math.max(2, Math.round(size * 0.04))}px 0 ${f.mid}` }}>
+        <Icon size={Math.round(size * 0.4)} color={f.deep} strokeWidth={2.25} />
+      </span>
+    </span>
+  );
+}
+
+/** Lesson tile for Path cards until lessons have their own illustrations: the lesson number on the unit's tab tint. */
+function LessonTile({ label, size }: { label: string; size: number }) {
+  return (
+    <span
+      className="inline-flex items-center justify-center shrink-0 tnum"
+      style={{ width: size, height: size, borderRadius: 18, background: "var(--u-tint)", border: "2px solid var(--edge)", borderBottomWidth: 4, color: "var(--u-ink)", fontSize: 28, fontWeight: 800 }}
+      aria-hidden
+    >
+      {label}
     </span>
   );
 }
@@ -78,10 +98,30 @@ export function HomeMock({ startUnit, theme }: { startUnit: string; theme: Theme
   const [i, setI] = useState(Math.max(0, ORDER.indexOf(startUnit)));
   const unit = UNITS[i];
   const fam = UNIT_FAMILY[unit.id] ?? "blue";
-  const go = (d: number) => setI((v) => Math.min(ORDER.length - 1, Math.max(0, v + d)));
+  // One strip holding every unit's art, moved as a whole: slot pitch = W/2 + 40, so the centre art is 200 px and its
+  // neighbours show 60 px (30 %) at the screen edges, whatever the width. Drag moves the strip with the finger; release
+  // snaps one unit at a time with stageSlide.
+  const box = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(390);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setW(el.clientWidth || 390));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const pitch = w / 2 + 40;
+  const target = w / 2 - 100 - i * pitch;
+  const x = useMotionValue(target);
+  useEffect(() => {
+    const c = animate(x, target, stageSlide);
+    return () => c.stop();
+  }, [target, x]);
   const onEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x < -48 || info.velocity.x < -400) go(1);
-    else if (info.offset.x > 48 || info.velocity.x > 400) go(-1);
+    const d = info.offset.x < -48 || info.velocity.x < -400 ? 1 : info.offset.x > 48 || info.velocity.x > 400 ? -1 : 0;
+    const next = Math.min(ORDER.length - 1, Math.max(0, i + d));
+    if (next === i) animate(x, target, stageSlide);
+    else setI(next);
   };
   // 5 page dots: a window around the current unit
   const first = Math.min(Math.max(0, i - 2), ORDER.length - 5);
@@ -97,28 +137,28 @@ export function HomeMock({ startUnit, theme }: { startUnit: string; theme: Theme
         </div>
       </div>
       {/* carousel: 200 × 200 art, neighbours peek 30 % in from the edges (70 % off-screen) */}
-      <div className="relative mt-4 overflow-hidden" style={{ height: 200 }} aria-roledescription="carousel" aria-label="Units">
-        {[-1, 0, 1].map((d) => {
-          const u = UNITS[i + d];
-          if (!u) return null;
-          const left = d === 0 ? "calc(50% - 100px)" : d < 0 ? "-140px" : "calc(100% - 60px)";
-          return (
-            <motion.div
+      <div ref={box} className="relative mt-4 overflow-hidden" style={{ height: 200 }} aria-roledescription="carousel" aria-label="Units">
+        <motion.div
+          className="absolute top-0 left-0 h-full"
+          style={{ x, width: ORDER.length * pitch, touchAction: "pan-y", cursor: "grab" }}
+          drag="x"
+          dragMomentum={false}
+          dragElastic={0.2}
+          dragConstraints={{ left: w / 2 - 100 - (ORDER.length - 1) * pitch, right: w / 2 - 100 }}
+          onDragEnd={onEnd}
+        >
+          {UNITS.map((u, k) => (
+            <div
               key={u.id}
               className="absolute top-0"
-              style={{ left, width: 200, height: 200, touchAction: d === 0 ? "pan-y" : undefined, cursor: d === 0 ? "grab" : "pointer", opacity: d === 0 ? 1 : 0.9 }}
-              drag={d === 0 ? "x" : false}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.35}
-              onDragEnd={d === 0 ? onEnd : undefined}
-              onClick={d !== 0 ? () => go(d) : undefined}
-              layout
-              transition={stageSlide}
+              style={{ left: k * pitch, width: 200, height: 200 }}
+              onClick={k !== i ? () => setI(k) : undefined}
+              aria-hidden={k !== i}
             >
               <UnitArt unitId={u.id} size={200} />
-            </motion.div>
-          );
-        })}
+            </div>
+          ))}
+        </motion.div>
       </div>
       <div className="flex justify-center gap-2 mt-3" role="tablist" aria-label="Unit pages">
         {dots.map((id) => (
@@ -167,7 +207,7 @@ export function PathMock({ unitId, theme }: { unitId: string; theme: Theme }) {
   useEffect(() => {
     const box = tabs.current;
     const tab = box?.querySelector<HTMLElement>('[aria-selected="true"]');
-    if (box && tab) box.scrollTo({ left: tab.offsetLeft - box.offsetLeft - 24 });
+    if (box && tab) box.scrollTo({ left: box.scrollLeft + tab.getBoundingClientRect().left - box.getBoundingClientRect().left - 24, behavior: "smooth" });
   }, [sel]);
   return (
     <div className="v3-glow pb-8" style={familyVars(fam, theme) as CSSProperties}>
@@ -217,10 +257,10 @@ export function PathMock({ unitId, theme }: { unitId: string; theme: Theme }) {
           <div key={l.id}>
             {k > 0 && <div className="v3-spine" aria-hidden />}
             <div className="v3-card v3-press flex items-center gap-4" role="button" tabIndex={0}>
-              <UnitArt unitId={unit.id} size={96} />
+              <LessonTile label={`${unit.n}.${k + 1}`} size={96} />
               <div className="min-w-0 flex-1">
                 <div className="v3-eyebrow">
-                  Lesson {unit.n}.{k + 1} · {l.stages.length}
+                  {l.stages.length}
                   {NNBSP}stages
                 </div>
                 <div className="v3-card-title mt-1" style={{ overflowWrap: "anywhere", hyphens: "auto" }} lang="en">{l.title}</div>
