@@ -36,11 +36,11 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u4-drill` | U4 | done-v2 | exact (min, default, objective-met) | Rock drilling — percussive, DTH and rotary penetration |
 | `u4-explosive` | U4 | done-v2 | exact (min, default, objective-met) | ANFO thermochemistry — oxygen balance, VOD, pressure, impedance |
 | `u4-kuzram` | U4 | done-v2 | exact (min, default, objective-met) | Kuz-Ram blast optimiser — bench round fragmentation |
-| `u4-delay` | U4 | todo | — | NONEL firing-wave visualiser — spot the cut-offs |
+| `u4-delay` | U4 | done-v2 | exact (min, default, objective-met) | NONEL firing-wave visualiser — spot the cut-offs |
 | `u4-vibe` | U4 | done-v2 | exact (min, default, objective-met) | Scaled distance — PPV, DGMS limits and airblast |
 | `u3-kirsch` | U3 | done-v2 | exact (min, default, objective-met) | Kirsch solution — boundary stress around an opening |
-| `u3-failure` | U3 | todo | — | Failure envelopes — Mohr–Coulomb vs Hoek–Brown (σ1–σ3 space) |
-| `u3-rmr` | U3 | todo | — | RMR (Bieniawski 1989) scorer with Q and GSI |
+| `u3-failure` | U3 | done-v2 | exact (min, default, objective-met) | Failure envelopes — Mohr–Coulomb vs Hoek–Brown (σ1–σ3 space) |
+| `u3-rmr` | U3 | done-v2 | exact (min, default, objective-met) | RMR (Bieniawski 1989) scorer with Q and GSI |
 | `u3-bolt` | U3 | todo | — | Roof bolting — suspension and beam-building |
 | `u3-pillar` | U3 | todo | — | Bord & pillar — tributary-area stress vs pillar strength |
 | `u3-slope` | U3 | todo | — | Plane failure — limit equilibrium of a sliding block |

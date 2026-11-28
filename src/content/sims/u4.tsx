@@ -400,14 +400,14 @@ export const delaySim: SimDef = {
     { key: "total", label: "Total firing time", unit: "ms", digits: 0 },
   ],
   caption: "A hole is exposed to cut-off if its surface signal arrives after the first hole has already detonated (surface time > in-hole delay) — ground movement can sever its tube.",
-  v3: { viewH: 290 },
+  v3: { viewH: 296 },
   render: (p, o, t) => {
     const d = delayPlan(p);
     const Tt = d.total + 120;
     const ms = ((t % 4) / 4) * Tt;
     const x = (c: number) => 60 + c * 52;
     const y = (r: number) => 70 + r * 50;
-    const H = 290;
+    const H = 296;
     return (
       <g>
         <clipPath id="u4dl-clip">
@@ -434,9 +434,9 @@ export const delaySim: SimDef = {
           return (
             <g key={`${h.c}-${h.r}`}>
               {fired && ms - h.td < 400 && <circle cx={x(h.c)} cy={y(h.r)} r={10 + (ms - h.td) * 0.09} fill="none" style={{ stroke: U.ink }} strokeWidth={2} opacity={1 - (ms - h.td) / 400} />}
-              {h.risk && <circle cx={x(h.c)} cy={y(h.r)} r={14} fill="none" data-state="unmet" style={{ stroke: BAD }} strokeWidth={2} strokeDasharray="4 3" />}
+              {h.risk && <circle cx={x(h.c)} cy={y(h.r)} r={12} fill="none" data-state="unmet" style={{ stroke: BAD }} strokeWidth={2} strokeDasharray="4 3" />}
               <circle cx={x(h.c)} cy={y(h.r)} r={6} style={{ fill: fired ? U.deep : signal ? U.mid : SURFACE, stroke: INK }} strokeWidth={2} />
-              <T x={x(h.c)} y={y(h.r) + 20} anchor="middle" fill={ON_LIGHT}>
+              <T x={x(h.c) + 14} y={y(h.r) + 27} fill={ON_LIGHT}>
                 {String(h.td)}
               </T>
             </g>

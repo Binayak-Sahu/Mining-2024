@@ -173,7 +173,7 @@ export const failureSim: SimDef = {
   ],
   handles: [{ key: "s3", axis: "x", at: (p) => [40 + (p.s3 / 30) * 340, 202], toValue: (x) => ((x - 40) / 340) * 30, color: "#64748B" }],
   // §5.6d redraw (v3e): the legacy plot box (x 40..380, y 15..210) is kept, so the lesson pins still land on the HB curve, the MC line and the s3 line.
-  v3: { viewH: 290 },
+  v3: { viewH: 296 },
   render: (p, o) => {
     const ymax = Math.max(60, Math.ceil(((o.scMC + 30 * o.Nphi) * 1.05) / 20) * 20, Math.ceil((30 + p.sci * Math.pow((hb(p.gsi, p.mi).mb * 30) / p.sci + hb(p.gsi, p.mi).s, hb(p.gsi, p.mi).a)) / 20) * 20);
     const h = hb(p.gsi, p.mi);
@@ -209,9 +209,9 @@ export const failureSim: SimDef = {
           <V3T x={80} y={265}>
             Hoek–Brown
           </V3T>
-          <line x1={180} x2={212} y1={259} y2={259} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
-          <circle cx={196} cy={259} r={5} style={{ fill: V3U.deep }} />
-          <V3T x={220} y={265}>
+          <line x1={196} x2={228} y1={259} y2={259} style={{ stroke: V3U.deep }} strokeWidth={2} strokeDasharray="6 4" />
+          <circle cx={212} cy={259} r={5} style={{ fill: V3U.deep }} />
+          <V3T x={236} y={265}>
             Mohr–Coulomb
           </V3T>
         </g>
@@ -272,7 +272,7 @@ export const rmrSim: SimDef = {
     { key: "gsi", label: "GSI ≈ RMR89(dry) − 5", digits: 0 },
   ],
   caption: "Support guidance is Bieniawski's for a 10 m horseshoe tunnel; coal roadways in India are designed with the CMRI-ISM RMR and Systematic Support Rules.",
-  v3: { viewH: 300 },
+  v3: { viewH: 312 },
   render: (p, o) => {
     const k = 3.4;
     const x0 = 30;
@@ -303,7 +303,7 @@ export const rmrSim: SimDef = {
     const lines: string[] = [];
     let cur = "";
     for (const w of words) {
-      if ((cur + " " + w).trim().length > 33) {
+      if ((cur + " " + w).trim().length > 31) {
         lines.push(cur);
         cur = w;
       } else cur = (cur + " " + w).trim();
@@ -311,7 +311,7 @@ export const rmrSim: SimDef = {
     if (cur) lines.push(cur);
     const legend = [
       ...parts.map((pt) => ({ t: `${pt.k} ${pt.v}`, c: pt.c, bad: false })),
-      { t: `Orient. ${String(p.ori).replace("-", "−")}`, c: p.ori < 0 ? V3BAD_LIGHT : "none", bad: p.ori < 0 },
+      { t: `Orient ${String(p.ori).replace("-", "−")}`, c: p.ori < 0 ? V3BAD_LIGHT : "none", bad: p.ori < 0 },
     ];
     return (
       <g>
@@ -319,7 +319,7 @@ export const rmrSim: SimDef = {
         {p.ori < 0 && <rect data-state="unsafe" x={xEnd + p.ori * k} y={34} width={-p.ori * k} height={26} fill={V3BAD_LIGHT} style={{ stroke: V3SURFACE }} strokeWidth={1.5} />}
         <rect x={x0} y={34} width={340} height={26} rx={2} fill="none" style={{ stroke: V3INK }} strokeWidth={2.5} />
         {legend.map((l, i) => {
-          const lx = 30 + (i % 3) * 116;
+          const lx = 30 + (i % 3) * 108;
           const ly = i < 3 ? 86 : 108;
           return (
             <g key={l.t}>
