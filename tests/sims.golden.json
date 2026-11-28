@@ -1,0 +1,9745 @@
+{
+ "u0-overburden": {
+  "params": [
+   {
+    "key": "H",
+    "min": 50,
+    "max": 1200,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "rho",
+    "min": 2,
+    "max": 3,
+    "step": 0.05,
+    "default": 2.5
+   }
+  ],
+  "handles": [
+   {
+    "key": "H",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "sv",
+   "grad",
+   "sv"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 50,
+     "rho": 2
+    },
+    "readouts": [
+     {
+      "key": "sv",
+      "raw": "0.981",
+      "text": "0.98 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "grad",
+      "raw": "19.619999999999997",
+      "text": "19.6 kPa/m",
+      "tone": "info"
+     },
+     {
+      "key": "sv",
+      "raw": "0.981",
+      "text": "5% of UCS",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 300,
+     "rho": 2.5
+    },
+    "readouts": [
+     {
+      "key": "sv",
+      "raw": "7.3575",
+      "text": "7.36 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "grad",
+      "raw": "24.525",
+      "text": "24.5 kPa/m",
+      "tone": "info"
+     },
+     {
+      "key": "sv",
+      "raw": "7.3575",
+      "text": "37% of UCS",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 800,
+     "rho": 2.5
+    },
+    "readouts": [
+     {
+      "key": "sv",
+      "raw": "19.62",
+      "text": "19.62 MPa",
+      "tone": "warn"
+     },
+     {
+      "key": "grad",
+      "raw": "24.525000000000002",
+      "text": "24.5 kPa/m",
+      "tone": "info"
+     },
+     {
+      "key": "sv",
+      "raw": "19.62",
+      "text": "98% of UCS",
+      "tone": "warn"
+     }
+    ],
+    "goal": "Find the depth where σv reaches coal's UCS (~20 MPa) at ρ = 2.5 t/m³",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-coalrank": {
+  "params": [
+   {
+    "key": "D",
+    "min": 0.2,
+    "max": 8,
+    "step": 0.1,
+    "default": 2
+   },
+   {
+    "key": "grad",
+    "min": 15,
+    "max": 60,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "time",
+    "min": 5,
+    "max": 300,
+    "step": 5,
+    "default": 100
+   }
+  ],
+  "handles": [
+   {
+    "key": "D",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "T",
+   "ro",
+   "rank",
+   "vm",
+   "moist",
+   "gcv"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "D": 0.2,
+     "grad": 15,
+     "time": 5
+    },
+    "readouts": [
+     {
+      "key": "T",
+      "raw": "28",
+      "text": "28 °C",
+      "tone": "info"
+     },
+     {
+      "key": "ro",
+      "raw": "0.14472414666867367",
+      "text": "0.14 %",
+      "tone": "info"
+     },
+     {
+      "key": "rank",
+      "raw": "0",
+      "text": "Peat",
+      "tone": "info"
+     },
+     {
+      "key": "vm",
+      "raw": "65",
+      "text": "65.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "moist",
+      "raw": "56.72808231792109",
+      "text": "56.7 %",
+      "tone": "info"
+     },
+     {
+      "key": "gcv",
+      "raw": "5500",
+      "text": "5500 kcal/kg",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "D": 2,
+     "grad": 30,
+     "time": 100
+    },
+    "readouts": [
+     {
+      "key": "T",
+      "raw": "85",
+      "text": "85 °C",
+      "tone": "info"
+     },
+     {
+      "key": "ro",
+      "raw": "0.41088664212877757",
+      "text": "0.41 %",
+      "tone": "info"
+     },
+     {
+      "key": "rank",
+      "raw": "2",
+      "text": "Sub-bituminous",
+      "tone": "info"
+     },
+     {
+      "key": "vm",
+      "raw": "52.13662770270411",
+      "text": "52.1 %",
+      "tone": "info"
+     },
+     {
+      "key": "moist",
+      "raw": "31.58593343697021",
+      "text": "31.6 %",
+      "tone": "info"
+     },
+     {
+      "key": "gcv",
+      "raw": "6453.889177815452",
+      "text": "6454 kcal/kg",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "D": 4.8,
+     "grad": 30,
+     "time": 100
+    },
+    "readouts": [
+     {
+      "key": "T",
+      "raw": "169",
+      "text": "169 °C",
+      "tone": "info"
+     },
+     {
+      "key": "ro",
+      "raw": "1.1258767748804337",
+      "text": "1.13 %",
+      "tone": "info"
+     },
+     {
+      "key": "rank",
+      "raw": "4",
+      "text": "MV Bituminous (prime coking)",
+      "tone": "ok"
+     },
+     {
+      "key": "vm",
+      "raw": "26.936627702704108",
+      "text": "26.9 %",
+      "tone": "info"
+     },
+     {
+      "key": "moist",
+      "raw": "6.551759142965139",
+      "text": "6.6 %",
+      "tone": "info"
+     },
+     {
+      "key": "gcv",
+      "raw": "8234.097127611367",
+      "text": "8234 kcal/kg",
+      "tone": "info"
+     }
+    ],
+    "goal": "Reach MV bituminous rank (1.1 ≤ Ro < 1.5 %)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-dip": {
+  "params": [
+   {
+    "key": "delta",
+    "min": 5,
+    "max": 80,
+    "step": 1,
+    "default": 40
+   },
+   {
+    "key": "beta",
+    "min": 0,
+    "max": 90,
+    "step": 1,
+    "default": 60
+   }
+  ],
+  "handles": [
+   {
+    "key": "beta",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "alpha",
+   "grad",
+   "ratio"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "delta": 5,
+     "beta": 0
+    },
+    "readouts": [
+     {
+      "key": "alpha",
+      "raw": "0",
+      "text": "0.0 °",
+      "tone": "info"
+     },
+     {
+      "key": "grad",
+      "raw": "Infinity",
+      "text": "level (∞)",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0",
+      "text": "0.00",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "delta": 40,
+     "beta": 60
+    },
+    "readouts": [
+     {
+      "key": "alpha",
+      "raw": "36.005214818786534",
+      "text": "36.0 °",
+      "tone": "info"
+     },
+     {
+      "key": "grad",
+      "raw": "1.3761185149839417",
+      "text": "1 in 1.38",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.9001303704696634",
+      "text": "0.90",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "delta": 40,
+     "beta": 26
+    },
+    "readouts": [
+     {
+      "key": "alpha",
+      "raw": "20.195392836924146",
+      "text": "20.2 °",
+      "tone": "info"
+     },
+     {
+      "key": "grad",
+      "raw": "2.718594965301453",
+      "text": "1 in 2.72",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.5048848209231036",
+      "text": "0.50",
+      "tone": "info"
+     }
+    ],
+    "goal": "With δ = 40°, set β so apparent dip ≈ 20°",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-dip3": {
+  "params": [
+   {
+    "key": "zA",
+    "min": 150,
+    "max": 250,
+    "step": 1,
+    "default": 200
+   },
+   {
+    "key": "dA",
+    "min": 50,
+    "max": 250,
+    "step": 1,
+    "default": 100
+   },
+   {
+    "key": "zB",
+    "min": 150,
+    "max": 250,
+    "step": 1,
+    "default": 210
+   },
+   {
+    "key": "dB",
+    "min": 50,
+    "max": 250,
+    "step": 1,
+    "default": 130
+   },
+   {
+    "key": "zC",
+    "min": 150,
+    "max": 250,
+    "step": 1,
+    "default": 190
+   },
+   {
+    "key": "dC",
+    "min": 50,
+    "max": 250,
+    "step": 1,
+    "default": 160
+   },
+   {
+    "key": "sec",
+    "min": 0,
+    "max": 359,
+    "step": 1,
+    "default": 90
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "dip",
+   "dipAz",
+   "strike",
+   "app",
+   "eA"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "zA": 150,
+     "dA": 50,
+     "zB": 150,
+     "dB": 50,
+     "zC": 150,
+     "dC": 50,
+     "sec": 0
+    },
+    "readouts": [
+     {
+      "key": "dip",
+      "raw": "0",
+      "text": "0.00 °",
+      "tone": "info"
+     },
+     {
+      "key": "dipAz",
+      "raw": "0",
+      "text": "0.0 °",
+      "tone": "info"
+     },
+     {
+      "key": "strike",
+      "raw": "270",
+      "text": "270° / 90°",
+      "tone": "info"
+     },
+     {
+      "key": "app",
+      "raw": "0",
+      "text": "0.00 °",
+      "tone": "info"
+     },
+     {
+      "key": "eA",
+      "raw": "100",
+      "text": "100 / 100 / 100 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "zA": 200,
+     "dA": 100,
+     "zB": 210,
+     "dB": 130,
+     "zC": 190,
+     "dC": 160,
+     "sec": 90
+    },
+    "readouts": [
+     {
+      "key": "dip",
+      "raw": "10.50555648304082",
+      "text": "10.51 °",
+      "tone": "info"
+     },
+     {
+      "key": "dipAz",
+      "raw": "15.642246457208728",
+      "text": "15.6 °",
+      "tone": "info"
+     },
+     {
+      "key": "strike",
+      "raw": "285.6422464572087",
+      "text": "286° / 106°",
+      "tone": "info"
+     },
+     {
+      "key": "app",
+      "raw": "2.8624052261117483",
+      "text": "2.86 °",
+      "tone": "info"
+     },
+     {
+      "key": "eA",
+      "raw": "100",
+      "text": "100 / 80 / 30 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "zA": 230,
+     "dA": 100,
+     "zB": 210,
+     "dB": 130,
+     "zC": 190,
+     "dC": 160,
+     "sec": 90
+    },
+    "readouts": [
+     {
+      "key": "dip",
+      "raw": "14.770333775210723",
+      "text": "14.77 °",
+      "tone": "info"
+     },
+     {
+      "key": "dipAz",
+      "raw": "28.300755766006375",
+      "text": "28.3 °",
+      "tone": "info"
+     },
+     {
+      "key": "strike",
+      "raw": "298.3007557660064",
+      "text": "298° / 118°",
+      "tone": "info"
+     },
+     {
+      "key": "app",
+      "raw": "7.125016348901797",
+      "text": "7.13 °",
+      "tone": "info"
+     },
+     {
+      "key": "eA",
+      "raw": "130",
+      "text": "130 / 80 / 30 m",
+      "tone": "info"
+     }
+    ],
+    "goal": "Re-interpret borehole C so the seam's true dip is 15° ± 0.5°",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-fault": {
+  "params": [
+   {
+    "key": "type",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "theta",
+    "min": 20,
+    "max": 85,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "d",
+    "min": 2,
+    "max": 40,
+    "step": 1,
+    "default": 15
+   }
+  ],
+  "handles": [
+   {
+    "key": "d",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "throwV",
+   "heave",
+   "zone"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "type": 0,
+     "theta": 20,
+     "d": 2
+    },
+    "readouts": [
+     {
+      "key": "throwV",
+      "raw": "0.6840402866513374",
+      "text": "0.68 m",
+      "tone": "info"
+     },
+     {
+      "key": "heave",
+      "raw": "1.8793852415718169",
+      "text": "1.88 m",
+      "tone": "info"
+     },
+     {
+      "key": "zone",
+      "raw": "0",
+      "text": "Barren GAP 1.9 m",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "type": 0,
+     "theta": 60,
+     "d": 15
+    },
+    "readouts": [
+     {
+      "key": "throwV",
+      "raw": "12.990381056766578",
+      "text": "12.99 m",
+      "tone": "info"
+     },
+     {
+      "key": "heave",
+      "raw": "7.500000000000002",
+      "text": "7.50 m",
+      "tone": "info"
+     },
+     {
+      "key": "zone",
+      "raw": "0",
+      "text": "Barren GAP 7.5 m",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "type": 1,
+     "theta": 47,
+     "d": 15
+    },
+    "readouts": [
+     {
+      "key": "throwV",
+      "raw": "10.970305524287557",
+      "text": "10.97 m",
+      "tone": "info"
+     },
+     {
+      "key": "heave",
+      "raw": "10.229975400937477",
+      "text": "10.23 m",
+      "tone": "info"
+     },
+     {
+      "key": "zone",
+      "raw": "1",
+      "text": "Double-seam OVERLAP 10.2 m",
+      "tone": "crit"
+     }
+    ],
+    "goal": "Reverse fault with heave = 10 ± 0.5 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-rqd": {
+  "params": [
+   {
+    "key": "lambda",
+    "min": 0.5,
+    "max": 30,
+    "step": 0.5,
+    "default": 6
+   },
+   {
+    "key": "rec",
+    "min": 60,
+    "max": 100,
+    "step": 1,
+    "default": 95
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "rqd",
+   "rqdT",
+   "cls"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "lambda": 0.5,
+     "rec": 60
+    },
+    "readouts": [
+     {
+      "key": "rqd",
+      "raw": "60",
+      "text": "60.0 %",
+      "tone": "warn"
+     },
+     {
+      "key": "rqdT",
+      "raw": "99.87908957257498",
+      "text": "99.9 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "2",
+      "text": "Fair",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "lambda": 6,
+     "rec": 95
+    },
+    "readouts": [
+     {
+      "key": "rqd",
+      "raw": "91.70261158388394",
+      "text": "91.7 %",
+      "tone": "ok"
+     },
+     {
+      "key": "rqdT",
+      "raw": "87.80986177504423",
+      "text": "87.8 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "4",
+      "text": "Excellent",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "lambda": 17,
+     "rec": 95
+    },
+    "readouts": [
+     {
+      "key": "rqd",
+      "raw": "49.86087927582418",
+      "text": "49.9 %",
+      "tone": "crit"
+     },
+     {
+      "key": "rqdT",
+      "raw": "49.32455149423836",
+      "text": "49.3 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "1",
+      "text": "Poor",
+      "tone": "crit"
+     }
+    ],
+    "goal": "Priest–Hudson RQD between 45 % and 50 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-supergene": {
+  "params": [
+   {
+    "key": "g0",
+    "min": 0.2,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 0.5
+   },
+   {
+    "key": "Hl",
+    "min": 20,
+    "max": 200,
+    "step": 5,
+    "default": 80
+   },
+   {
+    "key": "Hb",
+    "min": 10,
+    "max": 80,
+    "step": 5,
+    "default": 30
+   },
+   {
+    "key": "eta",
+    "min": 0.3,
+    "max": 0.95,
+    "step": 0.05,
+    "default": 0.8
+   }
+  ],
+  "handles": [
+   {
+    "key": "Hl",
+    "axis": "y"
+   },
+   {
+    "key": "Hb",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "cap",
+   "blanket",
+   "ef"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "g0": 0.2,
+     "Hl": 20,
+     "Hb": 10,
+     "eta": 0.3
+    },
+    "readouts": [
+     {
+      "key": "cap",
+      "raw": "0.13999999999999999",
+      "text": "0.14 % Cu",
+      "tone": "warn"
+     },
+     {
+      "key": "blanket",
+      "raw": "0.32000000000000006",
+      "text": "0.32 % Cu",
+      "tone": "info"
+     },
+     {
+      "key": "ef",
+      "raw": "1.6000000000000003",
+      "text": "1.60 ×",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "g0": 0.5,
+     "Hl": 80,
+     "Hb": 30,
+     "eta": 0.8
+    },
+    "readouts": [
+     {
+      "key": "cap",
+      "raw": "0.09999999999999998",
+      "text": "0.10 % Cu",
+      "tone": "warn"
+     },
+     {
+      "key": "blanket",
+      "raw": "1.5666666666666667",
+      "text": "1.57 % Cu",
+      "tone": "info"
+     },
+     {
+      "key": "ef",
+      "raw": "3.1333333333333333",
+      "text": "3.13 ×",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "g0": 0.5,
+     "Hl": 115,
+     "Hb": 30,
+     "eta": 0.8
+    },
+    "readouts": [
+     {
+      "key": "cap",
+      "raw": "0.09999999999999998",
+      "text": "0.10 % Cu",
+      "tone": "warn"
+     },
+     {
+      "key": "blanket",
+      "raw": "2.033333333333333",
+      "text": "2.03 % Cu",
+      "tone": "ok"
+     },
+     {
+      "key": "ef",
+      "raw": "4.066666666666666",
+      "text": "4.07 ×",
+      "tone": "info"
+     }
+    ],
+    "goal": "Blanket grade ≥ 2.0 % Cu with primary grade still 0.5 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u1-unfc": {
+  "params": [
+   {
+    "key": "E",
+    "min": 1,
+    "max": 3,
+    "step": 1,
+    "default": 1,
+    "options": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "key": "F",
+    "min": 1,
+    "max": 3,
+    "step": 1,
+    "default": 1,
+    "options": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "key": "G",
+    "min": 1,
+    "max": 4,
+    "step": 1,
+    "default": 1,
+    "options": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "code",
+   "code",
+   "reserve"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "E": 1,
+     "F": 1,
+     "G": 1
+    },
+    "readouts": [
+     {
+      "key": "code",
+      "raw": "111",
+      "text": "111",
+      "tone": "info"
+     },
+     {
+      "key": "code",
+      "raw": "111",
+      "text": "Proved Mineral Reserve",
+      "tone": "ok"
+     },
+     {
+      "key": "reserve",
+      "raw": "1",
+      "text": "RESERVE (mineable)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "E": 1,
+     "F": 1,
+     "G": 1
+    },
+    "readouts": [
+     {
+      "key": "code",
+      "raw": "111",
+      "text": "111",
+      "tone": "info"
+     },
+     {
+      "key": "code",
+      "raw": "111",
+      "text": "Proved Mineral Reserve",
+      "tone": "ok"
+     },
+     {
+      "key": "reserve",
+      "raw": "1",
+      "text": "RESERVE (mineable)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "E": 1,
+     "F": 2,
+     "G": 2
+    },
+    "readouts": [
+     {
+      "key": "code",
+      "raw": "122",
+      "text": "122",
+      "tone": "info"
+     },
+     {
+      "key": "code",
+      "raw": "122",
+      "text": "Probable Mineral Reserve",
+      "tone": "ok"
+     },
+     {
+      "key": "reserve",
+      "raw": "1",
+      "text": "RESERVE (mineable)",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Set the UNFC code for this block (Probable Reserve)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u10-fta": {
+  "params": [
+   {
+    "key": "p1",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.1
+   },
+   {
+    "key": "p2",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.05
+   },
+   {
+    "key": "p3",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.1
+   },
+   {
+    "key": "p4",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.05
+   },
+   {
+    "key": "p5",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.05
+   },
+   {
+    "key": "p6",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "default": 0.02
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "gas",
+   "ign",
+   "top"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "p1": 0,
+     "p2": 0,
+     "p3": 0,
+     "p4": 0,
+     "p5": 0,
+     "p6": 0
+    },
+    "readouts": [
+     {
+      "key": "gas",
+      "raw": "0",
+      "text": "0.0000",
+      "tone": "info"
+     },
+     {
+      "key": "ign",
+      "raw": "0",
+      "text": "0.0000",
+      "tone": "info"
+     },
+     {
+      "key": "top",
+      "raw": "0",
+      "text": "0.00000",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "p1": 0.1,
+     "p2": 0.05,
+     "p3": 0.1,
+     "p4": 0.05,
+     "p5": 0.05,
+     "p6": 0.02
+    },
+    "readouts": [
+     {
+      "key": "gas",
+      "raw": "0.23050000000000004",
+      "text": "0.2305",
+      "tone": "info"
+     },
+     {
+      "key": "ign",
+      "raw": "0.11555000000000004",
+      "text": "0.1156",
+      "tone": "info"
+     },
+     {
+      "key": "top",
+      "raw": "0.026634275000000013",
+      "text": "0.02663",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "p1": 0.1,
+     "p2": 0.05,
+     "p3": 0.1,
+     "p4": 0.05,
+     "p5": 0.05,
+     "p6": 0.02
+    },
+    "readouts": [
+     {
+      "key": "gas",
+      "raw": "0.23050000000000004",
+      "text": "0.2305",
+      "tone": "info"
+     },
+     {
+      "key": "ign",
+      "raw": "0.11555000000000004",
+      "text": "0.1156",
+      "tone": "info"
+     },
+     {
+      "key": "top",
+      "raw": "0.026634275000000013",
+      "text": "0.02663",
+      "tone": "crit"
+     }
+    ],
+    "goal": "Gas branch unchanged; P(explosion) ≤ 0.002",
+    "goalMet": false
+   }
+  ]
+ },
+ "u10-gassy": {
+  "params": [
+   {
+    "key": "em",
+    "min": 0,
+    "max": 20,
+    "step": 0.1,
+    "default": 0.5
+   },
+   {
+    "key": "gb",
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "default": 0.05
+   }
+  ],
+  "handles": [
+   {
+    "key": "em",
+    "axis": "x"
+   },
+   {
+    "key": "gb",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "deg",
+   "deg"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "em": 0,
+     "gb": 0
+    },
+    "readouts": [
+     {
+      "key": "deg",
+      "raw": "1",
+      "text": "Degree I",
+      "tone": "ok"
+     },
+     {
+      "key": "deg",
+      "raw": "1",
+      "text": "Least gassy — still test regularly",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "em": 0.5,
+     "gb": 0.05
+    },
+    "readouts": [
+     {
+      "key": "deg",
+      "raw": "1",
+      "text": "Degree I",
+      "tone": "ok"
+     },
+     {
+      "key": "deg",
+      "raw": "1",
+      "text": "Least gassy — still test regularly",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "em": 0.5,
+     "gb": 0.12
+    },
+    "readouts": [
+     {
+      "key": "deg",
+      "raw": "2",
+      "text": "Degree II",
+      "tone": "warn"
+     },
+     {
+      "key": "deg",
+      "raw": "2",
+      "text": "Gassy: flameproof/IS apparatus, permitted explosives, stricter gas testing",
+      "tone": "info"
+     }
+    ],
+    "goal": "Emission ≤ 1 m³/t but Degree II",
+    "goalMet": true
+   }
+  ]
+ },
+ "u10-risk": {
+  "params": [
+   {
+    "key": "L",
+    "min": 1,
+    "max": 5,
+    "step": 1,
+    "default": 4
+   },
+   {
+    "key": "C",
+    "min": 1,
+    "max": 5,
+    "step": 1,
+    "default": 5
+   },
+   {
+    "key": "ctrl",
+    "min": 0,
+    "max": 5,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  ],
+  "handles": [
+   {
+    "key": "C",
+    "axis": "x"
+   },
+   {
+    "key": "L",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "inh",
+   "res",
+   "br"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "L": 1,
+     "C": 1,
+     "ctrl": 0
+    },
+    "readouts": [
+     {
+      "key": "inh",
+      "raw": "1",
+      "text": "1",
+      "tone": "ok"
+     },
+     {
+      "key": "res",
+      "raw": "1",
+      "text": "1",
+      "tone": "ok"
+     },
+     {
+      "key": "br",
+      "raw": "0",
+      "text": "Low",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "L": 4,
+     "C": 5,
+     "ctrl": 0
+    },
+    "readouts": [
+     {
+      "key": "inh",
+      "raw": "20",
+      "text": "20",
+      "tone": "crit"
+     },
+     {
+      "key": "res",
+      "raw": "20",
+      "text": "20",
+      "tone": "crit"
+     },
+     {
+      "key": "br",
+      "raw": "3",
+      "text": "Very high",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "L": 4,
+     "C": 5,
+     "ctrl": 4
+    },
+    "readouts": [
+     {
+      "key": "inh",
+      "raw": "20",
+      "text": "20",
+      "tone": "crit"
+     },
+     {
+      "key": "res",
+      "raw": "5",
+      "text": "5",
+      "tone": "warn"
+     },
+     {
+      "key": "br",
+      "raw": "1",
+      "text": "Medium",
+      "tone": "warn"
+     }
+    ],
+    "goal": "L = 4, C = 5, residual ≤ 9",
+    "goalMet": true
+   }
+  ]
+ },
+ "u10-roles": {
+  "params": [
+   {
+    "key": "role",
+    "min": 0,
+    "max": 9,
+    "step": 1,
+    "default": 2,
+    "options": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "role",
+   "tier"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "role": 0
+    },
+    "readouts": [
+     {
+      "key": "role",
+      "raw": "0",
+      "text": "Owner",
+      "tone": "info"
+     },
+     {
+      "key": "tier",
+      "raw": "0",
+      "text": "Ownership & management",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "role": 2
+    },
+    "readouts": [
+     {
+      "key": "role",
+      "raw": "2",
+      "text": "Manager",
+      "tone": "info"
+     },
+     {
+      "key": "tier",
+      "raw": "1",
+      "text": "Statutory management",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "role": 6
+    },
+    "readouts": [
+     {
+      "key": "role",
+      "raw": "6",
+      "text": "Surveyor",
+      "tone": "info"
+     },
+     {
+      "key": "tier",
+      "raw": "2",
+      "text": "Specialist officials",
+      "tone": "info"
+     }
+    ],
+    "goal": "Select the official responsible for mine plans and sections",
+    "goalMet": true
+   }
+  ]
+ },
+ "u10-scba": {
+  "params": [
+   {
+    "key": "V",
+    "min": 1,
+    "max": 3,
+    "step": 0.1,
+    "default": 2
+   },
+   {
+    "key": "P",
+    "min": 100,
+    "max": 300,
+    "step": 10,
+    "default": 200
+   },
+   {
+    "key": "work",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 1,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "travel",
+    "min": 5,
+    "max": 90,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "res",
+    "min": 10,
+    "max": 30,
+    "step": 1,
+    "default": 20
+   }
+  ],
+  "handles": [
+   {
+    "key": "travel",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "o2",
+   "dur",
+   "workTime",
+   "turn"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "V": 1,
+     "P": 100,
+     "work": 0,
+     "travel": 5,
+     "res": 10
+    },
+    "readouts": [
+     {
+      "key": "o2",
+      "raw": "100",
+      "text": "100 L",
+      "tone": "info"
+     },
+     {
+      "key": "dur",
+      "raw": "83.33333333333334",
+      "text": "83 min",
+      "tone": "info"
+     },
+     {
+      "key": "workTime",
+      "raw": "65.00000000000001",
+      "text": "65 min",
+      "tone": "ok"
+     },
+     {
+      "key": "turn",
+      "raw": "16",
+      "text": "16 bar",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "V": 2,
+     "P": 200,
+     "work": 1,
+     "travel": 30,
+     "res": 20
+    },
+    "readouts": [
+     {
+      "key": "o2",
+      "raw": "400",
+      "text": "400 L",
+      "tone": "info"
+     },
+     {
+      "key": "dur",
+      "raw": "181.8181818181818",
+      "text": "182 min",
+      "tone": "info"
+     },
+     {
+      "key": "workTime",
+      "raw": "85.45454545454547",
+      "text": "85 min",
+      "tone": "ok"
+     },
+     {
+      "key": "turn",
+      "raw": "73",
+      "text": "73 bar",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "V": 2,
+     "P": 200,
+     "work": 2,
+     "travel": 40,
+     "res": 20
+    },
+    "readouts": [
+     {
+      "key": "o2",
+      "raw": "400",
+      "text": "400 L",
+      "tone": "info"
+     },
+     {
+      "key": "dur",
+      "raw": "125",
+      "text": "125 min",
+      "tone": "info"
+     },
+     {
+      "key": "workTime",
+      "raw": "20",
+      "text": "20 min",
+      "tone": "ok"
+     },
+     {
+      "key": "turn",
+      "raw": "104",
+      "text": "104 bar",
+      "tone": "info"
+     }
+    ],
+    "goal": "Heavy workload, 40 min travel, ≥ 20 min working time",
+    "goalMet": true
+   }
+  ]
+ },
+ "u2-access": {
+  "params": [
+   {
+    "key": "D",
+    "min": 50,
+    "max": 900,
+    "step": 10,
+    "default": 250
+   },
+   {
+    "key": "ang",
+    "min": 8,
+    "max": 16,
+    "step": 0.5,
+    "default": 14
+   },
+   {
+    "key": "P",
+    "min": 0.5,
+    "max": 10,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "hill",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [
+   {
+    "key": "D",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "L",
+   "incline",
+   "shaft",
+   "best"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "D": 50,
+     "ang": 8,
+     "P": 0.5,
+     "hill": 0
+    },
+    "readouts": [
+     {
+      "key": "L",
+      "raw": "359.264826716386",
+      "text": "359 m",
+      "tone": "info"
+     },
+     {
+      "key": "incline",
+      "raw": "29.49118613731088",
+      "text": "29 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "shaft",
+      "raw": "39.5",
+      "text": "40 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "best",
+      "raw": "1",
+      "text": "INCLINE (belt conveyor)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "D": 250,
+     "ang": 14,
+     "P": 3,
+     "hill": 0
+    },
+    "readouts": [
+     {
+      "key": "L",
+      "raw": "1033.3913736096872",
+      "text": "1033 m",
+      "tone": "info"
+     },
+     {
+      "key": "incline",
+      "raw": "87.17130988877499",
+      "text": "87 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "shaft",
+      "raw": "99.5",
+      "text": "100 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "best",
+      "raw": "1",
+      "text": "INCLINE (belt conveyor)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "D": 420,
+     "ang": 14,
+     "P": 3,
+     "hill": 0
+    },
+    "readouts": [
+     {
+      "key": "L",
+      "raw": "1736.0975076642746",
+      "text": "1736 m",
+      "tone": "info"
+     },
+     {
+      "key": "incline",
+      "raw": "143.38780061314196",
+      "text": "143 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "shaft",
+      "raw": "142",
+      "text": "142 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "best",
+      "raw": "2",
+      "text": "VERTICAL SHAFT (winding)",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Shaft preferred at the shallowest possible depth (≤ 420 m), 3 Mtpa, 14°, flat",
+    "goalMet": true
+   }
+  ]
+ },
+ "u2-burncut": {
+  "params": [
+   {
+    "key": "phi",
+    "min": 51,
+    "max": 200,
+    "step": 1,
+    "default": 64
+   },
+   {
+    "key": "S",
+    "min": 6,
+    "max": 30,
+    "step": 1,
+    "default": 16
+   },
+   {
+    "key": "f",
+    "min": 2,
+    "max": 15,
+    "step": 1,
+    "default": 8
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "H",
+   "adv",
+   "a1",
+   "N",
+   "vol"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "phi": 51,
+     "S": 6,
+     "f": 2
+    },
+    "readouts": [
+     {
+      "key": "H",
+      "raw": "1.7866205999999998",
+      "text": "1.79 m",
+      "tone": "info"
+     },
+     {
+      "key": "adv",
+      "raw": "1.6972895699999997",
+      "text": "1.70 m",
+      "tone": "crit"
+     },
+     {
+      "key": "a1",
+      "raw": "76.5",
+      "text": "77 mm",
+      "tone": "info"
+     },
+     {
+      "key": "N",
+      "raw": "9",
+      "text": "9",
+      "tone": "info"
+     },
+     {
+      "key": "vol",
+      "raw": "10.183737419999998",
+      "text": "10.2 m³",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "phi": 64,
+     "S": 16,
+     "f": 8
+    },
+    "readouts": [
+     {
+      "key": "H",
+      "raw": "2.1710176000000003",
+      "text": "2.17 m",
+      "tone": "info"
+     },
+     {
+      "key": "adv",
+      "raw": "2.06246672",
+      "text": "2.06 m",
+      "tone": "crit"
+     },
+     {
+      "key": "a1",
+      "raw": "96",
+      "text": "96 mm",
+      "tone": "info"
+     },
+     {
+      "key": "N",
+      "raw": "31",
+      "text": "31",
+      "tone": "info"
+     },
+     {
+      "key": "vol",
+      "raw": "32.99946752",
+      "text": "33.0 m³",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "phi": 121,
+     "S": 16,
+     "f": 8
+    },
+    "readouts": [
+     {
+      "key": "H",
+      "raw": "3.6992446000000005",
+      "text": "3.70 m",
+      "tone": "info"
+     },
+     {
+      "key": "adv",
+      "raw": "3.5142823700000005",
+      "text": "3.51 m",
+      "tone": "ok"
+     },
+     {
+      "key": "a1",
+      "raw": "181.5",
+      "text": "182 mm",
+      "tone": "info"
+     },
+     {
+      "key": "N",
+      "raw": "31",
+      "text": "31",
+      "tone": "info"
+     },
+     {
+      "key": "vol",
+      "raw": "56.22851792000001",
+      "text": "56.2 m³",
+      "tone": "info"
+     }
+    ],
+    "goal": "Expected pull ≥ 3.5 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u2-cutting": {
+  "params": [
+   {
+    "key": "m",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "ucs",
+    "min": 10,
+    "max": 250,
+    "step": 5,
+    "default": 60
+   },
+   {
+    "key": "P",
+    "min": 100,
+    "max": 500,
+    "step": 10,
+    "default": 300
+   }
+  ],
+  "handles": [
+   {
+    "key": "ucs",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "se",
+   "icr",
+   "ok"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "m": 0,
+     "ucs": 10,
+     "P": 100
+    },
+    "readouts": [
+     {
+      "key": "se",
+      "raw": "1.1",
+      "text": "1.1 kWh/m³",
+      "tone": "info"
+     },
+     {
+      "key": "icr",
+      "raw": "50",
+      "text": "50.0 m³/h",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes (≤ 100 MPa)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "m": 0,
+     "ucs": 60,
+     "P": 300
+    },
+    "readouts": [
+     {
+      "key": "se",
+      "raw": "6.6",
+      "text": "6.6 kWh/m³",
+      "tone": "info"
+     },
+     {
+      "key": "icr",
+      "raw": "25",
+      "text": "25.0 m³/h",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes (≤ 100 MPa)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "m": 0,
+     "ucs": 100,
+     "P": 300
+    },
+    "readouts": [
+     {
+      "key": "se",
+      "raw": "11",
+      "text": "11.0 kWh/m³",
+      "tone": "info"
+     },
+     {
+      "key": "icr",
+      "raw": "15",
+      "text": "15.0 m³/h",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes (≤ 100 MPa)",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Roadheader, 300 kW, rock as strong as possible while ICR ≥ 15 m³/h",
+    "goalMet": true
+   }
+  ]
+ },
+ "u2-freeze": {
+  "params": [
+   {
+    "key": "h",
+    "min": 30,
+    "max": 300,
+    "step": 5,
+    "default": 120
+   },
+   {
+    "key": "r",
+    "min": 2.5,
+    "max": 5,
+    "step": 0.1,
+    "default": 3.5
+   },
+   {
+    "key": "sig",
+    "min": 2,
+    "max": 10,
+    "step": 0.5,
+    "default": 4
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "pr",
+   "lame",
+   "domke",
+   "e",
+   "n"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "h": 30,
+     "r": 2.5,
+     "sig": 2
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "0.38999999999999996",
+      "text": "0.39 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "lame",
+      "raw": "0.7009219983223991",
+      "text": "0.70 m",
+      "tone": "info"
+     },
+     {
+      "key": "domke",
+      "raw": "0.3600187499999999",
+      "text": "0.36 m",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "0.7009219983223991",
+      "text": "0.70 m",
+      "tone": "ok"
+     },
+     {
+      "key": "n",
+      "raw": "16",
+      "text": "16",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "h": 120,
+     "r": 3.5,
+     "sig": 4
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "1.5599999999999998",
+      "text": "1.56 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "lame",
+      "raw": "3.962025072446364",
+      "text": "3.96 m",
+      "tone": "info"
+     },
+     {
+      "key": "domke",
+      "raw": "1.6202549999999993",
+      "text": "1.62 m",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "3.962025072446364",
+      "text": "3.96 m",
+      "tone": "ok"
+     },
+     {
+      "key": "n",
+      "raw": "30",
+      "text": "30",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "h": 200,
+     "r": 3.5,
+     "sig": 7.5
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "2.6",
+      "text": "2.60 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "lame",
+      "raw": "2.8202572870028835",
+      "text": "2.82 m",
+      "tone": "info"
+     },
+     {
+      "key": "domke",
+      "raw": "1.319297777777778",
+      "text": "1.32 m",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "2.8202572870028835",
+      "text": "2.82 m",
+      "tone": "ok"
+     },
+     {
+      "key": "n",
+      "raw": "27",
+      "text": "27",
+      "tone": "info"
+     }
+    ],
+    "goal": "h ≥ 200 m and a feasible design wall ≤ 3.0 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u2-sinking": {
+  "params": [
+   {
+    "key": "dia",
+    "min": 4,
+    "max": 8,
+    "step": 0.5,
+    "default": 6
+   },
+   {
+    "key": "hole",
+    "min": 1.5,
+    "max": 4,
+    "step": 0.1,
+    "default": 2.4
+   },
+   {
+    "key": "pull",
+    "min": 0.7,
+    "max": 0.95,
+    "step": 0.01,
+    "default": 0.85
+   },
+   {
+    "key": "grab",
+    "min": 10,
+    "max": 60,
+    "step": 1,
+    "default": 20
+   },
+   {
+    "key": "conc",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "adv",
+   "loose",
+   "cycle",
+   "muck",
+   "perMonth"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "dia": 4,
+     "hole": 1.5,
+     "pull": 0.7,
+     "grab": 10,
+     "conc": 0
+    },
+    "readouts": [
+     {
+      "key": "adv",
+      "raw": "1.0499999999999998",
+      "text": "1.05 m",
+      "tone": "info"
+     },
+     {
+      "key": "loose",
+      "raw": "31.680448637330194",
+      "text": "32 m³",
+      "tone": "info"
+     },
+     {
+      "key": "cycle",
+      "raw": "8.284711530399687",
+      "text": "8.3 h",
+      "tone": "info"
+     },
+     {
+      "key": "muck",
+      "raw": "3.1680448637330194",
+      "text": "3.2 h",
+      "tone": "ok"
+     },
+     {
+      "key": "perMonth",
+      "raw": "47.45125989691934",
+      "text": "47 m/month",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "dia": 6,
+     "hole": 2.4,
+     "pull": 0.85,
+     "grab": 20,
+     "conc": 0
+    },
+    "readouts": [
+     {
+      "key": "adv",
+      "raw": "2.04",
+      "text": "2.04 m",
+      "tone": "info"
+     },
+     {
+      "key": "loose",
+      "raw": "122.0501206097266",
+      "text": "122 m³",
+      "tone": "info"
+     },
+     {
+      "key": "cycle",
+      "raw": "12.135839363819663",
+      "text": "12.1 h",
+      "tone": "info"
+     },
+     {
+      "key": "muck",
+      "raw": "6.10250603048633",
+      "text": "6.1 h",
+      "tone": "warn"
+     },
+     {
+      "key": "perMonth",
+      "raw": "62.935572654086876",
+      "text": "63 m/month",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "dia": 6,
+     "hole": 3.3,
+     "pull": 0.85,
+     "grab": 20,
+     "conc": 0
+    },
+    "readouts": [
+     {
+      "key": "adv",
+      "raw": "2.8049999999999997",
+      "text": "2.80 m",
+      "tone": "info"
+     },
+     {
+      "key": "loose",
+      "raw": "167.8189158383741",
+      "text": "168 m³",
+      "tone": "info"
+     },
+     {
+      "key": "cycle",
+      "raw": "14.924279125252038",
+      "text": "14.9 h",
+      "tone": "info"
+     },
+     {
+      "key": "muck",
+      "raw": "8.390945791918705",
+      "text": "8.4 h",
+      "tone": "warn"
+     },
+     {
+      "key": "perMonth",
+      "raw": "70.36802187805934",
+      "text": "70 m/month",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Sinking rate ≥ 70 m/month for a 6 m finished shaft",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-bolt": {
+  "params": [
+   {
+    "key": "mode",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "L",
+    "min": 3,
+    "max": 6,
+    "step": 0.1,
+    "default": 4.8
+   },
+   {
+    "key": "t",
+    "min": 0.3,
+    "max": 2.5,
+    "step": 0.1,
+    "default": 1.2
+   },
+   {
+    "key": "n",
+    "min": 1,
+    "max": 6,
+    "step": 1,
+    "default": 5
+   },
+   {
+    "key": "s",
+    "min": 0.8,
+    "max": 2,
+    "step": 0.1,
+    "default": 1.2
+   },
+   {
+    "key": "cap",
+    "min": 50,
+    "max": 200,
+    "step": 5,
+    "default": 100
+   }
+  ],
+  "handles": [
+   {
+    "key": "L",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "load",
+   "fos",
+   "sigma",
+   "len"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "mode": 0,
+     "L": 3,
+     "t": 0.3,
+     "n": 1,
+     "s": 0.8,
+     "cap": 50
+    },
+    "readouts": [
+     {
+      "key": "load",
+      "raw": "4.800000000000001",
+      "text": "4.8 kN",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "10.416666666666664",
+      "text": "no bolts",
+      "tone": "crit"
+     },
+     {
+      "key": "sigma",
+      "raw": "0.375",
+      "text": "0.38 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "len",
+      "raw": "0.6",
+      "text": "0.6 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "mode": 0,
+     "L": 4.8,
+     "t": 1.2,
+     "n": 5,
+     "s": 1.2,
+     "cap": 100
+    },
+    "readouts": [
+     {
+      "key": "load",
+      "raw": "43.199999999999996",
+      "text": "43.2 kN",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "2.314814814814815",
+      "text": "no bolts",
+      "tone": "crit"
+     },
+     {
+      "key": "sigma",
+      "raw": "1.2",
+      "text": "1.20 MPa",
+      "tone": "warn"
+     },
+     {
+      "key": "len",
+      "raw": "1.5",
+      "text": "1.5 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "mode": 1,
+     "L": 5.6,
+     "t": 0.5,
+     "n": 3,
+     "s": 1.7,
+     "cap": 105
+    },
+    "readouts": [
+     {
+      "key": "load",
+      "raw": "36.125",
+      "text": "36.1 kN",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "2.906574394463668",
+      "text": "2.91",
+      "tone": "ok"
+     },
+     {
+      "key": "sigma",
+      "raw": "0.784",
+      "text": "0.78 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "len",
+      "raw": "0.8",
+      "text": "0.8 m",
+      "tone": "info"
+     }
+    ],
+    "goal": "Bolted, spacing ≥ 1.4 m, FOS ≥ 2",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-failure": {
+  "params": [
+   {
+    "key": "c",
+    "min": 0.5,
+    "max": 20,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "phi",
+    "min": 20,
+    "max": 55,
+    "step": 1,
+    "default": 35
+   },
+   {
+    "key": "sci",
+    "min": 20,
+    "max": 200,
+    "step": 5,
+    "default": 60
+   },
+   {
+    "key": "mi",
+    "min": 5,
+    "max": 30,
+    "step": 1,
+    "default": 10
+   },
+   {
+    "key": "gsi",
+    "min": 10,
+    "max": 100,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "s3",
+    "min": 0,
+    "max": 30,
+    "step": 0.5,
+    "default": 5
+   }
+  ],
+  "handles": [
+   {
+    "key": "s3",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "mc",
+   "hb",
+   "diff",
+   "scMC",
+   "scm",
+   "mb"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "c": 0.5,
+     "phi": 20,
+     "sci": 20,
+     "mi": 5,
+     "gsi": 10,
+     "s3": 0
+    },
+    "readouts": [
+     {
+      "key": "mc",
+      "raw": "1.4281480067421144",
+      "text": "1.4 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "hb",
+      "raw": "0.05739248724259287",
+      "text": "0.1 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "diff",
+      "raw": "2388.388420431165",
+      "text": "2388.4 %",
+      "tone": "warn"
+     },
+     {
+      "key": "scMC",
+      "raw": "1.4281480067421144",
+      "text": "1.4 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "scm",
+      "raw": "0.05739248724259287",
+      "text": "0.06 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "mb",
+      "raw": "0.2009201322553681",
+      "text": "0.20 / 4.5e-5",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "c": 3,
+     "phi": 35,
+     "sci": 60,
+     "mi": 10,
+     "gsi": 60,
+     "s3": 5
+    },
+    "readouts": [
+     {
+      "key": "mc",
+      "raw": "29.97675442254031",
+      "text": "30.0 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "hb",
+      "raw": "32.46889979501904",
+      "text": "32.5 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "diff",
+      "raw": "-7.67548450428568",
+      "text": "-7.7 %",
+      "tone": "warn"
+     },
+     {
+      "key": "scMC",
+      "raw": "11.525892761826993",
+      "text": "11.5 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "scm",
+      "raw": "6.420512170055171",
+      "text": "6.42 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "mb",
+      "raw": "2.396510364417758",
+      "text": "2.40 / 1.2e-2",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "c": 3.5,
+     "phi": 35,
+     "sci": 60,
+     "mi": 10,
+     "gsi": 60,
+     "s3": 5
+    },
+    "readouts": [
+     {
+      "key": "mc",
+      "raw": "31.897736549511478",
+      "text": "31.9 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "hb",
+      "raw": "32.46889979501904",
+      "text": "32.5 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "diff",
+      "raw": "-1.7591087136102577",
+      "text": "-1.8 %",
+      "tone": "ok"
+     },
+     {
+      "key": "scMC",
+      "raw": "13.44687488879816",
+      "text": "13.4 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "scm",
+      "raw": "6.420512170055171",
+      "text": "6.42 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "mb",
+      "raw": "2.396510364417758",
+      "text": "2.40 / 1.2e-2",
+      "tone": "info"
+     }
+    ],
+    "goal": "|MC − HB| ≤ 3 % at σ3 = 5 MPa",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-kirsch": {
+  "params": [
+   {
+    "key": "H",
+    "min": 50,
+    "max": 1500,
+    "step": 10,
+    "default": 400
+   },
+   {
+    "key": "K",
+    "min": 0.2,
+    "max": 3,
+    "step": 0.05,
+    "default": 0.5
+   },
+   {
+    "key": "ucs",
+    "min": 20,
+    "max": 150,
+    "step": 5,
+    "default": 50
+   },
+   {
+    "key": "T",
+    "min": 1,
+    "max": 10,
+    "step": 0.5,
+    "default": 4
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "p",
+   "side",
+   "roof",
+   "sideFail",
+   "roofFail"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 50,
+     "K": 0.2,
+     "ucs": 20,
+     "T": 1
+    },
+    "readouts": [
+     {
+      "key": "p",
+      "raw": "1.25",
+      "text": "1.3 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "side",
+      "raw": "3.5",
+      "text": "3.5 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "roof",
+      "raw": "-0.4999999999999999",
+      "text": "-0.5 MPa",
+      "tone": "warn"
+     },
+     {
+      "key": "sideFail",
+      "raw": "0",
+      "text": "Stable",
+      "tone": "ok"
+     },
+     {
+      "key": "roofFail",
+      "raw": "1",
+      "text": "In tension",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 400,
+     "K": 0.5,
+     "ucs": 50,
+     "T": 4
+    },
+    "readouts": [
+     {
+      "key": "p",
+      "raw": "10",
+      "text": "10.0 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "side",
+      "raw": "25",
+      "text": "25.0 MPa",
+      "tone": "warn"
+     },
+     {
+      "key": "roof",
+      "raw": "5",
+      "text": "5.0 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "sideFail",
+      "raw": "1",
+      "text": "Spalling onset",
+      "tone": "warn"
+     },
+     {
+      "key": "roofFail",
+      "raw": "0",
+      "text": "Stable",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 400,
+     "K": 0.35,
+     "ucs": 50,
+     "T": 4
+    },
+    "readouts": [
+     {
+      "key": "p",
+      "raw": "10",
+      "text": "10.0 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "side",
+      "raw": "26.5",
+      "text": "26.5 MPa",
+      "tone": "warn"
+     },
+     {
+      "key": "roof",
+      "raw": "0.4999999999999982",
+      "text": "0.5 MPa",
+      "tone": "ok"
+     },
+     {
+      "key": "sideFail",
+      "raw": "1",
+      "text": "Spalling onset",
+      "tone": "warn"
+     },
+     {
+      "key": "roofFail",
+      "raw": "0",
+      "text": "Stable",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Crown stress between 0 and 0.06·p (just compressive)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-pillar": {
+  "params": [
+   {
+    "key": "f",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "H",
+    "min": 50,
+    "max": 800,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "w",
+    "min": 8,
+    "max": 50,
+    "step": 1,
+    "default": 22
+   },
+   {
+    "key": "B",
+    "min": 3,
+    "max": 6,
+    "step": 0.1,
+    "default": 4.8
+   },
+   {
+    "key": "h",
+    "min": 1.5,
+    "max": 6,
+    "step": 0.1,
+    "default": 3
+   },
+   {
+    "key": "sc",
+    "min": 10,
+    "max": 50,
+    "step": 1,
+    "default": 30
+   }
+  ],
+  "handles": [
+   {
+    "key": "w",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "sp",
+   "S",
+   "fos",
+   "e",
+   "wh"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "f": 0,
+     "H": 50,
+     "w": 8,
+     "B": 3,
+     "h": 1.5,
+     "sc": 10
+    },
+    "readouts": [
+     {
+      "key": "sp",
+      "raw": "2.36328125",
+      "text": "2.36 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "S",
+      "raw": "14.291690187337021",
+      "text": "14.29 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "6.0473928726583095",
+      "text": "6.05",
+      "tone": "ok"
+     },
+     {
+      "key": "e",
+      "raw": "47.107438016528924",
+      "text": "47.1 %",
+      "tone": "info"
+     },
+     {
+      "key": "wh",
+      "raw": "5.333333333333333",
+      "text": "5.3",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "f": 0,
+     "H": 300,
+     "w": 22,
+     "B": 4.8,
+     "h": 3,
+     "sc": 30
+    },
+    "readouts": [
+     {
+      "key": "sp",
+      "raw": "11.129752066115703",
+      "text": "11.13 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "S",
+      "raw": "14.404455130288156",
+      "text": "14.40 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "1.294229650824138",
+      "text": "1.29",
+      "tone": "warn"
+     },
+     {
+      "key": "e",
+      "raw": "32.61305413232346",
+      "text": "32.6 %",
+      "tone": "info"
+     },
+     {
+      "key": "wh",
+      "raw": "7.333333333333333",
+      "text": "7.3",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "f": 0,
+     "H": 400,
+     "w": 40,
+     "B": 4.8,
+     "h": 3,
+     "sc": 30
+    },
+    "readouts": [
+     {
+      "key": "sp",
+      "raw": "12.543999999999999",
+      "text": "12.54 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "S",
+      "raw": "18.96400223942251",
+      "text": "18.96 MPa",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "1.5117986479131467",
+      "text": "1.51",
+      "tone": "ok"
+     },
+     {
+      "key": "e",
+      "raw": "20.280612244897945",
+      "text": "20.3 %",
+      "tone": "info"
+     },
+     {
+      "key": "wh",
+      "raw": "13.333333333333334",
+      "text": "13.3",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Salamon–Munro, H = 400 m, 1.5 ≤ FOS < 1.6",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-rmr": {
+  "params": [
+   {
+    "key": "ucs",
+    "min": 1,
+    "max": 250,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "rqd",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "default": 65
+   },
+   {
+    "key": "sp",
+    "min": 0.02,
+    "max": 3,
+    "step": 0.01,
+    "default": 0.3
+   },
+   {
+    "key": "cond",
+    "min": 0,
+    "max": 30,
+    "step": 1,
+    "default": 12
+   },
+   {
+    "key": "gw",
+    "min": 0,
+    "max": 15,
+    "step": 1,
+    "default": 7,
+    "options": [
+     15,
+     10,
+     7,
+     4,
+     0
+    ]
+   },
+   {
+    "key": "ori",
+    "min": -12,
+    "max": 0,
+    "step": 1,
+    "default": -5,
+    "options": [
+     0,
+     -2,
+     -5,
+     -10,
+     -12
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "rmr",
+   "cls",
+   "q",
+   "gsi"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "ucs": 1,
+     "rqd": 0,
+     "sp": 0.02,
+     "cond": 0,
+     "gw": 15,
+     "ori": 0
+    },
+    "readouts": [
+     {
+      "key": "rmr",
+      "raw": "24",
+      "text": "24",
+      "tone": "crit"
+     },
+     {
+      "key": "cls",
+      "raw": "3",
+      "text": "IV · Poor",
+      "tone": "crit"
+     },
+     {
+      "key": "q",
+      "raw": "0.10836802322189587",
+      "text": "0.11",
+      "tone": "info"
+     },
+     {
+      "key": "gsi",
+      "raw": "19",
+      "text": "19",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "ucs": 60,
+     "rqd": 65,
+     "sp": 0.3,
+     "cond": 12,
+     "gw": 7,
+     "ori": -5
+    },
+    "readouts": [
+     {
+      "key": "rmr",
+      "raw": "44",
+      "text": "44",
+      "tone": "warn"
+     },
+     {
+      "key": "cls",
+      "raw": "2",
+      "text": "III · Fair",
+      "tone": "warn"
+     },
+     {
+      "key": "q",
+      "raw": "1",
+      "text": "1.00",
+      "tone": "info"
+     },
+     {
+      "key": "gsi",
+      "raw": "52",
+      "text": "52",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "ucs": 60,
+     "rqd": 65,
+     "sp": 0.3,
+     "cond": 29,
+     "gw": 7,
+     "ori": -5
+    },
+    "readouts": [
+     {
+      "key": "rmr",
+      "raw": "61",
+      "text": "61",
+      "tone": "ok"
+     },
+     {
+      "key": "cls",
+      "raw": "1",
+      "text": "II · Good",
+      "tone": "ok"
+     },
+     {
+      "key": "q",
+      "raw": "6.612017911470155",
+      "text": "6.61",
+      "tone": "info"
+     },
+     {
+      "key": "gsi",
+      "raw": "69",
+      "text": "69",
+      "tone": "info"
+     }
+    ],
+    "goal": "Adjusted RMR ≥ 61 (Class II)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-slope": {
+  "params": [
+   {
+    "key": "H",
+    "min": 10,
+    "max": 60,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "pf",
+    "min": 30,
+    "max": 80,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "pp",
+    "min": 15,
+    "max": 60,
+    "step": 1,
+    "default": 35
+   },
+   {
+    "key": "c",
+    "min": 0,
+    "max": 150,
+    "step": 5,
+    "default": 50
+   },
+   {
+    "key": "phi",
+    "min": 15,
+    "max": 45,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "ru",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.05,
+    "default": 0
+   }
+  ],
+  "handles": [
+   {
+    "key": "pf",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "W",
+   "A",
+   "fos",
+   "daylight"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 10,
+     "pf": 30,
+     "pp": 15,
+     "c": 0,
+     "phi": 15,
+     "ru": 0
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "2500",
+      "text": "2500 kN/m",
+      "tone": "info"
+     },
+     {
+      "key": "A",
+      "raw": "38.63703305156273",
+      "text": "38.6 m",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "1.0000000000000002",
+      "text": "1.00",
+      "tone": "warn"
+     },
+     {
+      "key": "daylight",
+      "raw": "1",
+      "text": "Plane daylights (ψp < ψf)",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 30,
+     "pf": 60,
+     "pp": 35,
+     "c": 50,
+     "phi": 30,
+     "ru": 0
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "9571.474547465497",
+      "text": "9571 kN/m",
+      "tone": "info"
+     },
+     {
+      "key": "A",
+      "raw": "52.30340386863295",
+      "text": "52.3 m",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "1.3008956264354106",
+      "text": "1.30",
+      "tone": "ok"
+     },
+     {
+      "key": "daylight",
+      "raw": "1",
+      "text": "Plane daylights (ψp < ψf)",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 10,
+     "pf": 60,
+     "pp": 35,
+     "c": 50,
+     "phi": 30,
+     "ru": 0.3
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "1063.4971719406108",
+      "text": "1063 kN/m",
+      "tone": "info"
+     },
+     {
+      "key": "A",
+      "raw": "17.43446795621098",
+      "text": "17.4 m",
+      "tone": "info"
+     },
+     {
+      "key": "fos",
+      "raw": "2.0062411161953007",
+      "text": "2.01",
+      "tone": "ok"
+     },
+     {
+      "key": "daylight",
+      "raw": "1",
+      "text": "Plane daylights (ψp < ψf)",
+      "tone": "warn"
+     }
+    ],
+    "goal": "ru ≥ 0.3 and FOS ≥ 1.3",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-slope-modes": {
+  "params": [
+   {
+    "key": "mode",
+    "min": 0,
+    "max": 3,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "key": "H",
+    "min": 10,
+    "max": 60,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "pf",
+    "min": 25,
+    "max": 85,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "pp",
+    "min": 10,
+    "max": 80,
+    "step": 1,
+    "default": 35
+   },
+   {
+    "key": "xi",
+    "min": 40,
+    "max": 150,
+    "step": 1,
+    "default": 90
+   },
+   {
+    "key": "bh",
+    "min": 0.1,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 0.5
+   },
+   {
+    "key": "c",
+    "min": 0,
+    "max": 150,
+    "step": 5,
+    "default": 30
+   },
+   {
+    "key": "phi",
+    "min": 15,
+    "max": 45,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "ru",
+    "min": 0,
+    "max": 0.6,
+    "step": 0.05,
+    "default": 0.2
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "fos",
+   "kin",
+   "mech"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "mode": 0,
+     "H": 10,
+     "pf": 25,
+     "pp": 10,
+     "xi": 40,
+     "bh": 0.1,
+     "c": 0,
+     "phi": 15,
+     "ru": 0
+    },
+    "readouts": [
+     {
+      "key": "fos",
+      "raw": "1.5196153836158734",
+      "text": "1.52",
+      "tone": "ok"
+     },
+     {
+      "key": "kin",
+      "raw": "1",
+      "text": "Daylights in face — feasible",
+      "tone": "warn"
+     },
+     {
+      "key": "mech",
+      "raw": "0",
+      "text": "—",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "mode": 0,
+     "H": 30,
+     "pf": 60,
+     "pp": 35,
+     "xi": 90,
+     "bh": 0.5,
+     "c": 30,
+     "phi": 30,
+     "ru": 0.2
+    },
+    "readouts": [
+     {
+      "key": "fos",
+      "raw": "0.9454457030882838",
+      "text": "0.95",
+      "tone": "crit"
+     },
+     {
+      "key": "kin",
+      "raw": "1",
+      "text": "Daylights in face — feasible",
+      "tone": "warn"
+     },
+     {
+      "key": "mech",
+      "raw": "0",
+      "text": "—",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "mode": 2,
+     "H": 30,
+     "pf": 25,
+     "pp": 35,
+     "xi": 90,
+     "bh": 0.5,
+     "c": 30,
+     "phi": 30,
+     "ru": 0.2
+    },
+    "readouts": [
+     {
+      "key": "fos",
+      "raw": "1.6411949470689882",
+      "text": "1.64",
+      "tone": "ok"
+     },
+     {
+      "key": "kin",
+      "raw": "1",
+      "text": "Not structurally controlled",
+      "tone": "warn"
+     },
+     {
+      "key": "mech",
+      "raw": "0",
+      "text": "—",
+      "tone": "info"
+     }
+    ],
+    "goal": "Circular mode, H ≥ 30 m, ru ≥ 0.2, FoS ≥ 1.3",
+    "goalMet": true
+   }
+  ]
+ },
+ "u3-subsidence": {
+  "params": [
+   {
+    "key": "H",
+    "min": 50,
+    "max": 600,
+    "step": 10,
+    "default": 200
+   },
+   {
+    "key": "W",
+    "min": 20,
+    "max": 400,
+    "step": 5,
+    "default": 120
+   },
+   {
+    "key": "m",
+    "min": 1,
+    "max": 8,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "d",
+    "min": 15,
+    "max": 40,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "meth",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [
+   {
+    "key": "W",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "S0",
+   "Wc",
+   "ratio",
+   "cls"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 50,
+     "W": 20,
+     "m": 1,
+     "d": 15,
+     "meth": 0
+    },
+    "readouts": [
+     {
+      "key": "S0",
+      "raw": "0.7509210215465131",
+      "text": "0.75 m",
+      "tone": "warn"
+     },
+     {
+      "key": "Wc",
+      "raw": "26.79491924311227",
+      "text": "27 m",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.7464101615137755",
+      "text": "0.75",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "0",
+      "text": "Sub-critical",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 200,
+     "W": 120,
+     "m": 3,
+     "d": 30,
+     "meth": 0
+    },
+    "readouts": [
+     {
+      "key": "S0",
+      "raw": "1.9373958853575433",
+      "text": "1.94 m",
+      "tone": "crit"
+     },
+     {
+      "key": "Wc",
+      "raw": "230.9401076758503",
+      "text": "231 m",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.5196152422706632",
+      "text": "0.52",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "0",
+      "text": "Sub-critical",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 200,
+     "W": 120,
+     "m": 3,
+     "d": 30,
+     "meth": 1
+    },
+    "readouts": [
+     {
+      "key": "S0",
+      "raw": "0.36326172850453925",
+      "text": "0.36 m",
+      "tone": "warn"
+     },
+     {
+      "key": "Wc",
+      "raw": "230.9401076758503",
+      "text": "231 m",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.5196152422706632",
+      "text": "0.52",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "0",
+      "text": "Sub-critical",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Smax ≤ 0.5 m with W ≥ 120 m, H = 200 m, m ≥ 3 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u4-delay": {
+  "params": [
+   {
+    "key": "inh",
+    "min": 25,
+    "max": 500,
+    "step": 1,
+    "default": 25,
+    "options": [
+     25,
+     100,
+     200,
+     400,
+     500
+    ]
+   },
+   {
+    "key": "th",
+    "min": 9,
+    "max": 67,
+    "step": 1,
+    "default": 17,
+    "options": [
+     9,
+     17,
+     25,
+     42,
+     67
+    ]
+   },
+   {
+    "key": "tr",
+    "min": 17,
+    "max": 176,
+    "step": 1,
+    "default": 42,
+    "options": [
+     17,
+     25,
+     42,
+     67,
+     109,
+     176
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "risk",
+   "maxWin",
+   "total"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "inh": 25,
+     "th": 9,
+     "tr": 17
+    },
+    "readouts": [
+     {
+      "key": "risk",
+      "raw": "14",
+      "text": "14",
+      "tone": "crit"
+     },
+     {
+      "key": "maxWin",
+      "raw": "3",
+      "text": "3",
+      "tone": "warn"
+     },
+     {
+      "key": "total",
+      "raw": "104",
+      "text": "104 ms",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "inh": 25,
+     "th": 17,
+     "tr": 42
+    },
+    "readouts": [
+     {
+      "key": "risk",
+      "raw": "16",
+      "text": "16",
+      "tone": "crit"
+     },
+     {
+      "key": "maxWin",
+      "raw": "2",
+      "text": "2",
+      "tone": "warn"
+     },
+     {
+      "key": "total",
+      "raw": "194",
+      "text": "194 ms",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "inh": 400,
+     "th": 25,
+     "tr": 42
+    },
+    "readouts": [
+     {
+      "key": "risk",
+      "raw": "0",
+      "text": "0",
+      "tone": "ok"
+     },
+     {
+      "key": "maxWin",
+      "raw": "1",
+      "text": "1",
+      "tone": "ok"
+     },
+     {
+      "key": "total",
+      "raw": "609",
+      "text": "609 ms",
+      "tone": "info"
+     }
+    ],
+    "goal": "0 cut-off risks and max 1 hole per 8 ms",
+    "goalMet": true
+   }
+  ]
+ },
+ "u4-drill": {
+  "params": [
+   {
+    "key": "m",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "ucs",
+    "min": 20,
+    "max": 250,
+    "step": 5,
+    "default": 150
+   },
+   {
+    "key": "depth",
+    "min": 3,
+    "max": 40,
+    "step": 0.5,
+    "default": 6
+   }
+  ],
+  "handles": [
+   {
+    "key": "depth",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "pr",
+   "time",
+   "eta",
+   "th"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "m": 0,
+     "ucs": 20,
+     "depth": 3
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "7.681610340407643",
+      "text": "7.68 m/min",
+      "tone": "info"
+     },
+     {
+      "key": "time",
+      "raw": "0.39054311102179623",
+      "text": "0.4 min",
+      "tone": "info"
+     },
+     {
+      "key": "eta",
+      "raw": "0.9159436536204298",
+      "text": "92 %",
+      "tone": "ok"
+     },
+     {
+      "key": "th",
+      "raw": "7.681610340407643",
+      "text": "7.68 / 5.34 m/min",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "m": 0,
+     "ucs": 150,
+     "depth": 6
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "0.9381229654508599",
+      "text": "0.94 m/min",
+      "tone": "info"
+     },
+     {
+      "key": "time",
+      "raw": "6.395750046601207",
+      "text": "6.4 min",
+      "tone": "info"
+     },
+     {
+      "key": "eta",
+      "raw": "0.838952776607542",
+      "text": "84 %",
+      "tone": "ok"
+     },
+     {
+      "key": "th",
+      "raw": "0.9381229654508599",
+      "text": "0.94 / 0.71 m/min",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "m": 0,
+     "ucs": 150,
+     "depth": 15.5
+    },
+    "readouts": [
+     {
+      "key": "pr",
+      "raw": "0.7104128923641518",
+      "text": "0.71 m/min",
+      "tone": "info"
+     },
+     {
+      "key": "time",
+      "raw": "21.81829773446007",
+      "text": "21.8 min",
+      "tone": "info"
+     },
+     {
+      "key": "eta",
+      "raw": "0.63531422908964",
+      "text": "64 %",
+      "tone": "ok"
+     },
+     {
+      "key": "th",
+      "raw": "0.7104128923641518",
+      "text": "0.71 / 0.71 m/min",
+      "tone": "warn"
+     }
+    ],
+    "goal": "Top-hammer, UCS 150 MPa, shallowest depth (≤ 17 m) where it becomes slower than DTH",
+    "goalMet": true
+   }
+  ]
+ },
+ "u4-explosive": {
+  "params": [
+   {
+    "key": "fo",
+    "min": 0,
+    "max": 12,
+    "step": 0.1,
+    "default": 3
+   },
+   {
+    "key": "d",
+    "min": 25,
+    "max": 250,
+    "step": 1,
+    "default": 100
+   },
+   {
+    "key": "rock",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 1,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "ob",
+   "fume",
+   "vod",
+   "pd",
+   "pb",
+   "tr"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "fo": 0,
+     "d": 25,
+     "rock": 0
+    },
+    "readouts": [
+     {
+      "key": "ob",
+      "raw": "20",
+      "text": "20.00 %",
+      "tone": "warn"
+     },
+     {
+      "key": "fume",
+      "raw": "2",
+      "text": "Oxygen-rich → NOx (orange)",
+      "tone": "crit"
+     },
+     {
+      "key": "vod",
+      "raw": "0",
+      "text": "FAILS (< critical Ø)",
+      "tone": "crit"
+     },
+     {
+      "key": "pd",
+      "raw": "0",
+      "text": "0.00 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "pb",
+      "raw": "0",
+      "text": "0.00 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "tr",
+      "raw": "0",
+      "text": "0 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "fo": 3,
+     "d": 100,
+     "rock": 1
+    },
+    "readouts": [
+     {
+      "key": "ob",
+      "raw": "9.140000000000002",
+      "text": "9.14 %",
+      "tone": "warn"
+     },
+     {
+      "key": "fume",
+      "raw": "2",
+      "text": "Oxygen-rich → NOx (orange)",
+      "tone": "crit"
+     },
+     {
+      "key": "vod",
+      "raw": "3239.184193422222",
+      "text": "3239 m/s",
+      "tone": "info"
+     },
+     {
+      "key": "pd",
+      "raw": "2.2296167757697285",
+      "text": "2.23 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "pb",
+      "raw": "1.1148083878848642",
+      "text": "1.11 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "tr",
+      "raw": "74.36807987172958",
+      "text": "74 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "fo": 5.6,
+     "d": 100,
+     "rock": 1
+    },
+    "readouts": [
+     {
+      "key": "ob",
+      "raw": "-0.2719999999999949",
+      "text": "-0.27 %",
+      "tone": "ok"
+     },
+     {
+      "key": "fume",
+      "raw": "0",
+      "text": "Clean: CO₂ + H₂O + N₂",
+      "tone": "ok"
+     },
+     {
+      "key": "vod",
+      "raw": "3976.9460472035553",
+      "text": "3977 m/s",
+      "tone": "info"
+     },
+     {
+      "key": "pd",
+      "raw": "3.3609212207531964",
+      "text": "3.36 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "pb",
+      "raw": "1.6804606103765982",
+      "text": "1.68 GPa",
+      "tone": "info"
+     },
+     {
+      "key": "tr",
+      "raw": "81.84412744692811",
+      "text": "82 %",
+      "tone": "info"
+     }
+    ],
+    "goal": "|OB| ≤ 0.3 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u4-kuzram": {
+  "params": [
+   {
+    "key": "B",
+    "min": 2,
+    "max": 8,
+    "step": 0.1,
+    "default": 4.5
+   },
+   {
+    "key": "S",
+    "min": 2,
+    "max": 10,
+    "step": 0.1,
+    "default": 5.5
+   },
+   {
+    "key": "d",
+    "min": 76,
+    "max": 311,
+    "step": 1,
+    "default": 150
+   },
+   {
+    "key": "Hb",
+    "min": 5,
+    "max": 20,
+    "step": 0.5,
+    "default": 10
+   },
+   {
+    "key": "A",
+    "min": 4,
+    "max": 13,
+    "step": 0.5,
+    "default": 8
+   },
+   {
+    "key": "ex",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   }
+  ],
+  "handles": [
+   {
+    "key": "Hb",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "K",
+   "Q",
+   "x50",
+   "n",
+   "over",
+   "fines"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "B": 2,
+     "S": 2,
+     "d": 76,
+     "Hb": 5,
+     "A": 4,
+     "ex": 0
+    },
+    "readouts": [
+     {
+      "key": "K",
+      "raw": "0.7711981646032222",
+      "text": "0.77 kg/m³",
+      "tone": "info"
+     },
+     {
+      "key": "Q",
+      "raw": "15.423963292064444",
+      "text": "15 kg",
+      "tone": "info"
+     },
+     {
+      "key": "x50",
+      "raw": "8.872026158906309",
+      "text": "8.9 cm",
+      "tone": "info"
+     },
+     {
+      "key": "n",
+      "raw": "1.2454736842105263",
+      "text": "1.25",
+      "tone": "ok"
+     },
+     {
+      "key": "over",
+      "raw": "0.00007113621509624579",
+      "text": "0.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "fines",
+      "raw": "28.77093698405081",
+      "text": "28.8 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "B": 4.5,
+     "S": 5.5,
+     "d": 150,
+     "Hb": 10,
+     "A": 8,
+     "ex": 0
+    },
+    "readouts": [
+     {
+      "key": "K",
+      "raw": "0.4703464001255173",
+      "text": "0.47 kg/m³",
+      "tone": "info"
+     },
+     {
+      "key": "Q",
+      "raw": "116.41073403106553",
+      "text": "116 kg",
+      "tone": "info"
+     },
+     {
+      "key": "x50",
+      "raw": "36.91057808488663",
+      "text": "36.9 cm",
+      "tone": "info"
+     },
+     {
+      "key": "n",
+      "raw": "1.357179298907376",
+      "text": "1.36",
+      "tone": "ok"
+     },
+     {
+      "key": "over",
+      "raw": "6.854100699336674",
+      "text": "6.9 %",
+      "tone": "warn"
+     },
+     {
+      "key": "fines",
+      "raw": "4.492753243624204",
+      "text": "4.5 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "B": 3.8,
+     "S": 5.5,
+     "d": 150,
+     "Hb": 10,
+     "A": 8,
+     "ex": 0
+    },
+    "readouts": [
+     {
+      "key": "K",
+      "raw": "0.5821435071163025",
+      "text": "0.58 kg/m³",
+      "tone": "info"
+     },
+     {
+      "key": "Q",
+      "raw": "121.66799298730722",
+      "text": "122 kg",
+      "tone": "info"
+     },
+     {
+      "key": "x50",
+      "raw": "31.351496775211363",
+      "text": "31.4 cm",
+      "tone": "info"
+     },
+     {
+      "key": "n",
+      "raw": "1.5229265971516817",
+      "text": "1.52",
+      "tone": "ok"
+     },
+     {
+      "key": "over",
+      "raw": "1.7351017599433138",
+      "text": "1.7 %",
+      "tone": "ok"
+     },
+     {
+      "key": "fines",
+      "raw": "4.143477213294744",
+      "text": "4.1 %",
+      "tone": "info"
+     }
+    ],
+    "goal": "Oversize ≤ 3 % and powder factor ≤ 0.6 kg/m³",
+    "goalMet": true
+   }
+  ]
+ },
+ "u4-vibe": {
+  "params": [
+   {
+    "key": "D",
+    "min": 50,
+    "max": 1500,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "Q",
+    "min": 10,
+    "max": 1000,
+    "step": 5,
+    "default": 200
+   },
+   {
+    "key": "K",
+    "min": 200,
+    "max": 2000,
+    "step": 10,
+    "default": 1140
+   },
+   {
+    "key": "b",
+    "min": 1.2,
+    "max": 2,
+    "step": 0.05,
+    "default": 1.6
+   },
+   {
+    "key": "st",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "f",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   }
+  ],
+  "handles": [
+   {
+    "key": "D",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "sd",
+   "ppv",
+   "lim",
+   "qmax",
+   "air"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "D": 50,
+     "Q": 10,
+     "K": 200,
+     "b": 1.2,
+     "st": 0,
+     "f": 0
+    },
+    "readouts": [
+     {
+      "key": "sd",
+      "raw": "15.811388300841896",
+      "text": "15.8 m/√kg",
+      "tone": "info"
+     },
+     {
+      "key": "ppv",
+      "raw": "7.282256812104322",
+      "text": "7.28 mm/s",
+      "tone": "crit"
+     },
+     {
+      "key": "lim",
+      "raw": "5",
+      "text": "5 mm/s",
+      "tone": "info"
+     },
+     {
+      "key": "qmax",
+      "raw": "5.343674833364677",
+      "text": "5 kg",
+      "tone": "info"
+     },
+     {
+      "key": "air",
+      "raw": "132.22471989593555",
+      "text": "132 dB(L)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "D": 300,
+     "Q": 200,
+     "K": 1140,
+     "b": 1.6,
+     "st": 0,
+     "f": 0
+    },
+    "readouts": [
+     {
+      "key": "sd",
+      "raw": "21.213203435596427",
+      "text": "21.2 m/√kg",
+      "tone": "info"
+     },
+     {
+      "key": "ppv",
+      "raw": "8.596760748688022",
+      "text": "8.60 mm/s",
+      "tone": "crit"
+     },
+     {
+      "key": "lim",
+      "raw": "5",
+      "text": "5 mm/s",
+      "tone": "info"
+     },
+     {
+      "key": "qmax",
+      "raw": "101.58368211279806",
+      "text": "102 kg",
+      "tone": "info"
+     },
+     {
+      "key": "air",
+      "raw": "123.95732985203995",
+      "text": "124 dB(L)",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "D": 300,
+     "Q": 95,
+     "K": 1140,
+     "b": 1.6,
+     "st": 0,
+     "f": 0
+    },
+    "readouts": [
+     {
+      "key": "sd",
+      "raw": "30.779350562554626",
+      "text": "30.8 m/√kg",
+      "tone": "info"
+     },
+     {
+      "key": "ppv",
+      "raw": "4.739032946749559",
+      "text": "4.74 mm/s",
+      "tone": "ok"
+     },
+     {
+      "key": "lim",
+      "raw": "5",
+      "text": "5 mm/s",
+      "tone": "info"
+     },
+     {
+      "key": "qmax",
+      "raw": "101.58368211279806",
+      "text": "102 kg",
+      "tone": "info"
+     },
+     {
+      "key": "air",
+      "raw": "121.37087872903888",
+      "text": "121 dB(L)",
+      "tone": "ok"
+     }
+    ],
+    "goal": "D = 300 m, domestic, < 8 Hz, PPV ≤ 5 mm/s with Q ≥ 90 kg (K 1140, b 1.6)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u5-dragline": {
+  "params": [
+   {
+    "key": "H",
+    "min": 10,
+    "max": 60,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "W",
+    "min": 20,
+    "max": 80,
+    "step": 1,
+    "default": 40
+   },
+   {
+    "key": "s",
+    "min": 1.1,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 1.3
+   },
+   {
+    "key": "a",
+    "min": 30,
+    "max": 40,
+    "step": 1,
+    "default": 37
+   },
+   {
+    "key": "R",
+    "min": 40,
+    "max": 120,
+    "step": 1,
+    "default": 70
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "h",
+   "b",
+   "Rreq",
+   "reh"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 10,
+     "W": 20,
+     "s": 1.1,
+     "a": 30,
+     "R": 40
+    },
+    "readouts": [
+     {
+      "key": "h",
+      "raw": "11.270184524741273",
+      "text": "11.3 m",
+      "tone": "info"
+     },
+     {
+      "key": "b",
+      "raw": "39.04106441505677",
+      "text": "39.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Rreq",
+      "raw": "56.52053220752839",
+      "text": "56.5 m",
+      "tone": "crit"
+     },
+     {
+      "key": "reh",
+      "raw": "35.81251028960433",
+      "text": "35.8 %",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 30,
+     "W": 40,
+     "s": 1.3,
+     "a": 37,
+     "R": 70
+    },
+    "readouts": [
+     {
+      "key": "h",
+      "raw": "34.286211779086344",
+      "text": "34.3 m",
+      "tone": "info"
+     },
+     {
+      "key": "b",
+      "raw": "90.99867958883448",
+      "text": "91.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Rreq",
+      "raw": "102.49933979441724",
+      "text": "102.5 m",
+      "tone": "crit"
+     },
+     {
+      "key": "reh",
+      "raw": "25.509907955484856",
+      "text": "25.5 %",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 30,
+     "W": 40,
+     "s": 1.3,
+     "a": 37,
+     "R": 103
+    },
+    "readouts": [
+     {
+      "key": "h",
+      "raw": "34.286211779086344",
+      "text": "34.3 m",
+      "tone": "info"
+     },
+     {
+      "key": "b",
+      "raw": "90.99867958883448",
+      "text": "91.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Rreq",
+      "raw": "102.49933979441724",
+      "text": "102.5 m",
+      "tone": "ok"
+     },
+     {
+      "key": "reh",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "ok"
+     }
+    ],
+    "goal": "H = 30 m, cut ≥ 30 m wide, 0 % rehandle",
+    "goalMet": true
+   }
+  ]
+ },
+ "u5-dump": {
+  "params": [
+   {
+    "key": "n",
+    "min": 1,
+    "max": 5,
+    "step": 1,
+    "default": 3
+   },
+   {
+    "key": "h",
+    "min": 10,
+    "max": 40,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "b",
+    "min": 0,
+    "max": 40,
+    "step": 1,
+    "default": 10
+   },
+   {
+    "key": "a",
+    "min": 34,
+    "max": 38,
+    "step": 0.5,
+    "default": 37
+   },
+   {
+    "key": "phi",
+    "min": 26,
+    "max": 38,
+    "step": 1,
+    "default": 32
+   },
+   {
+    "key": "c",
+    "min": 0,
+    "max": 40,
+    "step": 1,
+    "default": 15
+   },
+   {
+    "key": "ru",
+    "min": 0,
+    "max": 0.5,
+    "step": 0.05,
+    "default": 0.1
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "Ht",
+   "bo",
+   "fos"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "n": 1,
+     "h": 10,
+     "b": 0,
+     "a": 34,
+     "phi": 26,
+     "c": 0,
+     "ru": 0
+    },
+    "readouts": [
+     {
+      "key": "Ht",
+      "raw": "10",
+      "text": "10 m",
+      "tone": "info"
+     },
+     {
+      "key": "bo",
+      "raw": "34",
+      "text": "34.0 °",
+      "tone": "warn"
+     },
+     {
+      "key": "fos",
+      "raw": "0.7230932988794293",
+      "text": "0.72",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "n": 3,
+     "h": 30,
+     "b": 10,
+     "a": 37,
+     "phi": 32,
+     "c": 15,
+     "ru": 0.1
+    },
+    "readouts": [
+     {
+      "key": "Ht",
+      "raw": "90",
+      "text": "90 m",
+      "tone": "info"
+     },
+     {
+      "key": "bo",
+      "raw": "32.84088839552436",
+      "text": "32.8 °",
+      "tone": "warn"
+     },
+     {
+      "key": "fos",
+      "raw": "0.9119237583158837",
+      "text": "0.91",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "n": 3,
+     "h": 30,
+     "b": 33,
+     "a": 37,
+     "phi": 32,
+     "c": 15,
+     "ru": 0.1
+    },
+    "readouts": [
+     {
+      "key": "Ht",
+      "raw": "90",
+      "text": "90 m",
+      "tone": "info"
+     },
+     {
+      "key": "bo",
+      "raw": "25.889515583661158",
+      "text": "25.9 °",
+      "tone": "ok"
+     },
+     {
+      "key": "fos",
+      "raw": "1.2058635193345402",
+      "text": "1.21",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Height ≥ 90 m, ru ≥ 0.1, FOS ≥ 1.2",
+    "goalMet": true
+   }
+  ]
+ },
+ "u5-haul": {
+  "params": [
+   {
+    "key": "gvw",
+    "min": 100,
+    "max": 450,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "P",
+    "min": 500,
+    "max": 2500,
+    "step": 50,
+    "default": 1500
+   },
+   {
+    "key": "rr",
+    "min": 1.5,
+    "max": 8,
+    "step": 0.5,
+    "default": 4
+   },
+   {
+    "key": "gr",
+    "min": -10,
+    "max": 12,
+    "step": 0.25,
+    "default": 10
+   },
+   {
+    "key": "Rc",
+    "min": 30,
+    "max": 300,
+    "step": 5,
+    "default": 80
+   }
+  ],
+  "handles": [
+   {
+    "key": "gr",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "tr",
+   "F",
+   "v",
+   "retard",
+   "e",
+   "gr"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "gvw": 100,
+     "P": 500,
+     "rr": 1.5,
+     "gr": -10,
+     "Rc": 30
+    },
+    "readouts": [
+     {
+      "key": "tr",
+      "raw": "-8.5",
+      "text": "-8.50 %",
+      "tone": "info"
+     },
+     {
+      "key": "F",
+      "raw": "-83.385",
+      "text": "-83 kN",
+      "tone": "info"
+     },
+     {
+      "key": "v",
+      "raw": "40",
+      "text": "40.0 km/h",
+      "tone": "ok"
+     },
+     {
+      "key": "retard",
+      "raw": "926.5",
+      "text": "927 kW",
+      "tone": "crit"
+     },
+     {
+      "key": "e",
+      "raw": "26.994750656167977",
+      "text": "27.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "-10",
+      "text": "10% > 1 in 16",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "gvw": 300,
+     "P": 1500,
+     "rr": 4,
+     "gr": 10,
+     "Rc": 80
+    },
+    "readouts": [
+     {
+      "key": "tr",
+      "raw": "14",
+      "text": "14.00 %",
+      "tone": "info"
+     },
+     {
+      "key": "F",
+      "raw": "412.02",
+      "text": "412 kN",
+      "tone": "info"
+     },
+     {
+      "key": "v",
+      "raw": "11.140235910878113",
+      "text": "11.1 km/h",
+      "tone": "warn"
+     },
+     {
+      "key": "retard",
+      "raw": "0",
+      "text": "0 kW",
+      "tone": "ok"
+     },
+     {
+      "key": "e",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "10",
+      "text": "10% > 1 in 16",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "gvw": 300,
+     "P": 1500,
+     "rr": 4,
+     "gr": 0.25,
+     "Rc": 80
+    },
+    "readouts": [
+     {
+      "key": "tr",
+      "raw": "4.25",
+      "text": "4.25 %",
+      "tone": "info"
+     },
+     {
+      "key": "F",
+      "raw": "125.0775",
+      "text": "125 kN",
+      "tone": "info"
+     },
+     {
+      "key": "v",
+      "raw": "36.69724770642202",
+      "text": "36.7 km/h",
+      "tone": "ok"
+     },
+     {
+      "key": "retard",
+      "raw": "0",
+      "text": "0 kW",
+      "tone": "ok"
+     },
+     {
+      "key": "e",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "0.25",
+      "text": "0.25% ≤ 1 in 16",
+      "tone": "ok"
+     }
+    ],
+    "goal": "GVW 300 t, 1500 kW, |grade| ≤ 6.25 %, speed ≥ 15 km/h",
+    "goalMet": true
+   }
+  ]
+ },
+ "u5-match": {
+  "params": [
+   {
+    "key": "N",
+    "min": 2,
+    "max": 20,
+    "step": 1,
+    "default": 8
+   },
+   {
+    "key": "cap",
+    "min": 35,
+    "max": 240,
+    "step": 5,
+    "default": 100
+   },
+   {
+    "key": "bucket",
+    "min": 5,
+    "max": 40,
+    "step": 1,
+    "default": 15
+   },
+   {
+    "key": "cyc",
+    "min": 25,
+    "max": 45,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "L",
+    "min": 0.5,
+    "max": 6,
+    "step": 0.1,
+    "default": 2.5
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "passes",
+   "tCycle",
+   "mf",
+   "prod",
+   "idle"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "N": 2,
+     "cap": 35,
+     "bucket": 5,
+     "cyc": 25,
+     "L": 0.5
+    },
+    "readouts": [
+     {
+      "key": "passes",
+      "raw": "5",
+      "text": "5",
+      "tone": "ok"
+     },
+     {
+      "key": "tCycle",
+      "raw": "5.940476190476191",
+      "text": "5.9 min",
+      "tone": "info"
+     },
+     {
+      "key": "mf",
+      "raw": "0.7014028056112225",
+      "text": "0.70",
+      "tone": "warn"
+     },
+     {
+      "key": "prod",
+      "raw": "707.0140280561122",
+      "text": "707 t/h",
+      "tone": "info"
+     },
+     {
+      "key": "idle",
+      "raw": "29.859719438877754",
+      "text": "30% / 0%",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "N": 8,
+     "cap": 100,
+     "bucket": 15,
+     "cyc": 30,
+     "L": 2.5
+    },
+    "readouts": [
+     {
+      "key": "passes",
+      "raw": "5",
+      "text": "5",
+      "tone": "ok"
+     },
+     {
+      "key": "tCycle",
+      "raw": "15.785714285714285",
+      "text": "15.8 min",
+      "tone": "info"
+     },
+     {
+      "key": "mf",
+      "raw": "1.2669683257918554",
+      "text": "1.27",
+      "tone": "warn"
+     },
+     {
+      "key": "prod",
+      "raw": "2400",
+      "text": "2400 t/h",
+      "tone": "info"
+     },
+     {
+      "key": "idle",
+      "raw": "0",
+      "text": "0% / 21%",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "N": 6,
+     "cap": 100,
+     "bucket": 15,
+     "cyc": 30,
+     "L": 2.5
+    },
+    "readouts": [
+     {
+      "key": "passes",
+      "raw": "5",
+      "text": "5",
+      "tone": "ok"
+     },
+     {
+      "key": "tCycle",
+      "raw": "15.785714285714285",
+      "text": "15.8 min",
+      "tone": "info"
+     },
+     {
+      "key": "mf",
+      "raw": "0.9502262443438915",
+      "text": "0.95",
+      "tone": "ok"
+     },
+     {
+      "key": "prod",
+      "raw": "2280.5429864253397",
+      "text": "2281 t/h",
+      "tone": "info"
+     },
+     {
+      "key": "idle",
+      "raw": "4.977375565610853",
+      "text": "5% / 0%",
+      "tone": "ok"
+     }
+    ],
+    "goal": "0.95 ≤ MF ≤ 1.05",
+    "goalMet": true
+   }
+  ]
+ },
+ "u5-pit": {
+  "params": [
+   {
+    "key": "H",
+    "min": 20,
+    "max": 300,
+    "step": 1,
+    "default": 60
+   },
+   {
+    "key": "t",
+    "min": 2,
+    "max": 30,
+    "step": 0.5,
+    "default": 10
+   },
+   {
+    "key": "Wf",
+    "min": 50,
+    "max": 500,
+    "step": 10,
+    "default": 200
+   },
+   {
+    "key": "beta",
+    "min": 25,
+    "max": 60,
+    "step": 1,
+    "default": 45
+   },
+   {
+    "key": "margin",
+    "min": 300,
+    "max": 3000,
+    "step": 50,
+    "default": 1200
+   },
+   {
+    "key": "sc",
+    "min": 80,
+    "max": 300,
+    "step": 5,
+    "default": 150
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "sr",
+   "besr",
+   "profit",
+   "tonnes"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "H": 20,
+     "t": 2,
+     "Wf": 50,
+     "beta": 25,
+     "margin": 300,
+     "sc": 80
+    },
+    "readouts": [
+     {
+      "key": "sr",
+      "raw": "12.460245503736788",
+      "text": "12.46 m³/t",
+      "tone": "crit"
+     },
+     {
+      "key": "besr",
+      "raw": "3.75",
+      "text": "3.75 m³/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "-696.819640298943",
+      "text": "-697 ₹/t",
+      "tone": "crit"
+     },
+     {
+      "key": "tonnes",
+      "raw": "162.86704152305734",
+      "text": "163 t",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "H": 60,
+     "t": 10,
+     "Wf": 200,
+     "beta": 45,
+     "margin": 1200,
+     "sc": 150
+    },
+    "readouts": [
+     {
+      "key": "sr",
+      "raw": "5.333333333333333",
+      "text": "5.33 m³/t",
+      "tone": "ok"
+     },
+     {
+      "key": "besr",
+      "raw": "8",
+      "text": "8.00 m³/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "400",
+      "text": "400 ₹/t",
+      "tone": "ok"
+     },
+     {
+      "key": "tonnes",
+      "raw": "3150",
+      "text": "3150 t",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "H": 85,
+     "t": 10,
+     "Wf": 200,
+     "beta": 45,
+     "margin": 1200,
+     "sc": 150
+    },
+    "readouts": [
+     {
+      "key": "sr",
+      "raw": "8.23015873015873",
+      "text": "8.23 m³/t",
+      "tone": "crit"
+     },
+     {
+      "key": "besr",
+      "raw": "8",
+      "text": "8.00 m³/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "-34.523809523809405",
+      "text": "-35 ₹/t",
+      "tone": "crit"
+     },
+     {
+      "key": "tonnes",
+      "raw": "3150",
+      "text": "3150 t",
+      "tone": "info"
+     }
+    ],
+    "goal": "SR within 3 % of BESR",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-cave": {
+  "params": [
+   {
+    "key": "h",
+    "min": 20,
+    "max": 300,
+    "step": 5,
+    "default": 100
+   },
+   {
+    "key": "e",
+    "min": 0.9,
+    "max": 0.99,
+    "step": 0.01,
+    "default": 0.95
+   },
+   {
+    "key": "s",
+    "min": 5,
+    "max": 40,
+    "step": 1,
+    "default": 15
+   }
+  ],
+  "handles": [
+   {
+    "key": "h",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "b",
+   "interact",
+   "left",
+   "vol"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "h": 20,
+     "e": 0.9,
+     "s": 5
+    },
+    "readouts": [
+     {
+      "key": "b",
+      "raw": "8.717797887081346",
+      "text": "8.7 m",
+      "tone": "info"
+     },
+     {
+      "key": "interact",
+      "raw": "1",
+      "text": "Interactive — uniform lowering",
+      "tone": "ok"
+     },
+     {
+      "key": "left",
+      "raw": "0",
+      "text": "0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "vol",
+      "raw": "795.8701389094141",
+      "text": "796 m³",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "h": 100,
+     "e": 0.95,
+     "s": 15
+    },
+    "readouts": [
+     {
+      "key": "b",
+      "raw": "31.224989991991997",
+      "text": "31.2 m",
+      "tone": "info"
+     },
+     {
+      "key": "interact",
+      "raw": "1",
+      "text": "Interactive — uniform lowering",
+      "tone": "ok"
+     },
+     {
+      "key": "left",
+      "raw": "0",
+      "text": "0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "vol",
+      "raw": "51050.880620834156",
+      "text": "51051 m³",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "h": 60,
+     "e": 0.97,
+     "s": 13
+    },
+    "readouts": [
+     {
+      "key": "b",
+      "raw": "14.586294937371866",
+      "text": "14.6 m",
+      "tone": "info"
+     },
+     {
+      "key": "interact",
+      "raw": "1",
+      "text": "Interactive — uniform lowering",
+      "tone": "ok"
+     },
+     {
+      "key": "left",
+      "raw": "0",
+      "text": "0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "vol",
+      "raw": "6684.052529777648",
+      "text": "6684 m³",
+      "tone": "info"
+     }
+    ],
+    "goal": "h = 60 m, e = 0.97, spacing ≥ 13 m, interactive",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-goaf": {
+  "params": [
+   {
+    "key": "t",
+    "min": 5,
+    "max": 30,
+    "step": 1,
+    "default": 10
+   },
+   {
+    "key": "st",
+    "min": 1,
+    "max": 8,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "m",
+    "min": 2,
+    "max": 6,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "x",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "default": 15
+   }
+  ],
+  "handles": [
+   {
+    "key": "x",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "Lm",
+   "Lp",
+   "hc",
+   "state"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "t": 5,
+     "st": 1,
+     "m": 2,
+     "x": 0
+    },
+    "readouts": [
+     {
+      "key": "Lm",
+      "raw": "20",
+      "text": "20.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Lp",
+      "raw": "8.16496580927726",
+      "text": "8.2 m",
+      "tone": "info"
+     },
+     {
+      "key": "hc",
+      "raw": "6.666666666666666",
+      "text": "6.7 m",
+      "tone": "info"
+     },
+     {
+      "key": "state",
+      "raw": "0",
+      "text": "Immediate roof caving normally",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "t": 10,
+     "st": 3,
+     "m": 3,
+     "x": 15
+    },
+    "readouts": [
+     {
+      "key": "Lm",
+      "raw": "48.98979485566356",
+      "text": "49.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Lp",
+      "raw": "20",
+      "text": "20.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "hc",
+      "raw": "9.999999999999998",
+      "text": "10.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "state",
+      "raw": "0",
+      "text": "Immediate roof caving normally",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "t": 10,
+     "st": 3,
+     "m": 3,
+     "x": 50
+    },
+    "readouts": [
+     {
+      "key": "Lm",
+      "raw": "48.98979485566356",
+      "text": "49.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "Lp",
+      "raw": "20",
+      "text": "20.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "hc",
+      "raw": "9.999999999999998",
+      "text": "10.0 m",
+      "tone": "info"
+     },
+     {
+      "key": "state",
+      "raw": "2",
+      "text": "MAIN FALL — air blast risk",
+      "tone": "crit"
+     }
+    ],
+    "goal": "Reach the main fall (t = 10 m, σt = 3 MPa)",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-longwall": {
+  "params": [
+   {
+    "key": "m",
+    "min": 1.5,
+    "max": 5,
+    "step": 0.1,
+    "default": 3.5
+   },
+   {
+    "key": "k",
+    "min": 1.2,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 1.3
+   },
+   {
+    "key": "wf",
+    "min": 1,
+    "max": 3,
+    "step": 0.1,
+    "default": 2
+   },
+   {
+    "key": "cl",
+    "min": 3,
+    "max": 6,
+    "step": 0.1,
+    "default": 4.5
+   },
+   {
+    "key": "sw",
+    "min": 1.5,
+    "max": 2.05,
+    "step": 0.25,
+    "default": 1.75,
+    "options": [
+     1.5,
+     1.75,
+     2.05
+    ]
+   },
+   {
+    "key": "rating",
+    "min": 400,
+    "max": 1200,
+    "step": 200,
+    "default": 600,
+    "options": [
+     400,
+     600,
+     800,
+     1000,
+     1200
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "hc",
+   "load",
+   "req",
+   "util"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "m": 1.5,
+     "k": 1.2,
+     "wf": 1,
+     "cl": 3,
+     "sw": 1.5,
+     "rating": 400
+    },
+    "readouts": [
+     {
+      "key": "hc",
+      "raw": "7.500000000000002",
+      "text": "7.5 m",
+      "tone": "info"
+     },
+     {
+      "key": "load",
+      "raw": "843.7500000000003",
+      "text": "844 kN",
+      "tone": "info"
+     },
+     {
+      "key": "req",
+      "raw": "103.21100917431195",
+      "text": "103 t",
+      "tone": "info"
+     },
+     {
+      "key": "util",
+      "raw": "0.2580275229357799",
+      "text": "26 %",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "m": 3.5,
+     "k": 1.3,
+     "wf": 2,
+     "cl": 4.5,
+     "sw": 1.75,
+     "rating": 600
+    },
+    "readouts": [
+     {
+      "key": "hc",
+      "raw": "11.666666666666664",
+      "text": "11.7 m",
+      "tone": "info"
+     },
+     {
+      "key": "load",
+      "raw": "4593.749999999999",
+      "text": "4594 kN",
+      "tone": "info"
+     },
+     {
+      "key": "req",
+      "raw": "561.9266055045871",
+      "text": "562 t",
+      "tone": "info"
+     },
+     {
+      "key": "util",
+      "raw": "0.9365443425076452",
+      "text": "94 %",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "m": 5,
+     "k": 1.45,
+     "wf": 2,
+     "cl": 4.5,
+     "sw": 1.75,
+     "rating": 600
+    },
+    "readouts": [
+     {
+      "key": "hc",
+      "raw": "11.111111111111112",
+      "text": "11.1 m",
+      "tone": "info"
+     },
+     {
+      "key": "load",
+      "raw": "4375.000000000001",
+      "text": "4375 kN",
+      "tone": "info"
+     },
+     {
+      "key": "req",
+      "raw": "535.1681957186545",
+      "text": "535 t",
+      "tone": "info"
+     },
+     {
+      "key": "util",
+      "raw": "0.8919469928644241",
+      "text": "89 %",
+      "tone": "ok"
+     }
+    ],
+    "goal": "m = 5 m with utilisation between 60 % and 90 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-lwcycle": {
+  "params": [
+   {
+    "key": "L",
+    "min": 150,
+    "max": 350,
+    "step": 10,
+    "default": 250
+   },
+   {
+    "key": "v",
+    "min": 2,
+    "max": 20,
+    "step": 0.5,
+    "default": 4
+   },
+   {
+    "key": "web",
+    "min": 0.5,
+    "max": 1,
+    "step": 0.05,
+    "default": 0.6
+   },
+   {
+    "key": "m",
+    "min": 1.5,
+    "max": 5,
+    "step": 0.1,
+    "default": 2.5
+   },
+   {
+    "key": "wi",
+    "min": 10,
+    "max": 40,
+    "step": 1,
+    "default": 20
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "cycle",
+   "shears",
+   "prod",
+   "adv",
+   "weighting"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "L": 150,
+     "v": 2,
+     "web": 0.5,
+     "m": 1.5,
+     "wi": 10
+    },
+    "readouts": [
+     {
+      "key": "cycle",
+      "raw": "85",
+      "text": "85.0 min",
+      "tone": "info"
+     },
+     {
+      "key": "shears",
+      "raw": "10.16470588235294",
+      "text": "10.2",
+      "tone": "info"
+     },
+     {
+      "key": "prod",
+      "raw": "1600.941176470588",
+      "text": "1601 t/day",
+      "tone": "warn"
+     },
+     {
+      "key": "adv",
+      "raw": "5.08235294117647",
+      "text": "5.1 m/day",
+      "tone": "info"
+     },
+     {
+      "key": "weighting",
+      "raw": "0.508235294117647",
+      "text": "0.51",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "L": 250,
+     "v": 4,
+     "web": 0.6,
+     "m": 2.5,
+     "wi": 20
+    },
+    "readouts": [
+     {
+      "key": "cycle",
+      "raw": "72.5",
+      "text": "72.5 min",
+      "tone": "info"
+     },
+     {
+      "key": "shears",
+      "raw": "11.917241379310346",
+      "text": "11.9",
+      "tone": "info"
+     },
+     {
+      "key": "prod",
+      "raw": "6256.551724137931",
+      "text": "6257 t/day",
+      "tone": "warn"
+     },
+     {
+      "key": "adv",
+      "raw": "7.150344827586207",
+      "text": "7.2 m/day",
+      "tone": "info"
+     },
+     {
+      "key": "weighting",
+      "raw": "0.35751724137931035",
+      "text": "0.36",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "L": 250,
+     "v": 9,
+     "web": 0.6,
+     "m": 2.5,
+     "wi": 20
+    },
+    "readouts": [
+     {
+      "key": "cycle",
+      "raw": "37.77777777777778",
+      "text": "37.8 min",
+      "tone": "info"
+     },
+     {
+      "key": "shears",
+      "raw": "22.870588235294118",
+      "text": "22.9",
+      "tone": "info"
+     },
+     {
+      "key": "prod",
+      "raw": "12007.05882352941",
+      "text": "12007 t/day",
+      "tone": "ok"
+     },
+     {
+      "key": "adv",
+      "raw": "13.72235294117647",
+      "text": "13.7 m/day",
+      "tone": "info"
+     },
+     {
+      "key": "weighting",
+      "raw": "0.6861176470588235",
+      "text": "0.69",
+      "tone": "info"
+     }
+    ],
+    "goal": "Production ≥ 12 000 t/day with face length ≥ 200 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-stope": {
+  "params": [
+   {
+    "key": "meth",
+    "min": 0,
+    "max": 4,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "key": "W",
+    "min": 1,
+    "max": 20,
+    "step": 0.1,
+    "default": 3
+   },
+   {
+    "key": "elos",
+    "min": 0,
+    "max": 3,
+    "step": 0.05,
+    "default": 1
+   },
+   {
+    "key": "g",
+    "min": 2,
+    "max": 15,
+    "step": 0.5,
+    "default": 6
+   },
+   {
+    "key": "cut",
+    "min": 1,
+    "max": 6,
+    "step": 0.1,
+    "default": 4
+   }
+  ],
+  "handles": [
+   {
+    "key": "W",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "D",
+   "gd",
+   "ok"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "meth": 0,
+     "W": 1,
+     "elos": 0,
+     "g": 2,
+     "cut": 1
+    },
+    "readouts": [
+     {
+      "key": "D",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "gd",
+      "raw": "2",
+      "text": "2.00 g/t",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes — payable",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "meth": 0,
+     "W": 3,
+     "elos": 1,
+     "g": 6,
+     "cut": 4
+    },
+    "readouts": [
+     {
+      "key": "D",
+      "raw": "25",
+      "text": "25.0 %",
+      "tone": "warn"
+     },
+     {
+      "key": "gd",
+      "raw": "4.55",
+      "text": "4.55 g/t",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes — payable",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "meth": 0,
+     "W": 2,
+     "elos": 1,
+     "g": 6,
+     "cut": 4
+    },
+    "readouts": [
+     {
+      "key": "D",
+      "raw": "33.33333333333333",
+      "text": "33.3 %",
+      "tone": "crit"
+     },
+     {
+      "key": "gd",
+      "raw": "4.066666666666666",
+      "text": "4.07 g/t",
+      "tone": "ok"
+     },
+     {
+      "key": "ok",
+      "raw": "1",
+      "text": "Yes — payable",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Ore width ≤ 2 m, 6 g/t ore, head grade ≥ 4 g/t cut-off",
+    "goalMet": true
+   }
+  ]
+ },
+ "u6-thick": {
+  "params": [
+   {
+    "key": "meth",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 1,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "T",
+    "min": 6,
+    "max": 15,
+    "step": 0.5,
+    "default": 10
+   },
+   {
+    "key": "hc",
+    "min": 2.5,
+    "max": 4,
+    "step": 0.1,
+    "default": 3
+   },
+   {
+    "key": "D",
+    "min": 0.2,
+    "max": 2,
+    "step": 0.05,
+    "default": 0.5
+   },
+   {
+    "key": "B",
+    "min": 1.2,
+    "max": 3,
+    "step": 0.1,
+    "default": 2.5
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "rec",
+   "dil",
+   "top"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "meth": 0,
+     "T": 6,
+     "hc": 2.5,
+     "D": 0.2,
+     "B": 1.2
+    },
+    "readouts": [
+     {
+      "key": "rec",
+      "raw": "68",
+      "text": "68.0 %",
+      "tone": "warn"
+     },
+     {
+      "key": "dil",
+      "raw": "10.2",
+      "text": "10.2 %",
+      "tone": "warn"
+     },
+     {
+      "key": "top",
+      "raw": "0",
+      "text": "—",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "meth": 1,
+     "T": 10,
+     "hc": 3,
+     "D": 0.5,
+     "B": 2.5
+    },
+    "readouts": [
+     {
+      "key": "rec",
+      "raw": "65.91863687836712",
+      "text": "65.9 %",
+      "tone": "warn"
+     },
+     {
+      "key": "dil",
+      "raw": "2",
+      "text": "2.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "top",
+      "raw": "56.70595788566324",
+      "text": "57 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "meth": 1,
+     "T": 10,
+     "hc": 3,
+     "D": 1,
+     "B": 2.5
+    },
+    "readouts": [
+     {
+      "key": "rec",
+      "raw": "78.07463511124585",
+      "text": "78.1 %",
+      "tone": "ok"
+     },
+     {
+      "key": "dil",
+      "raw": "3.6099689437998483",
+      "text": "3.6 %",
+      "tone": "ok"
+     },
+     {
+      "key": "top",
+      "raw": "75.58173153920161",
+      "text": "76 %",
+      "tone": "info"
+     }
+    ],
+    "goal": "LTCC with recovery ≥ 78 % and dilution ≤ 8 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-coward": {
+  "params": [
+   {
+    "key": "ch4",
+    "min": 0,
+    "max": 30,
+    "step": 0.1,
+    "default": 8
+   },
+   {
+    "key": "o2",
+    "min": 5,
+    "max": 21,
+    "step": 0.1,
+    "default": 18.5
+   }
+  ],
+  "handles": [
+   {
+    "key": "ch4",
+    "axis": "x"
+   },
+   {
+    "key": "o2",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "zone",
+   "def"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "ch4": 0,
+     "o2": 5
+    },
+    "readouts": [
+     {
+      "key": "zone",
+      "raw": "0",
+      "text": "Not explosive",
+      "tone": "ok"
+     },
+     {
+      "key": "def",
+      "raw": "15.93",
+      "text": "15.9 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "ch4": 8,
+     "o2": 18.5
+    },
+    "readouts": [
+     {
+      "key": "zone",
+      "raw": "1",
+      "text": "EXPLOSIVE",
+      "tone": "crit"
+     },
+     {
+      "key": "def",
+      "raw": "0.7556000000000012",
+      "text": "0.8 %",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "ch4": 8,
+     "o2": 9.3
+    },
+    "readouts": [
+     {
+      "key": "zone",
+      "raw": "2",
+      "text": "Fuel-rich: explosive if diluted with air",
+      "tone": "warn"
+     },
+     {
+      "key": "def",
+      "raw": "9.9556",
+      "text": "10.0 %",
+      "tone": "info"
+     }
+    ],
+    "goal": "Mixture in the 'explosive if diluted with air' zone",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-dust": {
+  "params": [
+   {
+    "key": "Mc",
+    "min": 0.1,
+    "max": 5,
+    "step": 0.1,
+    "default": 1
+   },
+   {
+    "key": "ash",
+    "min": 10,
+    "max": 40,
+    "step": 1,
+    "default": 25
+   },
+   {
+    "key": "moist",
+    "min": 0,
+    "max": 15,
+    "step": 0.5,
+    "default": 3
+   },
+   {
+    "key": "Ms",
+    "min": 0,
+    "max": 25,
+    "step": 0.25,
+    "default": 1
+   },
+   {
+    "key": "gas",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "inc",
+   "req",
+   "MsReq",
+   "conc"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "Mc": 0.1,
+     "ash": 10,
+     "moist": 0,
+     "Ms": 0,
+     "gas": 0
+    },
+    "readouts": [
+     {
+      "key": "inc",
+      "raw": "10.000000000000002",
+      "text": "10.0 %",
+      "tone": "crit"
+     },
+     {
+      "key": "req",
+      "raw": "75",
+      "text": "75 %",
+      "tone": "info"
+     },
+     {
+      "key": "MsReq",
+      "raw": "0.26",
+      "text": "0.26 kg/m",
+      "tone": "info"
+     },
+     {
+      "key": "conc",
+      "raw": "7.500000000000001",
+      "text": "8 g/m³",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "Mc": 1,
+     "ash": 25,
+     "moist": 3,
+     "Ms": 1,
+     "gas": 0
+    },
+    "readouts": [
+     {
+      "key": "inc",
+      "raw": "64",
+      "text": "64.0 %",
+      "tone": "crit"
+     },
+     {
+      "key": "req",
+      "raw": "75",
+      "text": "75 %",
+      "tone": "info"
+     },
+     {
+      "key": "MsReq",
+      "raw": "1.88",
+      "text": "1.88 kg/m",
+      "tone": "info"
+     },
+     {
+      "key": "conc",
+      "raw": "60",
+      "text": "60 g/m³",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "Mc": 0.1,
+     "ash": 25,
+     "moist": 3,
+     "Ms": 1,
+     "gas": 1
+    },
+    "readouts": [
+     {
+      "key": "inc",
+      "raw": "93.45454545454544",
+      "text": "93.5 %",
+      "tone": "ok"
+     },
+     {
+      "key": "req",
+      "raw": "85",
+      "text": "85 %",
+      "tone": "info"
+     },
+     {
+      "key": "MsReq",
+      "raw": "0.3799999999999999",
+      "text": "0.38 kg/m",
+      "tone": "info"
+     },
+     {
+      "key": "conc",
+      "raw": "5.999999999999999",
+      "text": "6 g/m³",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Firedamp present and incombustible ≥ 85 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-fan": {
+  "params": [
+   {
+    "key": "N",
+    "min": 60,
+    "max": 110,
+    "step": 1,
+    "default": 100
+   },
+   {
+    "key": "R",
+    "min": 0.05,
+    "max": 0.6,
+    "step": 0.01,
+    "default": 0.2
+   },
+   {
+    "key": "nvp",
+    "min": -300,
+    "max": 300,
+    "step": 10,
+    "default": 0
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "Q",
+   "P",
+   "stall",
+   "power"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "N": 60,
+     "R": 0.05,
+     "nvp": -300
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "79.55276357543016",
+      "text": "79.6 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "P",
+      "raw": "616.4321096244144",
+      "text": "616 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "stall",
+      "raw": "0",
+      "text": "Stable (right of peak)",
+      "tone": "ok"
+     },
+     {
+      "key": "power",
+      "raw": "65.38517050300705",
+      "text": "65 kW",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "N": 100,
+     "R": 0.2,
+     "nvp": 0
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "108.2535693110085",
+      "text": "108.3 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "P",
+      "raw": "2343.7670537146646",
+      "text": "2344 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "stall",
+      "raw": "0",
+      "text": "Stable (right of peak)",
+      "tone": "ok"
+     },
+     {
+      "key": "power",
+      "raw": "338.2948655975469",
+      "text": "338 kW",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "N": 101,
+     "R": 0.25,
+     "nvp": 0
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "100.54172553125863",
+      "text": "100.5 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "P",
+      "raw": "2527.159643200736",
+      "text": "2527 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "stall",
+      "raw": "0",
+      "text": "Stable (right of peak)",
+      "tone": "ok"
+     },
+     {
+      "key": "power",
+      "raw": "338.7799882938161",
+      "text": "339 kW",
+      "tone": "info"
+     }
+    ],
+    "goal": "R = 0.25, Q ≥ 100 m³/s, no stall",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-network": {
+  "params": [
+   {
+    "key": "Pf",
+    "min": 500,
+    "max": 3000,
+    "step": 50,
+    "default": 1500
+   },
+   {
+    "key": "R0",
+    "min": 0.05,
+    "max": 0.5,
+    "step": 0.01,
+    "default": 0.1
+   },
+   {
+    "key": "R1",
+    "min": 0.1,
+    "max": 2,
+    "step": 0.05,
+    "default": 0.4
+   },
+   {
+    "key": "R2",
+    "min": 0.1,
+    "max": 2,
+    "step": 0.05,
+    "default": 0.2
+   },
+   {
+    "key": "A",
+    "min": 0.5,
+    "max": 20,
+    "step": 0.1,
+    "default": 20
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "Q",
+   "Q1",
+   "Q2",
+   "Preg",
+   "Aeq",
+   "power"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "Pf": 500,
+     "R0": 0.05,
+     "R1": 0.1,
+     "R2": 0.1,
+     "A": 0.5
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "62.480964131744024",
+      "text": "62.5 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "Q1",
+      "raw": "55.20927966007035",
+      "text": "55.2 m³/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Q2",
+      "raw": "7.271684471673677",
+      "text": "7.3 m³/s",
+      "tone": "crit"
+     },
+     {
+      "key": "Preg",
+      "raw": "299.51871655282775",
+      "text": "300 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "Aeq",
+      "raw": "3.3251380577396765",
+      "text": "3.33 m²",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "41.65397608782935",
+      "text": "42 kW",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "Pf": 1500,
+     "R0": 0.1,
+     "R1": 0.4,
+     "R2": 0.2,
+     "A": 20
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "94.11738143997178",
+      "text": "94.1 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "Q1",
+      "raw": "39.18519653798757",
+      "text": "39.2 m³/s",
+      "tone": "crit"
+     },
+     {
+      "key": "Q2",
+      "raw": "54.93218490198421",
+      "text": "54.9 m³/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Preg",
+      "raw": "10.682863467128993",
+      "text": "11 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "Aeq",
+      "raw": "2.891819403851583",
+      "text": "2.89 m²",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "188.23476287994356",
+      "text": "188 kW",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "Pf": 1500,
+     "R0": 0.05,
+     "R1": 0.4,
+     "R2": 0.2,
+     "A": 20
+    },
+    "readouts": [
+     {
+      "key": "Q",
+      "raw": "112.11359163020153",
+      "text": "112.1 m³/s",
+      "tone": "info"
+     },
+     {
+      "key": "Q1",
+      "raw": "46.67780866184756",
+      "text": "46.7 m³/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Q2",
+      "raw": "65.43578296835398",
+      "text": "65.4 m³/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Preg",
+      "raw": "15.158790052515766",
+      "text": "15 Pa",
+      "tone": "info"
+     },
+     {
+      "key": "Aeq",
+      "raw": "3.444764981253673",
+      "text": "3.44 m²",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "224.22718326040308",
+      "text": "224 kW",
+      "tone": "info"
+     }
+    ],
+    "goal": "Q₁ ≥ 45 and Q₂ ≥ 30 m³/s at 1500 Pa",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-psychro": {
+  "params": [
+   {
+    "key": "Td",
+    "min": 20,
+    "max": 45,
+    "step": 0.5,
+    "default": 34
+   },
+   {
+    "key": "Tw",
+    "min": 15,
+    "max": 40,
+    "step": 0.5,
+    "default": 32
+   },
+   {
+    "key": "v",
+    "min": 0.1,
+    "max": 4,
+    "step": 0.1,
+    "default": 0.5
+   }
+  ],
+  "handles": [
+   {
+    "key": "Td",
+    "axis": "y"
+   },
+   {
+    "key": "v",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "rh",
+   "e",
+   "status"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "Td": 20,
+     "Tw": 15,
+     "v": 0.1
+    },
+    "readouts": [
+     {
+      "key": "rh",
+      "raw": "58.59189179462418",
+      "text": "59 %",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "1.3700432321157723",
+      "text": "1.37 kPa",
+      "tone": "info"
+     },
+     {
+      "key": "status",
+      "raw": "0",
+      "text": "Compliant",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "Td": 34,
+     "Tw": 32,
+     "v": 0.5
+    },
+    "readouts": [
+     {
+      "key": "rh",
+      "raw": "86.86648169038403",
+      "text": "87 %",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "4.620654196261813",
+      "text": "4.62 kPa",
+      "tone": "info"
+     },
+     {
+      "key": "status",
+      "raw": "1",
+      "text": "Wet bulb > 30.5 °C: needs ≥ 1 m/s air",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "Td": 20,
+     "Tw": 32,
+     "v": 0.5
+    },
+    "readouts": [
+     {
+      "key": "rh",
+      "raw": "100",
+      "text": "100 %",
+      "tone": "info"
+     },
+     {
+      "key": "e",
+      "raw": "2.338281270927446",
+      "text": "2.34 kPa",
+      "tone": "info"
+     },
+     {
+      "key": "status",
+      "raw": "0",
+      "text": "Compliant",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Wet bulb ≥ 31 °C and compliant",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-pump": {
+  "params": [
+   {
+    "key": "Q",
+    "min": 50,
+    "max": 500,
+    "step": 10,
+    "default": 200
+   },
+   {
+    "key": "H",
+    "min": 50,
+    "max": 600,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "d",
+    "min": 100,
+    "max": 400,
+    "step": 10,
+    "default": 200
+   },
+   {
+    "key": "hs1",
+    "min": 40,
+    "max": 100,
+    "step": 5,
+    "default": 60
+   },
+   {
+    "key": "lift",
+    "min": -2,
+    "max": 8,
+    "step": 0.1,
+    "default": 4
+   },
+   {
+    "key": "T",
+    "min": 20,
+    "max": 45,
+    "step": 1,
+    "default": 30
+   },
+   {
+    "key": "npshr",
+    "min": 2,
+    "max": 8,
+    "step": 0.1,
+    "default": 4
+   }
+  ],
+  "handles": [
+   {
+    "key": "lift",
+    "axis": "y"
+   }
+  ],
+  "outputs": [
+   "v",
+   "Ht",
+   "stages",
+   "power",
+   "npsha",
+   "margin"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "Q": 50,
+     "H": 50,
+     "d": 100,
+     "hs1": 40,
+     "lift": -2,
+     "T": 20,
+     "npshr": 2
+    },
+    "readouts": [
+     {
+      "key": "v",
+      "raw": "1.7683882565766147",
+      "text": "1.77 m/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Ht",
+      "raw": "57.969411381238736",
+      "text": "58 m",
+      "tone": "info"
+     },
+     {
+      "key": "stages",
+      "raw": "2",
+      "text": "2",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "10.53110973425837",
+      "text": "11 kW",
+      "tone": "info"
+     },
+     {
+      "key": "npsha",
+      "raw": "11.587840849038995",
+      "text": "11.59 m",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "9.587840849038995",
+      "text": "9.59 m",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "Q": 200,
+     "H": 300,
+     "d": 200,
+     "hs1": 60,
+     "lift": 4,
+     "T": 30,
+     "npshr": 4
+    },
+    "readouts": [
+     {
+      "key": "v",
+      "raw": "1.7683882565766147",
+      "text": "1.77 m/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Ht",
+      "raw": "307.96941138123873",
+      "text": "308 m",
+      "tone": "info"
+     },
+     {
+      "key": "stages",
+      "raw": "6",
+      "text": "6",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "223.79110560370015",
+      "text": "224 kW",
+      "tone": "info"
+     },
+     {
+      "key": "npsha",
+      "raw": "5.393673286568907",
+      "text": "5.39 m",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "1.393673286568907",
+      "text": "1.39 m",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "Q": 200,
+     "H": 300,
+     "d": 200,
+     "hs1": 60,
+     "lift": 4.7,
+     "T": 35,
+     "npshr": 4
+    },
+    "readouts": [
+     {
+      "key": "v",
+      "raw": "1.7683882565766147",
+      "text": "1.77 m/s",
+      "tone": "ok"
+     },
+     {
+      "key": "Ht",
+      "raw": "307.96941138123873",
+      "text": "308 m",
+      "tone": "info"
+     },
+     {
+      "key": "stages",
+      "raw": "6",
+      "text": "6",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "223.79110560370015",
+      "text": "224 kW",
+      "tone": "info"
+     },
+     {
+      "key": "npsha",
+      "raw": "4.55303962910335",
+      "text": "4.55 m",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "0.5530396291033499",
+      "text": "0.55 m",
+      "tone": "ok"
+     }
+    ],
+    "goal": "T = 35 °C, NPSH margin between 0.5 and 0.7 m",
+    "goalMet": true
+   }
+  ]
+ },
+ "u7-sponcom": {
+  "params": [
+   {
+    "key": "o2",
+    "min": 12,
+    "max": 20.9,
+    "step": 0.05,
+    "default": 20.2
+   },
+   {
+    "key": "co2",
+    "min": 0,
+    "max": 4,
+    "step": 0.05,
+    "default": 0.3
+   },
+   {
+    "key": "co",
+    "min": 0,
+    "max": 3000,
+    "step": 5,
+    "default": 50
+   },
+   {
+    "key": "h2",
+    "min": 0,
+    "max": 3000,
+    "step": 10,
+    "default": 0
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "def",
+   "gr",
+   "grc",
+   "yr",
+   "jtr"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "o2": 12,
+     "co2": 0,
+     "co": 0,
+     "h2": 0
+    },
+    "readouts": [
+     {
+      "key": "def",
+      "raw": "11.32",
+      "text": "11.32 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "0",
+      "text": "0.00 %",
+      "tone": "ok"
+     },
+     {
+      "key": "grc",
+      "raw": "0",
+      "text": "Normal (< 0.5)",
+      "tone": "ok"
+     },
+     {
+      "key": "yr",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "jtr",
+      "raw": "0",
+      "text": "0.00 (no fire / bad sample)",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "o2": 20.2,
+     "co2": 0.3,
+     "co": 50,
+     "h2": 0
+    },
+    "readouts": [
+     {
+      "key": "def",
+      "raw": "0.8661750000000019",
+      "text": "0.87 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "0.5772505556036585",
+      "text": "0.58 %",
+      "tone": "warn"
+     },
+     {
+      "key": "grc",
+      "raw": "1",
+      "text": "Heating — investigate (0.5–1)",
+      "tone": "warn"
+     },
+     {
+      "key": "yr",
+      "raw": "34.63503333621951",
+      "text": "34.6 %",
+      "tone": "info"
+     },
+     {
+      "key": "jtr",
+      "raw": "0.3506797125292225",
+      "text": "0.35 (no fire / bad sample)",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "o2": 20.2,
+     "co2": 0.3,
+     "co": 550,
+     "h2": 0
+    },
+    "readouts": [
+     {
+      "key": "def",
+      "raw": "0.852924999999999",
+      "text": "0.85 %",
+      "tone": "info"
+     },
+     {
+      "key": "gr",
+      "raw": "6.448398159275442",
+      "text": "6.45 %",
+      "tone": "crit"
+     },
+     {
+      "key": "grc",
+      "raw": "3",
+      "text": "Active fire likely (> 2)",
+      "tone": "crit"
+     },
+     {
+      "key": "yr",
+      "raw": "35.17308086877514",
+      "text": "35.2 %",
+      "tone": "info"
+     },
+     {
+      "key": "jtr",
+      "raw": "0.40009379488231717",
+      "text": "0.40 (methane burning)",
+      "tone": "info"
+     }
+    ],
+    "goal": "GR ≥ 2 and 0.4 ≤ JTR ≤ 1.6",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-bond": {
+  "params": [
+   {
+    "key": "F",
+    "min": 2,
+    "max": 200,
+    "step": 1,
+    "default": 100
+   },
+   {
+    "key": "P",
+    "min": 50,
+    "max": 5000,
+    "step": 5,
+    "default": 150
+   },
+   {
+    "key": "Wi",
+    "min": 5,
+    "max": 25,
+    "step": 0.5,
+    "default": 14
+   },
+   {
+    "key": "tph",
+    "min": 50,
+    "max": 2000,
+    "step": 10,
+    "default": 500
+   }
+  ],
+  "handles": [
+   {
+    "key": "F",
+    "axis": "x"
+   },
+   {
+    "key": "P",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "W",
+   "power",
+   "rr"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "F": 2,
+     "P": 50,
+     "Wi": 5,
+     "tph": 50
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "5.953033823115581",
+      "text": "5.95 kWh/t",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "297.651691155779",
+      "text": "298 kW",
+      "tone": "ok"
+     },
+     {
+      "key": "rr",
+      "raw": "40",
+      "text": "40",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "F": 100,
+     "P": 150,
+     "Wi": 14,
+     "tph": 500
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "10.988233260564591",
+      "text": "10.99 kWh/t",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "5494.116630282296",
+      "text": "5494 kW",
+      "tone": "ok"
+     },
+     {
+      "key": "rr",
+      "raw": "666.6666666666666",
+      "text": "667",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "F": 100,
+     "P": 50,
+     "Wi": 5,
+     "tph": 500
+    },
+    "readouts": [
+     {
+      "key": "W",
+      "raw": "6.912953928857056",
+      "text": "6.91 kWh/t",
+      "tone": "info"
+     },
+     {
+      "key": "power",
+      "raw": "3456.476964428528",
+      "text": "3456 kW",
+      "tone": "ok"
+     },
+     {
+      "key": "rr",
+      "raw": "2000",
+      "text": "2000",
+      "tone": "info"
+     }
+    ],
+    "goal": "P80 ≤ 75 µm and mill power ≤ 8000 kW",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-bowditch": {
+  "params": [
+   {
+    "key": "ang",
+    "min": 0,
+    "max": 60,
+    "step": 1,
+    "default": 20
+   },
+   {
+    "key": "tape",
+    "min": 0,
+    "max": 50,
+    "step": 1,
+    "default": 15
+   },
+   {
+    "key": "show",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "angMis",
+   "mis",
+   "prec",
+   "P"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "ang": 0,
+     "tape": 0,
+     "show": 0
+    },
+    "readouts": [
+     {
+      "key": "angMis",
+      "raw": "0",
+      "text": "0 ″",
+      "tone": "info"
+     },
+     {
+      "key": "mis",
+      "raw": "1.5888218580782548e-14",
+      "text": "0.000 m",
+      "tone": "info"
+     },
+     {
+      "key": "prec",
+      "raw": "45116864760745720",
+      "text": "1 in 45,11,68,64,76,07,45,720",
+      "tone": "ok"
+     },
+     {
+      "key": "P",
+      "raw": "716.8266089983335",
+      "text": "716.8 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "ang": 20,
+     "tape": 15,
+     "show": 0
+    },
+    "readouts": [
+     {
+      "key": "angMis",
+      "raw": "120",
+      "text": "120 ″",
+      "tone": "info"
+     },
+     {
+      "key": "mis",
+      "raw": "0.0868103320741454",
+      "text": "0.087 m",
+      "tone": "info"
+     },
+     {
+      "key": "prec",
+      "raw": "8257.388168796384",
+      "text": "1 in 8,257",
+      "tone": "warn"
+     },
+     {
+      "key": "P",
+      "raw": "716.8266089983335",
+      "text": "716.8 m",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "ang": 5,
+     "tape": 15,
+     "show": 0
+    },
+    "readouts": [
+     {
+      "key": "angMis",
+      "raw": "30",
+      "text": "30 ″",
+      "tone": "info"
+     },
+     {
+      "key": "mis",
+      "raw": "0.03823672569679238",
+      "text": "0.038 m",
+      "tone": "info"
+     },
+     {
+      "key": "prec",
+      "raw": "18747.070936005042",
+      "text": "1 in 18,747",
+      "tone": "ok"
+     },
+     {
+      "key": "P",
+      "raw": "716.8266089983335",
+      "text": "716.8 m",
+      "tone": "info"
+     }
+    ],
+    "goal": "Precision ≥ 1 : 10 000 with realistic angular error ≥ 5″",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-earth": {
+  "params": [
+   {
+    "key": "V",
+    "min": 550,
+    "max": 3300,
+    "step": 1,
+    "default": 550,
+    "options": [
+     550,
+     1100,
+     3300
+    ]
+   },
+   {
+    "key": "Rn",
+    "min": 0,
+    "max": 3000,
+    "step": 1,
+    "default": 0
+   },
+   {
+    "key": "Rf",
+    "min": 0.5,
+    "max": 50,
+    "step": 0.5,
+    "default": 2
+   },
+   {
+    "key": "Re",
+    "min": 0.1,
+    "max": 5,
+    "step": 0.1,
+    "default": 1
+   },
+   {
+    "key": "trip",
+    "min": 50,
+    "max": 1000,
+    "step": 25,
+    "default": 300
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "If",
+   "Vt",
+   "tripped",
+   "Rreq"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "V": 550,
+     "Rn": 0,
+     "Rf": 0.5,
+     "Re": 0.1,
+     "trip": 50
+    },
+    "readouts": [
+     {
+      "key": "If",
+      "raw": "529.2377467571571",
+      "text": "529.238 A",
+      "tone": "crit"
+     },
+     {
+      "key": "Vt",
+      "raw": "52.92377467571571",
+      "text": "52.92 V",
+      "tone": "crit"
+     },
+     {
+      "key": "tripped",
+      "raw": "1",
+      "text": "TRIPS — supply isolated",
+      "tone": "ok"
+     },
+     {
+      "key": "Rreq",
+      "raw": "422.79019740572556",
+      "text": "423 Ω",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "V": 550,
+     "Rn": 0,
+     "Rf": 2,
+     "Re": 1,
+     "trip": 300
+    },
+    "readouts": [
+     {
+      "key": "If",
+      "raw": "105.8475493514314",
+      "text": "105.848 A",
+      "tone": "crit"
+     },
+     {
+      "key": "Vt",
+      "raw": "105.8475493514314",
+      "text": "105.85 V",
+      "tone": "crit"
+     },
+     {
+      "key": "tripped",
+      "raw": "1",
+      "text": "TRIPS — supply isolated",
+      "tone": "ok"
+     },
+     {
+      "key": "Rreq",
+      "raw": "420.3901974057256",
+      "text": "420 Ω",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "V": 550,
+     "Rn": 450,
+     "Rf": 2,
+     "Re": 1,
+     "trip": 300
+    },
+    "readouts": [
+     {
+      "key": "If",
+      "raw": "0.7009771480227245",
+      "text": "0.701 A",
+      "tone": "ok"
+     },
+     {
+      "key": "Vt",
+      "raw": "0.7009771480227245",
+      "text": "0.70 V",
+      "tone": "ok"
+     },
+     {
+      "key": "tripped",
+      "raw": "1",
+      "text": "TRIPS — supply isolated",
+      "tone": "ok"
+     },
+     {
+      "key": "Rreq",
+      "raw": "420.3901974057256",
+      "text": "420 Ω",
+      "tone": "info"
+     }
+    ],
+    "goal": "550 V, If ≤ 0.75 A and relay trips",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-flot": {
+  "params": [
+   {
+    "key": "col",
+    "min": 0,
+    "max": 200,
+    "step": 5,
+    "default": 30
+   },
+   {
+    "key": "fr",
+    "min": 0,
+    "max": 60,
+    "step": 1,
+    "default": 15
+   },
+   {
+    "key": "act",
+    "min": 0,
+    "max": 400,
+    "step": 10,
+    "default": 0
+   },
+   {
+    "key": "dep",
+    "min": 0,
+    "max": 500,
+    "step": 10,
+    "default": 0
+   },
+   {
+    "key": "air",
+    "min": 0.3,
+    "max": 2.5,
+    "step": 0.1,
+    "default": 1.2
+   },
+   {
+    "key": "rpm",
+    "min": 600,
+    "max": 1600,
+    "step": 50,
+    "default": 1200
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "Rt",
+   "grade",
+   "Rp",
+   "S"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "col": 0,
+     "fr": 0,
+     "act": 0,
+     "dep": 0,
+     "air": 0.3,
+     "rpm": 600
+    },
+    "readouts": [
+     {
+      "key": "Rt",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "crit"
+     },
+     {
+      "key": "grade",
+      "raw": "0",
+      "text": "0.0 % Zn",
+      "tone": "crit"
+     },
+     {
+      "key": "Rp",
+      "raw": "0",
+      "text": "0.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "S",
+      "raw": "0",
+      "text": "0.00",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "col": 30,
+     "fr": 15,
+     "act": 0,
+     "dep": 0,
+     "air": 1.2,
+     "rpm": 1200
+    },
+    "readouts": [
+     {
+      "key": "Rt",
+      "raw": "35.70223019080907",
+      "text": "35.7 %",
+      "tone": "crit"
+     },
+     {
+      "key": "grade",
+      "raw": "16.50943271339933",
+      "text": "16.5 % Zn",
+      "tone": "crit"
+     },
+     {
+      "key": "Rp",
+      "raw": "61.59175434730757",
+      "text": "61.6 %",
+      "tone": "warn"
+     },
+     {
+      "key": "S",
+      "raw": "0.7768698398515702",
+      "text": "0.78",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "col": 130,
+     "fr": 18,
+     "act": 250,
+     "dep": 500,
+     "air": 1.8,
+     "rpm": 1300
+    },
+    "readouts": [
+     {
+      "key": "Rt",
+      "raw": "95.26897315224835",
+      "text": "95.3 %",
+      "tone": "ok"
+     },
+     {
+      "key": "grade",
+      "raw": "52.13301728637939",
+      "text": "52.1 % Zn",
+      "tone": "ok"
+     },
+     {
+      "key": "Rp",
+      "raw": "3.312158100223239",
+      "text": "3.3 %",
+      "tone": "ok"
+     },
+     {
+      "key": "S",
+      "raw": "0.8347011117784134",
+      "text": "0.83",
+      "tone": "info"
+     }
+    ],
+    "goal": "Zn recovery ≥ 85 % and concentrate ≥ 50 % Zn",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-koepe": {
+  "params": [
+   {
+    "key": "Q",
+    "min": 5,
+    "max": 40,
+    "step": 1,
+    "default": 20
+   },
+   {
+    "key": "skip",
+    "min": 10,
+    "max": 40,
+    "step": 1,
+    "default": 20
+   },
+   {
+    "key": "rope",
+    "min": 5,
+    "max": 20,
+    "step": 1,
+    "default": 10
+   },
+   {
+    "key": "a",
+    "min": 0,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 0.8
+   },
+   {
+    "key": "mu",
+    "min": 0.15,
+    "max": 0.35,
+    "step": 0.01,
+    "default": 0.25
+   },
+   {
+    "key": "wrap",
+    "min": 180,
+    "max": 200,
+    "step": 20,
+    "default": 180,
+    "options": [
+     180,
+     200
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "ratio",
+   "lim",
+   "margin",
+   "amax"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "Q": 5,
+     "skip": 10,
+     "rope": 5,
+     "a": 0,
+     "mu": 0.15,
+     "wrap": 180
+    },
+    "readouts": [
+     {
+      "key": "ratio",
+      "raw": "1.3333333333333335",
+      "text": "1.333",
+      "tone": "info"
+     },
+     {
+      "key": "lim",
+      "raw": "1.6019776512823565",
+      "text": "1.602",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "1.2014832384617673",
+      "text": "1.20",
+      "tone": "ok"
+     },
+     {
+      "key": "amax",
+      "raw": "0.8978267627833514",
+      "text": "0.90 m/s²",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "Q": 20,
+     "skip": 20,
+     "rope": 10,
+     "a": 0.8,
+     "mu": 0.25,
+     "wrap": 180
+    },
+    "readouts": [
+     {
+      "key": "ratio",
+      "raw": "1.962634110247873",
+      "text": "1.963",
+      "tone": "info"
+     },
+     {
+      "key": "lim",
+      "raw": "2.1932800507380152",
+      "text": "2.193",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "1.117518563081028",
+      "text": "1.12",
+      "tone": "ok"
+     },
+     {
+      "key": "amax",
+      "raw": "1.3383804689442582",
+      "text": "1.34 m/s²",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "Q": 30,
+     "skip": 34,
+     "rope": 10,
+     "a": 0.8,
+     "mu": 0.25,
+     "wrap": 180
+    },
+    "readouts": [
+     {
+      "key": "ratio",
+      "raw": "1.9804762385228536",
+      "text": "1.980",
+      "tone": "info"
+     },
+     {
+      "key": "lim",
+      "raw": "2.1932800507380152",
+      "text": "2.193",
+      "tone": "info"
+     },
+     {
+      "key": "margin",
+      "raw": "1.1074508282784965",
+      "text": "1.11",
+      "tone": "ok"
+     },
+     {
+      "key": "amax",
+      "raw": "1.2947906434861722",
+      "text": "1.29 m/s²",
+      "tone": "info"
+     }
+    ],
+    "goal": "Payload 30 t with slip margin ≥ 1.1",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-wash": {
+  "params": [
+   {
+    "key": "rho",
+    "min": 1.4,
+    "max": 1.9,
+    "step": 0.01,
+    "default": 1.7
+   },
+   {
+    "key": "Ep",
+    "min": 0,
+    "max": 0.15,
+    "step": 0.01,
+    "default": 0
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "y",
+   "cleanAsh",
+   "rejAsh",
+   "ngm",
+   "cls"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "rho": 1.4,
+     "Ep": 0
+    },
+    "readouts": [
+     {
+      "key": "y",
+      "raw": "10",
+      "text": "10.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cleanAsh",
+      "raw": "8",
+      "text": "8.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "rejAsh",
+      "raw": "32.63333333333333",
+      "text": "32.6 %",
+      "tone": "info"
+     },
+     {
+      "key": "ngm",
+      "raw": "36",
+      "text": "36.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "5",
+      "text": "Formidable",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "rho": 1.7,
+     "Ep": 0
+    },
+    "readouts": [
+     {
+      "key": "y",
+      "raw": "72",
+      "text": "72.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cleanAsh",
+      "raw": "19.680555555555557",
+      "text": "19.7 %",
+      "tone": "warn"
+     },
+     {
+      "key": "rejAsh",
+      "raw": "57.142857142857146",
+      "text": "57.1 %",
+      "tone": "info"
+     },
+     {
+      "key": "ngm",
+      "raw": "20.00000000000005",
+      "text": "20.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "4",
+      "text": "Exceedingly difficult",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "rho": 1.55,
+     "Ep": 0
+    },
+    "readouts": [
+     {
+      "key": "y",
+      "raw": "49",
+      "text": "49.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cleanAsh",
+      "raw": "15.244897959183673",
+      "text": "15.2 %",
+      "tone": "ok"
+     },
+     {
+      "key": "rejAsh",
+      "raw": "44.509803921568626",
+      "text": "44.5 %",
+      "tone": "info"
+     },
+     {
+      "key": "ngm",
+      "raw": "44.000000000000014",
+      "text": "44.0 %",
+      "tone": "info"
+     },
+     {
+      "key": "cls",
+      "raw": "5",
+      "text": "Formidable",
+      "tone": "crit"
+     }
+    ],
+    "goal": "Clean ash ≤ 17 % and yield ≥ 48 %",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-weisbach": {
+  "params": [
+   {
+    "key": "c",
+    "min": 1,
+    "max": 6,
+    "step": 0.1,
+    "default": 3
+   },
+   {
+    "key": "b",
+    "min": 0.5,
+    "max": 10,
+    "step": 0.1,
+    "default": 4
+   },
+   {
+    "key": "al",
+    "min": 10,
+    "max": 3600,
+    "step": 10,
+    "default": 300
+   },
+   {
+    "key": "d",
+    "min": 0.5,
+    "max": 10,
+    "step": 0.5,
+    "default": 2
+   }
+  ],
+  "handles": [
+   {
+    "key": "b",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "beta",
+   "ratio",
+   "err"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "c": 1,
+     "b": 0.5,
+     "al": 10,
+     "d": 0.5
+    },
+    "readouts": [
+     {
+      "key": "beta",
+      "raw": "5",
+      "text": "5 ″",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.5",
+      "text": "0.50",
+      "tone": "ok"
+     },
+     {
+      "key": "err",
+      "raw": "0.25",
+      "text": "0.25 ″",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "c": 3,
+     "b": 4,
+     "al": 300,
+     "d": 2
+    },
+    "readouts": [
+     {
+      "key": "beta",
+      "raw": "400",
+      "text": "400 ″",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "1.3333333333333333",
+      "text": "1.33",
+      "tone": "warn"
+     },
+     {
+      "key": "err",
+      "raw": "2.6666666666666665",
+      "text": "2.67 ″",
+      "tone": "warn"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "c": 3,
+     "b": 0.5,
+     "al": 300,
+     "d": 2
+    },
+    "readouts": [
+     {
+      "key": "beta",
+      "raw": "50",
+      "text": "50 ″",
+      "tone": "info"
+     },
+     {
+      "key": "ratio",
+      "raw": "0.16666666666666666",
+      "text": "0.17",
+      "tone": "ok"
+     },
+     {
+      "key": "err",
+      "raw": "0.3333333333333333",
+      "text": "0.33 ″",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Angle error 2″, carried error ≤ 1″",
+    "goalMet": true
+   }
+  ]
+ },
+ "u8-zones": {
+  "params": [
+   {
+    "key": "deg",
+    "min": 1,
+    "max": 3,
+    "step": 1,
+    "default": 3,
+    "options": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "key": "face",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "ret",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "intake",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "sub",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "key": "rn",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "elr",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   },
+   {
+    "key": "ev",
+    "min": 0,
+    "max": 2,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1,
+     2
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "score",
+   "ignition",
+   "faultA"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "deg": 1,
+     "face": 0,
+     "ret": 0,
+     "intake": 0,
+     "sub": 0,
+     "rn": 0,
+     "elr": 0,
+     "ev": 0
+    },
+    "readouts": [
+     {
+      "key": "score",
+      "raw": "4",
+      "text": "4 / 6",
+      "tone": "warn"
+     },
+     {
+      "key": "ignition",
+      "raw": "0",
+      "text": "No event injected",
+      "tone": "info"
+     },
+     {
+      "key": "faultA",
+      "raw": "106",
+      "text": "~106 A",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "deg": 3,
+     "face": 0,
+     "ret": 0,
+     "intake": 0,
+     "sub": 0,
+     "rn": 0,
+     "elr": 0,
+     "ev": 0
+    },
+    "readouts": [
+     {
+      "key": "score",
+      "raw": "0",
+      "text": "0 / 6",
+      "tone": "crit"
+     },
+     {
+      "key": "ignition",
+      "raw": "0",
+      "text": "No event injected",
+      "tone": "info"
+     },
+     {
+      "key": "faultA",
+      "raw": "106",
+      "text": "~106 A",
+      "tone": "crit"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "deg": 3,
+     "face": 1,
+     "ret": 1,
+     "intake": 1,
+     "sub": 1,
+     "rn": 1,
+     "elr": 1,
+     "ev": 2
+    },
+    "readouts": [
+     {
+      "key": "score",
+      "raw": "6",
+      "text": "6 / 6",
+      "tone": "ok"
+     },
+     {
+      "key": "ignition",
+      "raw": "0",
+      "text": "Safe — protection operated",
+      "tone": "ok"
+     },
+     {
+      "key": "faultA",
+      "raw": "0.75",
+      "text": "750 mA",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Degree III: all 6 checks pass and an injected earth fault trips safely",
+    "goalMet": true
+   }
+  ]
+ },
+ "u9-cutoff": {
+  "params": [
+   {
+    "key": "mean",
+    "min": 0.5,
+    "max": 5,
+    "step": 0.1,
+    "default": 1.5
+   },
+   {
+    "key": "cv",
+    "min": 0.3,
+    "max": 1.5,
+    "step": 0.05,
+    "default": 0.8
+   },
+   {
+    "key": "c",
+    "min": 0,
+    "max": 5,
+    "step": 0.05,
+    "default": 1.5
+   },
+   {
+    "key": "price",
+    "min": 3000,
+    "max": 10000,
+    "step": 100,
+    "default": 6000
+   },
+   {
+    "key": "rec",
+    "min": 0.7,
+    "max": 0.98,
+    "step": 0.01,
+    "default": 0.9
+   },
+   {
+    "key": "cost",
+    "min": 500,
+    "max": 5000,
+    "step": 50,
+    "default": 2500
+   }
+  ],
+  "handles": [
+   {
+    "key": "c",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "tonnes",
+   "g",
+   "metal",
+   "gbe",
+   "profit"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "mean": 0.5,
+     "cv": 0.3,
+     "c": 0,
+     "price": 3000,
+     "rec": 0.7,
+     "cost": 500
+    },
+    "readouts": [
+     {
+      "key": "tonnes",
+      "raw": "10",
+      "text": "10.00 Mt",
+      "tone": "info"
+     },
+     {
+      "key": "g",
+      "raw": "0.5",
+      "text": "0.50 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "metal",
+      "raw": "5",
+      "text": "5.00 t",
+      "tone": "info"
+     },
+     {
+      "key": "gbe",
+      "raw": "0.23809523809523808",
+      "text": "0.24 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "550",
+      "text": "550 ₹ cr",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "mean": 1.5,
+     "cv": 0.8,
+     "c": 1.5,
+     "price": 6000,
+     "rec": 0.9,
+     "cost": 2500
+    },
+    "readouts": [
+     {
+      "key": "tonnes",
+      "raw": "3.6254173446955784",
+      "text": "3.63 Mt",
+      "tone": "info"
+     },
+     {
+      "key": "g",
+      "raw": "2.6374546910983376",
+      "text": "2.64 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "metal",
+      "raw": "9.561873982956632",
+      "text": "9.56 t",
+      "tone": "info"
+     },
+     {
+      "key": "gbe",
+      "raw": "0.46296296296296297",
+      "text": "0.46 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "4257.057614622687",
+      "text": "4257 ₹ cr",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "mean": 1.5,
+     "cv": 0.8,
+     "c": 0.5,
+     "price": 6000,
+     "rec": 0.9,
+     "cost": 2500
+    },
+    "readouts": [
+     {
+      "key": "tonnes",
+      "raw": "8.869191117656241",
+      "text": "8.87 Mt",
+      "tone": "info"
+     },
+     {
+      "key": "g",
+      "raw": "1.6441765782276583",
+      "text": "1.64 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "metal",
+      "raw": "14.58251630347518",
+      "text": "14.58 t",
+      "tone": "info"
+     },
+     {
+      "key": "gbe",
+      "raw": "0.46296296296296297",
+      "text": "0.46 g/t",
+      "tone": "info"
+     },
+     {
+      "key": "profit",
+      "raw": "5657.261024462535",
+      "text": "5657 ₹ cr",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Cut-off within ±0.06 g/t of break-even",
+    "goalMet": true
+   }
+  ]
+ },
+ "u9-npv": {
+  "params": [
+   {
+    "key": "capex",
+    "min": 100,
+    "max": 5000,
+    "step": 50,
+    "default": 1500
+   },
+   {
+    "key": "rev",
+    "min": 100,
+    "max": 2000,
+    "step": 10,
+    "default": 600
+   },
+   {
+    "key": "opex",
+    "min": 30,
+    "max": 90,
+    "step": 1,
+    "default": 55
+   },
+   {
+    "key": "life",
+    "min": 5,
+    "max": 40,
+    "step": 1,
+    "default": 20
+   },
+   {
+    "key": "r",
+    "min": 6,
+    "max": 20,
+    "step": 0.5,
+    "default": 12
+   },
+   {
+    "key": "roy",
+    "min": 0,
+    "max": 20,
+    "step": 0.5,
+    "default": 14
+   },
+   {
+    "key": "lease",
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "default": 0,
+    "options": [
+     0,
+     1
+    ]
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "cf",
+   "npv",
+   "irr",
+   "payback",
+   "royalty"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "capex": 100,
+     "rev": 100,
+     "opex": 30,
+     "life": 5,
+     "r": 6,
+     "roy": 0,
+     "lease": 0
+    },
+    "readouts": [
+     {
+      "key": "cf",
+      "raw": "70",
+      "text": "70.0 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "npv",
+      "raw": "194.8654649895999",
+      "text": "195 ₹ cr",
+      "tone": "ok"
+     },
+     {
+      "key": "irr",
+      "raw": "64.12143190790862",
+      "text": "64.1 %",
+      "tone": "ok"
+     },
+     {
+      "key": "payback",
+      "raw": "1.4285714285714286",
+      "text": "1.4 yr",
+      "tone": "info"
+     },
+     {
+      "key": "royalty",
+      "raw": "0",
+      "text": "₹0.0 cr/yr",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "capex": 1500,
+     "rev": 600,
+     "opex": 55,
+     "life": 20,
+     "r": 12,
+     "roy": 14,
+     "lease": 0
+    },
+    "readouts": [
+     {
+      "key": "cf",
+      "raw": "159.12",
+      "text": "159.1 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "npv",
+      "raw": "-311.4621304969937",
+      "text": "-311 ₹ cr",
+      "tone": "crit"
+     },
+     {
+      "key": "irr",
+      "raw": "8.553113609217943",
+      "text": "8.6 %",
+      "tone": "crit"
+     },
+     {
+      "key": "payback",
+      "raw": "9.42684766214178",
+      "text": "9.4 yr",
+      "tone": "info"
+     },
+     {
+      "key": "royalty",
+      "raw": "84",
+      "text": "₹110.9 cr/yr",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "capex": 1500,
+     "rev": 770,
+     "opex": 55,
+     "life": 20,
+     "r": 12,
+     "roy": 14,
+     "lease": 0
+    },
+    "readouts": [
+     {
+      "key": "cf",
+      "raw": "204.20399999999998",
+      "text": "204.2 ₹ cr",
+      "tone": "info"
+     },
+     {
+      "key": "npv",
+      "raw": "25.290265862191358",
+      "text": "25 ₹ cr",
+      "tone": "ok"
+     },
+     {
+      "key": "irr",
+      "raw": "12.268255534620108",
+      "text": "12.3 %",
+      "tone": "ok"
+     },
+     {
+      "key": "payback",
+      "raw": "7.345595580889699",
+      "text": "7.3 yr",
+      "tone": "info"
+     },
+     {
+      "key": "royalty",
+      "raw": "107.8",
+      "text": "₹142.3 cr/yr",
+      "tone": "info"
+     }
+    ],
+    "goal": "0 ≤ NPV ≤ ₹50 cr with other inputs at defaults",
+    "goalMet": true
+   }
+  ]
+ },
+ "u9-pit": {
+  "params": [
+   {
+    "key": "price",
+    "min": 0.3,
+    "max": 2.5,
+    "step": 0.05,
+    "default": 1
+   },
+   {
+    "key": "mc",
+    "min": 0.5,
+    "max": 3,
+    "step": 0.1,
+    "default": 1
+   }
+  ],
+  "handles": [],
+  "outputs": [
+   "value",
+   "ore",
+   "waste",
+   "sr",
+   "maxDepth"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "price": 0.3,
+     "mc": 0.5
+    },
+    "readouts": [
+     {
+      "key": "value",
+      "raw": "0.2999999999999998",
+      "text": "0.3",
+      "tone": "ok"
+     },
+     {
+      "key": "ore",
+      "raw": "1",
+      "text": "1",
+      "tone": "info"
+     },
+     {
+      "key": "waste",
+      "raw": "0",
+      "text": "0",
+      "tone": "info"
+     },
+     {
+      "key": "sr",
+      "raw": "0",
+      "text": "0.00",
+      "tone": "info"
+     },
+     {
+      "key": "maxDepth",
+      "raw": "1",
+      "text": "1",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "price": 1,
+     "mc": 1
+    },
+    "readouts": [
+     {
+      "key": "value",
+      "raw": "188.84822641589665",
+      "text": "188.8",
+      "tone": "ok"
+     },
+     {
+      "key": "ore",
+      "raw": "41",
+      "text": "41",
+      "tone": "info"
+     },
+     {
+      "key": "waste",
+      "raw": "49",
+      "text": "49",
+      "tone": "info"
+     },
+     {
+      "key": "sr",
+      "raw": "1.1951219512195121",
+      "text": "1.20",
+      "tone": "info"
+     },
+     {
+      "key": "maxDepth",
+      "raw": "9",
+      "text": "9",
+      "tone": "info"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "price": 0.7,
+     "mc": 1
+    },
+    "readouts": [
+     {
+      "key": "value",
+      "raw": "55.99375849112762",
+      "text": "56.0",
+      "tone": "ok"
+     },
+     {
+      "key": "ore",
+      "raw": "41",
+      "text": "41",
+      "tone": "info"
+     },
+     {
+      "key": "waste",
+      "raw": "49",
+      "text": "49",
+      "tone": "info"
+     },
+     {
+      "key": "sr",
+      "raw": "1.1951219512195121",
+      "text": "1.20",
+      "tone": "info"
+     },
+     {
+      "key": "maxDepth",
+      "raw": "9",
+      "text": "9",
+      "tone": "info"
+     }
+    ],
+    "goal": "Pit depth ≥ 9 benches at mining cost 1.0, lowest price ≤ 0.8",
+    "goalMet": true
+   }
+  ]
+ },
+ "u9-radar": {
+  "params": [
+   {
+    "key": "tf",
+    "min": 30,
+    "max": 120,
+    "step": 1,
+    "default": 72
+   },
+   {
+    "key": "tnow",
+    "min": 6,
+    "max": 119,
+    "step": 1,
+    "default": 12
+   },
+   {
+    "key": "noise",
+    "min": 0,
+    "max": 40,
+    "step": 1,
+    "default": 25
+   }
+  ],
+  "handles": [
+   {
+    "key": "tf",
+    "axis": "x"
+   }
+  ],
+  "outputs": [
+   "tfp",
+   "errPct",
+   "lead"
+  ],
+  "states": [
+   {
+    "name": "min",
+    "vals": {
+     "tf": 30,
+     "tnow": 6,
+     "noise": 0
+    },
+    "readouts": [
+     {
+      "key": "tfp",
+      "raw": "30.000000000000004",
+      "text": "30.0 h",
+      "tone": "info"
+     },
+     {
+      "key": "errPct",
+      "raw": "1.1842378929335004e-14",
+      "text": "0.0 %",
+      "tone": "ok"
+     },
+     {
+      "key": "lead",
+      "raw": "24",
+      "text": "24 h",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "default",
+    "vals": {
+     "tf": 72,
+     "tnow": 12,
+     "noise": 25
+    },
+    "readouts": [
+     {
+      "key": "tfp",
+      "raw": "Infinity",
+      "text": "— h",
+      "tone": "info"
+     },
+     {
+      "key": "errPct",
+      "raw": "Infinity",
+      "text": "— %",
+      "tone": "crit"
+     },
+     {
+      "key": "lead",
+      "raw": "60",
+      "text": "60 h",
+      "tone": "ok"
+     }
+    ]
+   },
+   {
+    "name": "objective-met",
+    "vals": {
+     "tf": 72,
+     "tnow": 55,
+     "noise": 25
+    },
+    "readouts": [
+     {
+      "key": "tfp",
+      "raw": "73.29543947679156",
+      "text": "73.3 h",
+      "tone": "info"
+     },
+     {
+      "key": "errPct",
+      "raw": "1.7992214955438297",
+      "text": "1.8 %",
+      "tone": "ok"
+     },
+     {
+      "key": "lead",
+      "raw": "17",
+      "text": "17 h",
+      "tone": "ok"
+     }
+    ],
+    "goal": "Noise ≥ 20 %, error ≤ 2 %, lead ≥ 12 h",
+    "goalMet": true
+   }
+  ]
+ }
+}

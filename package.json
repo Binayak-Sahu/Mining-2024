@@ -13,7 +13,10 @@
     "fetch:sources": "node scripts/fetch-sources.mjs",
     "audit:svg": "tsx --tsconfig scripts/tsconfig.json scripts/audit-svg.tsx",
     "audit:illus": "tsx --tsconfig scripts/tsconfig.json scripts/audit-illustrations.ts",
-    "draw:illus": "tsx --tsconfig scripts/tsconfig.json scripts/draw-illustrations.ts"
+    "draw:illus": "tsx --tsconfig scripts/tsconfig.json scripts/draw-illustrations.ts",
+    "golden:record": "tsx --tsconfig scripts/tsconfig.json scripts/golden-sims.ts",
+    "test:golden": "tsx --tsconfig scripts/tsconfig.json --test tests/sims.golden.test.ts",
+    "audit:sim": "tsx --tsconfig scripts/tsconfig.json scripts/audit-sim.tsx"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.3.0",
