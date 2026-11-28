@@ -486,29 +486,30 @@ export const unfcSim: SimDef = {
           const cy = 38 + i * 52;
           return (
             <g key={a.k}>
+              <rect x={8} y={cy - 16} width={14} height={32} rx={7} style={{ fill: U.mid }} />
               {Array.from({ length: a.n }).map((_, j) => {
                 const on = a.v === j + 1;
-                const x = 10 + j * 46;
+                const x = 34 + j * 44;
                 return (
                   <g key={j}>
-                    <rect x={x} y={cy - 16} width={42} height={32} rx={8} style={{ fill: on ? U.deep : GREYS.light, stroke: on ? U.deep : INK3 }} strokeWidth={1.5} />
-                    <T x={x + 21} y={cy + 6} anchor="middle" fill={on ? "#FFFFFF" : ON_LIGHT}>
+                    <rect x={x} y={cy - 16} width={40} height={32} rx={8} style={{ fill: on ? U.deep : GREYS.light, stroke: on ? U.deep : INK3 }} strokeWidth={1.5} />
+                    <T x={x + 20} y={cy + 6} anchor="middle" fill={on ? "#FFFFFF" : ON_LIGHT}>
                       {`${a.k}${j + 1}`}
                     </T>
                   </g>
                 );
               })}
-              <T x={20 + a.n * 46} y={cy + 6}>
+              <T x={40 + a.n * 44} y={cy + 6}>
                 {a.name}
               </T>
             </g>
           );
         })}
-        <rect data-state={state} x={276} y={30} width={96} height={92} rx={14} style={{ fill, stroke: INK }} strokeWidth={2.5} />
-        <T x={324} y={108} anchor="middle" fill={ON_LIGHT}>
+        <rect data-state={state} x={292} y={30} width={80} height={92} rx={14} style={{ fill, stroke: INK }} strokeWidth={2.5} />
+        <T x={332} y={108} anchor="middle" fill={ON_LIGHT}>
           Code
         </T>
-        <T x={24} y={224}>
+        <T x={26} y={216}>
           Reserve: E1, F1–F2, G1–G2
         </T>
       </g>
