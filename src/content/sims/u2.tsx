@@ -145,8 +145,8 @@ export const sinkingSim: SimDef = {
       { k: "line", label: "Line", fill: "var(--u-light)" },
       { k: "misc", label: "Misc", fill: GREYS.light },
     ];
-    const RX = 196;
-    const RW = 180;
+    const RX = 208;
+    const RW = 168;
     let x = RX;
     const w = RW / o.cycle;
     const sw = 60 + p.dia * 5;
@@ -164,29 +164,29 @@ export const sinkingSim: SimDef = {
         </defs>
         <g clipPath="url(#u2sk-clip)">
           {/* host rock, flat bands */}
-          <rect x={0} y={0} width={190} height={250} fill={GREYS.light} opacity={0.5} />
-          <rect x={0} y={70} width={190} height={46} fill={GREYS.light} />
-          <rect x={0} y={160} width={190} height={34} fill={GREYS.light} />
+          <rect x={0} y={0} width={200} height={250} fill={GREYS.light} />
+          <rect x={0} y={70} width={200} height={46} fill={GREYS.mid} opacity={0.45} />
+          <rect x={0} y={160} width={200} height={34} fill={GREYS.mid} opacity={0.45} />
           {/* open shaft */}
           <rect x={sl} y={0} width={sw} height={220} style={{ fill: "var(--surface)" }} />
           {/* lining: only above the working level (sequential) or down to the stage (concurrent) */}
-          <rect x={sl - 4} y={0} width={4} height={liningH + 12} style={{ fill: U.light }} />
-          <rect x={sr} y={0} width={4} height={liningH + 12} style={{ fill: U.light }} />
+          <rect x={sl - 6} y={0} width={6} height={liningH + 12} style={{ fill: U.mid }} />
+          <rect x={sr} y={0} width={6} height={liningH + 12} style={{ fill: U.mid }} />
           {/* sump */}
           <rect x={sl} y={208} width={sw} height={14} fill={GREYS.mid} />
           {/* shaft walls */}
-          <line x1={sl - 4} y1={0} x2={sl - 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
-          <line x1={sr + 4} y1={0} x2={sr + 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
-          <line x1={sl - 4} y1={222} x2={sr + 4} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sl - 6} y1={0} x2={sl - 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sr + 6} y1={0} x2={sr + 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
+          <line x1={sl - 6} y1={222} x2={sr + 6} y2={222} style={{ stroke: INK }} strokeWidth={2.5} />
         </g>
         {/* Galloway stage deck, with the hoist rope passing through it */}
         <rect x={sl} y={120} width={sw} height={14} fill={GREYS.deep} />
-        <T x={132} y={132} fill={ON_LIGHT} weight={700}>
+        <T x={140} y={132} fill={ON_LIGHT} weight={700}>
           Stage
         </T>
         <line x1={75} y1={12} x2={75} y2={ky} style={{ stroke: INK3 }} strokeWidth={1.5} />
         <path d={`M${66} ${ky} h18 l-3 18 h-12 z`} style={{ fill: U.deep }} stroke={ON_LIGHT} strokeWidth={1.5} strokeLinejoin="round" />
-        <T x={132} y={ky + 15} fill={ON_LIGHT} weight={700}>
+        <T x={140} y={ky + 15} fill={ON_LIGHT} weight={700}>
           Kibble
         </T>
         {/* cycle Gantt */}
