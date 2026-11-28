@@ -69,5 +69,5 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u8-earth` | U8 | done-v2 | exact (min, default, objective-met) | Earth fault on a UG feeder — restricted neutral & earth-leakage relay |
 | `u8-koepe` | U8 | unsure: lesson pin 2 sits ~22 units from the tight-side rope (as before the redraw) | exact (min, default, objective-met) | Koepe friction winder — rope slip check |
 | `u8-flot` | U8 | done-v2 | exact (min, default, objective-met) | Froth flotation circuit — reagents, aeration, grade–recovery |
-| `u8-zones` | U8 | todo | — | FLP vs IS — gassy-mine electrical zoning troubleshooter |
+| `u8-zones` | U8 | done-v2 | exact (min, default, objective-met) | FLP vs IS — gassy-mine electrical zoning troubleshooter |
 | `u0-overburden` | U0 | done-v2 | exact (min, default, objective-met) | Overburden column — vertical stress gauge |
