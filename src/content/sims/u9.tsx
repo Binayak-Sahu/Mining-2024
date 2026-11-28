@@ -414,34 +414,63 @@ export const radarSim: SimDef = {
   caption: "For accelerating creep, 1/velocity falls roughly linearly to zero at failure (Fukuzono). Later forecasts are more accurate but leave less time to evacuate — set alarm thresholds, don't wait for certainty.",
   animated: true,
   handles: [{ key: "tf", axis: "x", at: (p) => [40 + (p.tf / 130) * 340, 204], toValue: (x) => ((x - 40) / 340) * 130, color: "#EF4444" }],
+  v3: { viewH: 304 },
   render: (p, _o, tt) => {
     const r = inverseVelocity(p);
     const ymax = Math.max(...r.pts.map((q) => q[1]), 0.4) * 1.1;
+    const yTop = Math.ceil(ymax * 10) / 10;
+    const sx = v3scale(0, 130, 40, 380);
+    const sy = v3scale(0, yTop, 204, 14);
+    const xf = sx(p.tf);
+    const xn = sx(r.tnow);
+    const xe = sx(Math.min(r.tfp, 130));
+    const fitOk = Number.isFinite(r.tfp);
+    const failLeft = xf > 290;
+    const nowLeft = xn - 8 - textW("now") >= 52;
+    const nowLow = !nowLeft && Math.abs(xn - xf) < 90;
     return (
-      <Plot x={40} y={14} w={340} h={190} xmin={0} xmax={130} ymin={0} ymax={Math.ceil(ymax * 10) / 10} xlabel="time (h)" ylabel="1/v (h/mm)">
-        {(sx, sy) => (
-          <g>
-            <g transform="translate(352 34)">
-              <path d="M-14 10 A 16 16 0 0 1 14 10" fill="none" stroke="#475569" strokeWidth={2} />
-              <path d="M0 10 L0 18 M-6 18 L6 18" stroke="#475569" strokeWidth={2} />
-              <path d={`M0 6 L ${(Math.cos(tt * 2) * 22).toFixed(1)} ${(6 - Math.abs(Math.sin(tt * 2)) * 18).toFixed(1)}`} stroke={C.safe} strokeWidth={2} opacity={0.8} />
-              <circle cx={0} cy={6} r={2.5} fill={C.safe} />
-            </g>
-            {r.pts.map(([t, y], i) => (
-              <circle key={i} cx={sx(t)} cy={sy(y)} r={3} fill={C.tech} opacity={i === r.pts.length - 1 ? 0.6 + 0.4 * Math.abs(Math.sin(tt * 3)) : 1} />
-            ))}
-            {Number.isFinite(r.tfp) && <line x1={sx(0)} y1={sy(r.a)} x2={sx(Math.min(r.tfp, 130))} y2={sy(Math.max(0, r.a + r.b * Math.min(r.tfp, 130)))} stroke={C.hazard} strokeWidth={2} strokeDasharray="6 3" />}
-            <line x1={sx(p.tf)} x2={sx(p.tf)} y1={sy(0)} y2={sy(ymax)} stroke={C.crit} strokeWidth={1.5} />
-            <Txt x={sx(p.tf) > 300 ? sx(p.tf) - 3 : sx(p.tf) + 3} anchor={sx(p.tf) > 300 ? "end" : "start"} y={sy(ymax) + 12} size={8} fill={C.crit} weight={700}>
-              actual failure
-            </Txt>
-            <line x1={sx(r.tnow)} x2={sx(r.tnow)} y1={sy(0)} y2={sy(ymax)} stroke={C.ink} strokeDasharray="2 2" />
-            <Txt x={sx(r.tnow) - 3} y={sy(ymax) + 24} size={8} anchor="end" weight={700}>
-              now
-            </Txt>
-          </g>
-        )}
-      </Plot>
+      <g>
+        <defs>
+          <clipPath id="u9-radar-plot">
+            <rect x={40} y={14} width={340} height={190} />
+          </clipPath>
+        </defs>
+        <rect x={40} y={14} width={Math.max(0, xn - 40)} height={190} style={{ fill: U.light }} />
+        <Axes x={40} y={14} w={340} h={190} />
+        <T x={376} y={246} anchor="end">
+          time (h)
+        </T>
+        <g clipPath="url(#u9-radar-plot)">
+          {fitOk && <line x1={sx(0)} y1={sy(r.a)} x2={xe} y2={sy(Math.max(0, r.a + r.b * Math.min(r.tfp, 130)))} style={{ stroke: U.deep }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />}
+          <line x1={xn} x2={xn} y1={14} y2={204} style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="3 3" />
+          <line x1={xf} x2={xf} y1={14} y2={204} style={{ stroke: INK }} strokeWidth={2} strokeLinecap="round" />
+          {r.pts.map(([t, y], i) => (
+            <circle key={i} cx={sx(t)} cy={sy(y)} r={3} style={{ fill: ON_LIGHT }} opacity={i === r.pts.length - 1 ? 0.6 + 0.4 * Math.abs(Math.sin(tt * 3)) : 1} />
+          ))}
+        </g>
+        {fitOk && r.tfp >= 0 && r.tfp <= 130 && <circle cx={sx(r.tfp)} cy={204} r={7} fill="none" style={{ stroke: U.ink }} strokeWidth={2.5} />}
+        <T x={failLeft ? xf - 8 : xf + 8} y={40} anchor={failLeft ? "end" : "start"} fill={INK}>
+          Failure
+        </T>
+        <T x={nowLeft ? xn - 8 : xn + 8} y={nowLow ? 66 : 40} anchor={nowLeft ? "end" : "start"} fill={nowLeft ? ON_LIGHT : INK2}>
+          now
+        </T>
+        {/* legend */}
+        <g>
+          <circle cx={30} cy={266} r={3} style={{ fill: INK }} />
+          <T x={42} y={272}>
+            1/v (h/mm)
+          </T>
+          <line x1={160} x2={186} y1={266} y2={266} style={{ stroke: U.deep }} strokeWidth={2} strokeDasharray="6 4" strokeLinecap="round" />
+          <T x={194} y={272}>
+            Fit
+          </T>
+          <circle cx={256} cy={266} r={7} fill="none" style={{ stroke: U.ink }} strokeWidth={2.5} />
+          <T x={270} y={272}>
+            Forecast
+          </T>
+        </g>
+      </g>
     );
   },
 };

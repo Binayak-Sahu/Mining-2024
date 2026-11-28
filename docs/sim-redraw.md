@@ -61,7 +61,7 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u9-npv` | U9 | done-v2 | exact (min, default, objective-met) | Project DCF — NPV, IRR and payback with royalty, DMF and NMET |
 | `u9-cutoff` | U9 | done-v2 | exact (min, default, objective-met) | Grade–tonnage curve and break-even cut-off grade |
 | `u9-pit` | U9 | done-v2 | exact (min, default, objective-met) | Lerchs–Grossmann 2-D ultimate pit (45° slopes) |
-| `u9-radar` | U9 | todo | — | Slope stability radar — Fukuzono inverse-velocity forecast |
+| `u9-radar` | U9 | unsure: lesson pin 1 (100,120) sits over empty stage ~30 units right of the 1/v dots at default | exact (min, default, objective-met) | Slope stability radar — Fukuzono inverse-velocity forecast |
 | `u8-bowditch` | U8 | todo | — | Closed traverse — misclosure and Bowditch adjustment |
 | `u8-weisbach` | U8 | todo | — | Shaft plumbing — Weisbach triangle error control |
 | `u8-bond` | U8 | todo | — | Comminution energy — Bond's third theory |

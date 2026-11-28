@@ -1,6 +1,8 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, Plot, clamp, polyline, Dim, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
+import { T as T3, GREYS, Arrow as Arrow3, INK as BINK, INK3 as BINK3, U as BU } from "@/components/sim/v3";
+import { T, INK, INK3, ON_LIGHT, U, OK, BAD, Dot } from "@/components/sim/v3";
 
 /* ---------------- Closed traverse & Bowditch ---------------- */
 
@@ -64,6 +66,7 @@ export const bowditchSim: SimDef = {
     { key: "P", label: "Perimeter", unit: "m", digits: 1 },
   ],
   caption: "Bowditch: each leg's latitude and departure are corrected in proportion to its length — distributing the misclosure along the traverse.",
+  v3: { viewH: 250 },
   render: (p) => {
     const t = traverse(p);
     const k = 0.85;
@@ -74,36 +77,65 @@ export const bowditchSim: SimDef = {
     const meas = exag(t.pts);
     const cor = exag(t.cor);
     const truth = [...V, V[0]].map(([x, y]): [number, number] => [X(x), Y(y)]);
+    const adj = !!p.show;
+    const state = t.prec >= 10000 ? "safe" : "unsafe";
+    const line = adj ? cor : meas;
+    const ends = meas;
+    const lab: [number, number, "start" | "middle" | "end"][] = [
+      [46, 222, "end"],
+      [150, 196, "middle"],
+      [252, 142, "start"],
+      [232, 50, "start"],
+      [107, 40, "end"],
+      [24, 112, "start"],
+    ];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#F0FDF4" />
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <path key={i} d={`M-10 ${40 + i * 38} C 90 ${20 + i * 38}, 200 ${70 + i * 34}, 410 ${30 + i * 40}`} fill="none" stroke="#86EFAC" strokeWidth={1} opacity={0.8} />
-        ))}
-        <polyline points={polyline(truth)} fill="none" stroke="#CBD5E1" strokeWidth={6} strokeLinejoin="round" />
-        {p.show ? <polyline points={polyline(cor)} fill="none" stroke={C.safe} strokeWidth={2.5} /> : <polyline points={polyline(meas)} fill="none" stroke={C.crit} strokeWidth={2.5} />}
-        {!p.show && <line x1={meas[meas.length - 1][0]} y1={meas[meas.length - 1][1]} x2={meas[0][0]} y2={meas[0][1]} stroke={C.hazard} strokeWidth={2} strokeDasharray="3 2" />}
+        <defs>
+          <clipPath id="u8bow-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u8bow-clip)">
+          <rect x={0} y={0} width={400} height={250} style={{ fill: U.light }} />
+        </g>
+        <polygon points={polyline(truth)} style={{ fill: "#FFFFFF", stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" />
+        <polyline points={polyline(line)} fill="none" data-state={adj ? "safe" : "unsafe"} style={{ stroke: adj ? OK : BAD }} strokeWidth={2} strokeLinejoin="round" />
+        {!adj && <line x1={ends[ends.length - 1][0]} y1={ends[ends.length - 1][1]} x2={ends[0][0]} y2={ends[0][1]} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeDasharray="4 3" />}
         {V.map(([x, y], i) => (
-          <g key={i}>
-            <path d={`M${X(x)} ${Y(y) - 7} l5 9 h-10 z`} fill={C.hazard} stroke="#92400E" strokeWidth={0.8} />
-            <circle cx={X(x)} cy={Y(y)} r={2} fill={C.ink} />
-            <Txt x={X(x) + 6} y={Y(y) - 4} size={8} mono>
-              {String.fromCharCode(65 + i)}
-            </Txt>
-          </g>
+          <Dot key={i} x={X(x)} y={Y(y)} ring={i === 0} fill={ON_LIGHT} />
         ))}
-        <Txt x={250} y={30} size={9} weight={700} fill={C.slate}>
-          errors exaggerated ×400
-        </Txt>
-        <Txt x={250} y={50} size={9} weight={700} fill={p.show ? C.safe : C.crit}>
-          {p.show ? "— adjusted (closes)" : "— as measured (open)"}
-        </Txt>
-        <Txt x={250} y={66} size={9} fill={C.slate}>
-          ▬ true traverse
-        </Txt>
-        <Txt x={250} y={100} size={14} weight={900} mono fill={t.prec >= 10000 ? C.safe : t.prec >= 5000 ? C.hazard : C.crit}>
-          {Number.isFinite(t.prec) ? `1 : ${Math.round(t.prec)}` : "closed"}
-        </Txt>
+        {lab.map(([x, y, a], i) => (
+          <T key={i} x={x} y={y} anchor={a} fill={ON_LIGHT} weight={700}>
+            {String.fromCharCode(65 + i)}
+          </T>
+        ))}
+        <rect x={256} y={26} width={128} height={106} rx={8} style={{ fill: "#FFFFFF", stroke: INK3 }} strokeWidth={1.5} />
+        <g opacity={adj ? 1 : 0.45}>
+          <line x1={266} y1={42} x2={286} y2={42} data-state="safe" style={{ stroke: OK }} strokeWidth={2} />
+          <T x={376} y={48} anchor="end" fill={ON_LIGHT}>
+            Adjusted
+          </T>
+        </g>
+        <g opacity={adj ? 0.45 : 1}>
+          <line x1={266} y1={67} x2={286} y2={67} data-state="unsafe" style={{ stroke: BAD }} strokeWidth={2} />
+          <T x={376} y={73} anchor="end" fill={ON_LIGHT}>
+            Measured
+          </T>
+        </g>
+        <g opacity={adj ? 0.45 : 1}>
+          <line x1={266} y1={92} x2={286} y2={92} style={{ stroke: ON_LIGHT }} strokeWidth={2} strokeDasharray="4 3" />
+          <T x={376} y={98} anchor="end" fill={ON_LIGHT}>
+            Misclosure
+          </T>
+        </g>
+        <rect x={266} y={113} width={20} height={12} style={{ fill: U.light, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={376} y={124} anchor="end" fill={ON_LIGHT}>
+          True
+        </T>
+        <T x={376} y={220} anchor="end" fill={ON_LIGHT}>
+          Errors ×400
+        </T>
       </g>
     );
   },
@@ -201,64 +233,75 @@ export const bondSim: SimDef = {
   ],
   caption: "Rittinger (E ∝ new surface, 1/x) suits fine grinding; Kick (E ∝ log ratio) suits coarse crushing; Bond (E ∝ 1/√x) sits between and is the industry design standard.",
   animated: true,
+  v3: { viewH: 250, formula: () => "W = 10\\,W_i\\left(\\frac{1}{\\sqrt{P_{80}}}-\\frac{1}{\\sqrt{F_{80}}}\\right)" },
   handles: [
     { key: "F", axis: "x", at: (p) => [30 + ((Math.log10(p.F * 1000) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)) / 1000, color: "#0F172A" },
     { key: "P", axis: "x", at: (p) => [30 + ((Math.log10(p.P) - 1) / (Math.log10(300000) - 1)) * 340, 40], toValue: (x) => Math.pow(10, 1 + ((x - 30) / 340) * (Math.log10(300000) - 1)), color: "#3B82F6" },
   ],
   render: (p, o, t) => {
     const lx = (um: number) => 30 + ((Math.log10(um) - 1) / (Math.log10(300000) - 1)) * 340;
+    const xF = lx(p.F * 1000);
+    const xP = lx(p.P);
+    const close = Math.abs(xF - xP) < 64;
+    const cx = 90;
+    const cy = 165;
+    const R = 40;
+    const bar = clamp(o.W / 32, 0, 1) * 68;
+    const ticks: [number, string][] = [
+      [100, "100 µm"],
+      [1000, "1 mm"],
+      [10000, "10 mm"],
+      [100000, "100 mm"],
+    ];
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        <Txt x={30} y={24} size={9} weight={700} fill={C.slate}>
-          PARTICLE SIZE (log scale)
-        </Txt>
-        <rect x={30} y={32} width={340} height={16} fill="url(#sizeg)" rx={8} />
         <defs>
-          <linearGradient id="sizeg" x1="0" x2="1">
-            <stop offset="0" stopColor="#e0e7ff" />
-            <stop offset="1" stopColor="#57534e" />
-          </linearGradient>
+          <clipPath id="u8bond-clip">
+            <rect x={0} y={0} width={400} height={250} rx={12} />
+          </clipPath>
         </defs>
-        {[10, 100, 1000, 10000, 100000].map((u) => (
-          <Txt key={u} x={lx(u)} y={62} size={7} anchor="middle" mono fill={C.slate}>
-            {u >= 1000 ? `${u / 1000} mm` : `${u} µm`}
-          </Txt>
+        <g clipPath="url(#u8bond-clip)">
+          <rect x={0} y={cy + R} width={400} height={250 - cy - R} style={{ fill: GREYS.light }} />
+        </g>
+        <rect x={30} y={30} width={340} height={20} rx={10} style={{ fill: BU.light, stroke: BINK3 }} strokeWidth={1.5} />
+        {ticks.map(([u, l]) => (
+          <g key={u}>
+            <line x1={lx(u)} y1={50} x2={lx(u)} y2={56} style={{ stroke: BINK3 }} strokeWidth={1.5} strokeLinecap="round" />
+            <T3 x={lx(u)} y={76} anchor="middle">
+              {l}
+            </T3>
+          </g>
         ))}
-        <Arrow x1={lx(p.F * 1000)} y1={80} x2={lx(p.P) + 6} y2={80} color={C.crit} width={3} />
-        <circle cx={lx(p.F * 1000)} cy={40} r={6} fill={C.ink} />
-        <circle cx={lx(p.P)} cy={40} r={6} fill={C.tech} />
-        <Txt x={lx(p.F * 1000)} y={96} size={8} anchor="middle" weight={700}>
+        {Math.abs(xF - xP) > 16 && <Arrow3 x1={xF} y1={92} x2={xP + (xF > xP ? 6 : -6)} y2={92} color={BU.deep} />}
+        <T3 x={xF} y={116} anchor="middle" fill={BINK} weight={700}>
           F80
-        </Txt>
-        <Txt x={lx(p.P)} y={96} size={8} anchor="middle" weight={700} fill={C.tech}>
+        </T3>
+        <T3 x={xP} y={close ? 138 : 116} anchor="middle" fill={BINK} weight={700}>
           P80
-        </Txt>
-        <circle cx={90} cy={165} r={47} fill={MAT.metalH} stroke={C.ink} strokeWidth={2} filter="url(#f-shadow)" />
-        <circle cx={90} cy={165} r={41} fill="#E2E8F0" />
-        <g transform={`rotate(${((t * 60) % 360).toFixed(0)} 90 165)`}>
+        </T3>
+        <circle cx={cx} cy={cy} r={R} style={{ fill: GREYS.light, stroke: BINK }} strokeWidth={2.5} />
+        <circle cx={cx} cy={cy} r={R - 7} style={{ fill: BU.light }} />
+        <path
+          d={`M${cx + (R - 7) * Math.cos(0.35)} ${cy + (R - 7) * Math.sin(0.35)} A${R - 7} ${R - 7} 0 0 1 ${cx + (R - 7) * Math.cos(2.5)} ${cy + (R - 7) * Math.sin(2.5)} Z`}
+          transform={`rotate(-25 ${cx} ${cy})`}
+          style={{ fill: GREYS.mid }}
+        />
+        <g transform={`rotate(${((t * 40) % 360).toFixed(0)} ${cx} ${cy})`}>
           {[0, 60, 120, 180, 240, 300].map((a) => (
-            <rect key={a} x={88} y={124} width={4} height={6} fill="#64748B" transform={`rotate(${a} 90 165)`} />
+            <rect key={a} x={cx - 2.5} y={cy - R + 5} width={5} height={7} style={{ fill: GREYS.deep }} transform={`rotate(${a} ${cx} ${cy})`} />
           ))}
         </g>
-        {Array.from({ length: 9 }).map((_, i) => {
-          // charge cascades up the rising side and tumbles back
-          const a = ((t * 1.3 + i / 9) % 1) * Math.PI * 1.1 + Math.PI * 0.35;
-          const rr = 18 + (i % 3) * 7;
-          return <circle key={i} cx={90 + Math.cos(a) * rr} cy={170 + Math.sin(a) * rr * 0.8} r={5.5} fill="#475569" stroke="#1E293B" strokeWidth={0.6} />;
-        })}
-        <Txt x={90} y={226} size={8} anchor="middle" weight={700}>
-          ball mill
-        </Txt>
-        <Txt x={170} y={140} size={10} weight={800}>
-          W = 10·Wi(1/√P − 1/√F)
-        </Txt>
-        <Txt x={170} y={164} size={14} weight={900} mono>
-          {`${o.W.toFixed(2)} kWh/t`}
-        </Txt>
-        <Txt x={170} y={186} size={14} weight={900} mono fill={o.power > 8000 ? C.hazard : C.ink}>
-          {`${(o.power / 1000).toFixed(2)} MW`}
-        </Txt>
+        <T3 x={148} y={cy - 4} fill={BINK} weight={700}>
+          Ball mill
+        </T3>
+        <T3 x={148} y={cy + 20}>
+          Shell
+        </T3>
+        <rect x={344} y={124} width={32} height={72} rx={4} style={{ fill: "none", stroke: BINK3 }} strokeWidth={1.5} />
+        <rect x={347} y={193 - bar} width={26} height={bar} rx={2} style={{ fill: BU.mid }} />
+        <T3 x={376} y={222} anchor="end" weight={700}>
+          Energy
+        </T3>
       </g>
     );
   },
