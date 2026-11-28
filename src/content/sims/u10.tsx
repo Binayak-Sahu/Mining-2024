@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, clamp, SANS, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, ON_DEEP, GREYS, U } from "@/components/sim/v3";
+import { T, INK, INK2, INK3, ON_LIGHT, ON_DEEP, GREYS, U, textW } from "@/components/sim/v3";
 
 /* ---------------- Statutory hierarchy & duties explorer ---------------- */
 
@@ -29,35 +29,61 @@ export const rolesSim: SimDef = {
     { key: "role", label: "Position", format: (v) => ROLES[v].name },
     { key: "tier", label: "Level", format: (v) => ["Ownership & management", "Statutory management", "Specialist officials", "Supervisory", "Front-line competent persons"][v] },
   ],
+  primary: ["tier"],
+  v3: { viewH: 400 },
   render: (p) => {
     const r = ROLES[p.role];
+    const H = 400;
+    const lines = wrapDuty(r.duty);
+    const cy = 142;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill="#f8fafc" />
-        {LAWS.map((l, i) => {
-          const w = 150 + i * 45;
+        <clipPath id="u10roles-clip">
+          <rect x={12} y={12} width={376} height={H - 24} rx={12} />
+        </clipPath>
+        <g clipPath="url(#u10roles-clip)">
+          <rect x={0} y={0} width={400} height={cy - 8} fill={GREYS.light} />
+        </g>
+        {ROLE_LAWS.map((l, i) => {
+          const y = 28 + i * 22;
           return (
             <g key={l}>
-              <rect x={200 - w / 2} y={12 + i * 22} width={w} height={20} rx={4} fill={i === 0 ? C.ink : i === 1 ? "#334155" : i === 2 ? "#475569" : i === 3 ? "#64748b" : "#94a3b8"} filter="url(#f-shadow)" />
-              <rect x={200 - w / 2} y={12 + i * 22} width={w} height={7} rx={4} fill={MAT.glass} />
-              <Txt x={200} y={26 + i * 22} size={8} anchor="middle" fill="white" weight={700}>
+              <T x={24} y={y + 6} fill={ON_LIGHT}>
                 {l}
-              </Txt>
+              </T>
+              <rect x={200} y={y - 8} width={100 + i * 15 + 60} height={16} rx={4} fill={[U.deep, U.deep, U.mid, U.mid, GREYS.mid][i]} />
             </g>
           );
         })}
-        <rect x={20} y={130} width={360} height={100} rx={12} fill="white" stroke={C.tech} strokeWidth={2} filter="url(#f-shadow)" />
-        <rect x={20} y={130} width={6} height={100} rx={3} fill={C.tech} />
-        <Txt x={32} y={150} size={12} weight={900} fill={C.tech}>
-          {r.name}
-        </Txt>
-        <foreignObject x={30} y={156} width={340} height={72}>
-          <div style={{ fontSize: 10, lineHeight: 1.35, color: "#0f172a", fontFamily: SANS }}>{r.duty}</div>
-        </foreignObject>
+        <rect x={24} y={cy} width={352} height={H - 24 - cy} rx={12} fill="var(--surface)" stroke={INK3} strokeWidth={1.5} />
+        <rect x={24} y={cy} width={6} height={H - 24 - cy} rx={3} fill={U.deep} />
+        <T x={40} y={cy + 28} fill={INK}>
+          {`Duty · level ${r.tier + 1} of 5`}
+        </T>
+        {lines.map((ln, i) => (
+          <T key={i} x={40} y={cy + 56 + i * 23} fill={INK2} weight={500}>
+            {ln}
+          </T>
+        ))}
       </g>
     );
   },
 };
+
+const ROLE_LAWS = ["Act / Code", "Rules", "Regulations", "DGMS circulars", "Mine orders"];
+
+function wrapDuty(d: string): string[] {
+  const out: string[] = [];
+  let l = "";
+  for (const t of d.split(" ")) {
+    if (l && textW(l + " " + t, 18) > 316) {
+      out.push(l);
+      l = t;
+    } else l = l ? l + " " + t : t;
+  }
+  out.push(l);
+  return out;
+}
 
 /* ---------------- Degree of gassiness ---------------- */
 

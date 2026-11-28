@@ -652,39 +652,57 @@ export const pumpSim: SimDef = {
   ],
   caption: "NPSHa = (Patm − Pv)/ρg − suction lift − suction losses (0.5 m). Atmospheric pressure taken as 101.3 kPa (conservative underground).",
   animated: true,
-  // §5.6 redraw (v3e): sump, pump, rising main and the NPSH column keep their legacy places (lesson hotspots).
+  // v3.2 redraw: sump, pump, rising main and the NPSH column keep their lesson-pin places.
   v3: { viewH: 240 },
-  handles: [{ key: "lift", axis: "y", at: (p) => [118, 163 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (163 - y) / 8 }],
+  handles: [{ key: "lift", axis: "y", at: (p) => [100, 163 - clamp(p.lift * 8, -20, 70)], toValue: (y) => (163 - y) / 8 }],
   render: (p, o, t) => {
     const cav = o.margin < 0;
     const off = clamp(p.lift * 8, -20, 70);
+    const cy = 163 - off;
+    const ny = (m: number) => 170 - 9 * clamp(m, 0, 12);
+    const state = cav ? "unsafe" : "safe";
     return (
       <g>
-        <rect x={20} y={180} width={120} height={50} rx={8} style={{ fill: U.light }} />
-        <T x={80} y={212} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <defs>
+          <clipPath id="u7pump-clip">
+            <rect x={0} y={0} width={400} height={240} rx={12} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#u7pump-clip)">
+          <rect x={0} y={208} width={400} height={32} style={{ fill: GREYS.light }} />
+        </g>
+        <rect x={24} y={168} width={96} height={40} rx={6} style={{ fill: U.light, stroke: INK3 }} strokeWidth={1.5} />
+        <T x={32} y={194} fill={ON_LIGHT} weight={700}>
           Sump
         </T>
-        <path d={`M120 215 L150 215 L150 ${180 - off}`} fill="none" stroke={GREYS.deep} strokeWidth={6} strokeLinejoin="round" />
-        <path d={`M212 ${164 - off} L240 ${164 - off} L240 20`} fill="none" stroke={GREYS.deep} strokeWidth={8} strokeLinejoin="round" />
-        <path d={`M212 ${164 - off} L240 ${164 - off} L240 20`} fill="none" style={{ stroke: U.light }} strokeWidth={2.5} strokeDasharray="6 10" strokeDashoffset={-((t * (cav ? 6 : 30)) % 16)} strokeLinejoin="round" />
-        <rect x={132} y={146 - off} width={80} height={34} rx={8} style={{ fill: cav ? BAD : U.deep }} />
-        <T x={172} y={169 - off} anchor="middle" fill={cav ? ON_LIGHT : ON_DEEP} weight={700}>
-          {`${o.stages}-stage`}
+        <path d={`M100 190 L100 ${cy} L132 ${cy}`} fill="none" stroke={GREYS.deep} strokeWidth={6} strokeLinejoin="round" />
+        <path d={`M212 ${cy} L240 ${cy} L240 28`} fill="none" stroke={GREYS.deep} strokeWidth={8} strokeLinejoin="round" />
+        <path d={`M212 ${cy} L240 ${cy} L240 28`} fill="none" style={{ stroke: U.light }} strokeWidth={2.5} strokeDasharray="6 10" strokeDashoffset={-((t * (cav ? 6 : 30)) % 16)} strokeLinejoin="round" />
+        <rect x={132} y={cy - 25} width={80} height={50} rx={8} data-state={state} style={{ fill: cav ? BAD_LIGHT : U.deep, stroke: INK }} strokeWidth={2.5} />
+        <T x={172} y={cy + 6} anchor="middle" fill={cav ? ON_LIGHT : ON_DEEP} weight={700}>
+          Pump
         </T>
-        {cav && [0, 1, 2, 3, 4].map((i) => <circle key={i} cx={148 + i * 12} cy={138 - off - (i % 2) * 6 - ((t * 20 + i * 4) % 12)} r={3} fill="#FFFFFF" style={{ stroke: BAD }} strokeWidth={1.5} />)}
-        <T x={250} y={30} weight={700}>
+        {cav && (
+          <g data-state="unsafe">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <circle key={i} cx={148 + i * 12} cy={cy - 31 - (i % 2) * 6 - ((t * 20 + i * 4) % 12)} r={3} fill="#FFFFFF" style={{ stroke: BAD }} strokeWidth={1.5} />
+            ))}
+            <T x={132} y={cy - 59} fill={INK}>
+              Bubbles
+            </T>
+          </g>
+        )}
+        <T x={256} y={44} weight={700}>
           Rising main
         </T>
-        <T x={250} y={72} fill={INK} weight={700}>
-          {`Total head ${num(o.Ht, 0, "m")}`}
+        <rect x={338} y={62} width={36} height={108} rx={4} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <rect x={342} y={ny(o.npsha)} width={28} height={170 - ny(o.npsha) - 4} rx={2} data-state={state} style={{ fill: cav ? BAD_LIGHT : OK_LIGHT }} />
+        <line x1={332} y1={ny(p.npshr)} x2={376} y2={ny(p.npshr)} style={{ stroke: INK }} strokeWidth={2.5} strokeLinecap="round" />
+        <T x={326} y={ny(p.npshr) + 6} anchor="end" fill={INK}>
+          NPSHr
         </T>
-        <T x={250} y={96}>{`Friction ${num(o.hf, 1, "m")}`}</T>
-        <T x={250} y={152} fill={cav ? BAD_TEXT : o.margin < 0.5 ? INK : OK_TEXT} weight={800}>
-          {`NPSHa ${num(o.npsha, 2, "m")}`}
-        </T>
-        <T x={250} y={176}>{`NPSHr ${num(p.npshr, 1, "m")}`}</T>
-        <T x={250} y={204} fill={cav ? BAD_TEXT : OK_TEXT} weight={700}>
-          {cav ? "Cavitation" : "No cavitation"}
+        <T x={376} y={196} anchor="end" weight={700}>
+          NPSHa
         </T>
       </g>
     );

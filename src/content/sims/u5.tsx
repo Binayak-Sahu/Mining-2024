@@ -1,7 +1,7 @@
 import type { SimDef } from "@/lib/types";
 import { C, Txt, Arrow, clamp, rad, deg, polyline, Cracks, Stream } from "@/components/sim/svg";
 import { MAT } from "@/components/sim/defs";
-import { T, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
+import { T, LBL, INK, INK3, ON_LIGHT, GREYS, U, OK_LIGHT, BAD_LIGHT, BAD, Arrow as V3Arrow, DimLine, pts, num, textW } from "@/components/sim/v3";
 import { SvgTex } from "@/components/sim/Tex";
 
 /* ---------------- Pit section: stripping ratio vs BESR ---------------- */
@@ -249,56 +249,86 @@ export const matchSim: SimDef = {
     { key: "idle", label: "Shovel idle / truck queue", format: (v, o) => `${v.toFixed(0)}% / ${o.queue.toFixed(0)}%`, tone: (v, o) => (v > 10 || o.queue > 10 ? "warn" : "ok") },
   ],
   caption: "Loaded 20 km/h, empty 35 km/h, dump + spot 1.5 min; bucket fill 0.9, loose density 1.8 t/m³. MF = N·t_load / t_cycle (one shovel).",
-  render: (p, o, t) => {
+  // §5.6d redraw (v3.2): same loop geometry as legacy (lanes y 90 / 150, shovel left, dump right) so the four pins stay put.
+  v3: { viewH: 250 },
+  render: (p, _o, t) => {
     const r = truckShovel(p);
-    const loop = (u: number): [number, number] => {
-      // rounded rectangle loop: shovel left (60,120), dump right (340,120)
-      const per = u % 1;
-      if (per < 0.5) return [60 + per * 2 * 280, 90];
-      return [340 - (per - 0.5) * 2 * 280, 150];
+    const R = 30;
+    const straight = 240;
+    const arc = Math.PI * R;
+    const total = 2 * straight + 2 * arc;
+    // position + heading (deg) at fraction u of the loop; loaded on the top lane and the dump arc
+    const loop = (u: number): { x: number; y: number; a: number; loaded: boolean } => {
+      const s = (((u % 1) + 1) % 1) * total;
+      if (s < straight) return { x: 80 + s, y: 90, a: 0, loaded: true };
+      if (s < straight + arc) {
+        const th = -Math.PI / 2 + (s - straight) / R;
+        return { x: 320 + R * Math.cos(th), y: 120 + R * Math.sin(th), a: deg(th) + 90, loaded: true };
+      }
+      if (s < 2 * straight + arc) return { x: 320 - (s - straight - arc), y: 150, a: 180, loaded: false };
+      const th = Math.PI / 2 + (s - 2 * straight - arc) / R;
+      return { x: 80 + R * Math.cos(th), y: 120 + R * Math.sin(th), a: deg(th) + 90, loaded: false };
     };
-    const trucks = [];
     const speed = 1 / (r.tCycle * 0.6);
     const waiting = Math.max(0, Math.round(p.N - r.tCycle / r.tLoad));
+    const moving = Math.max(p.N - waiting, 1);
+    const balanced = Math.abs(r.mf - 1) <= 0.05;
+    const status = r.mf < 0.95 ? "Shovel waits for trucks" : r.mf > 1.05 ? "Trucks queue at shovel" : "Balanced fleet";
+    const trucks = [];
     for (let i = 0; i < p.N; i++) {
       if (i < waiting) {
-        trucks.push(<rect key={i} x={20 - i * 4} y={112 + (i % 3) * 3} width={14} height={9} rx={2} fill={C.hazard} stroke={C.ink} />);
+        trucks.push(
+          <rect key={i} x={100 + i * 13} y={115} width={11} height={10} rx={2} data-state="unsafe" fill={BAD_LIGHT} style={{ stroke: INK3 }} strokeWidth={1.5} />,
+        );
         continue;
       }
-      const [x, y] = loop(t * speed + i / Math.max(p.N - waiting, 1));
-      trucks.push(<rect key={i} x={x - 7} y={y - 5} width={14} height={9} rx={2} fill={y < 120 ? C.coal : C.hazard} stroke={C.ink} />);
+      const q = loop(t * speed + (i - waiting) / moving);
+      trucks.push(
+        <g key={i} transform={`translate(${q.x} ${q.y}) rotate(${q.a})`}>
+          <rect x={-8} y={-5} width={16} height={10} rx={2} fill={q.loaded ? U.deep : GREYS.light} style={{ stroke: q.loaded ? ON_LIGHT : INK3 }} strokeWidth={1.5} />
+        </g>,
+      );
     }
+    const pillW = textW(status) + 20;
     return (
       <g>
-        <rect x={0} y={0} width={400} height={240} fill={MAT.sand} />
-        <rect x={0} y={0} width={400} height={240} fill="#F8FAFC" opacity={0.5} />
-        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#78716C" strokeWidth={20} />
-        <rect x={50} y={80} width={300} height={80} rx={40} fill="none" stroke="#F8FAFC" strokeWidth={1} strokeDasharray="6 6" opacity={0.7} />
-        <circle cx={55} cy={120} r={17} fill={MAT.steel} stroke="#0F172A" />
-        <circle cx={55} cy={120} r={13} fill={C.tech} />
-        <Txt x={55} y={124} size={8} anchor="middle" fill="white" weight={800}>
-          SHOVEL
-        </Txt>
-        <path d="M331 138 L345 102 L361 102 L375 138 Z" fill={MAT.goaf} stroke="#57534E" />
-        <Txt x={353} y={124} size={7} anchor="middle" fill="white" weight={800}>
-          DUMP
-        </Txt>
+        <defs>
+          <clipPath id="u5match-clip">
+            <rect x={12} y={12} width={376} height={226} rx={12} />
+          </clipPath>
+        </defs>
+        {/* host ground, edge to edge, clipped */}
+        <g clipPath="url(#u5match-clip)">
+          <rect x={0} y={0} width={400} height={250} fill={GREYS.light} opacity={0.35} />
+          <rect x={80} y={90} width={240} height={60} rx={30} fill="none" stroke={GREYS.mid} strokeWidth={24} />
+          <rect x={80} y={90} width={240} height={60} rx={30} fill="none" style={{ stroke: INK3 }} strokeWidth={1.5} strokeDasharray="6 6" />
+        </g>
+        {/* shovel (loading unit) */}
+        <rect x={30} y={138} width={46} height={16} rx={4} fill={GREYS.deep} />
+        <rect x={34} y={106} width={38} height={34} rx={5} style={{ fill: U.deep, stroke: INK }} strokeWidth={2.5} />
+        <path d="M72 116 L96 100" style={{ stroke: INK }} strokeWidth={3} strokeLinecap="round" />
+        {/* dump bay */}
+        <polygon points="338,96 372,96 364,128 344,128" fill={GREYS.deep} style={{ stroke: INK3 }} strokeWidth={1.5} strokeLinejoin="round" />
         {trucks}
-        <Txt x={200} y={76} size={8} anchor="middle" fill={C.slate}>
-          loaded →
-        </Txt>
-        <Txt x={200} y={176} size={8} anchor="middle" fill={C.slate}>
-          ← empty return
-        </Txt>
-        <Txt x={20} y={30} size={18} weight={900} mono fill={Math.abs(r.mf - 1) <= 0.05 ? C.safe : C.hazard}>
-          {`MF ${r.mf.toFixed(2)}`}
-        </Txt>
-        <Txt x={20} y={210} size={9} fill={C.ink}>
-          {r.mf < 0.95 ? "Under-trucked: shovel waits for trucks" : r.mf > 1.05 ? "Over-trucked: trucks queue at shovel" : "Balanced fleet"}
-        </Txt>
-        <Txt x={20} y={226} size={9} mono fill={C.slate}>
-          {`${p.N} trucks · ${r.passes} passes · cycle ${r.tCycle.toFixed(1)} min`}
-        </Txt>
+        {/* labels */}
+        <line x1={50} y1={68} x2={50} y2={104} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={24} y={62} fill={INK}>
+          Shovel
+        </T>
+        <line x1={354} y1={68} x2={354} y2={94} style={{ stroke: INK3 }} strokeWidth={1.5} />
+        <T x={376} y={62} anchor="end" fill={INK}>
+          Dump
+        </T>
+        <T x={200} y={66} anchor="middle">
+          Loaded →
+        </T>
+        <T x={200} y={192} anchor="middle">
+          ← Empty return
+        </T>
+        <rect x={200 - pillW / 2} y={198} width={pillW} height={26} rx={13} data-state={balanced ? "met" : "unmet"} fill={balanced ? OK_LIGHT : BAD_LIGHT} />
+        <T x={200} y={217} anchor="middle" fill={ON_LIGHT} weight={700}>
+          {status}
+        </T>
       </g>
     );
   },
@@ -346,7 +376,7 @@ export const haulSim: SimDef = {
   caption: "Speed from P·η / F (η = 0.85), capped at 50 km/h; downgrade speed held at 40 km/h by retarder. e = v²/(127R) − f with side friction f = 0.15.",
   animated: true,
   // §5.6 redraw (v3e): ramp drawn with 2.6× vertical exaggeration; plan-view curve panel at right.
-  v3: { viewH: 250, formula: "F = GVW\\,g\\,(RR + GR)\\qquad e + f = \\dfrac{v^2}{127R}" },
+  v3: { viewH: 250, formula: () => "F = GVW\\,g\\,(RR + GR)\\qquad e + f = \\dfrac{v^2}{127R}" },
   handles: [{ key: "gr", axis: "y", at: (p) => { const a = Math.atan(p.gr / 100); return [HW.x0 + HW.L * Math.cos(a), HW.y0 - HW.L * Math.sin(a) * HW.k]; }, toValue: (y) => 100 * Math.tan(Math.asin(clamp((HW.y0 - y) / (HW.L * HW.k), -0.99, 0.99))) }],
   render: (p, o, t) => {
     const ang = Math.atan(p.gr / 100);
@@ -378,7 +408,7 @@ export const haulSim: SimDef = {
         {/* ramp: road surface + moving centre-line dashes */}
         <polyline points={pts([[x0 - 12, y0], [x0, y0], [x1, y1], [x1 + 8, y1]])} fill="none" data-state={steep ? "unsafe" : "safe"} style={{ stroke: steep ? BAD : GREYS.deep }} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
         <line x1={x0} y1={y0} x2={x1} y2={y1} style={{ stroke: GREYS.light }} strokeWidth={1.5} strokeDasharray="5 6" strokeDashoffset={-(t * o.v * 0.8) % 11} />
-        <T x={tx} y={ty + 48} anchor="middle" fill={ON_LIGHT} weight={700}>
+        <T x={tx} y={Math.min(ty + 40, 212)} anchor="middle" fill={ON_LIGHT} weight={700}>
           Haul ramp
         </T>
         {/* truck */}

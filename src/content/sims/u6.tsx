@@ -336,7 +336,7 @@ export const caveSim: SimDef = {
   animated: true,
   primary: ["b", "interact"],
   // §5.6d redraw (v3.2): extraction level y 204 (drawpoint mouth spans 204-222, pin y 216) and the waste band at the top (pin y 27).
-  v3: { viewH: 264 },
+  v3: { viewH: 272 },
   handles: [{ key: "h", axis: "y", at: (p) => [200, 204 - p.h * (148 / 300)], toValue: (y) => (204 - y) / (148 / 300) }],
   render: (p, o, t) => {
     const base = 204;
@@ -349,7 +349,7 @@ export const caveSim: SimDef = {
     return (
       <g>
         <clipPath id="u6-cave-scene">
-          <rect x={12} y={12} width={376} height={240} rx={12} />
+          <rect x={12} y={12} width={376} height={248} rx={12} />
         </clipPath>
         <clipPath id="u6-cave-col">
           <rect x={0} y={56} width={400} height={base - 56} />
@@ -363,7 +363,7 @@ export const caveSim: SimDef = {
         <T x={36} y={44} fill={ON_LIGHT} weight={600}>
           Overlying waste
         </T>
-        <T x={36} y={240} fill={ON_DEEP} weight={600}>
+        <T x={36} y={242} fill={ON_DEEP} weight={600}>
           Extraction level
         </T>
         {Array.from({ length: n }).map((_, i) => {
@@ -381,8 +381,8 @@ export const caveSim: SimDef = {
             </g>
           );
         })}
-        <circle cx={286} cy={233} r={2.5} fill={ON_DEEP} />
-        <T x={364} y={240} anchor="end" fill={ON_DEEP} weight={600}>
+        <circle cx={286} cy={235} r={2.5} fill={ON_DEEP} />
+        <T x={364} y={242} anchor="end" fill={ON_DEEP} weight={600}>
           Ore flow
         </T>
       </g>
