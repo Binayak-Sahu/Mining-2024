@@ -14,22 +14,22 @@ Status: `todo`, `done` (redrawn to v3, §5.6), `done-v2` (redrawn to v3.2, §5.6
 | `u7-network` | U7 | done-v2 | exact (min, default, objective-met) | Ventilation network — Atkinson's law, splits and a regulator |
 | `u7-fan` | U7 | done-v2 | exact (min, default, objective-met) | Axial fan characteristic, mine curve, stall and NVP |
 | `u7-psychro` | U7 | unsure: pin statutory-lines (160,72) sits ~40 units above the wet-bulb limit lines | exact (min, default, objective-met) | Psychrometry & heat stress at the face |
-| `u7-sponcom` | U7 | done | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
-| `u7-dust` | U7 | done | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
-| `u7-pump` | U7 | done | exact (min, default, objective-met) | Mine dewatering — multistage pump head, power and NPSH |
+| `u7-sponcom` | U7 | unsure: pin Graham's ratio (232,22) in the top inset | exact (min, default, objective-met) | Spontaneous heating early-warning analyser |
+| `u7-dust` | U7 | unsure: pin Incombustible content (380,212) outside the inset | exact (min, default, objective-met) | Roadway dust — incombustible content and stone dusting |
+| `u7-pump` | U7 | done-v2 | exact (min, default, objective-met) | Mine dewatering — multistage pump head, power and NPSH |
 | `u6-goaf` | U6 | unsure: pin 3 Main roof (381,88) lies outside the 24-unit inset | exact (min, default, objective-met) | Depillaring goaf — immediate caving, main fall and air blast |
 | `u6-longwall` | U6 | unsure: pin Front abutment (258,12) lies outside the inset | exact (min, default, objective-met) | Longwall face — abutment pressure and shield capacity |
 | `u6-stope` | U6 | done-v2 | exact (min, default, objective-met) | Metalliferous stope — overbreak (ELOS) and dilution |
-| `u6-cave` | U6 | done | exact (min, default, objective-met) | Block caving — draw ellipsoids and drawpoint spacing |
+| `u6-cave` | U6 | done-v2 | exact (min, default, objective-met) | Block caving — draw ellipsoids and drawpoint spacing |
 | `u6-lwcycle` | U6 | done-v2 | exact (min, default, objective-met) | Longwall face cycle — DERD shearer, AFC snake and shield advance |
 | `u6-thick` | U6 | done-v2 | exact (min, default, objective-met) | Thick-seam extraction — Blasting Gallery vs Longwall Top Coal Caving |
 | `u5-pit` | U5 | unsure: pin SR vs BESR (380,22) lies outside the inset | exact (min, default, objective-met) | Pit cross-section — stripping ratio vs break-even stripping ratio |
 | `u5-dragline` | U5 | done-v2 | exact (min, default, objective-met) | Dragline side-casting — spoil geometry and rehandle |
-| `u5-match` | U5 | todo | — | Truck–shovel match factor and queueing |
-| `u5-haul` | U5 | todo | — | Haul road physics — resistance, rimpull, speed and super-elevation |
+| `u5-match` | U5 | unsure: pin 4 Match factor (150,24) sits over empty stage | exact (min, default, objective-met) | Truck–shovel match factor and queueing |
+| `u5-haul` | U5 | unsure: pin Total resistance (260,22) in the top inset | exact (min, default, objective-met) | Haul road physics — resistance, rimpull, speed and super-elevation |
 | `u5-dump` | U5 | todo | — | Multi-deck waste dump — overall slope and stability |
-| `u10-roles` | U10 | todo | — | Statutory architecture & duty explorer |
-| `u10-gassy` | U10 | todo | — | Degree of gassiness classifier (coal seams) |
+| `u10-roles` | U10 | unsure: pins 1 (290,22) and 4 (385,150) outside the inset | exact (min, default, objective-met) | Statutory architecture & duty explorer |
+| `u10-gassy` | U10 | done-v2 | exact (min, default, objective-met) | Degree of gassiness classifier (coal seams) |
 | `u10-risk` | U10 | todo | — | Risk matrix — hazard rating and hierarchy of controls |
 | `u10-fta` | U10 | todo | — | Fault tree — firedamp explosion |
 | `u10-scba` | U10 | todo | — | Rescue mission planner — closed-circuit oxygen breathing apparatus |

@@ -51,7 +51,7 @@ export const rolesSim: SimDef = {
               <T x={28} y={y + 6} fill={ON_LIGHT}>
                 {l}
               </T>
-              <rect x={200} y={y - 8} width={100 + i * 15 + 60} height={16} rx={4} fill={[U.deep, U.deep, U.mid, U.mid, GREYS.mid][i]} />
+              <rect x={200} y={y - 8} width={100 + i * 15} height={16} rx={4} fill={[U.deep, U.deep, U.mid, U.mid, GREYS.mid][i]} />
             </g>
           );
         })}
